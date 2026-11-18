@@ -2,6 +2,8 @@
 
 Trigger: owner explicitly starts or schedules a run in an authorized local agent environment. Read AGENTS.md, docs/execution-safety.md and pacing/snapshot/stop partials. Markdown does not launch a runner. New CV/setup requests use skills/00-onboarding-chat.md first, outside this run.
 
+0. Mandatory: skills/00-interrogate-and-onboard.md. Audit all five gates; incomplete/stale/example data HARD BLOCKS the run and starts the focused interview. When complete show current mission briefing and wait for explicit launch confirmation. No browser run before consent.
+
 1. Acquire `npm run run:lock -- acquire`; keep returned owner token for journal/release, never run two agents on one browser profile. Then `npm run preflight`; must exit 0. Failure: write schema-valid aborted run, validate, release owned lock, report and STOP. No browser actions first.
 2. Auth verification: open each DISTINCT enabled platform's auth_check_url, pace/snapshot. For auth_required:true require an explicit account indicator. For public boards false logged-out is allowed. Any unexpected login, CAPTCHA, 2FA, warning or rate limit -> abort entire run and notify, never skip and continue.
 3. Load owner profile, CV, preferences, targets, owner-verified form answers and guardrails. Use UTC YYYY-MM-DD for run ID/caps and ISO timestamps. Initialize DailyRun with all zero counts, running status, null finished_at and steps; validate. Do not overwrite an existing day's run: append steps/counts under the lock.

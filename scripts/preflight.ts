@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { parse } from "yaml";
+import { auditReadiness } from "../bin/readiness.mjs";
 import { withinActiveHours } from "../schemas/runtime";
 import { agentDailyCap } from "../schemas/agent-policy";
 import { ApplicationsLog, DailyRun, Guardrails, FormAnswers, Targets, canApply } from "../schemas/index.ts";
@@ -20,8 +21,13 @@ const g = Guardrails.safeParse(yaml("config/guardrails.yaml"));
 const answers = FormAnswers.safeParse(yaml("context/form-answers.yaml"));
 const targets = Targets.safeParse(yaml("context/targets.yaml"));
 const preferences = yaml("context/preferences.yaml");
+const readiness = auditReadiness(root, { answers: answers.success ? answers.data : undefined, targets: targets.success ? targets.data : undefined });
+if (!readiness.overall_ready) {
+  for (const [key, gate] of Object.entries(readiness.gates)) for (const missing of gate.missing) problems.push(`${key}: ${missing}`);
+  problems.push("HARD BLOCK: complete skills/00-interrogate-and-onboard.md and obtain per-run launch confirmation");
+}
 if (!g.success) problems.push("invalid guardrails: require score >=7, review floor 5, agent action delays 3–9s (legacy delay_seconds 3–8) and CAPTCHA/2FA stops");
-if (!answers.success) problems.push("form answers must be owner-verified and include ./assets/<resume>.pdf");
+if (!answers.success) problems.push("form answers must be owner-verified and include ./assets/<resume>.pdf or ./context/resume.pdf");
 if (!targets.success || !targets.data.targets.some(t => t.enabled)) problems.push("need valid enabled targets");
 if (answers.success) {
   const pdf = p(answers.data.resume_pdf_path);

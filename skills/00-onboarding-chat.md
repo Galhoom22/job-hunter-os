@@ -4,7 +4,7 @@ description: Set up a private job-hunting profile when the owner says Setup my p
 ---
 # Chat-first onboarding
 
-Read AGENTS.md and docs/execution-safety.md. This is setup, not a daily application run: no employer submission, LinkedIn edit or post. Use the owner's language. Never ask for passwords, tokens, or session cookies in chat.
+First read skills/00-interrogate-and-onboard.md; its five-gate interview governs this setup. Read AGENTS.md and docs/execution-safety.md. This is setup, not a daily application run: no employer submission, LinkedIn edit or post. Use the owner's language. Never ask for passwords, tokens, or session cookies in chat.
 
 ## 1. Inspect before writing
 - Confirm local file tools and available Playwright MCP tools. Resolve the repository root; resolve `./browser-profile` to one absolute path, never a shared/global profile. Do not launch another browser against a locked profile.
@@ -14,7 +14,7 @@ Read AGENTS.md and docs/execution-safety.md. This is setup, not a daily applicat
 ## 2. Extract, then verify in chat
 Build a compact fact table: name/contact, location, links, dated employers/roles, education, skills, projects and exact achievements. Keep a source reference (CV page/section or owner message) for each fact. Missing contact or dates remain unknown; do not infer nationality, work authorization, sponsorship, salary, notice period, years per skill or sensitive EEO answers.
 
-Ask one short batch for missing target roles/seniority, locations/remote restrictions, salary currency/period, exclusions, chosen platforms, active-hours timezone and optional Notion. Explain default dry run: it fills/reviews but never submits. If the owner does not answer a required fact, retain it as unknown and report readiness blocked; partial onboarding is allowed.
+Ask missing facts in focused batches of 3–4 questions, waiting and saving answers/state after each batch; follow the five phases in interrogate-and-onboard.md. Explain default dry run: it fills/reviews but never submits. If the owner does not answer a required fact, retain it as unknown and report readiness blocked; partial onboarding is allowed.
 
 Show the extracted facts and proposed preferences. Obtain explicit confirmation before `owner_verified:true`; CV extraction alone is not verification. Verify legal answers individually rather than accepting a generic yes to a profile summary.
 

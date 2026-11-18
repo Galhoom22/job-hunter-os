@@ -1,5 +1,10 @@
 # Repository readiness audit
 
+## Strict readiness gatekeeper
+- [x] Add five-gate schema, private state template, shared audit and CLI/preflight enforcement.
+- [x] Add 3–4-question interview, CV drop guide, scoped answer learning and per-run launch confirmation.
+- [x] Update all IDE/command entrypoints and documentation; verify 91 tests and save the request commit.
+
 ## Universal CLI installation
 - [x] Implement dependency-free local/global CLI and non-destructive MCP/IDE injection.
 - [x] Add transparent POSIX/PowerShell installers and six portable commands.

@@ -114,7 +114,7 @@ export const Guardrails = z.object({
 }).merge(RuntimeControls);
 export const FormAnswers = z.object({
   owner_verified: z.literal(true),
-  resume_pdf_path: z.string().regex(/^\.\/assets\/[^/\\]+\.pdf$/i),
+  resume_pdf_path: z.string().regex(/^\.\/(?:assets\/[^/\\]+|context\/resume)\.pdf$/i),
   questions: z.array(z.object({ match: z.array(z.string().min(1)).min(1), answer: z.string().min(1) })),
   skills_years: z.record(z.number().nonnegative()),
   eeo: z.record(z.string()),

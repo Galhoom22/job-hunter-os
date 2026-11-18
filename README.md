@@ -62,6 +62,13 @@ node ./bin/job-hunter.mjs init
 2. Open Antigravity, Cursor, Claude Code, Windsurf or Cline, drop your CV into chat and request `/setup`. The agent extracts only your facts, asks you to verify them and prepares private context. Missing native command? Ask “Setup my profile from this CV” and point it to your agent home's AGENTS.md.
 3. Request `/daily-run` or `/apply-url JOB_URL`. **Dry run is on by default: no final Submit.** Actual submissions require verified facts/resume, permitted targets, live auth, caps and successful preflight. Optional local safety helpers require a separate approved dependency install and Node 22+; see [runtime details](docs/cli-installation.md).
 
+## Smart Readiness Gatekeeper & Interactive AI Interview
+“Start applying”, `/daily-run` and `/apply-url` first hit a hard readiness gate—not an immediate browser run. The agent checks a private `context/readiness-state.json` and the actual sources against five mandatory gates: real verified CV/PDF; confirmed role/seniority/work-mode/region/timezone/blacklist preferences; salary units/currency plus notice/start date/authorization/sponsorship; exact hands-on years for every core skill; chosen platforms and fresh session/access evidence.
+
+Incomplete, stale or placeholder data → a clear five-line checklist and focused **3–4-question batches**. The agent waits for your reply, writes your verified answers and asks only what's still missing. Optional metrics/portfolio links may be omitted, never invented. Drop a PDF into context/ or assets/ and say **“Check my folder”**, or use `/setup` with no manual file editing.
+
+Once these prerequisites pass, you see a **mission briefing** (roles/platforms/effective caps/minimum score/dry-run vs live) and explicitly confirm **each launch**. Readiness does not override preflight, fresh auth, dry run, duplicate prevention or stop rules; READY_100% is not a permanent login or safety guarantee. Newly encountered factual/legal questions pause the form, ask you and save only context-scoped verified answers for future reuse. No background work continues while waiting for chat answers.
+
 ## CLI reference
 | Command | Result |
 |---|---|

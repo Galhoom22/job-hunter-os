@@ -4,6 +4,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { spawnSync, spawn } from 'node:child_process';
+import { auditReadiness } from './readiness.mjs';
 
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const home = os.homedir();
@@ -125,6 +126,7 @@ function init() {
     write(path.join(root, 'context', name), fs.readFileSync(path.join(source, 'context', name)), { preserve: true });
     write(path.join(root, 'context', name.replace(/\.example$/, '')), fs.readFileSync(path.join(source, 'context', name)), { preserve: true });
   }
+  write(path.join(root, 'context', 'DROP_YOUR_FILES_HERE.md'), fs.readFileSync(path.join(source, 'context', 'DROP_YOUR_FILES_HERE.md')), { preserve: true });
   for (const dir of ['logs/runs', 'logs/resumes', 'logs/screenshots', 'browser-profile', 'assets']) { safePath(path.join(root, dir)); fs.mkdirSync(path.join(root, dir), { recursive: true, mode: 0o700 }); }
   write(path.join(root, 'logs', 'applications-log.json'), '[]\n', { preserve: true });
   const manifest = JSON.parse(fs.readFileSync(path.join(source, 'package.json'), 'utf8'));
@@ -134,7 +136,7 @@ function init() {
   const ignoreFile = path.join(root, '.gitignore'); safePath(ignoreFile);
   const old = fs.existsSync(ignoreFile) ? fs.readFileSync(ignoreFile, 'utf8') : '';
   const marker = '# Job Hunter OS private runtime';
-  if (!old.includes(marker)) write(ignoreFile, old + `\n${marker}\n/context/*\n!/context/*.example\n/logs/\n/browser-profile/\n/assets/*.pdf\n/.env*\n!/.env.example\n/.mcp.json\n/.cursor/mcp.json\n/mcp/*.import.json\n*.job-hunter-backup-*\nnode_modules/\n`);
+  if (!old.includes(marker)) write(ignoreFile, old + `\n${marker}\n/context/*\n!/context/*.example\n!/context/DROP_YOUR_FILES_HERE.md\n/logs/\n/browser-profile/\n/assets/*.pdf\n/.env*\n!/.env.example\n/.mcp.json\n/.cursor/mcp.json\n/mcp/*.import.json\n*.job-hunter-backup-*\nnode_modules/\n`);
   write(path.join(root, '.job-hunter-install.json'), JSON.stringify({ version: 1, scope: global ? 'global' : 'local' }, null, 2) + '\n', { preserve: true });
   inject(global); syncMcp(global);
   say(`Installed agent home: ${root}`);
@@ -144,6 +146,9 @@ function doctor() {
   let failures = 0;
   const check = (ok, label, detail) => { if (!ok) failures++; say(`[${ok ? '✓' : '✗'}] ${label.padEnd(27)} ${detail}`, ok ? '32' : '33'); };
   say(`Job Hunter OS doctor — ${root}`);
+  const readiness = auditReadiness(root);
+  for (const [key, gate] of Object.entries(readiness.gates)) check(gate.complete, key, gate.complete ? 'Verified prerequisite evidence' : gate.missing.join('; '));
+  check(readiness.overall_ready, 'Strict readiness state', readiness.overall_ready ? 'READY_100% — per-run confirmation still required' : 'HARD BLOCK: request /setup for the 3–4-question interview');
   check(Number(process.versions.node.split('.')[0]) >= 18, 'Node.js 18+', process.versions.node);
   const probe = spawnSync(process.platform === 'win32' ? 'where.exe' : 'which', ['npx'], { stdio: 'pipe' });
   check(probe.status === 0, 'npx available', probe.status === 0 ? 'found' : 'install Node/npm');
@@ -157,8 +162,7 @@ function doctor() {
   check(populated('profile.md'), 'Profile populated', 'placeholder heuristic only; owner review still required');
   const answers = path.join(root, 'context', 'form-answers.yaml');
   check(populated('form-answers.yaml') && /^owner_verified:\s*true\s*(?:#.*)?$/m.test(fs.existsSync(answers) ? fs.readFileSync(answers, 'utf8') : ''), 'Form answers verified', 'must have owner_verified: true');
-  const pdf = path.join(root, 'assets', 'resume.pdf');
-  check(fs.existsSync(pdf) && fs.readFileSync(pdf).subarray(0, 5).toString() === '%PDF-', 'Base resume PDF', 'assets/resume.pdf signature; content needs human review');
+  check(Boolean(readiness.pdf), 'Base resume PDF', 'assets/resume.pdf or context/resume.pdf signature; content needs human review');
   for (const file of configTargets(global || root === path.join(home, '.job-hunter-os'))) {
     let good = false;
     try { good = configRead(file).mcpServers?.playwright?.args?.includes(`--user-data-dir=${path.join(root, 'browser-profile')}`) === true; } catch { /* diagnostics without private values */ }

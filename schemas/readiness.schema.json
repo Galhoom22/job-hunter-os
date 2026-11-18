@@ -1,0 +1,484 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Job Hunter Readiness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "status",
+    "overall_ready",
+    "updated_at",
+    "gates",
+    "source_hashes",
+    "requirements",
+    "sessions"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "INCOMPLETE",
+        "INTERVIEWING",
+        "READY_100%"
+      ]
+    },
+    "overall_ready": {
+      "type": "boolean"
+    },
+    "updated_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resume_gate",
+        "target_preferences_gate",
+        "compensation_and_legal_gate",
+        "tech_experience_matrix_gate",
+        "browser_and_platforms_gate"
+      ],
+      "properties": {
+        "resume_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "complete",
+            "owner_confirmed",
+            "verified_at",
+            "missing"
+          ],
+          "properties": {
+            "complete": {
+              "type": "boolean"
+            },
+            "owner_confirmed": {
+              "type": "boolean"
+            },
+            "verified_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "target_preferences_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "complete",
+            "owner_confirmed",
+            "verified_at",
+            "missing"
+          ],
+          "properties": {
+            "complete": {
+              "type": "boolean"
+            },
+            "owner_confirmed": {
+              "type": "boolean"
+            },
+            "verified_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "compensation_and_legal_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "complete",
+            "owner_confirmed",
+            "verified_at",
+            "missing"
+          ],
+          "properties": {
+            "complete": {
+              "type": "boolean"
+            },
+            "owner_confirmed": {
+              "type": "boolean"
+            },
+            "verified_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "tech_experience_matrix_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "complete",
+            "owner_confirmed",
+            "verified_at",
+            "missing"
+          ],
+          "properties": {
+            "complete": {
+              "type": "boolean"
+            },
+            "owner_confirmed": {
+              "type": "boolean"
+            },
+            "verified_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "browser_and_platforms_gate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "complete",
+            "owner_confirmed",
+            "verified_at",
+            "missing"
+          ],
+          "properties": {
+            "complete": {
+              "type": "boolean"
+            },
+            "owner_confirmed": {
+              "type": "boolean"
+            },
+            "verified_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "source_hashes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roles",
+        "seniority",
+        "work_modes",
+        "regions",
+        "timezones",
+        "blacklisted_companies",
+        "salary",
+        "notice_period",
+        "earliest_start_date",
+        "work_authorization",
+        "visa_sponsorship",
+        "core_skills"
+      ],
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "seniority": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "work_modes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timezones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blacklisted_companies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "core_skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "salary": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "required": [
+            "minimum",
+            "currency",
+            "period"
+          ],
+          "properties": {
+            "minimum": {
+              "type": "number",
+              "minimum": 0
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            "period": {
+              "enum": [
+                "hourly",
+                "monthly",
+                "annual"
+              ]
+            }
+          }
+        },
+        "notice_period": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "earliest_start_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "work_authorization": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "visa_sponsorship": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "platform",
+          "verified_at",
+          "evidence",
+          "authenticated"
+        ],
+        "properties": {
+          "platform": {
+            "type": "string"
+          },
+          "verified_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "authenticated": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "overall_ready": {
+            "const": true
+          }
+        },
+        "required": [
+          "overall_ready"
+        ]
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "const": "READY_100%"
+          },
+          "gates": {
+            "properties": {
+              "resume_gate": {
+                "properties": {
+                  "complete": {
+                    "const": true
+                  },
+                  "owner_confirmed": {
+                    "const": true
+                  },
+                  "missing": {
+                    "maxItems": 0
+                  },
+                  "verified_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "target_preferences_gate": {
+                "properties": {
+                  "complete": {
+                    "const": true
+                  },
+                  "owner_confirmed": {
+                    "const": true
+                  },
+                  "missing": {
+                    "maxItems": 0
+                  },
+                  "verified_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "compensation_and_legal_gate": {
+                "properties": {
+                  "complete": {
+                    "const": true
+                  },
+                  "owner_confirmed": {
+                    "const": true
+                  },
+                  "missing": {
+                    "maxItems": 0
+                  },
+                  "verified_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "tech_experience_matrix_gate": {
+                "properties": {
+                  "complete": {
+                    "const": true
+                  },
+                  "owner_confirmed": {
+                    "const": true
+                  },
+                  "missing": {
+                    "maxItems": 0
+                  },
+                  "verified_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "browser_and_platforms_gate": {
+                "properties": {
+                  "complete": {
+                    "const": true
+                  },
+                  "owner_confirmed": {
+                    "const": true
+                  },
+                  "missing": {
+                    "maxItems": 0
+                  },
+                  "verified_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "READY_100%"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "overall_ready": {
+            "const": true
+          }
+        }
+      }
+    }
+  ]
+}

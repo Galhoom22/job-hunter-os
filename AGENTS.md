@@ -53,6 +53,8 @@ a skipped application is cheap, a wrong or fabricated one is expensive.
 
 ## Strict execution order (daily run)
 
+Step 0: skills/00-interrogate-and-onboard.md: five gates + fresh launch consent, then steps 1–3 unchanged.
+
 ```
 1. Preflight Check      -> npm run preflight (must exit 0)
 2. Auth Verification    -> open each enabled platform, confirm logged-in state
@@ -110,7 +112,7 @@ All records follow `schemas/index.ts` (Zod). Status values:
 
 ## Chat-first product and commands
 - Markdown skills/prompts/templates/MCP are the product; leave src/ untouched. Why: no web application is required.
-- Use docs/chat-commands.md for six commands including /apply-url; see docs/cli-installation.md for local/global cwd. Why: IDE support varies.
-- Setup uses skills/00-onboarding-chat.md; Notion provisioning is opt-in. Why: owners should not hand-edit YAML or expose secrets in chat.
+- Six commands use docs/chat-commands.md; global cwd uses docs/cli-installation.md. Why: IDE support varies.
+- Readiness uses shared bin/readiness.mjs and schemas/readiness.schema.json. Why: doctor/preflight must block stale or unverified facts.
 - Use schemas/agent-policy.ts before submissions: first three distinct authorized run dates cap at 5 alongside calendar warm-up. Why: idle days cannot bypass caution.
 - CLI uses Node built-ins; tests in scripts/tests/. Why: installation needs no web runtime.

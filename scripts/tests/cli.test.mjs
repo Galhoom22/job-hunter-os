@@ -6,6 +6,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { outreachAllowed } from '../../bin/agent-rules.mjs';
+import { readyFixture } from './readiness-fixture.mjs';
 const cli = fileURLToPath(new URL('../../bin/job-hunter.mjs', import.meta.url));
 function fixture(t) {
   const base = fs.mkdtempSync(path.join(os.tmpdir(), 'job-hunter-cli-'));
@@ -72,9 +73,7 @@ test('symlinked destination cannot redirect private profile writes', t => {
 });
 test('doctor returns success for completed structural fixture without claiming live auth', t => {
   const f = fixture(t); assert.equal(f.run('init').status, 0);
-  fs.writeFileSync(path.join(f.cwd, 'context', 'profile.md'), '# Verified owner\n- full_name: Synthetic Candidate\n- current_title: Engineer\n');
-  fs.writeFileSync(path.join(f.cwd, 'context', 'form-answers.yaml'), 'owner_verified: true\nresume_pdf_path: "./assets/resume.pdf"\nquestions: []\nskills_years: {}\neeo: {}\n');
-  fs.writeFileSync(path.join(f.cwd, 'assets', 'resume.pdf'), '%PDF-1.7 synthetic');
+  readyFixture(f.cwd);
   fs.mkdirSync(path.join(f.cwd, 'browser-profile', 'Default'));
   const result = f.run('doctor'); assert.equal(result.status, 0); assert.match(result.stdout, /not proof of logged-in sessions/);
 });

@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "status": "INCOMPLETE",
+  "overall_ready": false,
+  "updated_at": null,
+  "gates": {
+    "resume_gate": {
+      "complete": false,
+      "owner_confirmed": false,
+      "verified_at": null,
+      "missing": [
+        "Awaiting owner interview and evidence"
+      ]
+    },
+    "target_preferences_gate": {
+      "complete": false,
+      "owner_confirmed": false,
+      "verified_at": null,
+      "missing": [
+        "Awaiting owner interview and evidence"
+      ]
+    },
+    "compensation_and_legal_gate": {
+      "complete": false,
+      "owner_confirmed": false,
+      "verified_at": null,
+      "missing": [
+        "Awaiting owner interview and evidence"
+      ]
+    },
+    "tech_experience_matrix_gate": {
+      "complete": false,
+      "owner_confirmed": false,
+      "verified_at": null,
+      "missing": [
+        "Awaiting owner interview and evidence"
+      ]
+    },
+    "browser_and_platforms_gate": {
+      "complete": false,
+      "owner_confirmed": false,
+      "verified_at": null,
+      "missing": [
+        "Awaiting owner interview and evidence"
+      ]
+    }
+  },
+  "source_hashes": {},
+  "requirements": {
+    "roles": [],
+    "seniority": [],
+    "work_modes": [],
+    "regions": [],
+    "timezones": [],
+    "blacklisted_companies": [],
+    "core_skills": [],
+    "salary": null,
+    "notice_period": null,
+    "earliest_start_date": null,
+    "work_authorization": null,
+    "visa_sponsorship": null
+  },
+  "sessions": []
+}
