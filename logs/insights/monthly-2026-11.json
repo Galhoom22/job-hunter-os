@@ -1,0 +1,83 @@
+{
+  "type": "monthly",
+  "period": "2026-11",
+  "generated_at": "2026-11-17T20:00:00Z",
+  "scanned": 116,
+  "applied": 37,
+  "match_rate": 0.319,
+  "avg_match_score": 5.91,
+  "top_skills": [
+    {
+      "skill": "Tailwind CSS",
+      "count": 71
+    },
+    {
+      "skill": "React",
+      "count": 70
+    },
+    {
+      "skill": "Playwright",
+      "count": 70
+    },
+    {
+      "skill": "TypeScript",
+      "count": 64
+    },
+    {
+      "skill": "Next.js",
+      "count": 63
+    },
+    {
+      "skill": "Jest",
+      "count": 62
+    },
+    {
+      "skill": "GraphQL",
+      "count": 61
+    },
+    {
+      "skill": "Node.js",
+      "count": 51
+    },
+    {
+      "skill": "Storybook",
+      "count": 23
+    },
+    {
+      "skill": "React Native",
+      "count": 19
+    }
+  ],
+  "skill_gaps": [
+    {
+      "skill": "Storybook",
+      "count": 23
+    },
+    {
+      "skill": "React Native",
+      "count": 19
+    },
+    {
+      "skill": "Micro-frontends",
+      "count": 18
+    },
+    {
+      "skill": "Docker",
+      "count": 17
+    },
+    {
+      "skill": "AWS",
+      "count": 17
+    },
+    {
+      "skill": "Kubernetes",
+      "count": 16
+    }
+  ],
+  "recommendations": [
+    "Add a small Storybook project to your CV \u2014 it appeared in 23 scored roles.",
+    "Mention React Native exposure if you have any; it is your second most common gap.",
+    "Lead your CV summary with React + TypeScript performance wins \u2014 they match most roles.",
+    "Add answers for recurring 'years with X' questions in form-answers.yaml to cut needs_review."
+  ]
+}

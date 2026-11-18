@@ -1,0 +1,38 @@
+{
+  "run_id": "2026-11-05",
+  "started_at": "2026-11-05T09:00:00Z",
+  "finished_at": "2026-11-05T14:15:00Z",
+  "dry_run": false,
+  "status": "completed",
+  "counts": {
+    "scanned": 8,
+    "applied": 3,
+    "dry_run": 0,
+    "needs_review": 2,
+    "skipped": 3,
+    "failed": 0
+  },
+  "platforms": [
+    "linkedin",
+    "wellfound",
+    "wuzzuf"
+  ],
+  "errors": [],
+  "steps": [
+    {
+      "at": "2026-11-05T09:00:05Z",
+      "step": "preflight",
+      "detail": "passed"
+    },
+    {
+      "at": "2026-11-05T09:01:10Z",
+      "step": "auth_verification",
+      "detail": "all platforms logged in"
+    },
+    {
+      "at": "2026-11-05T14:15:00Z",
+      "step": "report"
+    }
+  ],
+  "notes": ""
+}

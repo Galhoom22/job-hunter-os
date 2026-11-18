@@ -5,7 +5,8 @@ import { ApplicationsLog, DailyRun, Insight } from "../../schemas/index";
 
 // Bundled snapshot of the repo files — used when the real filesystem is unavailable
 // (hosted preview). Locally, `npm run dev` reads the live files on every request.
-import bundledApps from "../../logs/applications-log.json";
+const bundledAppsGlob = import.meta.glob("../../logs/applications-log.json", { eager: true, import: "default" });
+const bundledApps = Object.values(bundledAppsGlob)[0] ?? [];
 const bundledRuns = import.meta.glob("../../logs/runs/*.json", { eager: true, import: "default" });
 const bundledInsights = import.meta.glob("../../logs/insights/*.json", { eager: true, import: "default" });
 const bundledText = import.meta.glob(

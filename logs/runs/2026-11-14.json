@@ -1,0 +1,40 @@
+{
+  "run_id": "2026-11-14",
+  "started_at": "2026-11-14T09:00:00Z",
+  "finished_at": "2026-11-14T14:15:00Z",
+  "dry_run": false,
+  "status": "completed",
+  "counts": {
+    "scanned": 8,
+    "applied": 4,
+    "dry_run": 0,
+    "needs_review": 2,
+    "skipped": 2,
+    "failed": 0
+  },
+  "platforms": [
+    "linkedin",
+    "wellfound",
+    "wuzzuf"
+  ],
+  "errors": [
+    "Notion sync timeout (retried later)"
+  ],
+  "steps": [
+    {
+      "at": "2026-11-14T09:00:05Z",
+      "step": "preflight",
+      "detail": "passed"
+    },
+    {
+      "at": "2026-11-14T09:01:10Z",
+      "step": "auth_verification",
+      "detail": "all platforms logged in"
+    },
+    {
+      "at": "2026-11-14T14:15:00Z",
+      "step": "report"
+    }
+  ],
+  "notes": ""
+}

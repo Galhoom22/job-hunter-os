@@ -1,0 +1,83 @@
+{
+  "type": "weekly",
+  "period": "2026-W46",
+  "generated_at": "2026-11-17T20:00:00Z",
+  "scanned": 52,
+  "applied": 21,
+  "match_rate": 0.404,
+  "avg_match_score": 6.22,
+  "top_skills": [
+    {
+      "skill": "Playwright",
+      "count": 32
+    },
+    {
+      "skill": "Tailwind CSS",
+      "count": 31
+    },
+    {
+      "skill": "Jest",
+      "count": 31
+    },
+    {
+      "skill": "TypeScript",
+      "count": 31
+    },
+    {
+      "skill": "React",
+      "count": 31
+    },
+    {
+      "skill": "Next.js",
+      "count": 29
+    },
+    {
+      "skill": "Node.js",
+      "count": 28
+    },
+    {
+      "skill": "GraphQL",
+      "count": 28
+    },
+    {
+      "skill": "React Native",
+      "count": 11
+    },
+    {
+      "skill": "Vue",
+      "count": 9
+    }
+  ],
+  "skill_gaps": [
+    {
+      "skill": "React Native",
+      "count": 11
+    },
+    {
+      "skill": "Vue",
+      "count": 9
+    },
+    {
+      "skill": "Storybook",
+      "count": 9
+    },
+    {
+      "skill": "AWS",
+      "count": 8
+    },
+    {
+      "skill": "Docker",
+      "count": 8
+    },
+    {
+      "skill": "Terraform",
+      "count": 8
+    }
+  ],
+  "recommendations": [
+    "Add a small React Native project to your CV \u2014 it appeared in 11 scored roles.",
+    "Mention Vue exposure if you have any; it is your second most common gap.",
+    "Lead your CV summary with React + TypeScript performance wins \u2014 they match most roles.",
+    "Add answers for recurring 'years with X' questions in form-answers.yaml to cut needs_review."
+  ]
+}

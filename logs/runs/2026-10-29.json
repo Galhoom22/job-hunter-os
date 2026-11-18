@@ -1,0 +1,39 @@
+{
+  "run_id": "2026-10-29",
+  "started_at": "2026-10-29T09:00:00Z",
+  "finished_at": "2026-10-29T13:15:00Z",
+  "dry_run": true,
+  "status": "completed",
+  "counts": {
+    "scanned": 6,
+    "applied": 0,
+    "dry_run": 2,
+    "needs_review": 0,
+    "skipped": 4,
+    "failed": 0
+  },
+  "platforms": [
+    "greenhouse",
+    "linkedin",
+    "wellfound",
+    "wuzzuf"
+  ],
+  "errors": [],
+  "steps": [
+    {
+      "at": "2026-10-29T09:00:05Z",
+      "step": "preflight",
+      "detail": "passed"
+    },
+    {
+      "at": "2026-10-29T09:01:10Z",
+      "step": "auth_verification",
+      "detail": "all platforms logged in"
+    },
+    {
+      "at": "2026-10-29T13:15:00Z",
+      "step": "report"
+    }
+  ],
+  "notes": ""
+}

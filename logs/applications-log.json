@@ -1,0 +1,3964 @@
+[
+  {
+    "job_id": "linkedin:1922121676",
+    "title": "Full Stack Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/1922121676",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-28T09:05:00Z",
+    "status": "dry_run",
+    "match_score": 10,
+    "matched_skills": [
+      "React",
+      "Jest",
+      "GraphQL",
+      "Playwright",
+      "Next.js",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-28",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:2703729684",
+    "title": "Senior Frontend Engineer",
+    "company": "Elmenus",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/2703729684",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-28T09:14:00Z",
+    "status": "dry_run",
+    "match_score": 9.2,
+    "matched_skills": [
+      "React",
+      "Playwright",
+      "GraphQL",
+      "Jest",
+      "TypeScript",
+      "Next.js"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-28",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:3744112455",
+    "title": "Senior Frontend Engineer",
+    "company": "Talabat",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/3744112455",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-28T10:23:00Z",
+    "status": "skipped",
+    "match_score": 4.6,
+    "matched_skills": [
+      "GraphQL",
+      "Jest",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-28",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:4349342752",
+    "title": "Senior React Engineer",
+    "company": "Remote.com",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/4349342752",
+    "location": "Remote (EMEA)",
+    "apply_type": "external",
+    "discovered_at": "2026-10-28T10:05:00Z",
+    "status": "skipped",
+    "match_score": 4.5,
+    "matched_skills": [
+      "Jest",
+      "Node.js",
+      "GraphQL",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Micro-frontends",
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-28",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:8809768138",
+    "title": "UI Engineer",
+    "company": "Lucidya",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/8809768138",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-28T11:21:00Z",
+    "status": "dry_run",
+    "match_score": 7.3,
+    "matched_skills": [
+      "GraphQL",
+      "Jest",
+      "React",
+      "Node.js",
+      "Tailwind CSS",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Docker",
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-28",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:8307852598",
+    "title": "Senior React Engineer",
+    "company": "Rubikal",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/8307852598",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-28T11:41:00Z",
+    "status": "skipped",
+    "match_score": 4.1,
+    "matched_skills": [
+      "TypeScript",
+      "Next.js",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-28",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:6358464899",
+    "title": "Full Stack Engineer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/6358464899",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-29T09:25:00Z",
+    "status": "dry_run",
+    "match_score": 7.3,
+    "matched_skills": [
+      "Node.js",
+      "TypeScript",
+      "GraphQL",
+      "React",
+      "Tailwind CSS",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-29",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:1756849392",
+    "title": "UI Engineer",
+    "company": "Halan",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/1756849392",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-29T09:14:00Z",
+    "status": "skipped",
+    "match_score": 4.5,
+    "matched_skills": [
+      "Next.js",
+      "Playwright",
+      "Tailwind CSS",
+      "GraphQL",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Vue",
+      "Storybook",
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-29",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:5526864997",
+    "title": "UI Engineer",
+    "company": "Deel",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/5526864997",
+    "location": "Berlin, Germany",
+    "apply_type": "external",
+    "discovered_at": "2026-10-29T10:57:00Z",
+    "status": "skipped",
+    "match_score": 5.2,
+    "matched_skills": [
+      "GraphQL",
+      "Next.js",
+      "React",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Python",
+      "Vue",
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-29",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:1225810525",
+    "title": "Senior React Engineer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/1225810525",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-29T10:00:00Z",
+    "status": "dry_run",
+    "match_score": 7.9,
+    "matched_skills": [
+      "Playwright",
+      "React",
+      "TypeScript",
+      "Jest",
+      "Node.js",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-29",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:3036465042",
+    "title": "Full Stack Engineer",
+    "company": "Sylndr",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/3036465042",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-29T11:07:00Z",
+    "status": "skipped",
+    "match_score": 3.0,
+    "matched_skills": [
+      "TypeScript",
+      "Playwright",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Docker",
+      "Go",
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-29",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:2553714997",
+    "title": "Senior React Engineer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/2553714997",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-29T11:44:00Z",
+    "status": "skipped",
+    "match_score": 3.3,
+    "matched_skills": [
+      "TypeScript",
+      "Node.js",
+      "Next.js",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Docker",
+      "Python",
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-29",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4662012810",
+    "title": "Frontend Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4662012810",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-30T09:51:00Z",
+    "status": "dry_run",
+    "match_score": 7.7,
+    "matched_skills": [
+      "Next.js",
+      "Jest",
+      "TypeScript",
+      "GraphQL",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-30",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:9538558444",
+    "title": "Senior Frontend Engineer",
+    "company": "Halan",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/9538558444",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-30T09:23:00Z",
+    "status": "dry_run",
+    "match_score": 8.1,
+    "matched_skills": [
+      "React",
+      "Jest",
+      "Next.js",
+      "Tailwind CSS",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-30",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4221828754",
+    "title": "Frontend Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4221828754",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-30T10:30:00Z",
+    "status": "needs_review",
+    "match_score": 6.4,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Jest",
+      "GraphQL",
+      "Node.js",
+      "React"
+    ],
+    "missing_skills": [
+      "Vue",
+      "AWS",
+      "Python"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-30",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:9181277449",
+    "title": "UI Engineer",
+    "company": "Rabbit",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/9181277449",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-30T10:51:00Z",
+    "status": "dry_run",
+    "match_score": 8.2,
+    "matched_skills": [
+      "Playwright",
+      "Node.js",
+      "React",
+      "TypeScript",
+      "GraphQL",
+      "Jest"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-30",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:5415199442",
+    "title": "React Developer",
+    "company": "Thndr",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/5415199442",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T09:13:00Z",
+    "status": "needs_review",
+    "match_score": 6.9,
+    "matched_skills": [
+      "Next.js",
+      "React",
+      "Playwright",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "Storybook"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with React Native?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/wellfound-5415199442.png",
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:3192782745",
+    "title": "Full Stack Engineer",
+    "company": "Rabbit",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/3192782745",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T09:55:00Z",
+    "status": "needs_review",
+    "match_score": 6.2,
+    "matched_skills": [
+      "Playwright",
+      "Jest",
+      "TypeScript",
+      "React",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "Terraform",
+      "Python",
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "linkedin:4334999595",
+    "title": "Senior React Engineer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4334999595",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T10:56:00Z",
+    "status": "needs_review",
+    "match_score": 6.0,
+    "matched_skills": [
+      "Next.js",
+      "Tailwind CSS",
+      "GraphQL",
+      "React"
+    ],
+    "missing_skills": [],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Python?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/linkedin-4334999595.png",
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:3199716799",
+    "title": "React Developer",
+    "company": "Zalando",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/3199716799",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T10:44:00Z",
+    "status": "skipped",
+    "match_score": 5.0,
+    "matched_skills": [
+      "Jest",
+      "GraphQL",
+      "React"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:7193850035",
+    "title": "UI Engineer",
+    "company": "Halan",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/7193850035",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T11:04:00Z",
+    "status": "skipped",
+    "match_score": 4.7,
+    "matched_skills": [
+      "GraphQL",
+      "Jest",
+      "TypeScript",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "linkedin:9450540511",
+    "title": "UI Engineer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/9450540511",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T11:14:00Z",
+    "status": "skipped",
+    "match_score": 4.5,
+    "matched_skills": [
+      "Next.js",
+      "Node.js",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Docker",
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:9985904926",
+    "title": "Senior Frontend Engineer",
+    "company": "Delivery Hero",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/9985904926",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T12:23:00Z",
+    "status": "skipped",
+    "match_score": 3.7,
+    "matched_skills": [
+      "Next.js",
+      "Node.js",
+      "Tailwind CSS",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Vue",
+      "Storybook",
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:2167889500",
+    "title": "Frontend Engineer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/2167889500",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T12:57:00Z",
+    "status": "dry_run",
+    "match_score": 7.2,
+    "matched_skills": [
+      "Node.js",
+      "GraphQL",
+      "Playwright",
+      "Next.js",
+      "React",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5605983482",
+    "title": "UI Engineer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5605983482",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-10-31T13:01:00Z",
+    "status": "needs_review",
+    "match_score": 6.3,
+    "matched_skills": [
+      "Next.js",
+      "GraphQL",
+      "Playwright",
+      "Node.js",
+      "Tailwind CSS",
+      "Jest"
+    ],
+    "missing_skills": [
+      "AWS",
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-10-31",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5988385884",
+    "title": "Frontend Engineer",
+    "company": "Paymob",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5988385884",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-01T09:03:00Z",
+    "status": "skipped",
+    "match_score": 3,
+    "matched_skills": [
+      "Jest",
+      "React",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "Go",
+      "Docker",
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-01",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:3039081424",
+    "title": "Full Stack Engineer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/3039081424",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-01T09:59:00Z",
+    "status": "needs_review",
+    "match_score": 6.1,
+    "matched_skills": [
+      "GraphQL",
+      "Tailwind CSS",
+      "Jest",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Vue",
+      "Kubernetes"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Kubernetes?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/wuzzuf-3039081424.png",
+    "run_id": "2026-11-01",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:5217150806",
+    "title": "Frontend Engineer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/5217150806",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-01T10:53:00Z",
+    "status": "dry_run",
+    "match_score": 9.5,
+    "matched_skills": [
+      "GraphQL",
+      "Node.js",
+      "TypeScript",
+      "Playwright",
+      "Next.js",
+      "React"
+    ],
+    "missing_skills": [
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-01",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:1796080901",
+    "title": "Full Stack Engineer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/1796080901",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-01T10:17:00Z",
+    "status": "dry_run",
+    "match_score": 7.1,
+    "matched_skills": [
+      "Next.js",
+      "React",
+      "Playwright",
+      "Tailwind CSS",
+      "Jest",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-01",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:5655274506",
+    "title": "Senior React Engineer",
+    "company": "Rabbit",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/5655274506",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-02T09:17:00Z",
+    "status": "skipped",
+    "match_score": 5.2,
+    "matched_skills": [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-02",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:2692125395",
+    "title": "React Developer",
+    "company": "Paymob",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/2692125395",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-02T09:19:00Z",
+    "status": "skipped",
+    "match_score": 4.6,
+    "matched_skills": [
+      "GraphQL",
+      "Playwright",
+      "React"
+    ],
+    "missing_skills": [
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-02",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:7989338257",
+    "title": "UI Engineer",
+    "company": "Elmenus",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/7989338257",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-02T10:46:00Z",
+    "status": "needs_review",
+    "match_score": 6.2,
+    "matched_skills": [
+      "Playwright",
+      "Jest",
+      "Next.js",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-02",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:5745580125",
+    "title": "Full Stack Engineer",
+    "company": "Elmenus",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/5745580125",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-02T10:53:00Z",
+    "status": "skipped",
+    "match_score": 4.2,
+    "matched_skills": [
+      "Tailwind CSS",
+      "React",
+      "Playwright"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-02",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:3298665724",
+    "title": "Senior React Engineer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/3298665724",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-02T11:42:00Z",
+    "status": "dry_run",
+    "match_score": 7.1,
+    "matched_skills": [
+      "Jest",
+      "Next.js",
+      "React",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-02",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:3760645980",
+    "title": "Senior React Engineer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/3760645980",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-02T11:04:00Z",
+    "status": "needs_review",
+    "match_score": 6.4,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Node.js",
+      "TypeScript",
+      "Playwright",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Storybook",
+      "AWS",
+      "Micro-frontends"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Kubernetes?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/linkedin-3760645980.png",
+    "run_id": "2026-11-02",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7513471209",
+    "title": "Full Stack Engineer",
+    "company": "Zalando",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7513471209",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-02T12:29:00Z",
+    "status": "skipped",
+    "match_score": 5.3,
+    "matched_skills": [
+      "React",
+      "Tailwind CSS",
+      "Jest",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "AWS",
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-02",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:6448841365",
+    "title": "Frontend Engineer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/6448841365",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-02T12:13:00Z",
+    "status": "skipped",
+    "match_score": 5.6,
+    "matched_skills": [
+      "GraphQL",
+      "React",
+      "Tailwind CSS",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Micro-frontends",
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-02",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:1683180147",
+    "title": "UI Engineer",
+    "company": "Sylndr",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/1683180147",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-03T09:31:00Z",
+    "status": "needs_review",
+    "match_score": 6.6,
+    "matched_skills": [
+      "GraphQL",
+      "React",
+      "Node.js",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "Micro-frontends"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Kubernetes?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/wellfound-1683180147.png",
+    "run_id": "2026-11-03",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4062412897",
+    "title": "UI Engineer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4062412897",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-03T09:57:00Z",
+    "status": "needs_review",
+    "match_score": 6.5,
+    "matched_skills": [
+      "Node.js",
+      "Tailwind CSS",
+      "Next.js",
+      "React",
+      "Jest",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Vue",
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-03",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:8138141947",
+    "title": "Frontend Engineer",
+    "company": "Rabbit",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/8138141947",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-03T10:40:00Z",
+    "status": "dry_run",
+    "match_score": 7.9,
+    "matched_skills": [
+      "TypeScript",
+      "Next.js",
+      "Tailwind CSS",
+      "Playwright",
+      "React",
+      "Jest"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-03",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:8440397198",
+    "title": "Senior React Engineer",
+    "company": "Rabbit",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/8440397198",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-03T10:28:00Z",
+    "status": "skipped",
+    "match_score": 4.6,
+    "matched_skills": [
+      "Node.js",
+      "Playwright",
+      "Tailwind CSS",
+      "React"
+    ],
+    "missing_skills": [
+      "Python",
+      "Terraform",
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-03",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:6412384889",
+    "title": "Frontend Engineer",
+    "company": "ITWorx",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/6412384889",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-03T11:41:00Z",
+    "status": "skipped",
+    "match_score": 5.4,
+    "matched_skills": [
+      "Next.js",
+      "Tailwind CSS",
+      "Playwright",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Go",
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-03",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:6239968573",
+    "title": "React Developer",
+    "company": "Sylndr",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/6239968573",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-03T11:58:00Z",
+    "status": "skipped",
+    "match_score": 4.4,
+    "matched_skills": [
+      "Next.js",
+      "Node.js",
+      "TypeScript"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-03",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:3251285041",
+    "title": "React Developer",
+    "company": "Delivery Hero",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/3251285041",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-04T09:24:00Z",
+    "status": "applied",
+    "match_score": 7.6,
+    "matched_skills": [
+      "TypeScript",
+      "Next.js",
+      "Jest",
+      "Playwright",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-04",
+    "applied_at": "2026-11-04T09:28:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:7209914506",
+    "title": "Senior Frontend Engineer",
+    "company": "GitLab",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/7209914506",
+    "location": "Cairo, Egypt",
+    "apply_type": "external",
+    "discovered_at": "2026-11-04T09:19:00Z",
+    "status": "applied",
+    "match_score": 7.2,
+    "matched_skills": [
+      "Next.js",
+      "Node.js",
+      "GraphQL",
+      "Playwright",
+      "TypeScript"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-04",
+    "applied_at": "2026-11-04T09:23:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:9138477245",
+    "title": "Senior React Engineer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/9138477245",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-04T10:05:00Z",
+    "status": "applied",
+    "match_score": 7.6,
+    "matched_skills": [
+      "React",
+      "Jest",
+      "Tailwind CSS",
+      "GraphQL",
+      "Node.js",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-04",
+    "applied_at": "2026-11-04T10:09:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:1481606229",
+    "title": "React Developer",
+    "company": "Talabat",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/1481606229",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-04T10:04:00Z",
+    "status": "skipped",
+    "match_score": 4.0,
+    "matched_skills": [
+      "GraphQL",
+      "TypeScript",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "Python",
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-04",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:3349356708",
+    "title": "Full Stack Engineer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/3349356708",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-05T09:01:00Z",
+    "status": "skipped",
+    "match_score": 3.6,
+    "matched_skills": [
+      "GraphQL",
+      "Tailwind CSS",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "React Native",
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-05",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "wuzzuf:8718332034",
+    "title": "Senior React Engineer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/8718332034",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-05T09:47:00Z",
+    "status": "needs_review",
+    "match_score": 6.3,
+    "matched_skills": [
+      "TypeScript",
+      "Next.js",
+      "Jest",
+      "Tailwind CSS",
+      "Playwright",
+      "React"
+    ],
+    "missing_skills": [
+      "Kubernetes",
+      "Vue",
+      "Storybook"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Kubernetes?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/wuzzuf-8718332034.png",
+    "run_id": "2026-11-05",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7378252935",
+    "title": "UI Engineer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7378252935",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-05T10:58:00Z",
+    "status": "needs_review",
+    "match_score": 6.4,
+    "matched_skills": [
+      "Tailwind CSS",
+      "TypeScript",
+      "Jest",
+      "Playwright",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "AWS",
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-05",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:1258278968",
+    "title": "Full Stack Engineer",
+    "company": "Lucidya",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/1258278968",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-05T10:25:00Z",
+    "status": "skipped",
+    "match_score": 3.2,
+    "matched_skills": [
+      "Tailwind CSS",
+      "React",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-05",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:8898990331",
+    "title": "Full Stack Engineer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/8898990331",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-05T11:21:00Z",
+    "status": "applied",
+    "match_score": 7.3,
+    "matched_skills": [
+      "Tailwind CSS",
+      "TypeScript",
+      "Node.js",
+      "GraphQL",
+      "Jest"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-05",
+    "applied_at": "2026-11-05T11:25:00Z",
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "linkedin:8823599127",
+    "title": "Full Stack Engineer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/8823599127",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-05T11:52:00Z",
+    "status": "skipped",
+    "match_score": 4.0,
+    "matched_skills": [
+      "Node.js",
+      "Tailwind CSS",
+      "React"
+    ],
+    "missing_skills": [
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-05",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:2738485150",
+    "title": "Senior Frontend Engineer",
+    "company": "Zalando",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/2738485150",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-05T12:24:00Z",
+    "status": "applied",
+    "match_score": 8.1,
+    "matched_skills": [
+      "Jest",
+      "TypeScript",
+      "Next.js",
+      "Node.js",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-05",
+    "applied_at": "2026-11-05T12:28:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:6478790550",
+    "title": "UI Engineer",
+    "company": "Fawry",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/6478790550",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-05T12:00:00Z",
+    "status": "applied",
+    "match_score": 7.3,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Node.js",
+      "React",
+      "GraphQL",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "Go",
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-05",
+    "applied_at": "2026-11-05T12:04:00Z",
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "wuzzuf:4319191017",
+    "title": "Frontend Engineer",
+    "company": "ITWorx",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/4319191017",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-06T09:38:00Z",
+    "status": "applied",
+    "match_score": 9.8,
+    "matched_skills": [
+      "GraphQL",
+      "Tailwind CSS",
+      "Playwright",
+      "TypeScript",
+      "Node.js",
+      "React"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-06",
+    "applied_at": "2026-11-06T09:42:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:5440410852",
+    "title": "Senior React Engineer",
+    "company": "Remote.com",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/5440410852",
+    "location": "Remote",
+    "apply_type": "external",
+    "discovered_at": "2026-11-06T09:35:00Z",
+    "status": "skipped",
+    "match_score": 3.3,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Jest",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-06",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:9470176521",
+    "title": "Frontend Engineer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/9470176521",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-06T10:11:00Z",
+    "status": "skipped",
+    "match_score": 4.2,
+    "matched_skills": [
+      "GraphQL",
+      "Jest",
+      "React"
+    ],
+    "missing_skills": [
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-06",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:6150482230",
+    "title": "Frontend Engineer",
+    "company": "Paymob",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/6150482230",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-06T10:15:00Z",
+    "status": "skipped",
+    "match_score": 4.1,
+    "matched_skills": [
+      "GraphQL",
+      "Next.js",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Vue",
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-06",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:1159013186",
+    "title": "Full Stack Engineer",
+    "company": "GitLab",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/1159013186",
+    "location": "Berlin, Germany",
+    "apply_type": "external",
+    "discovered_at": "2026-11-06T11:00:00Z",
+    "status": "skipped",
+    "match_score": 5.7,
+    "matched_skills": [
+      "Node.js",
+      "React",
+      "Tailwind CSS",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "Python"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-06",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5061759525",
+    "title": "UI Engineer",
+    "company": "Fawry",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5061759525",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-06T11:06:00Z",
+    "status": "applied",
+    "match_score": 7.4,
+    "matched_skills": [
+      "Tailwind CSS",
+      "React",
+      "Playwright",
+      "TypeScript",
+      "GraphQL"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-06",
+    "applied_at": "2026-11-06T11:10:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:6700492042",
+    "title": "React Developer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/6700492042",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-06T12:43:00Z",
+    "status": "applied",
+    "match_score": 8.0,
+    "matched_skills": [
+      "Node.js",
+      "TypeScript",
+      "React",
+      "Playwright",
+      "Next.js"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-06",
+    "applied_at": "2026-11-06T12:47:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:6459620140",
+    "title": "UI Engineer",
+    "company": "ITWorx",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/6459620140",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-07T09:18:00Z",
+    "status": "applied",
+    "match_score": 9.4,
+    "matched_skills": [
+      "TypeScript",
+      "Tailwind CSS",
+      "React",
+      "Playwright",
+      "Jest",
+      "Next.js"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-07",
+    "applied_at": "2026-11-07T09:22:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5967416887",
+    "title": "Senior Frontend Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5967416887",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-07T09:07:00Z",
+    "status": "skipped",
+    "match_score": 5.2,
+    "matched_skills": [
+      "Playwright",
+      "Tailwind CSS",
+      "React",
+      "Next.js",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Storybook",
+      "React Native",
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-07",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:3166652372",
+    "title": "React Developer",
+    "company": "ITWorx",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/3166652372",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-07T10:09:00Z",
+    "status": "skipped",
+    "match_score": 4.6,
+    "matched_skills": [
+      "Next.js",
+      "React",
+      "Playwright",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-07",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7368304724",
+    "title": "Senior React Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7368304724",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-07T10:03:00Z",
+    "status": "skipped",
+    "match_score": 4.7,
+    "matched_skills": [
+      "Playwright",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Docker",
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-07",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:1936890768",
+    "title": "Senior React Engineer",
+    "company": "GitLab",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/1936890768",
+    "location": "Berlin, Germany",
+    "apply_type": "external",
+    "discovered_at": "2026-11-07T11:25:00Z",
+    "status": "skipped",
+    "match_score": 4.9,
+    "matched_skills": [
+      "Tailwind CSS",
+      "GraphQL",
+      "Jest",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-07",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7099162211",
+    "title": "Frontend Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7099162211",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-07T11:37:00Z",
+    "status": "skipped",
+    "match_score": 5.1,
+    "matched_skills": [
+      "Tailwind CSS",
+      "React",
+      "GraphQL",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "AWS",
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-07",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:7327426782",
+    "title": "Senior Frontend Engineer",
+    "company": "Halan",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/7327426782",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-07T12:06:00Z",
+    "status": "applied",
+    "match_score": 8.9,
+    "matched_skills": [
+      "Next.js",
+      "React",
+      "Playwright",
+      "GraphQL",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-07",
+    "applied_at": "2026-11-07T12:10:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:1343459769",
+    "title": "Senior React Engineer",
+    "company": "Rubikal",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/1343459769",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-08T09:48:00Z",
+    "status": "needs_review",
+    "match_score": 6.2,
+    "matched_skills": [
+      "React",
+      "Node.js",
+      "TypeScript"
+    ],
+    "missing_skills": [],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Python?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/wuzzuf-1343459769.png",
+    "run_id": "2026-11-08",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "linkedin:8542734675",
+    "title": "React Developer",
+    "company": "Fawry",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/8542734675",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-08T09:10:00Z",
+    "status": "skipped",
+    "match_score": 3,
+    "matched_skills": [
+      "Tailwind CSS",
+      "TypeScript",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Docker",
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-08",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:2598874370",
+    "title": "Frontend Engineer",
+    "company": "Rubikal",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/2598874370",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-08T10:12:00Z",
+    "status": "skipped",
+    "match_score": 4.2,
+    "matched_skills": [
+      "GraphQL",
+      "Jest",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Terraform",
+      "Python"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-08",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4848724787",
+    "title": "Senior React Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4848724787",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-08T10:16:00Z",
+    "status": "needs_review",
+    "match_score": 6.2,
+    "matched_skills": [
+      "Playwright",
+      "TypeScript",
+      "Next.js",
+      "React",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Micro-frontends",
+      "Python"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-08",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:5114492472",
+    "title": "Senior React Engineer",
+    "company": "Lucidya",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/5114492472",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-08T11:18:00Z",
+    "status": "skipped",
+    "match_score": 5.9,
+    "matched_skills": [
+      "Node.js",
+      "Next.js",
+      "React",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-08",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:1205197926",
+    "title": "Frontend Engineer",
+    "company": "Vercel",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/1205197926",
+    "location": "Cairo, Egypt",
+    "apply_type": "external",
+    "discovered_at": "2026-11-08T11:31:00Z",
+    "status": "skipped",
+    "match_score": 5.9,
+    "matched_skills": [
+      "React",
+      "Node.js",
+      "Jest",
+      "TypeScript",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Terraform",
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-08",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "greenhouse:3039687760",
+    "title": "Senior Frontend Engineer",
+    "company": "GitLab",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/3039687760",
+    "location": "Remote",
+    "apply_type": "external",
+    "discovered_at": "2026-11-08T12:08:00Z",
+    "status": "skipped",
+    "match_score": 4.6,
+    "matched_skills": [
+      "GraphQL",
+      "React",
+      "Jest",
+      "Next.js",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Terraform",
+      "Go",
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-08",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:1188987101",
+    "title": "Senior Frontend Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/1188987101",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-09T09:34:00Z",
+    "status": "needs_review",
+    "match_score": 6.0,
+    "matched_skills": [
+      "GraphQL",
+      "React",
+      "Playwright",
+      "Jest",
+      "Next.js",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Terraform",
+      "Python",
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-09",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:3633603737",
+    "title": "React Developer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/3633603737",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-09T09:32:00Z",
+    "status": "skipped",
+    "match_score": 4.1,
+    "matched_skills": [
+      "React",
+      "GraphQL",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-09",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:5747148709",
+    "title": "UI Engineer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/5747148709",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-09T10:14:00Z",
+    "status": "skipped",
+    "match_score": 3,
+    "matched_skills": [
+      "Playwright",
+      "Jest",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "AWS",
+      "Micro-frontends",
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-09",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:1931988714",
+    "title": "Senior React Engineer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/1931988714",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-09T10:56:00Z",
+    "status": "skipped",
+    "match_score": 3.1,
+    "matched_skills": [
+      "GraphQL",
+      "Node.js",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Python",
+      "Go",
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-09",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7311424131",
+    "title": "Senior React Engineer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7311424131",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-09T11:53:00Z",
+    "status": "skipped",
+    "match_score": 5.1,
+    "matched_skills": [
+      "Next.js",
+      "Node.js",
+      "Jest",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Vue",
+      "React Native",
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-09",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:1480576961",
+    "title": "Frontend Engineer",
+    "company": "Delivery Hero",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/1480576961",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-10T09:39:00Z",
+    "status": "skipped",
+    "match_score": 4.5,
+    "matched_skills": [
+      "Playwright",
+      "GraphQL",
+      "Jest",
+      "React"
+    ],
+    "missing_skills": [
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-10",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4164468633",
+    "title": "Senior React Engineer",
+    "company": "Delivery Hero",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4164468633",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-10T09:04:00Z",
+    "status": "skipped",
+    "match_score": 5.6,
+    "matched_skills": [
+      "Next.js",
+      "Node.js",
+      "Playwright"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-10",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:3723751257",
+    "title": "UI Engineer",
+    "company": "ITWorx",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/3723751257",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-10T10:52:00Z",
+    "status": "skipped",
+    "match_score": 3.4,
+    "matched_skills": [
+      "Playwright",
+      "React",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-10",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:2213728670",
+    "title": "React Developer",
+    "company": "Delivery Hero",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/2213728670",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-10T10:45:00Z",
+    "status": "skipped",
+    "match_score": 4.2,
+    "matched_skills": [
+      "GraphQL",
+      "Next.js",
+      "Playwright",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Kubernetes",
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-10",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4026489397",
+    "title": "Senior React Engineer",
+    "company": "Paymob",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4026489397",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-10T11:34:00Z",
+    "status": "skipped",
+    "match_score": 4.8,
+    "matched_skills": [
+      "Playwright",
+      "React",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-10",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5705948461",
+    "title": "Frontend Engineer",
+    "company": "Zalando",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5705948461",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-10T11:44:00Z",
+    "status": "skipped",
+    "match_score": 4.5,
+    "matched_skills": [
+      "Playwright",
+      "React",
+      "GraphQL",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Kubernetes",
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-10",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:6697893532",
+    "title": "Full Stack Engineer",
+    "company": "Rubikal",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/6697893532",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-10T12:06:00Z",
+    "status": "applied",
+    "match_score": 8.0,
+    "matched_skills": [
+      "Next.js",
+      "Jest",
+      "TypeScript",
+      "Node.js",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-10",
+    "applied_at": "2026-11-10T12:10:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:3775836874",
+    "title": "Senior React Engineer",
+    "company": "Delivery Hero",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/3775836874",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-10T12:22:00Z",
+    "status": "skipped",
+    "match_score": 5.4,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Next.js",
+      "Playwright",
+      "Jest",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "React Native",
+      "Micro-frontends",
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-10",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:6117770464",
+    "title": "UI Engineer",
+    "company": "Elmenus",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/6117770464",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T09:19:00Z",
+    "status": "needs_review",
+    "match_score": 6.9,
+    "matched_skills": [
+      "Next.js",
+      "Tailwind CSS",
+      "Playwright",
+      "Jest",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-11",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:2650267739",
+    "title": "React Developer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/2650267739",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T09:09:00Z",
+    "status": "applied",
+    "match_score": 7.3,
+    "matched_skills": [
+      "Node.js",
+      "TypeScript",
+      "Playwright",
+      "Next.js",
+      "Jest"
+    ],
+    "missing_skills": [
+      "AWS",
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-11",
+    "applied_at": "2026-11-11T09:13:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:6567193628",
+    "title": "Frontend Engineer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/6567193628",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T10:01:00Z",
+    "status": "skipped",
+    "match_score": 3.6,
+    "matched_skills": [
+      "GraphQL",
+      "TypeScript",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Kubernetes",
+      "Terraform",
+      "Storybook"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-11",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7244464541",
+    "title": "React Developer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7244464541",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T10:20:00Z",
+    "status": "skipped",
+    "match_score": 4.4,
+    "matched_skills": [
+      "Playwright",
+      "Node.js",
+      "GraphQL",
+      "Jest"
+    ],
+    "missing_skills": [
+      "React Native",
+      "Terraform",
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-11",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:5340631850",
+    "title": "Full Stack Engineer",
+    "company": "Breadfast",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/5340631850",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T11:53:00Z",
+    "status": "skipped",
+    "match_score": 5.0,
+    "matched_skills": [
+      "GraphQL",
+      "Playwright",
+      "Tailwind CSS",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "Kubernetes",
+      "Storybook",
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-11",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:8855432142",
+    "title": "React Developer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/8855432142",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T11:33:00Z",
+    "status": "skipped",
+    "match_score": 4.1,
+    "matched_skills": [
+      "Tailwind CSS",
+      "GraphQL",
+      "Next.js",
+      "React"
+    ],
+    "missing_skills": [
+      "Python",
+      "React Native",
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-11",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:8193572454",
+    "title": "React Developer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/8193572454",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T12:37:00Z",
+    "status": "needs_review",
+    "match_score": 6.4,
+    "matched_skills": [
+      "TypeScript",
+      "Node.js",
+      "GraphQL",
+      "Next.js",
+      "React",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Storybook",
+      "Terraform"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Storybook?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/linkedin-8193572454.png",
+    "run_id": "2026-11-11",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:5139765274",
+    "title": "UI Engineer",
+    "company": "Sylndr",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/5139765274",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T12:22:00Z",
+    "status": "needs_review",
+    "match_score": 6.4,
+    "matched_skills": [
+      "Playwright",
+      "Tailwind CSS",
+      "TypeScript",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-11",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:8726272227",
+    "title": "Frontend Engineer",
+    "company": "ITWorx",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/8726272227",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-11T13:22:00Z",
+    "status": "skipped",
+    "match_score": 4.0,
+    "matched_skills": [
+      "Jest",
+      "Next.js",
+      "TypeScript",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Go",
+      "Storybook",
+      "Docker"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-11",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:9654298303",
+    "title": "Frontend Engineer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/9654298303",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T09:00:00Z",
+    "status": "applied",
+    "match_score": 7.0,
+    "matched_skills": [
+      "Next.js",
+      "Jest",
+      "Tailwind CSS",
+      "React",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Docker",
+      "Python"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-12",
+    "applied_at": "2026-11-12T09:04:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4355578365",
+    "title": "Senior React Engineer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4355578365",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T09:42:00Z",
+    "status": "needs_review",
+    "match_score": 6.7,
+    "matched_skills": [
+      "Tailwind CSS",
+      "TypeScript",
+      "Jest",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-12",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5893420590",
+    "title": "Senior React Engineer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5893420590",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T10:31:00Z",
+    "status": "skipped",
+    "match_score": 4.6,
+    "matched_skills": [
+      "Jest",
+      "Node.js",
+      "React"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-12",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:6905399104",
+    "title": "UI Engineer",
+    "company": "Vodafone",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/6905399104",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T10:26:00Z",
+    "status": "applied",
+    "match_score": 7.9,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Jest",
+      "TypeScript",
+      "GraphQL",
+      "React",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Micro-frontends",
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-12",
+    "applied_at": "2026-11-12T10:30:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:1620577138",
+    "title": "UI Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/1620577138",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T11:13:00Z",
+    "status": "skipped",
+    "match_score": 3.5,
+    "matched_skills": [
+      "React",
+      "Node.js",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "AWS",
+      "Python"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-12",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:6552889449",
+    "title": "Full Stack Engineer",
+    "company": "Sylndr",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/6552889449",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T11:52:00Z",
+    "status": "needs_review",
+    "match_score": 6.0,
+    "matched_skills": [
+      "Jest",
+      "Playwright",
+      "GraphQL",
+      "Node.js",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Storybook",
+      "Vue"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Go?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/wellfound-6552889449.png",
+    "run_id": "2026-11-12",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5279917580",
+    "title": "UI Engineer",
+    "company": "Talabat",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5279917580",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T12:25:00Z",
+    "status": "applied",
+    "match_score": 7.5,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Node.js",
+      "Jest",
+      "React",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-12",
+    "applied_at": "2026-11-12T12:29:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7922371038",
+    "title": "Frontend Engineer",
+    "company": "Fawry",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7922371038",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T12:39:00Z",
+    "status": "applied",
+    "match_score": 9.8,
+    "matched_skills": [
+      "GraphQL",
+      "React",
+      "Playwright",
+      "Node.js",
+      "TypeScript",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-12",
+    "applied_at": "2026-11-12T12:43:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:8344964342",
+    "title": "React Developer",
+    "company": "Halan",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/8344964342",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-12T13:55:00Z",
+    "status": "skipped",
+    "match_score": 5.0,
+    "matched_skills": [
+      "TypeScript",
+      "Node.js",
+      "Jest",
+      "React"
+    ],
+    "missing_skills": [
+      "AWS",
+      "Kubernetes",
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-12",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "greenhouse:7032919217",
+    "title": "Senior Frontend Engineer",
+    "company": "Deel",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/7032919217",
+    "location": "Remote (EMEA)",
+    "apply_type": "external",
+    "discovered_at": "2026-11-13T09:04:00Z",
+    "status": "needs_review",
+    "match_score": 6.0,
+    "matched_skills": [
+      "Jest",
+      "GraphQL",
+      "Playwright"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-13",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:3874906100",
+    "title": "Senior Frontend Engineer",
+    "company": "Paymob",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/3874906100",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-13T09:54:00Z",
+    "status": "failed",
+    "match_score": 8.1,
+    "matched_skills": [
+      "Playwright",
+      "GraphQL",
+      "React",
+      "Node.js",
+      "Tailwind CSS",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-13",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7434276659",
+    "title": "React Developer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7434276659",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-13T10:42:00Z",
+    "status": "skipped",
+    "match_score": 5.6,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Jest",
+      "Node.js",
+      "TypeScript",
+      "React"
+    ],
+    "missing_skills": [
+      "Docker",
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-13",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "linkedin:6653377384",
+    "title": "UI Engineer",
+    "company": "Zalando",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/6653377384",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-13T10:36:00Z",
+    "status": "skipped",
+    "match_score": 4.6,
+    "matched_skills": [
+      "Playwright",
+      "Next.js",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-13",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7729425805",
+    "title": "React Developer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7729425805",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-13T11:18:00Z",
+    "status": "skipped",
+    "match_score": 3.9,
+    "matched_skills": [
+      "Node.js",
+      "Jest",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Micro-frontends",
+      "Storybook",
+      "Terraform"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-13",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:4848788667",
+    "title": "Full Stack Engineer",
+    "company": "Remote.com",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/4848788667",
+    "location": "Cairo, Egypt",
+    "apply_type": "external",
+    "discovered_at": "2026-11-13T11:51:00Z",
+    "status": "skipped",
+    "match_score": 5.8,
+    "matched_skills": [
+      "React",
+      "Playwright",
+      "TypeScript",
+      "GraphQL",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "React Native",
+      "Storybook",
+      "Python"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-13",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7442347645",
+    "title": "Senior Frontend Engineer",
+    "company": "Talabat",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7442347645",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-13T12:34:00Z",
+    "status": "applied",
+    "match_score": 9.4,
+    "matched_skills": [
+      "Next.js",
+      "GraphQL",
+      "React",
+      "Jest",
+      "TypeScript",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-13",
+    "applied_at": "2026-11-13T12:38:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:6948418357",
+    "title": "Senior Frontend Engineer",
+    "company": "Thndr",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/6948418357",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-13T12:34:00Z",
+    "status": "skipped",
+    "match_score": 4.3,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Next.js",
+      "GraphQL",
+      "React"
+    ],
+    "missing_skills": [
+      "Micro-frontends",
+      "React Native",
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-13",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:7719179132",
+    "title": "Senior React Engineer",
+    "company": "Halan",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/7719179132",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-14T09:25:00Z",
+    "status": "needs_review",
+    "match_score": 6.2,
+    "matched_skills": [
+      "Node.js",
+      "Tailwind CSS",
+      "GraphQL",
+      "Jest",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "React Native"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Go?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/wuzzuf-7719179132.png",
+    "run_id": "2026-11-14",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "wuzzuf:1088347951",
+    "title": "Frontend Engineer",
+    "company": "Elmenus",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/1088347951",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-14T09:02:00Z",
+    "status": "applied",
+    "match_score": 7.2,
+    "matched_skills": [
+      "TypeScript",
+      "Next.js",
+      "Node.js",
+      "Tailwind CSS",
+      "React"
+    ],
+    "missing_skills": [
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-14",
+    "applied_at": "2026-11-14T09:06:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:6071219915",
+    "title": "Senior Frontend Engineer",
+    "company": "Swvl",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/6071219915",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-14T10:05:00Z",
+    "status": "skipped",
+    "match_score": 5.4,
+    "matched_skills": [
+      "GraphQL",
+      "Tailwind CSS",
+      "React",
+      "Playwright",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Kubernetes",
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-14",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:3751497683",
+    "title": "UI Engineer",
+    "company": "Elmenus",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/3751497683",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-14T10:58:00Z",
+    "status": "applied",
+    "match_score": 8.4,
+    "matched_skills": [
+      "TypeScript",
+      "Playwright",
+      "GraphQL",
+      "Tailwind CSS",
+      "React",
+      "Next.js"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-14",
+    "applied_at": "2026-11-14T11:02:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5497012278",
+    "title": "Senior React Engineer",
+    "company": "Zalando",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5497012278",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-14T11:50:00Z",
+    "status": "applied",
+    "match_score": 7.2,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Node.js",
+      "TypeScript",
+      "Playwright",
+      "React"
+    ],
+    "missing_skills": [
+      "Vue",
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-14",
+    "applied_at": "2026-11-14T11:54:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:5747742471",
+    "title": "React Developer",
+    "company": "Lucidya",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/5747742471",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-14T11:20:00Z",
+    "status": "skipped",
+    "match_score": 4.2,
+    "matched_skills": [
+      "Tailwind CSS",
+      "Node.js",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Terraform",
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-14",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:4217309687",
+    "title": "Full Stack Engineer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/4217309687",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-14T12:49:00Z",
+    "status": "applied",
+    "match_score": 7.4,
+    "matched_skills": [
+      "Next.js",
+      "Tailwind CSS",
+      "TypeScript",
+      "Node.js",
+      "React",
+      "GraphQL"
+    ],
+    "missing_skills": [
+      "Kubernetes"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-14",
+    "applied_at": "2026-11-14T12:53:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5916496103",
+    "title": "Frontend Engineer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5916496103",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-14T12:55:00Z",
+    "status": "needs_review",
+    "match_score": 6.8,
+    "matched_skills": [
+      "Node.js",
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "React",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Docker",
+      "Vue"
+    ],
+    "open_questions": [
+      {
+        "question": "How many years of experience do you have with Micro-frontends?",
+        "field_type": "number"
+      }
+    ],
+    "screenshot": "logs/screenshots/linkedin-5916496103.png",
+    "run_id": "2026-11-14",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:1490348549",
+    "title": "Senior Frontend Engineer",
+    "company": "GitLab",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/1490348549",
+    "location": "Remote (EMEA)",
+    "apply_type": "external",
+    "discovered_at": "2026-11-15T09:32:00Z",
+    "status": "applied",
+    "match_score": 7.3,
+    "matched_skills": [
+      "Node.js",
+      "Playwright",
+      "TypeScript",
+      "Next.js",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-15",
+    "applied_at": "2026-11-15T09:36:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4973187389",
+    "title": "Full Stack Engineer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4973187389",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-15T09:06:00Z",
+    "status": "skipped",
+    "match_score": 4.8,
+    "matched_skills": [
+      "GraphQL",
+      "Playwright",
+      "TypeScript"
+    ],
+    "missing_skills": [
+      "Storybook",
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-15",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7556639838",
+    "title": "React Developer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7556639838",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-15T10:11:00Z",
+    "status": "skipped",
+    "match_score": 5.7,
+    "matched_skills": [
+      "Next.js",
+      "Node.js",
+      "React",
+      "Tailwind CSS",
+      "Jest"
+    ],
+    "missing_skills": [
+      "Micro-frontends"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-15",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:8433941438",
+    "title": "React Developer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/8433941438",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-15T10:48:00Z",
+    "status": "applied",
+    "match_score": 7.2,
+    "matched_skills": [
+      "Next.js",
+      "TypeScript",
+      "Playwright",
+      "GraphQL",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-15",
+    "applied_at": "2026-11-15T10:52:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:9356470773",
+    "title": "Senior Frontend Engineer",
+    "company": "N26",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/9356470773",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-15T11:05:00Z",
+    "status": "applied",
+    "match_score": 7.8,
+    "matched_skills": [
+      "Tailwind CSS",
+      "React",
+      "Playwright",
+      "GraphQL",
+      "Jest"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-15",
+    "applied_at": "2026-11-15T11:09:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:4685396114",
+    "title": "Senior React Engineer",
+    "company": "Zalando",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/4685396114",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-15T11:22:00Z",
+    "status": "skipped",
+    "match_score": 5.8,
+    "matched_skills": [
+      "Next.js",
+      "GraphQL",
+      "Jest",
+      "React"
+    ],
+    "missing_skills": [
+      "Vue"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-15",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "wellfound:1088853451",
+    "title": "Frontend Engineer",
+    "company": "Thndr",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/1088853451",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-16T09:05:00Z",
+    "status": "applied",
+    "match_score": 9.1,
+    "matched_skills": [
+      "React",
+      "Next.js",
+      "Jest",
+      "Tailwind CSS",
+      "GraphQL",
+      "Playwright"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-16",
+    "applied_at": "2026-11-16T09:09:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:2907877500",
+    "title": "Senior Frontend Engineer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/2907877500",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-16T09:22:00Z",
+    "status": "applied",
+    "match_score": 8.6,
+    "matched_skills": [
+      "React",
+      "Jest",
+      "Playwright",
+      "TypeScript",
+      "Next.js"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-16",
+    "applied_at": "2026-11-16T09:26:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:8501497633",
+    "title": "Senior Frontend Engineer",
+    "company": "Rubikal",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/8501497633",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-16T10:10:00Z",
+    "status": "applied",
+    "match_score": 7.4,
+    "matched_skills": [
+      "GraphQL",
+      "React",
+      "Playwright",
+      "Node.js",
+      "Tailwind CSS",
+      "Jest"
+    ],
+    "missing_skills": [
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-16",
+    "applied_at": "2026-11-16T10:14:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "greenhouse:8368139049",
+    "title": "Senior React Engineer",
+    "company": "Remote.com",
+    "platform": "greenhouse",
+    "url": "https://boards.greenhouse.io/company/jobs/8368139049",
+    "location": "Berlin, Germany",
+    "apply_type": "external",
+    "discovered_at": "2026-11-16T10:53:00Z",
+    "status": "skipped",
+    "match_score": 4.4,
+    "matched_skills": [
+      "Playwright",
+      "React",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "Storybook",
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-16",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:5592454846",
+    "title": "Frontend Engineer",
+    "company": "Talabat",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/5592454846",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-16T11:27:00Z",
+    "status": "applied",
+    "match_score": 7.4,
+    "matched_skills": [
+      "Next.js",
+      "Node.js",
+      "Jest",
+      "TypeScript",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-16",
+    "applied_at": "2026-11-16T11:31:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:9743602732",
+    "title": "React Developer",
+    "company": "Valu",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/9743602732",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-17T09:06:00Z",
+    "status": "skipped",
+    "match_score": 3.9,
+    "matched_skills": [
+      "React",
+      "Jest",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "Terraform",
+      "Go"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-17",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": false
+  },
+  {
+    "job_id": "linkedin:9166541464",
+    "title": "Full Stack Engineer",
+    "company": "Fawry",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/9166541464",
+    "location": "Remote (EMEA)",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-17T09:05:00Z",
+    "status": "skipped",
+    "match_score": 3,
+    "matched_skills": [
+      "GraphQL",
+      "React",
+      "Next.js"
+    ],
+    "missing_skills": [
+      "Docker",
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-17",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wuzzuf:2660655344",
+    "title": "UI Engineer",
+    "company": "ITWorx",
+    "platform": "wuzzuf",
+    "url": "https://wuzzuf.net/jobs/p/2660655344",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-17T10:35:00Z",
+    "status": "skipped",
+    "match_score": 4.1,
+    "matched_skills": [
+      "Next.js",
+      "Jest",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Go",
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-17",
+    "applied_at": null,
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7810457987",
+    "title": "React Developer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7810457987",
+    "location": "Remote",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-17T10:00:00Z",
+    "status": "applied",
+    "match_score": 8.3,
+    "matched_skills": [
+      "Jest",
+      "Playwright",
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "React Native"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-17",
+    "applied_at": "2026-11-17T10:04:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "wellfound:9856294988",
+    "title": "Full Stack Engineer",
+    "company": "Lucidya",
+    "platform": "wellfound",
+    "url": "https://wellfound.com/jobs/9856294988",
+    "location": "Cairo, Egypt",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-17T11:24:00Z",
+    "status": "applied",
+    "match_score": 7.2,
+    "matched_skills": [
+      "GraphQL",
+      "Next.js",
+      "TypeScript",
+      "Playwright",
+      "React",
+      "Tailwind CSS"
+    ],
+    "missing_skills": [
+      "Python"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-17",
+    "applied_at": "2026-11-17T11:28:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7336100747",
+    "title": "UI Engineer",
+    "company": "Instabug",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7336100747",
+    "location": "Berlin, Germany",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-17T11:50:00Z",
+    "status": "applied",
+    "match_score": 8.0,
+    "matched_skills": [
+      "Node.js",
+      "Jest",
+      "Next.js",
+      "TypeScript",
+      "GraphQL",
+      "Playwright"
+    ],
+    "missing_skills": [
+      "Python",
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-17",
+    "applied_at": "2026-11-17T11:54:00Z",
+    "notes": "",
+    "notion_synced": true
+  },
+  {
+    "job_id": "linkedin:7261643161",
+    "title": "React Developer",
+    "company": "Careem",
+    "platform": "linkedin",
+    "url": "https://www.linkedin.com/jobs/view/7261643161",
+    "location": "Dubai, UAE",
+    "apply_type": "easy_apply",
+    "discovered_at": "2026-11-17T12:46:00Z",
+    "status": "applied",
+    "match_score": 7.1,
+    "matched_skills": [
+      "TypeScript",
+      "Tailwind CSS",
+      "Playwright",
+      "GraphQL",
+      "Jest",
+      "Node.js"
+    ],
+    "missing_skills": [
+      "Terraform",
+      "AWS"
+    ],
+    "open_questions": [],
+    "screenshot": null,
+    "run_id": "2026-11-17",
+    "applied_at": "2026-11-17T12:50:00Z",
+    "notes": "",
+    "notion_synced": true
+  }
+]
