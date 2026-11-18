@@ -1,0 +1,62 @@
+{
+  "name": "job-hunter-os",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Zero-code AI agent skills and MCP playbooks for autonomous job discovery, ATS resume tailoring, and multi-platform applications",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redasalem/job-hunter-os.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "job-hunter": "./bin/cli.mjs",
+    "job-hunter-os": "./bin/cli.mjs"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    "skills/",
+    ".agents/",
+    ".agent/",
+    "commands/",
+    "adapters/",
+    "context/*.example",
+    "context/DROP_YOUR_FILES_HERE.md",
+    "config/",
+    "templates/",
+    "schemas/",
+    "mcp/mcp.template.json",
+    "mcp/claude_desktop_config.example.json",
+    "mcp/README.md",
+    "docs/",
+    "prompts/",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "WARP.md",
+    "CRUSH.md",
+    ".windsurfrules",
+    ".clinerules",
+    ".goosehints",
+    ".rules",
+    ".aider.conf.yml",
+    ".cursor/",
+    ".trae/",
+    ".roo/",
+    ".continue/",
+    ".junie/",
+    ".aiassistant/",
+    ".kiro/",
+    ".amazonq/",
+    ".openhands/",
+    ".augment/",
+    "opencode.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}

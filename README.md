@@ -10,23 +10,52 @@
 [![agentskills.io](https://img.shields.io/badge/Standard-agentskills.io-2ea44f)](.agents/skills/daily-run/SKILL.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-There is **no custom CLI, no Node/Python automation script, no browser extension, and no backend server** executing your job search. **The AI model inside your IDE is the runtime engine.** It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), interviews you in chat, drives Chrome via **Playwright MCP** using accessibility snapshots, tailors HTML/PDF resumes, fills forms safely, and logs everything to local JSON (plus optional **Notion MCP**).
+There is **no custom application backend, no browser extension, and no external package dependencies** executing your job search. **The AI model inside your IDE is the runtime engine.** It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), interviews you in chat, drives Chrome via **Playwright MCP** using accessibility snapshots, tailors HTML/PDF resumes, fills forms safely, and logs everything to local JSON (plus optional **Notion MCP**).
 
 ---
 
-## 1. How to Install (Zero Coding, Zero Dependencies!)
+## 1. 30-Second Cross-Platform CLI Quick Start
 
-### Option A — Project Mode (Recommended — Zero-Config `/skills` Auto-Discovery)
+Zero external dependencies (`Node.js 18+` built-ins only) — works identically on **macOS, Linux, and Windows**:
+
+```bash
+# 1. Install skills globally (~/.job-hunter-os + ~/.agents/skills, ~/.claude/skills, ~/.cursor/rules, Antigravity) and sync Playwright MCP
+npx github:redasalem/job-hunter-os init --global
+
+# 2. Open Chrome/Chromium once with your dedicated local browser-profile/ to sign in to LinkedIn, Wellfound, and Wuzzuf
+npx github:redasalem/job-hunter-os login --global
+
+# 3. Verify OS, paths, readiness gates, and MCP config health
+npx github:redasalem/job-hunter-os doctor
+```
+
+> **CLI Commands:** `init [--global|-g] [--ide <name>]` · `update` · `doctor` · `login [--global]` · `sync-mcp [--global]`
+
+### Native OS One-Line Installers (Optional Fallback)
+
+**macOS / Linux:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/redasalem/job-hunter-os/main/scripts/install.sh | bash
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/redasalem/job-hunter-os/main/scripts/install.ps1 | iex
+```
+
+### Option A — Project Mode (Zero-Config `/skills` Auto-Discovery)
 Clone the repo and open the folder directly in **VS Code Copilot, Cursor, Antigravity, Claude Code, Codex CLI, OpenCode, Devin Desktop, Zed, or JetBrains Junie**:
 
 ```bash
 git clone https://github.com/redasalem/job-hunter-os.git
 cd job-hunter-os
+# Optional: scaffold local context/ and .mcp.json
+npx github:redasalem/job-hunter-os init
 ```
 
 Because `job-hunter-os` ships official `agentskills.io` wrappers under [`.agents/skills/`](.agents/skills/daily-run/SKILL.md), typing `/skills` in **VS Code, Cursor, OpenAI Codex CLI, OpenCode, Goose, or Zed** auto-discovers the core workflows immediately—no file copying needed! Start with `/setup` (or *"Read AGENTS.md and set up my profile"*).
 
-### Option B — Global Skills Mode (Use Across Any Workspace)
+### Option B — Manual Copy (No CLI Needed)
 Copy `skills/` and `.agent/workflows/` (or `commands/`) straight into your IDE's global configuration folder—zero packages or installers required:
 
 **macOS / Linux / Git Bash:**
@@ -316,6 +345,7 @@ Every major AI IDE, CLI harness, desktop client, and LLM family works out of the
 | Path | Purpose |
 |---|---|
 | [`AGENTS.md`](AGENTS.md), [`GEMINI.md`](GEMINI.md), [`CLAUDE.md`](CLAUDE.md), [`WARP.md`](WARP.md), [`CRUSH.md`](CRUSH.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
+| [`bin/cli.mjs`](bin/cli.mjs), [`scripts/`](scripts/install.sh) | Zero-dependency cross-platform CLI installer (`init`, `update`, `doctor`, `login`, `sync-mcp`) and OS one-liners |
 | [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | Official `agentskills.io` auto-discovery mirror (`/skills` in VS Code, Cursor, Codex, OpenCode, Goose, Zed) |
 | [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, 42-skill catalog (`00–12`, `fallback-no-mcp`, 4 `meta-*`, 16 platforms, 7 ATS) |
 | [`adapters/`](adapters/models/claude.md) | Model tuning guides (`adapters/models/`) and app/harness adapters (`adapters/apps/`) |
