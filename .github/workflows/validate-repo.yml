@@ -84,6 +84,22 @@ jobs:
               if p.as_posix() not in registry:
                   raise SystemExit(f"{p} not indexed in skills/REGISTRY.md")
 
+          agent_skills = sorted(pathlib.Path(".agents/skills").glob("*/SKILL.md"))
+          if not agent_skills:
+              raise SystemExit("Missing .agents/skills/*/SKILL.md auto-discovery files")
+          for ap in agent_skills:
+              atext = ap.read_text(encoding="utf-8")
+              if not atext.startswith("---"):
+                  raise SystemExit(f"Missing YAML frontmatter: {ap}")
+              aend = atext.find("\n---", 3)
+              if aend < 0:
+                  raise SystemExit(f"Unterminated YAML frontmatter: {ap}")
+              afm = atext[3:aend]
+              if not re.search(rf"^name:\s*{re.escape(ap.parent.name)}\s*$", afm, re.M):
+                  raise SystemExit(f"{ap} frontmatter name must match folder {ap.parent.name}")
+              if not re.search(r"^description:\s*\S.{19,}", afm, re.M):
+                  raise SystemExit(f"{ap} missing valid description")
+
           broken = []
           for md in pathlib.Path(".").rglob("*.md"):
               if ".git" in md.parts:
@@ -95,12 +111,12 @@ jobs:
                       continue
                   if not (md.parent / target).resolve().exists():
                       broken.append(f"{md} -> {m.group(1)}")
-              for m in re.finditer(r"\b(skills/[A-Za-z0-9_./-]+\.md)\b", text):
+              for m in re.finditer(r"(?<![A-Za-z0-9_./-])(skills/[A-Za-z0-9_./-]+\.md)(?![A-Za-z0-9_/-])", text):
                   if not pathlib.Path(m.group(1)).exists():
                       broken.append(f"{md} -> {m.group(1)}")
           if broken:
               raise SystemExit("Broken links:\n" + "\n".join(broken))
-          print(f"Validated {len(skill_files)} skills, REGISTRY.md, and 0 broken Markdown links.")
+          print(f"Validated {len(skill_files)} skills, {len(agent_skills)} .agents/skills wrappers, REGISTRY.md, and 0 broken Markdown links.")
           PY
 
       - name: Security audit — ensure no sensitive files are tracked in Git

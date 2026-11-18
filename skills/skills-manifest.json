@@ -315,6 +315,94 @@
       "path": "skills/09-offer-negotiator.md"
     },
     {
+      "name": "autonomous-scheduler-loop",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when running a recurring /loop or scheduled job-hunting trigger (Cursor, Claude Code, OpenClaw, cron) so discovery, ghost filtering, and CV prep run strictly inside active_hours while respecting warm-up caps and pausing at approve_before_submit.",
+      "triggers": [
+        "/loop daily-run",
+        "scheduled job discovery",
+        "recurring OpenClaw / cron job hunt"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "all 5 readiness gates pass in context/ with zero placeholders",
+        "current local time is inside active_hours in config/guardrails.yaml"
+      ],
+      "requires_skills": [
+        "interrogate-and-onboard",
+        "discover-and-triage",
+        "tailor-resume-and-verify",
+        "fill-and-apply",
+        "log-and-insights",
+        "meta-context-compaction"
+      ],
+      "verification": [
+        "active_hours, Days 1-3 warm-up cap (<=5/day), and max_per_platform were verified before any action",
+        "scheduled run stopped cleanly at the Mission Control table or approve_before_submit without bypassing owner APPROVE",
+        "logs/runs/current-session-checkpoint.json and logs/runs/YYYY-MM-DD.json reflect the latest loop state"
+      ],
+      "path": "skills/10-autonomous-scheduler-loop.md"
+    },
+    {
+      "name": "portfolio-and-github-auditor",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when the owner asks to audit their GitHub profile, pinned repositories, or portfolio website before applying; checks live links, README quality, and bio alignment against target roles in context/preferences.yaml without inventing claims.",
+      "triggers": [
+        "audit my GitHub or portfolio",
+        "check portfolio links before applying",
+        "portfolio-auditor"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "verified GitHub and/or portfolio URLs exist in context/profile.md or context/resume-data.json",
+        "target roles loaded from context/preferences.yaml"
+      ],
+      "requires_skills": [
+        "resume-ingestion"
+      ],
+      "verification": [
+        "every link on the portfolio and GitHub profile was checked live (broken 404/error links flagged)",
+        "pinned repositories were audited for README clarity, live demo/screenshots, and stack alignment with target roles",
+        "concrete prioritized fixes were presented in chat without inventing project metrics or modifying remote repos unapproved"
+      ],
+      "path": "skills/11-portfolio-and-github-auditor.md"
+    },
+    {
+      "name": "recruiter-inbox-triage",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when the owner pastes or shares incoming recruiter emails or LinkedIn messages (interview invites, technical assessments, follow-up questions, or rejections); classifies each message, updates logs/applications-log.json and optional Notion, and drafts polite humanized replies with interview slots without auto-sending.",
+      "triggers": [
+        "triage recruiter message / email",
+        "recruiter replied with interview invite",
+        "draft reply to recruiter inbox"
+      ],
+      "requires_mcp": [
+        "notion"
+      ],
+      "preconditions": [
+        "incoming recruiter message(s) provided by the owner in chat (or read from an owner-approved view)",
+        "logs/applications-log.json readable to match the corresponding job_id/company"
+      ],
+      "requires_skills": [
+        "log-and-insights",
+        "tailor-resume-and-verify",
+        "offer-negotiator"
+      ],
+      "verification": [
+        "message classified accurately (interview_invite, assessment, info_request, offer, rejection, or spam)",
+        "matching entry in logs/applications-log.json updated (and Notion synced if enabled) without overwriting applied_at receipts",
+        "drafted reply is humanized, uses verified owner availability/timezone, and is marked DRAFT_ONLY"
+      ],
+      "path": "skills/12-recruiter-inbox-triage.md"
+    },
+    {
       "name": "fallback-no-mcp",
       "version": "2.0.0",
       "category": "core",

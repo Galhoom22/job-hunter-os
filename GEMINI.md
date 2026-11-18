@@ -11,5 +11,8 @@ This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**.
 - Persona switch -> `skills/07-persona-switcher.md`
 - 7-day follow-up -> `skills/08-follow-up-radar.md`
 - Offer negotiation -> `skills/09-offer-negotiator.md`
+- Scheduled `/loop` -> `skills/10-autonomous-scheduler-loop.md`
+- Portfolio/GitHub audit -> `skills/11-portfolio-and-github-auditor.md`
+- Recruiter inbox triage -> `skills/12-recruiter-inbox-triage.md`
 
 See `adapters/models/gemini.md` for Gemini-specific multimodal & snapshot verification guidance. Respect `dry_run: true`, verified facts only, caps, and explicit `APPROVE` gates.

@@ -32,8 +32,8 @@ use the editor.
 
 # Autonomous Job Hunter — Canonical Agent Brain
 
-> Single source of truth for **Antigravity**, **Cursor**, **Claude Code**, **Windsurf**, **Cline/Roo**, and **GitHub Copilot**.
-> This repository is a **100% zero-code Markdown skills, templates, and MCP playbook system**. You (the AI model) are the runtime engine: you read these instructions, interview the user in chat, inspect pages with **Playwright MCP**, edit local files directly, and optionally sync tracking records with **Notion MCP**.
+> Single source of truth for **Antigravity**, **Cursor**, **Claude Code**, **OpenAI Codex CLI**, **Devin Desktop / Windsurf**, **OpenCode**, **Kilo Code**, **Cline / Roo**, **JetBrains Junie**, **AWS Kiro**, **Trae**, **Zed**, **Goose**, **Aider**, **OpenHands**, **Warp**, and **GitHub Copilot**.
+> This repository is a **100% zero-code Markdown skills, templates, and MCP playbook system** following the official `agentskills.io` (`.agents/skills/*/SKILL.md`) and `skills/REGISTRY.md` conventions. You (the AI model) are the runtime engine: you read these instructions, interview the user in chat, inspect pages with **Playwright MCP**, edit local files directly, and optionally sync tracking records with **Notion MCP**.
 
 ## Identity
 
@@ -65,8 +65,12 @@ At the start of every session, read `AGENTS.md` and `skills/REGISTRY.md` first. 
   - `skills/07-persona-switcher.md` — Multi-persona career tracks (`context/personas/`)
   - `skills/08-follow-up-radar.md` — 7-day `applied` follow-up radar (`<= 75`-word drafts)
   - `skills/09-offer-negotiator.md` — Offer & B2B rate negotiation analysis (`DRAFT_ONLY`)
+  - `skills/10-autonomous-scheduler-loop.md` — Scheduled `/loop` runner within `active_hours` & warm-up caps
+  - `skills/11-portfolio-and-github-auditor.md` — Pre-application GitHub & live portfolio audit
+  - `skills/12-recruiter-inbox-triage.md` — Recruiter reply triage, status update & slot drafting
   - `skills/fallback-no-mcp.md` — Non-MCP web chat fallback (ChatGPT / Claude Web / Gemini Web)
-- **Model tuning guides:** `adapters/models/claude.md`, `adapters/models/gemini.md`, `adapters/models/openai.md`, `adapters/models/deepseek-qwen-local.md`.
+- **Auto-discovery mirror:** `.agents/skills/*/SKILL.md` (`agentskills.io` compatible wrappers pointing to `skills/`).
+- **Model tuning guides:** `adapters/models/claude.md`, `adapters/models/gemini.md`, `adapters/models/openai.md`, `adapters/models/deepseek-qwen-local.md`, `adapters/models/grok-and-kimi.md`, `adapters/models/mistral-and-llama.md`.
 - **Meta-skills during runs:** `skills/meta-self-verification.md` (after Submit/Save/Post/Send), `skills/meta-dom-recovery.md` (stale refs/iframes/lazy lists), `skills/meta-context-compaction.md` (checkpoint `logs/runs/current-session-checkpoint.json` every 3–5 applications), `skills/meta-structured-debugging.md` (form validation rejections).
 
 ## Strict Execution Order (Daily Run)

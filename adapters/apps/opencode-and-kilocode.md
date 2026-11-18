@@ -1,0 +1,16 @@
+# OpenCode v2 & Kilo Code Adapter
+
+`job-hunter-os` works out of the box in **OpenCode v2** and **Kilo Code** with zero code installation.
+
+## OpenCode v2 Setup
+1. Root `opencode.json` automatically wires:
+   - `instructions`: `["AGENTS.md", "skills/REGISTRY.md"]` (Progressive Disclosure).
+   - `mcp.playwright`: `@playwright/mcp@latest --user-data-dir=./browser-profile`.
+   - `mcp.notion`: disabled by default (`enabled: false`); set `NOTION_TOKEN` in your environment and switch `enabled: true` only when opting into Notion sync.
+2. OpenCode natively auto-discovers every skill in `.agents/skills/*/SKILL.md` (and `.opencode/skills/` if you prefer copying/linking them there).
+3. Run `/skills` in OpenCode to see all discovered `job-hunter-os` workflows, or start with `/setup`.
+
+## Kilo Code Setup
+1. Kilo Code discovers `AGENTS.md` and `.agents/skills/*/SKILL.md` automatically at the repository root.
+2. Copy the `playwright` (and optional `notion`) server definitions from `mcp/mcp.template.json` into `.kilocode/mcp.json` (gitignored if storing private tokens) or your global Kilo Code MCP settings.
+3. Follow `adapters/models/deepseek-qwen-local.md` if pairing Kilo Code with DeepSeek, Qwen, or local Ollama models.

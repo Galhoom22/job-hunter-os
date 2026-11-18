@@ -6,7 +6,8 @@
 [![Zero Code](https://img.shields.io/badge/Runtime-Zero_Code_Markdown-167d60)](AGENTS.md)
 [![Playwright MCP](https://img.shields.io/badge/Browser-Playwright_MCP-167d60)](mcp/README.md)
 [![Notion MCP optional](https://img.shields.io/badge/Tracking-Notion_MCP_optional-356ac3)](mcp/mcp.template.json)
-[![Multi-IDE ready](https://img.shields.io/badge/IDE-Antigravity_%7C_Cursor_%7C_Claude_%7C_Windsurf_%7C_Cline-167d60)](docs/chat-commands.md)
+[![Multi-IDE ready](https://img.shields.io/badge/IDE-25%2B_AI_Apps_%26_Harnesses-167d60)](docs/chat-commands.md)
+[![agentskills.io](https://img.shields.io/badge/Standard-agentskills.io-2ea44f)](.agents/skills/daily-run/SKILL.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 There is **no custom CLI, no Node/Python automation script, no browser extension, and no backend server** executing your job search. **The AI model inside your IDE is the runtime engine.** It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), interviews you in chat, drives Chrome via **Playwright MCP** using accessibility snapshots, tailors HTML/PDF resumes, fills forms safely, and logs everything to local JSON (plus optional **Notion MCP**).
@@ -15,15 +16,15 @@ There is **no custom CLI, no Node/Python automation script, no browser extension
 
 ## 1. How to Install (Zero Coding, Zero Dependencies!)
 
-### Option A — Project Mode (Recommended)
-Clone the repo and open the folder directly in **Antigravity, Cursor, Claude Code, Windsurf, or Cline**:
+### Option A — Project Mode (Recommended — Zero-Config `/skills` Auto-Discovery)
+Clone the repo and open the folder directly in **VS Code Copilot, Cursor, Antigravity, Claude Code, Codex CLI, OpenCode, Devin Desktop, Zed, or JetBrains Junie**:
 
 ```bash
 git clone https://github.com/redasalem/job-hunter-os.git
 cd job-hunter-os
 ```
 
-Open `job-hunter-os/` in your IDE, connect Playwright MCP (below), and type `/setup` (or *"Read AGENTS.md and set up my profile"*).
+Because `job-hunter-os` ships official `agentskills.io` wrappers under [`.agents/skills/`](.agents/skills/daily-run/SKILL.md), typing `/skills` in **VS Code, Cursor, OpenAI Codex CLI, OpenCode, Goose, or Zed** auto-discovers the core workflows immediately—no file copying needed! Start with `/setup` (or *"Read AGENTS.md and set up my profile"*).
 
 ### Option B — Global Skills Mode (Use Across Any Workspace)
 Copy `skills/` and `.agent/workflows/` (or `commands/`) straight into your IDE's global configuration folder—zero packages or installers required:
@@ -91,10 +92,10 @@ Paste the exact configuration from [`mcp/mcp.template.json`](mcp/mcp.template.js
 
 ## 3. Modular `agent_skills` Architecture & Progressive Disclosure
 
-To keep the AI model fast and prevent blowing up the context window with 35+ playbooks at once, every skill follows the **`agent_skills` / `SKILL.md` standard** with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
+To keep the AI model fast and prevent blowing up the context window with **42 skills** at once, every skill follows the **`agentskills.io` / `SKILL.md` standard** (plus `.agents/skills/*/SKILL.md` auto-discovery) with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
 
 1. **Progressive Disclosure ([`skills/REGISTRY.md`](skills/REGISTRY.md) & [`skills/skills-manifest.json`](skills/skills-manifest.json)):** At the start of a session, the AI reads `AGENTS.md` and `skills/REGISTRY.md` only. It loads a specific skill's full Markdown playbook **only** when its trigger matches the active step.
-2. **Seven Core Numbered Playbooks:**
+2. **Core & Career-Ops Playbooks (42-Skill Catalog):**
    - [`skills/00-daily-run.md`](skills/00-daily-run.md) — End-to-end orchestrator for `/daily-run` and `/apply-url`.
    - [`skills/00-interrogate-and-onboard.md`](skills/00-interrogate-and-onboard.md) — **Pure-Chat Readiness Gatekeeper**: inspects `context/` directly, halts on placeholders/missing data, interviews you 3–4 questions at a time, and saves answers.
    - [`skills/01-resume-ingestion.md`](skills/01-resume-ingestion.md) — **Pure-AI CV Ingestion**: reads pasted text, Markdown, or local PDFs via Playwright MCP (`file:///`), confirms facts, and warns if a PDF is scanned/unreadable.
@@ -106,6 +107,9 @@ To keep the AI model fast and prevent blowing up the context window with 35+ pla
    - [`skills/07-persona-switcher.md`](skills/07-persona-switcher.md) — **Multi-Persona Career Switcher**: maintains multiple tracks under `context/personas/` (e.g., Fullstack, AI Agent Engineer, B2B Contractor) and switches target roles & rate floors on demand.
    - [`skills/08-follow-up-radar.md`](skills/08-follow-up-radar.md) — **7-Day Follow-Up Radar**: flags `applied` jobs `>= 7 days` old and saves `<= 75`-word draft-only `followup-draft.md` messages.
    - [`skills/09-offer-negotiator.md`](skills/09-offer-negotiator.md) — **Salary & Offer Negotiator**: benchmarks recruiter rate checks and job offers against your floor and drafts grounded `DRAFT_ONLY` counter/clarification replies.
+   - [`skills/10-autonomous-scheduler-loop.md`](skills/10-autonomous-scheduler-loop.md) — **Scheduled `/loop` Runner**: executes recurring discovery & Tier A prep strictly inside `active_hours` and `warmup_mode`, pausing on `approve_before_submit`.
+   - [`skills/11-portfolio-and-github-auditor.md`](skills/11-portfolio-and-github-auditor.md) — **GitHub & Portfolio Auditor**: checks pinned repos, README clarity, live demo links, and bio alignment before applying.
+   - [`skills/12-recruiter-inbox-triage.md`](skills/12-recruiter-inbox-triage.md) — **Recruiter Inbox Triage**: classifies interview invites, assessments, and rejections, updates `logs/applications-log.json`, and drafts `DRAFT_ONLY` reply slots.
 3. **Four Agent Reliability Meta-Skills:**
    - [`skills/meta-self-verification.md`](skills/meta-self-verification.md) — Forbids reporting `"applied"` or `"updated"` without a fresh post-click `browser_snapshot` receipt quote.
    - [`skills/meta-dom-recovery.md`](skills/meta-dom-recovery.md) — Recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded job lists.
@@ -261,30 +265,38 @@ Reply APPLY ALL GREEN, APPLY 1, or tell me which CV to tweak before I open any f
 
 ---
 
-## 8. 🤖 Supported AI Models & 15+ AI Apps Matrix
+## 8. 🤖 25+ Supported AI Apps, Harnesses & Models Compatibility Matrix
 
-Every major AI IDE, terminal agent, desktop client, and LLM family works out of the box against the same canonical [`AGENTS.md`](AGENTS.md) + [`skills/REGISTRY.md`](skills/REGISTRY.md):
+Every major AI IDE, CLI harness, desktop client, and LLM family works out of the box against [`AGENTS.md`](AGENTS.md), [`skills/REGISTRY.md`](skills/REGISTRY.md), and [`.agents/skills/`](.agents/skills/daily-run/SKILL.md):
 
-### Native AI Apps, IDEs & CLI Clients
+### Native AI Apps, IDEs & CLI Harnesses (25+)
 
-| Client / App | Type | Native Entrypoint | MCP / Fallback |
+| Client / Harness | Type | Native Entrypoint | Auto-Discovery / MCP Guide |
 |---|---|---|---|
 | **Antigravity** | AI IDE | [`AGENTS.md`](AGENTS.md) + [`.agent/workflows/`](.agent/workflows/daily-run.md) | `mcp/mcp.template.json` |
 | **Google Gemini CLI** | Terminal CLI | [`GEMINI.md`](GEMINI.md) -> `AGENTS.md` | `mcp/mcp.template.json` |
 | **Claude Code** | Terminal CLI | [`CLAUDE.md`](CLAUDE.md) + [`commands/`](commands/daily-run.md) | `mcp/mcp.template.json` |
 | **Claude Desktop** | Desktop App | [`CLAUDE.md`](CLAUDE.md) | [`mcp/claude_desktop_config.example.json`](mcp/claude_desktop_config.example.json) |
-| **OpenAI Codex CLI** | Terminal CLI | [`AGENTS.md`](AGENTS.md) | `mcp/mcp.template.json` |
+| **OpenAI Codex CLI** | Terminal CLI | [`AGENTS.md`](AGENTS.md) + [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | `mcp/mcp.template.json` |
 | **ChatGPT / Claude / Gemini Web** | Desktop / Web Chat | [`adapters/apps/chatgpt-and-web-chats.md`](adapters/apps/chatgpt-and-web-chats.md) | [`skills/fallback-no-mcp.md`](skills/fallback-no-mcp.md) |
-| **Cursor** | AI IDE | [`.cursor/rules/job-hunter.mdc`](.cursor/rules/job-hunter.mdc) | `mcp/mcp.template.json` |
-| **Windsurf** | AI IDE | [`.windsurfrules`](.windsurfrules) | `mcp/mcp.template.json` |
+| **Cursor** | AI IDE | [`.cursor/rules/job-hunter.mdc`](.cursor/rules/job-hunter.mdc) + [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | `mcp/mcp.template.json` |
+| **Devin Desktop / Windsurf** | AI IDE | [`.windsurfrules`](.windsurfrules) + [`adapters/apps/devin-desktop.md`](adapters/apps/devin-desktop.md) | `mcp/mcp.template.json` |
+| **OpenCode v2** | Terminal CLI | [`opencode.json`](opencode.json) + [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | [`adapters/apps/opencode-and-kilocode.md`](adapters/apps/opencode-and-kilocode.md) |
+| **Kilo Code** | IDE Agent | [`AGENTS.md`](AGENTS.md) + [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | [`adapters/apps/opencode-and-kilocode.md`](adapters/apps/opencode-and-kilocode.md) |
+| **JetBrains Junie & AI Assistant** | JetBrains IDEs | [`.junie/guidelines.md`](.junie/guidelines.md) + [`.aiassistant/rules/AGENTS.md`](.aiassistant/rules/AGENTS.md) | `mcp/mcp.template.json` |
+| **AWS Kiro & Amazon Q CLI** | IDE / CLI | [`.kiro/steering/job-hunter.md`](.kiro/steering/job-hunter.md) + [`.amazonq/rules/job-hunter.md`](.amazonq/rules/job-hunter.md) | `mcp/mcp.template.json` |
 | **Trae** | AI IDE | [`.trae/rules/project_rules.md`](.trae/rules/project_rules.md) | `mcp/mcp.template.json` |
-| **Zed** | Code Editor AI | [`.rules`](.rules) | `mcp/mcp.template.json` |
-| **GitHub Copilot** | IDE Agent | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) + [`.github/prompts/daily-run.prompt.md`](.github/prompts/daily-run.prompt.md) | VS Code MCP |
-| **Cline** | VS Code Agent | [`.clinerules`](.clinerules) | `mcp/mcp.template.json` |
-| **Roo Code** | VS Code Agent | [`.roo/rules/job-hunter.md`](.roo/rules/job-hunter.md) | `mcp/mcp.template.json` |
-| **Block Goose** | Terminal Agent | [`.goosehints`](.goosehints) | `mcp/mcp.template.json` |
+| **Zed** | Code Editor AI | [`.rules`](.rules) + [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | `mcp/mcp.template.json` |
+| **GitHub Copilot** | IDE Agent | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) + [`.github/prompts/daily-run.prompt.md`](.github/prompts/daily-run.prompt.md) | VS Code `/skills` + MCP |
+| **Cline & Roo Code** | VS Code Agents | [`.clinerules`](.clinerules) + [`.roo/rules/job-hunter.md`](.roo/rules/job-hunter.md) | `mcp/mcp.template.json` |
+| **Block Goose & Amp** | Terminal Agents | [`.goosehints`](.goosehints) + [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | `mcp/mcp.template.json` |
 | **Aider** | Terminal CLI | [`.aider.conf.yml`](.aider.conf.yml) (`read: [AGENTS.md, skills/REGISTRY.md]`) | Text / file edits |
 | **Continue.dev** | IDE Agent | [`.continue/rules/job-hunter.md`](.continue/rules/job-hunter.md) | `mcp/mcp.template.json` |
+| **OpenHands** | Autonomous Agent | [`.openhands/microagents/repo.md`](.openhands/microagents/repo.md) | `mcp/mcp.template.json` |
+| **Warp Terminal Agent** | Terminal AI | [`WARP.md`](WARP.md) | `mcp/mcp.template.json` |
+| **Augment Code & Charm Crush** | IDE / CLI | [`.augment/rules/job-hunter.md`](.augment/rules/job-hunter.md) + [`CRUSH.md`](CRUSH.md) | `mcp/mcp.template.json` |
+| **Qwen Code / Mistral Vibe 3 / Kimi / DeepSeek / Grok Build** | Frontier Harnesses | `AGENTS.md` + [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | [`adapters/apps/qwen-mistral-kimi-deepseek.md`](adapters/apps/qwen-mistral-kimi-deepseek.md) |
+| **Hermes / Pi / Factory Droid / OpenClaw** | Loop & CLI Agents | `AGENTS.md` + [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | [`adapters/apps/hermes-pi-factory-openclaw.md`](adapters/apps/hermes-pi-factory-openclaw.md) |
 
 ### Model-Specific Execution Tuning Guides (`adapters/models/`)
 
@@ -293,6 +305,8 @@ Every major AI IDE, terminal agent, desktop client, and LLM family works out of 
 | **Anthropic Claude** (Sonnet / Opus) | [`adapters/models/claude.md`](adapters/models/claude.md) | Strict YAML skill routing + XML `<pre_submit_check>` scratchpad |
 | **Google Gemini** (Pro / Flash) | [`adapters/models/gemini.md`](adapters/models/gemini.md) | Multimodal screenshot cross-check + native PDF inspection |
 | **OpenAI** (GPT / o-series / Codex) | [`adapters/models/openai.md`](adapters/models/openai.md) | Deterministic JSON/YAML log contracts + sequential paced actions |
+| **xAI Grok & Moonshot Kimi** (K2 / Thinking) | [`adapters/models/grok-and-kimi.md`](adapters/models/grok-and-kimi.md) | Long-context multi-tab ATS comparison + strict evidence mapping |
+| **Mistral** (Large / Codestral / Vibe) & **Meta Llama 4** | [`adapters/models/mistral-and-llama.md`](adapters/models/mistral-and-llama.md) | Strict JSON log extraction + single-step snapshot verification |
 | **DeepSeek / Qwen / Local Ollama** | [`adapters/models/deepseek-qwen-local.md`](adapters/models/deepseek-qwen-local.md) | Ultra-lean 3-file context budget + explicit `ref` ID quoting |
 
 ---
@@ -301,14 +315,15 @@ Every major AI IDE, terminal agent, desktop client, and LLM family works out of 
 
 | Path | Purpose |
 |---|---|
-| [`AGENTS.md`](AGENTS.md), [`GEMINI.md`](GEMINI.md), [`CLAUDE.md`](CLAUDE.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
-| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, core `00–09` playbooks, 4 `meta-*` skills, 16 platform playbooks, 7 ATS playbooks, and `fallback-no-mcp.md` |
-| [`adapters/`](adapters/models/claude.md) | Model-specific tuning guides (`adapters/models/`) and Desktop/Web chat adapters (`adapters/apps/`) |
-| [`.agent/workflows/`](.agent/workflows/daily-run.md), [`commands/`](commands/daily-run.md), [`.github/prompts/`](.github/prompts/daily-run.prompt.md) | Portable slash-command & prompt entrypoints across 15+ AI apps |
+| [`AGENTS.md`](AGENTS.md), [`GEMINI.md`](GEMINI.md), [`CLAUDE.md`](CLAUDE.md), [`WARP.md`](WARP.md), [`CRUSH.md`](CRUSH.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
+| [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | Official `agentskills.io` auto-discovery mirror (`/skills` in VS Code, Cursor, Codex, OpenCode, Goose, Zed) |
+| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, 42-skill catalog (`00–12`, `fallback-no-mcp`, 4 `meta-*`, 16 platforms, 7 ATS) |
+| [`adapters/`](adapters/models/claude.md) | Model tuning guides (`adapters/models/`) and app/harness adapters (`adapters/apps/`) |
+| [`.agent/workflows/`](.agent/workflows/daily-run.md), [`commands/`](commands/daily-run.md), [`.github/prompts/`](.github/prompts/daily-run.prompt.md) | Portable slash-command & prompt entrypoints across 25+ AI apps |
 | [`context/`](context/DROP_YOUR_FILES_HERE.md) | Synthetic `.example` templates (`profile.md.example`, `form-answers.yaml.example`, `targets.yaml.example`, etc.); real files & `personas/` stay private |
 | [`config/guardrails.yaml`](config/guardrails.yaml) | Default `dry_run: true`, warm-up caps, active hours, 3–9 s pacing, and `batch_review_first` settings |
 | [`templates/`](templates/ats-resume-template.html) | Clean single-column ATS resume & cover-letter HTML templates |
-| [`mcp/`](mcp/mcp.template.json) | Canonical Playwright & optional Notion MCP JSON templates (`mcp.template.json`, `claude_desktop_config.example.json`) |
+| [`mcp/`](mcp/mcp.template.json), [`opencode.json`](opencode.json) | Canonical Playwright & optional Notion MCP definitions (`mcp.template.json`, `claude_desktop_config.example.json`, `opencode.json`) |
 | [`docs/`](docs/repository-audit.md) | Chat command matrix, safety rules, platform registry, and repository audit |
 
 ---
