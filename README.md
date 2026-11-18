@@ -1,29 +1,30 @@
-# Welcome to your Lovable project
+# Autonomous AI Job Hunter (portable, zero-backend)
 
-This project was built with [Lovable](https://lovable.dev).
+Clone this repo and open it in **Antigravity**, **Cursor** or **Claude Code**. Then say *"Start today's job run"*.
 
-## Build with Lovable
+- **Brain:** `AGENTS.md` + `skills/*.md` (pointers: `CLAUDE.md`, `.cursor/rules/`, `.agent/workflows/`)
+- **Hands:** Playwright MCP with a persistent local browser profile (`browser-profile/`, gitignored)
+- **Memory:** Notion MCP + `logs/*.json` (validated by `schemas/index.ts`)
+- **Dashboard:** `npm run dev` → http://localhost:8080 (Overview, Applications, Runs, Insights, Config)
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+## Quick start
+```bash
+npm install
+cp .env.example .env            # add NOTION_TOKEN
+npm run sync:mcp                # generates .mcp.json + .cursor/mcp.json
+# fill in context/*.md / *.yaml (templates in *.example), put your CV PDF at context/resume.pdf
+npm run preflight
+npm run dev                     # dashboard
 ```
+Log in once to LinkedIn and Google in the agent's browser — see `mcp/README.md`.
+`config/guardrails.yaml` ships with `dry_run: true`. Switch it off on the Config page when you're ready.
 
-## Built with
+## Scripts
+| Command | What it does |
+|---|---|
+| `npm run sync:mcp` | Template → IDE MCP configs |
+| `npm run validate:logs` | Schema + duplicate check of everything in `logs/` |
+| `npm run preflight` | Files, MCP config, caps, and log validity before a run |
+| `npm test` | Guardrail rule tests |
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+`logs/` contains demo data. Delete it before your first real run, and uncomment the privacy lines in `.gitignore`.

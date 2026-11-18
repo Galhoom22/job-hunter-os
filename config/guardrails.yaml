@@ -1,0 +1,11 @@
+# Safety settings read by every skill. Start with dry_run: true.
+dry_run: true
+max_applications_per_day: 20
+max_per_platform:
+  linkedin: 12
+  wellfound: 5
+  wuzzuf: 5
+min_match_score: 7
+delay_seconds: [3, 8]
+max_consecutive_errors: 3
+stop_on_captcha: true

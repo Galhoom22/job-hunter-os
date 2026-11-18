@@ -1,0 +1,26 @@
+questions:
+  - match: ["years of experience", "how many years"]
+    answer: "5"
+  - match: ["notice period", "start date", "when can you start"]
+    answer: "30 days"
+  - match: ["require sponsorship", "visa sponsorship"]
+    answer: "Yes"
+  - match: ["authorized to work in egypt"]
+    answer: "Yes"
+  - match: ["expected salary", "salary expectation"]
+    answer: "Open to discuss; target range 3,000–4,000 USD/month"
+  - match: ["willing to relocate"]
+    answer: "Yes"
+  - match: ["english proficiency"]
+    answer: "Professional working proficiency"
+skills_years:
+  React: 5
+  TypeScript: 4
+  Node.js: 3
+  GraphQL: 2
+  Next.js: 3
+eeo:
+  gender: "Decline to self-identify"
+  ethnicity: "Decline to self-identify"
+  veteran: "I am not a protected veteran"
+  disability: "I do not wish to answer"
