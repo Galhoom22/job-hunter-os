@@ -4,7 +4,9 @@ locations: ["Cairo", "Remote", "Dubai", "Berlin"]
 remote_ok: true
 salary_min_usd_month: 2500
 exclude_keywords: ["intern", "unpaid", "commission only", "PHP"]
+blacklisted_companies: ["Example Spam Corp"]
 blacklist_companies: ["Example Spam Corp"]
+blacklisted_domains: ["spam-recruiting.example", "current-employer.example"]
 follow_companies: false
 cover_letter: false
 notion:

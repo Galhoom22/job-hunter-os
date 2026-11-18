@@ -327,14 +327,59 @@ function scaffoldFrom(srcRoot, targetRoot, { isUpdate = false } = {}) {
   }
 
   // Ensure runtime directories & starter logs (preserve existing logs)
-  for (const d of ['logs/runs', 'logs/resumes', 'logs/screenshots', 'logs/insights', 'logs/exports', 'assets', 'browser-profile']) {
+  for (const d of ['logs/runs', 'logs/resumes', 'logs/screenshots', 'logs/insights', 'logs/exports', 'logs/backups', 'assets', 'browser-profile']) {
     const p = path.join(targetRoot, d);
     refuseSymlink(p);
     fs.mkdirSync(p, { recursive: true });
   }
   writeAtomic(path.join(targetRoot, 'logs', 'applications-log.json'), '[]\n', { preserve: true, mode: 0o600 });
   writeAtomic(path.join(targetRoot, 'logs', 'skipped-jobs.json'), '[]\n', { preserve: true, mode: 0o600 });
+  writeAtomic(path.join(targetRoot, 'logs', 'circuit-breaker.json'), '{\n  "platforms": {}\n}\n', { preserve: true, mode: 0o600 });
   ensurePrivateGitignore(targetRoot);
+  installGitPreCommitHook(targetRoot);
+}
+
+function installGitPreCommitHook(root) {
+  const gitDir = path.join(root, '.git');
+  try {
+    if (!fs.existsSync(gitDir) || !fs.lstatSync(gitDir).isDirectory()) return false;
+  } catch {
+    return false;
+  }
+  const hookFile = path.join(gitDir, 'hooks', 'pre-commit');
+  const marker = '# job-hunter-os pre-commit pii shield';
+  if (fs.existsSync(hookFile)) {
+    try {
+      const existing = fs.readFileSync(hookFile, 'utf8');
+      if (!existing.includes(marker)) return true; // preserve custom user hook
+    } catch {
+      return false;
+    }
+  }
+  const script = [
+    '#!/usr/bin/env sh',
+    marker,
+    'set -e',
+    'STAGED=$(git diff --cached --name-only --diff-filter=ACM || true)',
+    'if [ -z "$STAGED" ]; then exit 0; fi',
+    'for f in $STAGED; do',
+    '  case "$f" in',
+    '    context/*.example|context/DROP_YOUR_FILES_HERE.md) ;;',
+    '    context/*|logs/*|browser-profile/*|*.pdf|.env|.env.*|.mcp.json|.cursor/mcp.json)',
+    '      echo "[job-hunter-os PII Shield] BLOCKED commit of private file: $f" >&2',
+    '      exit 1',
+    '      ;;',
+    '  esac',
+    'done',
+    'if git diff --cached -U0 | grep -E "^\\+.*(ntn_[A-Za-z0-9]{12,}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})" >/dev/null 2>&1; then',
+    '  echo "[job-hunter-os PII Shield] BLOCKED commit containing an API token signature (ntn_ / sk- / ghp_)." >&2',
+    '  exit 1',
+    'fi',
+    'exit 0',
+    '',
+  ].join('\n');
+  writeAtomic(hookFile, script, { preserve: false, mode: 0o755 });
+  return true;
 }
 
 function cmdInit() {
@@ -526,6 +571,10 @@ async function cmdDoctor() {
 
   const profileExists = fs.existsSync(path.join(ROOT, 'browser-profile'));
   checkGate('Browser Profile Directory', profileExists, 'run `login` to initialize browser-profile/');
+
+  if (installGitPreCommitHook(ROOT)) {
+    ok('Git Pre-Commit PII Shield: .git/hooks/pre-commit active');
+  }
 
   // MCP configs
   for (const file of mcpTargetFiles(ROOT, isGlobal)) {
@@ -813,8 +862,66 @@ function cmdDashboard() {
   openFileInBrowser(outFile);
 }
 
+function cmdUnlock() {
+  const profile = path.join(ROOT, 'browser-profile');
+  refuseSymlink(profile);
+  if (!fs.existsSync(profile)) {
+    fs.mkdirSync(profile, { recursive: true });
+    ok(`Initialized clean browser-profile directory at ${profile} (0 lock files).`);
+    return;
+  }
+  const lockNames = ['SingletonLock', 'SingletonCookie', 'SingletonSocket', 'lockfile', 'DevToolsActivePort'];
+  let removed = 0;
+  for (const name of lockNames) {
+    const target = path.join(profile, name);
+    try {
+      fs.lstatSync(target);
+      fs.rmSync(target, { force: true });
+      removed++;
+    } catch (e) {
+      if (e.code !== 'ENOENT') throw e;
+    }
+  }
+  ok(`Unlocked browser-profile at ${profile} (${removed} stale Chromium lock file(s) removed).`);
+}
+
+function cmdBackup() {
+  const jsonFiles = ['logs/applications-log.json', 'logs/skipped-jobs.json', 'logs/circuit-breaker.json'];
+  let verifiedCount = 0;
+  for (const rel of jsonFiles) {
+    const f = path.join(ROOT, rel);
+    if (!fs.existsSync(f)) continue;
+    refuseSymlink(f);
+    try {
+      JSON.parse(fs.readFileSync(f, 'utf8'));
+      verifiedCount++;
+    } catch (e) {
+      throw new Error(`JSON integrity check failed for ${f}: ${e.message}`);
+    }
+  }
+
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const destDir = path.join(ROOT, 'logs', 'backups', `backup-${stamp}`);
+  refuseSymlink(destDir);
+  fs.mkdirSync(destDir, { recursive: true });
+
+  let copied = 0;
+  const ctxDir = path.join(ROOT, 'context');
+  if (fs.existsSync(ctxDir)) {
+    copied += copyTree(ctxDir, path.join(destDir, 'context'), { preserve: false });
+  }
+  for (const rel of jsonFiles) {
+    const src = path.join(ROOT, rel);
+    if (fs.existsSync(src)) {
+      const dst = path.join(destDir, rel);
+      if (writeAtomic(dst, fs.readFileSync(src), { mode: 0o600 })) copied++;
+    }
+  }
+  ok(`Verified JSON integrity (${verifiedCount} log file(s)) & backed up ${copied} file(s) -> ${destDir}`);
+}
+
 function cmdHelp() {
-  console.log(`job-hunter-os v1.0.0 — Zero-Code Markdown Agent Skills & MCP Installer
+  console.log(`job-hunter-os v1.1.0 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
   job-hunter init [--global | -g] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
@@ -823,6 +930,8 @@ Usage:
   job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
   job-hunter bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
   job-hunter dashboard [--global | -g] [--no-open] Generate & open local Kanban dashboard at logs/exports/dashboard.html
+  job-hunter unlock [--global | -g]                Remove stale Chromium lock files from browser-profile/ after crash
+  job-hunter backup [--global | -g]                Verify JSON log integrity & snapshot context/ + logs/ to logs/backups/
   job-hunter login [--global | -g]                 Open Chrome/Chromium with persistent browser-profile/
   job-hunter sync-mcp [--global | -g]              Safely merge Playwright & optional Notion MCP configs
   job-hunter --help                                Show this help message`);
@@ -839,6 +948,8 @@ try {
   else if (command === 'status') cmdStatus();
   else if (command === 'bundle') cmdBundle();
   else if (command === 'dashboard') cmdDashboard();
+  else if (command === 'unlock') cmdUnlock();
+  else if (command === 'backup') cmdBackup();
   else if (command === 'login') cmdLogin();
   else if (command === 'sync-mcp') syncMcp();
   else throw new Error(`Unknown command "${command}". Run with --help for usage.`);

@@ -26,5 +26,8 @@ This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**.
 - ATS keyword heatmap -> `skills/21-ats-keyword-heatmap.md`
 - Take-home / system design architect -> `skills/22-technical-assessment-architect.md`
 - Contract & B2B NDA auditor -> `skills/23-contract-and-nda-auditor.md`
+- Anti-bot circuit breaker & 24h cooldown -> `skills/24-circuit-breaker-and-antiban.md`
+- Untrusted-DOM prompt-injection defense -> `skills/25-prompt-injection-defense.md`
+- Cross-channel deduplication & blacklist guard -> `skills/26-deduplication-and-blacklist-guard.md`
 
 See `adapters/models/gemini.md` for Gemini-specific multimodal & snapshot verification guidance. Respect `dry_run: true`, verified facts only, caps, and explicit `APPROVE` gates.

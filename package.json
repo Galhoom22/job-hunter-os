@@ -1,6 +1,6 @@
 {
   "name": "job-hunter-os",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "Zero-code AI agent skills and MCP playbooks for autonomous job discovery, ATS resume tailoring, and multi-platform applications",
   "license": "MIT",

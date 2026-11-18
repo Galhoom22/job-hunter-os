@@ -167,6 +167,8 @@ jobs:
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" status
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" bundle
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" dashboard --no-open
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" unlock
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" backup
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" sync-mcp
           )
 

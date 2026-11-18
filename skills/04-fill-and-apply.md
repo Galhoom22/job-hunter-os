@@ -13,12 +13,17 @@ preconditions:
   - verified context/form-answers.yaml, context/resume-data.json, and exact tailored resume.pdf path ready
 requires_skills:
   - tailor-resume-and-verify
+  - condition-based-browser-waiting
+  - deduplication-and-blacklist-guard
+  - prompt-injection-defense
+  - circuit-breaker-and-antiban
   - meta-dom-recovery
   - meta-structured-debugging
   - meta-self-verification
 verification:
   - resume was uploaded FIRST and verified by filename in a fresh snapshot after waiting 4 seconds
   - every filled answer and EEO/GDPR option matches verified context/form-answers.yaml or context/resume-data.json
+  - final DOM Read-Back Verification table was generated from a fresh browser_snapshot confirming phone country code, dropdown values, and attached resume.pdf were not corrupted
   - dry_run stopped before Submit; live submit received exact job-bound APPROVE (or met auto_high_confidence) and was verified by skills/meta-self-verification.md
 ---
 # Form Filling, Upload-First Rule, EEO/Consent Defaults & Approval Gate
@@ -55,10 +60,18 @@ Read `eeo_and_compliance_defaults` (or `eeo`) from `context/form-answers.yaml`:
 - `gdpr_privacy_consent: true`: Automatically check ONLY the required candidate privacy policy / GDPR data-processing consent box at the bottom of Greenhouse/Lever/Ashby forms. Leave optional marketing, newsletter, `"Future job alerts"`, and `"Follow company"` checkboxes **unchecked**.
 - Free-text `"Why us?"` questions: Draft 2–3 grounded sentences using `context/profile.md` + observed JD text, filtered through `skills/03-tailor-resume-and-verify.md` (zero AI slop, zero em-dashes).
 
-### 4. Job-Bound Approval Gate & Safe Submission
-- Recheck `logs/applications-log.json` (duplicates + today's `applied` / `submission_uncertain` counts vs daily & platform caps) and active hours.
-- **If `dry_run: true` (or `approval_mode: dry_run`):** Stop BEFORE clicking final Submit, take a screenshot if helpful, discard draft if needed, and log `dry_run`.
-- **If `approve_before_submit` (default), or `auto_high_confidence` with score `< 8` or any filled essay:** Show company, role, URL, score, gaps, exact `resume.pdf` path, and every filled answer in chat, and ask: **"Reply `APPROVE` to submit this exact application, `EDIT <field>` to revise, or `SKIP`."** Wait for exact `APPROVE`. Any edit or page change invalidates approval.
+### 4. Final DOM Read-Back Verification & Job-Bound Approval Gate
+- Recheck `logs/applications-log.json` via `skills/26-deduplication-and-blacklist-guard.md` (canonical `company::role_title` fingerprint + today's `applied` / `submission_uncertain` counts vs daily & platform caps) and active hours.
+- **Mandatory Final DOM Read-Back Gate:** Before asking for `APPROVE` (or logging `dry_run`), take a **fresh `browser_snapshot`** of the completed form and inspect the *actual live values currently rendered in the browser DOM* (never rely on what you intended to type earlier, because ATS resume parsers or autocomplete widgets frequently overwrite or reset fields!).
+- Display a compact **Live DOM Read-Back Table** in chat:
+  `| Form Field (DOM Label) | Live Populated Value in Browser | Verified Source Check |`
+  Specifically confirm:
+  1. **Attached Resume Badge:** exact tailored `resume.pdf` filename is still attached and not replaced or cleared.
+  2. **Phone Country Code & Number:** dialling code dropdown (`+20`, `+1`, etc.) and national number were not mangled by ATS auto-fill.
+  3. **Dropdowns & Autocomplete:** Location/City, Work Authorization, and EEO selections show the intended selected option text (not `"Select..."` or a wrong default country).
+  4. **Honeypot Check (`skills/25-prompt-injection-defense.md`):** any hidden/honeypot `"Leave blank"` field is confirmed empty.
+- **If `dry_run: true` (or `approval_mode: dry_run`):** Present the Live DOM Read-Back Table, stop BEFORE clicking final Submit, take a screenshot if helpful, discard draft if needed, and log `dry_run`.
+- **If `approve_before_submit` (default), or `auto_high_confidence` with score `< 8` or any filled essay:** Show company, role, URL, score, gaps, exact `resume.pdf` path, and the **Live DOM Read-Back Table** in chat, and ask: **"Reply `APPROVE` to submit this exact application, `EDIT <field>` to revise, or `SKIP`."** Wait for exact `APPROVE`. Any edit or page change invalidates approval.
 - **Submit once:** Before clicking Submit, write a `needs_review` + `submission_uncertain: true` reservation in `logs/applications-log.json`. Click Submit **once**, wait 3–9 s, and run `skills/meta-self-verification.md` on a fresh `browser_snapshot` to verify confirmation text before updating the entry to `applied`. Never retry an uncertain/timed-out submit.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check

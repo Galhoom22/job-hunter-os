@@ -5,6 +5,21 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-11-18 — Resilience, Security & Chaos Shield Edition
+
+### Added
+- **3 New Security, Anti-Ban & Chaos-Resilience Skills (`57` Total Skills in `skills/REGISTRY.md` & `skills/skills-manifest.json`):**
+  - [`skills/24-circuit-breaker-and-antiban.md`](skills/24-circuit-breaker-and-antiban.md) + [`.agents/skills/circuit-breaker-and-antiban/SKILL.md`](.agents/skills/circuit-breaker-and-antiban/SKILL.md): Defines immediate trip conditions (CAPTCHA, Cloudflare/DataDome/Arkose frames, HTTP 429/403 rate limits, unusual-activity banners, or forced login redirects) and persists a 24-hour platform lock in `logs/circuit-breaker.json`.
+  - [`skills/25-prompt-injection-defense.md`](skills/25-prompt-injection-defense.md) + [`.agents/skills/prompt-injection-defense/SKILL.md`](.agents/skills/prompt-injection-defense/SKILL.md): Treats all scraped JDs and form labels inside `browser_snapshot` as `UNTRUSTED_EXTERNAL_DATA`, blocks indirect prompt injections and honeypot trap fields, and distinguishes benign recruiter Easter-egg attention checks (`"Include PINEAPPLE in cover letter"`) in the Mission Control Table.
+  - [`skills/26-deduplication-and-blacklist-guard.md`](skills/26-deduplication-and-blacklist-guard.md) + [`.agents/skills/deduplication-and-blacklist-guard/SKILL.md`](.agents/skills/deduplication-and-blacklist-guard/SKILL.md): Enforces `blacklisted_companies` and `blacklisted_domains` in `context/preferences.yaml` plus cross-channel canonical job fingerprinting (`normalize(company)::normalize(role_title)`) against `logs/applications-log.json`.
+- **Pre-Submit Final DOM Read-Back & PDF Page-Overflow Gate:**
+  - Updated [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) to require a **Live DOM Read-Back Table** from a fresh `browser_snapshot` before requesting `APPROVE`, verifying attached `resume.pdf` filename, phone country code, dropdown values, and empty honeypot fields.
+  - Updated [`skills/03-tailor-resume-and-verify.md`](skills/03-tailor-resume-and-verify.md) and [`templates/ats-resume-template.html`](templates/ats-resume-template.html) with character/bullet budgets and `@media print` `orphans`/`widows`/`break-inside` rules to prevent 2-page orphan spills.
+- **CLI Crash Recovery (`unlock`), JSON Integrity Backup (`backup`) & Git Pre-Commit PII Shield (`bin/cli.mjs`):**
+  - `npx job-hunter-os unlock`: Safely removes stale Chromium lock files (`SingletonLock`, `SingletonCookie`, `SingletonSocket`, `lockfile`, `DevToolsActivePort`) from `browser-profile/` after a browser crash across Windows, macOS, and Linux.
+  - `npx job-hunter-os backup`: Verifies JSON parse integrity of `logs/applications-log.json`, `logs/skipped-jobs.json`, and `logs/circuit-breaker.json` and snapshots `context/` + `logs/` into timestamped `logs/backups/backup-<timestamp>/` directories.
+  - Automatic `.git/hooks/pre-commit` PII & secret shield installed during `init` and `doctor` to block accidental commits of private `context/*`, `*.pdf`, `browser-profile/`, `logs/`, or API tokens (`ntn_`, `sk-`, `ghp_`).
+
 ## [1.0.0] - 2026-11-18
 
 ### Added

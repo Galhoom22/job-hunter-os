@@ -13,10 +13,12 @@ preconditions:
   - full expanded job description captured
 requires_skills:
   - resume-ingestion
+  - ats-keyword-heatmap
 verification:
   - evidence map links every tailored bullet and summary claim to an exact verified fact in context/profile.md
   - fact-check audit confirmed 0 unverified percentages, currency amounts, multipliers, years, dates, employers, degrees, or tools
   - humanized prose contains 0 banned AI-slop clichés and no em-dash overuse
+  - page-overflow & character budget gate passed (clean 1-page A4 fit or intentional full 2-page layout with zero 2-page orphan spill of < 10 lines)
   - tailored HTML and printed PDF (< 200 KB, text-selectable) saved in logs/resumes/<company>-<role>-<job-id>/
 ---
 # Pure AI Tailoring, Fact-Check Guard & Anti-AI Slop
@@ -56,13 +58,18 @@ Scan every summary sentence, bullet, and cover-letter paragraph and rewrite if A
 - **Banned em-dash overuse (`—`):** Use **0 em-dashes** inside prose sentences (use periods, commas, or parentheses; structural `Title — Employer` headings are fine).
 - **Tone rule:** Write like a direct, practical peer engineer using concrete technical nouns and active plain verbs (`built`, `shipped`, `cut`, `migrated`, `tested`, `debugged`).
 
-### 4. Print & Save Multi-Format Artifacts (`.pdf`, `.doc`, `.txt`) via Playwright MCP
+### 4. Character/Bullet Budget & PDF Page-Overflow Gate (Print via Playwright MCP)
+- **Strict Character & Bullet Budgets (Prevent Awkward 2-Page Orphan Spills):**
+  - **Professional Summary:** Max `3` lines (`<= 320` characters total).
+  - **Technical Skills:** Group into `3–4` compact category lines (`<= 95` characters per line).
+  - **Experience & Projects:** Max `4–5` bullets for the two most recent relevant roles, `2–3` bullets for older roles; each bullet `<= 160` characters (`1–2` printed lines).
+  - **Page-Count Gate:** Target a crisp **1-page A4 PDF** (`<= 38` rendered content lines) for `< 8` years of experience, or a well-balanced **2-page A4 PDF** (`>= 70%` fill on page 2) for senior/staff profiles. **Never allow an awkward 2-page overflow where page 2 contains only 1–8 orphan lines**—if overflow occurs, tighten bullet phrasing or trim the lowest-relevance older project bullet and re-render before saving!
 - Open `file:///<absolute-path-to>/logs/resumes/<folder>/resume.html` in Playwright MCP (or ask the owner to Chrome `Print -> Save as PDF` with A4, no headers/footers if the MCP server does not expose a PDF print tool).
 - Save all needed formats inside `logs/resumes/<folder>/`:
-  - `resume.pdf` — default upload format (**<= 200 KB**, single-column, text-selectable, zero `{{...}}` placeholders or cut-off bullets).
+  - `resume.pdf` — default upload format (**<= 200 KB**, single-column, text-selectable, zero `{{...}}` placeholders, cut-off bullets, or orphan page spills).
   - `resume.doc` — Word-compatible HTML copy (with `urn:schemas-microsoft-com:office:word` headers) for legacy portals that only accept `.doc`/`.docx`.
   - `resume.txt` — clean plain-text copy for portals with `"Paste your plain-text resume"` boxes.
-  - `tailoring-notes.md` — JD asked -> what changed -> skill gaps.
+  - `tailoring-notes.md` — JD asked -> what changed -> skill gaps + `skills/21-ats-keyword-heatmap.md` summary.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 
