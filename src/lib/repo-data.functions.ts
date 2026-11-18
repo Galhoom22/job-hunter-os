@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { parse, parseDocument } from "yaml";
+import { parse } from "yaml";
 import { z } from "zod";
+import { setDryRunInText } from "./yaml-edit";
 import { ApplicationsLog, DailyRun, Insight } from "../../schemas/index";
 
 // Bundled snapshot of the repo files — used when the real filesystem is unavailable
@@ -97,8 +98,6 @@ export const setDryRun = createServerFn({ method: "POST" })
     const api = await fsApi();
     if (!api) throw new Error("Read-only: run the dashboard locally with npm run dev to save files.");
     const file = api.path.join(api.root, EDITABLE.guardrails);
-    const doc = parseDocument(await api.fs.readFile(file, "utf8"));
-    doc.set("dry_run", data.dryRun);
-    await api.fs.writeFile(file, doc.toString(), "utf8");
+    await api.fs.writeFile(file, setDryRunInText(await api.fs.readFile(file, "utf8"), data.dryRun), "utf8");
     return { ok: true };
   });
