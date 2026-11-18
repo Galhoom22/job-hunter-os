@@ -1121,6 +1121,122 @@
         "no account created, no terms accepted, no Submit clicked"
       ],
       "path": "skills/ats/workday.md"
+    },
+    {
+      "name": "company-due-diligence",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load before submitting a Tier A application or accepting an interview invite to inspect company health, funding/stage signals, layoffs or re-post churn, scam red flags, and Glassdoor/LinkedIn employer trust indicators using Playwright MCP without inventing unverified claims.",
+      "triggers": [
+        "company due diligence",
+        "check company health before applying",
+        "Tier A company vetting",
+        "vet employer for scams or layoffs"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "target company name, job URL, and captured job description are available",
+        "company health check is requested by the owner or triggered for a Tier A role (score >= 8)"
+      ],
+      "requires_skills": [
+        "discover-and-triage",
+        "outreach-and-interview-prep",
+        "log-and-insights"
+      ],
+      "verification": [
+        "company health badge (GREEN, YELLOW, or RED) is justified solely from observed page/search snapshots with dates",
+        "red flags (unpaid test work, wire/crypto fees, mismatched domains, mass layoff bursts, chronic reposting) are surfaced transparently",
+        "summary persisted alongside interview dossier or logged in logs/applications-log.json notes without fabricating ratings"
+      ],
+      "path": "skills/13-company-due-diligence.md"
+    },
+    {
+      "name": "privacy-pii-shield",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load whenever sanitizing job-hunt outputs for screenshots, demo showcases, public repositories, Git commits, or external sharing; redacts real emails, phone numbers, home addresses, passport/national ID numbers, auth cookies, and API tokens before display or commit.",
+      "triggers": [
+        "redact PII before sharing",
+        "privacy shield audit",
+        "check repo for leaked secrets or personal data",
+        "sanitize resume or log snippet for export"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "target text, markdown, HTML/PDF preview, log file, or git tracked file list is available to inspect"
+      ],
+      "requires_skills": [
+        "log-and-insights",
+        "tailor-resume-and-verify"
+      ],
+      "verification": [
+        "zero real email addresses, phone numbers, street addresses, IDs, .env values, or session cookies remain in any shareable or committed artifact",
+        "context/* (except *.example), logs/, assets/*.pdf, and browser-profile/ remain excluded from git tracking",
+        "every masked field uses clear synthetic placeholders (e.g., [REDACTED_EMAIL], +1-555-0100) rather than altered factual work claims"
+      ],
+      "path": "skills/14-privacy-pii-shield.md"
+    },
+    {
+      "name": "multilingual-adaptation",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when a job posting, ATS form, or outreach target requires adapting a verified English/Arabic/European CV, cover letter, or <=75-word outreach draft into Arabic (with clean RTL directionality), German, French, or Spanish while keeping 100% of factual claims faithful to context/cv.md.",
+      "triggers": [
+        "adapt CV to Arabic / German / French / Spanish",
+        "bilingual or RTL resume adaptation",
+        "translate cover letter or outreach to target job language"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "verified source CV facts exist in context/cv.md and context/profile.md",
+        "target language and full captured job description language conventions are confirmed"
+      ],
+      "requires_skills": [
+        "tailor-resume-and-verify",
+        "outreach-and-interview-prep",
+        "privacy-pii-shield"
+      ],
+      "verification": [
+        "translated/adapted CV preserves every employer, date, degree, and metric verbatim from context/cv.md with zero semantic inflation",
+        "ATS keyword equivalents match the job description terminology naturally without robotic literalism or AI clichés",
+        "RTL styling (dir=\"rtl\" and Cairo/Noto Sans Arabic stack) is applied cleanly when rendering Arabic HTML/PDF output via Playwright MCP"
+      ],
+      "path": "skills/15-multilingual-adaptation.md"
+    },
+    {
+      "name": "b2b-contract-networks",
+      "version": "1.0.0",
+      "category": "platform",
+      "description": "Load when discovering or applying to curated B2B & remote freelance engineering networks (Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing); handles vetted-talent gate detection, rate-card consistency, contract pitch drafting, and strict human approval before any profile update or application submission.",
+      "triggers": [
+        "target.platform in toptal/braintrust/lemon/gunio/contra/arc/turing",
+        "B2B contract network search",
+        "curated freelance engineering platform"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
+        "B2B or contract work_type and verified rate floor configured in context/preferences.yaml"
+      ],
+      "requires_skills": [
+        "discover-and-triage",
+        "offer-negotiator",
+        "fill-and-apply"
+      ],
+      "verification": [
+        "verified whether the target requires talent-network vetting/login before accessing client gigs",
+        "proposed hourly/monthly rate aligns strictly with context/preferences.yaml floor without undercutting",
+        "draft-only pitch and explicit APPROVE gate enforced before any submission or public profile edit"
+      ],
+      "path": "skills/platforms/b2b-contract-networks.md"
     }
   ]
 }

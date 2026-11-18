@@ -280,3 +280,111 @@ targets:
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Service root is not a role search. Owner must supply a verified employer board/job link before enabling."
     live_verified: false
+
+  # Curated B2B & Remote Contract Networks (all disabled by default)
+  - name: "Toptal — Talent Portal (Vetted B2B)"
+    platform: "toptal"
+    enabled: false
+    url: "https://www.toptal.com/talent/dashboard"
+    auth_check_url: "https://www.toptal.com/users/login"
+    auth_required: true
+    max_results: 10
+    category: "B2B Contract"
+    search_url_template: "https://www.toptal.com/talent/job_postings"
+    query_parameters: {}
+    playbook: "skills/platforms/b2b-contract-networks.md"
+    automation_mode: "draft_only_or_vetted_member"
+    filter_notes: "Requires passed Toptal screening; agent pauses if onboarding/screening wall is detected."
+    live_verified: false
+
+  - name: "Braintrust — Talent Marketplace (0% Fee B2B)"
+    platform: "braintrust"
+    enabled: false
+    url: "https://app.usebraintrust.com/jobs/"
+    auth_check_url: "https://app.usebraintrust.com/login/"
+    auth_required: true
+    max_results: 15
+    category: "B2B Contract"
+    search_url_template: "https://app.usebraintrust.com/jobs/"
+    query_parameters:
+      q: "{{ROLE}}"
+    playbook: "skills/platforms/b2b-contract-networks.md"
+    automation_mode: "draft_only_and_approve_gate"
+    filter_notes: "Verify B2B rate floor via skills/09-offer-negotiator.md before proposing."
+    live_verified: false
+
+  - name: "Lemon.io — Startup Contract Network"
+    platform: "lemon"
+    enabled: false
+    url: "https://app.lemon.io/"
+    auth_check_url: "https://app.lemon.io/login"
+    auth_required: true
+    max_results: 10
+    category: "B2B Contract"
+    search_url_template: "https://app.lemon.io/"
+    query_parameters: {}
+    playbook: "skills/platforms/b2b-contract-networks.md"
+    automation_mode: "draft_only_or_vetted_member"
+    filter_notes: "Vetted network; requires completed Lemon.io screening before viewing client gigs."
+    live_verified: false
+
+  - name: "Gun.io — Senior Contract & Fractional Talent"
+    platform: "gunio"
+    enabled: false
+    url: "https://app.gun.io/"
+    auth_check_url: "https://app.gun.io/login/"
+    auth_required: true
+    max_results: 10
+    category: "B2B Contract"
+    search_url_template: "https://app.gun.io/"
+    query_parameters: {}
+    playbook: "skills/platforms/b2b-contract-networks.md"
+    automation_mode: "draft_only_and_approve_gate"
+    filter_notes: "Requires peer review/vetting; show exact hourly rate and pitch before any submission."
+    live_verified: false
+
+  - name: "Contra — Independent Freelance Network"
+    platform: "contra"
+    enabled: false
+    url: "https://contra.com/discover/projects"
+    auth_check_url: "https://contra.com/login"
+    auth_required: true
+    max_results: 15
+    category: "B2B Contract"
+    search_url_template: "https://contra.com/discover/projects?query={{ROLE}}"
+    query_parameters:
+      query: "{{ROLE}}"
+    playbook: "skills/platforms/b2b-contract-networks.md"
+    automation_mode: "draft_only_and_approve_gate"
+    filter_notes: "Draft project pitches <= 75 words; verify portfolio links via skills/11-portfolio-and-github-auditor.md."
+    live_verified: false
+
+  - name: "Arc.dev — Remote Tech & Contract Network"
+    platform: "arc"
+    enabled: false
+    url: "https://arc.dev/remote-jobs"
+    auth_check_url: "https://arc.dev/login"
+    auth_required: true
+    max_results: 15
+    category: "B2B Contract"
+    search_url_template: "https://arc.dev/remote-jobs/{{ROLE}}"
+    query_parameters: {}
+    playbook: "skills/platforms/b2b-contract-networks.md"
+    automation_mode: "draft_only_and_approve_gate"
+    filter_notes: "Open remote listings + vetted talent track; pause if technical assessment prompt appears."
+    live_verified: false
+
+  - name: "Turing — Remote Engineering Contracts"
+    platform: "turing"
+    enabled: false
+    url: "https://developers.turing.com/"
+    auth_check_url: "https://developers.turing.com/login"
+    auth_required: true
+    max_results: 10
+    category: "B2B Contract"
+    search_url_template: "https://developers.turing.com/"
+    query_parameters: {}
+    playbook: "skills/platforms/b2b-contract-networks.md"
+    automation_mode: "draft_only_or_vetted_member"
+    filter_notes: "Stop if Turing stack challenge / proctored test appears; owner must complete assessments personally."
+    live_verified: false

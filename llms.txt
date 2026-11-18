@@ -1,0 +1,41 @@
+# Job Hunter OS (`redasalem/job-hunter-os`)
+
+> 100% Zero-Code, Pure Markdown AI Agent Skills & MCP Playbook System for autonomous job discovery, ATS resume tailoring, anti-hallucination verification, and human-approved job applications. Works natively across 25+ AI coding apps & CLIs using Playwright MCP and optional Notion MCP.
+
+## Core Entrypoints
+
+- [AGENTS.md](AGENTS.md): Canonical rules, progressive disclosure protocol, strict daily-run execution order, and 10 non-negotiable guardrails.
+- [skills/REGISTRY.md](skills/REGISTRY.md): Complete 46-skill routing index ( triggers, preconditions, verification contracts).
+- [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 46 skills.
+- [PLATFORMS.md](PLATFORMS.md): Global job board, B2B contract network, regional portal, and employer ATS compatibility matrix.
+- [README.md](README.md): Quick start CLI (`npx job-hunter-os init --global`), MCP setup, and workflow guide.
+
+## Playbooks & Modular Skills
+
+- [Daily Run Orchestrator](skills/00-daily-run.md): Full `/daily-run` and `/apply-url` lifecycle orchestrator.
+- [Readiness Gatekeeper](skills/00-interrogate-and-onboard.md): 5-gate profile audit and batched chat onboarding (`/setup`).
+- [Resume Ingestion](skills/01-resume-ingestion.md): Pure-AI CV extraction and verification into structured JSON/Markdown.
+- [Discover & Triage](skills/02-discover-and-triage.md): Ghost-job filter, 0-10 fit scoring, and Mission Control dashboard table.
+- [Tailor Resume & Verify](skills/03-tailor-resume-and-verify.md): Anti-hallucination evidence mapping, anti-AI-slop humanizer, HTML-to-PDF rendering.
+- [Fill & Apply](skills/04-fill-and-apply.md): Upload-first form filling, EEO/GDPR compliance defaults, and job-bound `APPROVE` safety gate.
+- [Outreach & Interview Prep](skills/05-outreach-and-interview-prep.md): Interview dossier generation and draft-only `<= 75`-word outreach.
+- [Log & Insights](skills/06-log-and-insights.md): Local JSON ledger (`logs/`), optional Notion MCP sync, and `/weekly-report`.
+- [Persona Switcher](skills/07-persona-switcher.md): Multi-track career profiles under `context/personas/`.
+- [Follow-Up Radar](skills/08-follow-up-radar.md): 7-day stale application detector and humanized check-in drafts.
+- [Offer Negotiator](skills/09-offer-negotiator.md): Grounded B2B rate and salary counter-offer drafting (`DRAFT_ONLY`).
+- [Autonomous Scheduler Loop](skills/10-autonomous-scheduler-loop.md): Safe recurring discovery within `active_hours` and warm-up caps.
+- [Portfolio & GitHub Auditor](skills/11-portfolio-and-github-auditor.md): Pre-application audit of pinned repos, READMEs, and live URLs.
+- [Recruiter Inbox Triage](skills/12-recruiter-inbox-triage.md): Classify recruiter replies, update local logs, and draft interview slot replies.
+- [Company Due Diligence](skills/13-company-due-diligence.md): Domain authenticity check, layoff/churn signals, and `GREEN`/`YELLOW`/`RED` badges.
+- [Privacy & PII Shield](skills/14-privacy-pii-shield.md): PII redaction guardrails for screenshots, demos, logs, and git safety.
+- [Multilingual Adaptation](skills/15-multilingual-adaptation.md): Arabic (RTL), German, French, and Spanish resume & outreach localization.
+- [B2B Contract Networks](skills/platforms/b2b-contract-networks.md): Playbook for Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, and Turing.
+
+## Examples & Adapters
+
+- [Sandbox Demo Mode](examples/sandbox-demo/expected-mission-control.md): Try `/demo` in 15 seconds with zero personal data.
+- [Sample Interview Dossier](examples/outputs/sample-interview-dossier.md): Real generated prep packet example.
+- [Sample 75-Word Outreach](examples/outputs/sample-outreach-75-words.md): Real anti-slop hiring-manager draft.
+- [Sample Interrogation Transcript](examples/outputs/sample-interrogation-transcript.md): Readiness gate onboarding transcript.
+- [MCP Bundle Examples](mcp/mcp.template.json): Portable Playwright + optional Notion MCP configuration.
+- [Zero-Dependency CLI](bin/cli.mjs): Cross-platform installer supporting `--global`, `--project`, `--all`, and `status`.

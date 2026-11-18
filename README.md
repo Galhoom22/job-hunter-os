@@ -20,14 +20,17 @@ Zero external dependencies (`Node.js 18+` built-ins only) — works identically 
 
 ```bash
 # 1. Install skills globally (~/.job-hunter-os + ~/.agents/skills, ~/.claude/skills, ~/.cursor/rules, Antigravity) and sync Playwright MCP
-npx github:redasalem/job-hunter-os init --global
+npx job-hunter-os init --global
+# (Or run directly from GitHub source: npx github:redasalem/job-hunter-os init --global)
 
 # 2. Open Chrome/Chromium once with your dedicated local browser-profile/ to sign in to LinkedIn, Wellfound, and Wuzzuf
-npx github:redasalem/job-hunter-os login --global
+npx job-hunter-os login --global
 
 # 3. Verify OS, paths, readiness gates, and MCP config health
-npx github:redasalem/job-hunter-os doctor
+npx job-hunter-os doctor
 ```
+
+> **Want to test-drive in 15 seconds with zero personal data?** Run `/demo` inside any supported AI IDE (or inspect [`examples/sandbox-demo/`](examples/sandbox-demo/expected-mission-control.md) and [`examples/outputs/`](examples/outputs/sample-interview-dossier.md)) to see live Mission Control scoring, Company Health vetting, `<= 75`-word outreach drafts, and PII shielding without setting up `context/` first.
 
 > **CLI Commands:** `init [--global|-g] [--ide <name>]` · `update` · `doctor` · `login [--global]` · `sync-mcp [--global]`
 
@@ -121,10 +124,10 @@ Paste the exact configuration from [`mcp/mcp.template.json`](mcp/mcp.template.js
 
 ## 3. Modular `agent_skills` Architecture & Progressive Disclosure
 
-To keep the AI model fast and prevent blowing up the context window with **42 skills** at once, every skill follows the **`agentskills.io` / `SKILL.md` standard** (plus `.agents/skills/*/SKILL.md` auto-discovery) with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
+To keep the AI model fast and prevent blowing up the context window with **46 skills** at once, every skill follows the **`agentskills.io` / `SKILL.md` standard** (plus `.agents/skills/*/SKILL.md` auto-discovery) with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
 
 1. **Progressive Disclosure ([`skills/REGISTRY.md`](skills/REGISTRY.md) & [`skills/skills-manifest.json`](skills/skills-manifest.json)):** At the start of a session, the AI reads `AGENTS.md` and `skills/REGISTRY.md` only. It loads a specific skill's full Markdown playbook **only** when its trigger matches the active step.
-2. **Core & Career-Ops Playbooks (42-Skill Catalog):**
+2. **Core & Career-Ops Playbooks (46-Skill Catalog):**
    - [`skills/00-daily-run.md`](skills/00-daily-run.md) — End-to-end orchestrator for `/daily-run` and `/apply-url`.
    - [`skills/00-interrogate-and-onboard.md`](skills/00-interrogate-and-onboard.md) — **Pure-Chat Readiness Gatekeeper**: inspects `context/` directly, halts on placeholders/missing data, interviews you 3–4 questions at a time, and saves answers.
    - [`skills/01-resume-ingestion.md`](skills/01-resume-ingestion.md) — **Pure-AI CV Ingestion**: reads pasted text, Markdown, or local PDFs via Playwright MCP (`file:///`), confirms facts, and warns if a PDF is scanned/unreadable.
@@ -139,6 +142,9 @@ To keep the AI model fast and prevent blowing up the context window with **42 sk
    - [`skills/10-autonomous-scheduler-loop.md`](skills/10-autonomous-scheduler-loop.md) — **Scheduled `/loop` Runner**: executes recurring discovery & Tier A prep strictly inside `active_hours` and `warmup_mode`, pausing on `approve_before_submit`.
    - [`skills/11-portfolio-and-github-auditor.md`](skills/11-portfolio-and-github-auditor.md) — **GitHub & Portfolio Auditor**: checks pinned repos, README clarity, live demo links, and bio alignment before applying.
    - [`skills/12-recruiter-inbox-triage.md`](skills/12-recruiter-inbox-triage.md) — **Recruiter Inbox Triage**: classifies interview invites, assessments, and rejections, updates `logs/applications-log.json`, and drafts `DRAFT_ONLY` reply slots.
+   - [`skills/13-company-due-diligence.md`](skills/13-company-due-diligence.md) — **Company Due Diligence**: checks domain authenticity, layoff/repost churn, and red flags to assign a `GREEN`/`YELLOW`/`RED` Company Health badge.
+   - [`skills/14-privacy-pii-shield.md`](skills/14-privacy-pii-shield.md) — **Privacy & PII Shield**: redacts personal contact details, tokens, and cookies in demos, screenshots, logs, and commits.
+   - [`skills/15-multilingual-adaptation.md`](skills/15-multilingual-adaptation.md) — **Multilingual & RTL Adaptation**: localizes resumes and `<= 75`-word outreach across English, Arabic (RTL `dir="rtl"`), German, French, and Spanish with zero factual drift.
 3. **Four Agent Reliability Meta-Skills:**
    - [`skills/meta-self-verification.md`](skills/meta-self-verification.md) — Forbids reporting `"applied"` or `"updated"` without a fresh post-click `browser_snapshot` receipt quote.
    - [`skills/meta-dom-recovery.md`](skills/meta-dom-recovery.md) — Recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded job lists.
@@ -252,9 +258,10 @@ Read [`context/targets.yaml.example`](context/targets.yaml.example) for the comp
 | ZipRecruiter | Global | `https://www.ziprecruiter.com/jobs-search?search={{ROLE_ENCODED}}&days=1` | [ziprecruiter.md](skills/platforms/ziprecruiter.md) |
 | Wuzzuf | MENA | `https://wuzzuf.net/search/jobs/?q={{ROLE_ENCODED}}&a=hpb` | [wuzzuf.md](skills/platforms/wuzzuf.md) |
 | Bayt | MENA | `https://www.bayt.com/en/international/jobs/{{ROLE_SLUG}}-jobs/` | [bayt.md](skills/platforms/bayt.md) |
+| Toptal / Braintrust / Lemon.io / Gun.io / Contra / Arc.dev / Turing | B2B Contract | Curated client project portals + rate-card floor checks | [b2b-contract-networks.md](skills/platforms/b2b-contract-networks.md) |
 | Greenhouse / Lever / Ashby | ATS | Direct employer boards or Google dorks (`site:boards.greenhouse.io`, `site:jobs.lever.co`, `site:jobs.ashbyhq.com`) + JSON feeds | [ats-engines.md](skills/platforms/ats-engines.md) |
 
-Engine playbooks: [greenhouse.md](skills/ats/greenhouse.md), [lever.md](skills/ats/lever.md), [ashby.md](skills/ats/ashby.md), [smartrecruiters.md](skills/ats/smartrecruiters.md), [breezyhr.md](skills/ats/breezyhr.md), [workday.md](skills/ats/workday.md), [taleo.md](skills/ats/taleo.md).
+See [`PLATFORMS.md`](PLATFORMS.md) for the complete regional matrix (North America, Europe, MENA, APAC, LATAM, B2B Contract Networks, and ATS engines). Engine playbooks: [greenhouse.md](skills/ats/greenhouse.md), [lever.md](skills/ats/lever.md), [ashby.md](skills/ats/ashby.md), [smartrecruiters.md](skills/ats/smartrecruiters.md), [breezyhr.md](skills/ats/breezyhr.md), [workday.md](skills/ats/workday.md), [taleo.md](skills/ats/taleo.md).
 
 ### How to Add a New Job Platform (2-Minute Playbook)
 1. Copy [`skills/platforms/_template.md`](skills/platforms/_template.md) to `skills/platforms/<board>.md` and document its search URL pattern, accessible job-card/JD expansion labels, apply trigger, and receipt confirmation text.
@@ -285,6 +292,7 @@ Reply APPLY ALL GREEN, APPLY 1, or tell me which CV to tweak before I open any f
 
 | Command | Workflow | What it does |
 |---|---|---|
+| `/demo` | [`.agent/workflows/demo.md`](.agent/workflows/demo.md) | 15-second zero-setup sandbox simulation using [`examples/sandbox-demo/`](examples/sandbox-demo/expected-mission-control.md) |
 | `/setup` | [`.agent/workflows/setup.md`](.agent/workflows/setup.md) | Runs readiness audit, CV ingestion, 3–4-question interview, and headed Playwright login |
 | `/daily-run` | [`.agent/workflows/daily-run.md`](.agent/workflows/daily-run.md) | Full gated run: readiness -> auth -> discovery/ghost check -> Mission Control -> tailor -> fill/approve -> dossier/log |
 | `/tailor-cv URL` | [`.agent/workflows/tailor-cv.md`](.agent/workflows/tailor-cv.md) | Tailors CV + fact-check + humanizer + `interview-dossier.md` for one URL (never applies) |
@@ -347,7 +355,9 @@ Every major AI IDE, CLI harness, desktop client, and LLM family works out of the
 | [`AGENTS.md`](AGENTS.md), [`GEMINI.md`](GEMINI.md), [`CLAUDE.md`](CLAUDE.md), [`WARP.md`](WARP.md), [`CRUSH.md`](CRUSH.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
 | [`bin/cli.mjs`](bin/cli.mjs), [`scripts/`](scripts/install.sh) | Zero-dependency cross-platform CLI installer (`init`, `update`, `doctor`, `login`, `sync-mcp`) and OS one-liners |
 | [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | Official `agentskills.io` auto-discovery mirror (`/skills` in VS Code, Cursor, Codex, OpenCode, Goose, Zed) |
-| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, 42-skill catalog (`00–12`, `fallback-no-mcp`, 4 `meta-*`, 16 platforms, 7 ATS) |
+| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, 46-skill catalog (`00–15`, `fallback-no-mcp`, 4 `meta-*`, 17 platforms, 7 ATS) |
+| [`PLATFORMS.md`](PLATFORMS.md), [`llms.txt`](llms.txt) | Global regional/B2B/ATS compatibility matrix + LLM-native discovery map (`llmstxt.org`) |
+| [`examples/`](examples/sandbox-demo/expected-mission-control.md) | 15-second `/demo` sandbox fixture and real generated outputs ([dossier](examples/outputs/sample-interview-dossier.md), [75-word outreach](examples/outputs/sample-outreach-75-words.md), [interrogation transcript](examples/outputs/sample-interrogation-transcript.md)) |
 | [`adapters/`](adapters/models/claude.md) | Model tuning guides (`adapters/models/`) and app/harness adapters (`adapters/apps/`) |
 | [`.agent/workflows/`](.agent/workflows/daily-run.md), [`commands/`](commands/daily-run.md), [`.github/prompts/`](.github/prompts/daily-run.prompt.md) | Portable slash-command & prompt entrypoints across 25+ AI apps |
 | [`context/`](context/DROP_YOUR_FILES_HERE.md) | Synthetic `.example` templates (`profile.md.example`, `form-answers.yaml.example`, `targets.yaml.example`, etc.); real files & `personas/` stay private |

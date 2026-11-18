@@ -54,6 +54,9 @@
     ".openhands/",
     ".augment/",
     "opencode.json",
+    "examples/",
+    "llms.txt",
+    "PLATFORMS.md",
     "LICENSE",
     "README.md"
   ],

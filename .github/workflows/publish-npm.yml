@@ -1,0 +1,36 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Validate & Publish CLI Package
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Verify zero-dependency CLI & package syntax
+        run: |
+          node --check bin/cli.mjs
+          node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8')); if(Object.keys(p.dependencies||{}).length || Object.keys(p.devDependencies||{}).length) { process.exit(1); }"
+
+      - name: Publish to npm (when NPM_TOKEN secret is configured)
+        if: ${{ env.NPM_TOKEN != '' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public

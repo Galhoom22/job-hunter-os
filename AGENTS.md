@@ -68,6 +68,10 @@ At the start of every session, read `AGENTS.md` and `skills/REGISTRY.md` first. 
   - `skills/10-autonomous-scheduler-loop.md` — Scheduled `/loop` runner within `active_hours` & warm-up caps
   - `skills/11-portfolio-and-github-auditor.md` — Pre-application GitHub & live portfolio audit
   - `skills/12-recruiter-inbox-triage.md` — Recruiter reply triage, status update & slot drafting
+  - `skills/13-company-due-diligence.md` — Tier A employer health badge, churn & scam vetting
+  - `skills/14-privacy-pii-shield.md` — PII & credential redaction for demos, logs & commits
+  - `skills/15-multilingual-adaptation.md` — Arabic (RTL), German, French & Spanish CV localization
+  - `skills/platforms/b2b-contract-networks.md` — Curated B2B contract networks (Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing)
   - `skills/fallback-no-mcp.md` — Non-MCP web chat fallback (ChatGPT / Claude Web / Gemini Web)
 - **Auto-discovery mirror:** `.agents/skills/*/SKILL.md` (`agentskills.io` compatible wrappers pointing to `skills/`).
 - **Model tuning guides:** `adapters/models/claude.md`, `adapters/models/gemini.md`, `adapters/models/openai.md`, `adapters/models/deepseek-qwen-local.md`, `adapters/models/grok-and-kimi.md`, `adapters/models/mistral-and-llama.md`.

@@ -4,6 +4,7 @@ Read [AGENTS.md](./AGENTS.md) and [skills/REGISTRY.md](./skills/REGISTRY.md) fir
 
 This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**. Execute workflows directly using your file tools, Playwright MCP, and optional Notion MCP:
 - `/setup` or "Check my folder" -> `skills/00-interrogate-and-onboard.md` + `skills/01-resume-ingestion.md`
+- `/demo` -> `.agent/workflows/demo.md` + `examples/sandbox-demo/expected-mission-control.md`
 - `/daily-run` or `/apply-url <url>` -> `skills/00-daily-run.md`
 - `/tailor-cv <url>` -> `skills/03-tailor-resume-and-verify.md`
 - `/weekly-report` -> `skills/06-log-and-insights.md`
@@ -14,5 +15,8 @@ This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**.
 - Scheduled `/loop` -> `skills/10-autonomous-scheduler-loop.md`
 - Portfolio/GitHub audit -> `skills/11-portfolio-and-github-auditor.md`
 - Recruiter inbox triage -> `skills/12-recruiter-inbox-triage.md`
+- Company due diligence -> `skills/13-company-due-diligence.md`
+- Privacy & PII redaction shield -> `skills/14-privacy-pii-shield.md`
+- Multilingual CV adaptation -> `skills/15-multilingual-adaptation.md`
 
 See `adapters/models/gemini.md` for Gemini-specific multimodal & snapshot verification guidance. Respect `dry_run: true`, verified facts only, caps, and explicit `APPROVE` gates.
