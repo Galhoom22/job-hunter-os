@@ -7,11 +7,15 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
     name: Validate & Publish CLI Package
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
@@ -24,14 +28,15 @@ jobs:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Verify zero-dependency CLI, package syntax & Skill Eval Harness Reference Baseline
+      - name: Verify zero-dependency CLI, package syntax & Skill Eval Harness
         run: |
           node --check bin/cli.mjs
           node ./bin/cli.mjs eval --baseline
+          node ./bin/cli.mjs eval --file evals/results/live-agent-eval-run.json
           node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8')); if(Object.keys(p.dependencies||{}).length || Object.keys(p.devDependencies||{}).length) { process.exit(1); }"
 
-      - name: Publish to npm (when NPM_TOKEN secret is configured)
+      - name: Publish to npm with OIDC Sigstore Provenance (when NPM_TOKEN secret is configured)
         if: ${{ env.NPM_TOKEN != '' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: npm publish --provenance --access public

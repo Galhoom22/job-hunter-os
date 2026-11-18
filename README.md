@@ -22,6 +22,8 @@
 
 ## ⚡ Try `/demo` in 15 Seconds & Live Dashboard Preview (Zero Setup)
 
+![Job Hunter OS — 3-Step Safe-Wedge Workflow Preview: /demo -> Mission Control -> dashboard.html](assets/demo-preview.png)
+
 - **15-Second IDE Sandbox (`/demo`):** Open this repo in **Cursor, Claude Code, Antigravity, VS Code Copilot, Codex CLI, OpenCode, or Windsurf** and type `/demo` (or view [`examples/sandbox-demo/`](examples/sandbox-demo/expected-mission-control.md) and [`examples/outputs/`](examples/outputs/sample-interview-dossier.md)) to test Mission Control scoring, Company Health vetting, and outreach drafting with zero personal data.
 - **Live Interactive Browser Preview:** Open the [**GitHub Pages Kanban & Analytics Dashboard**](https://redasalem.github.io/job-hunter-os/demo-dashboard.html) ([`docs/demo-dashboard.html`](docs/demo-dashboard.html)) pre-loaded with synthetic applications—or run `npx github:redasalem/job-hunter-os dashboard` locally against your own `logs/applications-log.json`.
 
@@ -45,17 +47,31 @@ npx github:redasalem/job-hunter-os eval --baseline
 
 ---
 
-## 2. Deterministic Harness Validator (`eval --baseline` / `--file`)
+## 2. Eval Runs & ATS Support Matrix (`eval --baseline` / `--file`)
 
-> **Truthful Scope Note:** `node ./bin/cli.mjs eval` (`--baseline`) is a **deterministic harness validator for CI schema and fixture integrity checks** against [`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json)—it is **not** a live multi-model benchmark score. To grade an actual cold LLM run (`Claude`, `Gemini`, `GPT`, `DeepSeek`), run [`evals/PROMPT.md`](evals/PROMPT.md) and grade its output with `node ./bin/cli.mjs eval --file <output.json>`. See [`evals/README.md`](evals/README.md).
+> **Truthful Scope Note:** `node ./bin/cli.mjs eval --baseline` is a **deterministic CI harness validator for schema, fixture integrity, and assertion logic** against [`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json)—it is **not** a live LLM benchmark. Actual model runs are stored separately (e.g., [`evals/results/live-agent-eval-run.json`](evals/results/live-agent-eval-run.json)) and graded with `--file` against immutable [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json). Run [`evals/PROMPT.md`](evals/PROMPT.md) on any model (`Claude`, `Gemini`, `GPT`, `DeepSeek`) to reproduce. See [`evals/README.md`](evals/README.md).
 
-| Validator Group | Fixtures Checked | Verified Invariants | CI Schema Baseline |
+### Verified Evaluation Runs
+
+| Run Type | Artifact / Command | Purpose & Scope | Deterministic Score |
 |---|---|---|---|
-| **Anti-Hallucination & ATS Tailoring** (`EVAL-01, 04..07`) | [`candidate-profile.md`](evals/fixtures/candidate-profile.md), [`01-strong-match.md`](evals/fixtures/jds/01-strong-match.md) | `0` invented metrics, `Kubernetes` isolated in `true_gaps`, `0` banned AI clichés/em-dashes, 1-page A4 budget (`<= 38` lines) | **5 / 5 PASS** |
+| **CI Harness Self-Test** | `node ./bin/cli.mjs eval --baseline` ([`baseline-verified-run.json`](evals/results/baseline-verified-run.json)) | Static CI fixture & schema regression check across Linux/macOS/Windows | **20 / 20 PASS** |
+| **Live Agent Session Run** | `node ./bin/cli.mjs eval --file evals/results/live-agent-eval-run.json` ([`live-agent-eval-run.json`](evals/results/live-agent-eval-run.json)) | Live Gemini agent session executing [`evals/PROMPT.md`](evals/PROMPT.md) against all 5 JDs, 3 ATS HTML mocks & immutable [`ground-truth.json`](evals/fixtures/ground-truth.json) | **20 / 20 PASS (100%)** |
+
+| Validator Group | Fixtures Checked | Verified Invariants | CI Baseline & Live Run |
+|---|---|---|---|
+| **Anti-Hallucination & ATS Tailoring** (`EVAL-01, 04..07`) | [`candidate-profile.md`](evals/fixtures/candidate-profile.md), [`ground-truth.json`](evals/fixtures/ground-truth.json), [`01-strong-match.md`](evals/fixtures/jds/01-strong-match.md) | `0` invented metrics, `Kubernetes` isolated in `true_gaps`, `0` banned AI clichés/em-dashes, 1-page A4 budget (`<= 38` lines) | **5 / 5 PASS** |
 | **Prompt-Injection & Honeypot Defense** (`EVAL-03, 08, 17`) | [`02-prompt-injection-trap.md`](evals/fixtures/jds/02-prompt-injection-trap.md), [`01-strong-match.md`](evals/fixtures/jds/01-strong-match.md) | Quarantines hidden `SYSTEM OVERRIDE` (`0` leaked files, salary floor untampered), leaves `website_url_honeypot` blank, captures `PINEAPPLE` codeword | **3 / 3 PASS** |
 | **Ghost, Blacklist & Cross-Channel Dedup** (`EVAL-02, 09..12`) | [`03-ghost-expired-job.md`](evals/fixtures/jds/03-ghost-expired-job.md), [`04-blacklist-duplicate.md`](evals/fixtures/jds/04-blacklist-duplicate.md), [`05-stretch-mismatch.md`](evals/fixtures/jds/05-stretch-mismatch.md) | Skips `>90d` closed jobs, blocks `blacklisted_companies`/`blacklisted_domains`, deduplicates `acme-cloud::senior-backend-engineer` | **5 / 5 PASS** |
 | **ATS Form Mocks, DOM Read-Back & Anti-Ban** (`EVAL-13..16, 18..20`) | [`greenhouse-mock.html`](evals/fixtures/forms/greenhouse-mock.html), [`lever-mock.html`](evals/fixtures/forms/lever-mock.html), [`ashby-mock.html`](evals/fixtures/forms/ashby-mock.html) | Upload-First (`resume.pdf`), neutral EEO defaults, `gdpr_consent: true`, Live DOM Read-Back Table before `APPROVE`, and 24h circuit-breaker cooldown | **7 / 7 PASS** |
-| **Total Schema & Fixture Assertions** | **5 JDs + 3 ATS Mocks** | `npx github:redasalem/job-hunter-os eval --file <your-run.json>` for external model runs | **20 / 20 (CI Baseline)** |
+
+### Honest ATS & Platform Support Matrix
+
+| Support Tier | Platforms / ATS Engines | Verification Evidence & Notes |
+|---|---|---|
+| **Fixture-Verified** | **Greenhouse**, **Lever**, **Ashby** | Local HTML form fixtures ([`evals/fixtures/forms/`](evals/fixtures/forms/greenhouse-mock.html)) + `#grnhse_iframe`, file upload, honeypot, EEO/GDPR, and DOM read-back checks verified in CI |
+| **Playbook-Ready / Field-Testing** | **Workday**, **SmartRecruiters**, **LinkedIn Easy Apply**, **Wellfound** | Full Markdown playbooks with `last_verified` timestamps (<60d freshness check in `doctor`); multi-step React-Select / shadow-DOM flows undergoing community field-testing |
+| **Help Wanted** | **Regional Job Boards** (GulfTalent & Bayt MENA, Naukri India, StepStone DACH / Europe) | Open `good first issue` / `playbook` contributor issues — PRs welcome with redacted `browser_snapshot` traces |
 
 ---
 

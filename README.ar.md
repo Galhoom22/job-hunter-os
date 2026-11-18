@@ -21,6 +21,8 @@
 
 ## ⚡ جرّب `/demo` خلال 15 ثانية والمعاينة الحية (بدون إعداد)
 
+![معاينة دورة عمل job-hunter-os في 3 خطوات: /demo -> جدول Mission Control -> لوحة dashboard.html](assets/demo-preview.png)
+
 - **محاكاة `/demo` فورية:** افتح المستودع في **Cursor أو Antigravity أو Claude Code أو VS Code Copilot أو Codex CLI أو OpenCode** واكتب `/demo` (أو راجع [`examples/sandbox-demo/`](examples/sandbox-demo/expected-mission-control.md) و [`examples/outputs/`](examples/outputs/sample-interview-dossier.md)).
 - **معاينة لوحة التحكم في المتصفح:** [افتح لوحة Kanban والتحليلات عبر GitHub Pages](https://redasalem.github.io/job-hunter-os/demo-dashboard.html) ([`docs/demo-dashboard.html`](docs/demo-dashboard.html)) — أو شغّل `npx github:redasalem/job-hunter-os dashboard` محليًا.
 
@@ -42,16 +44,22 @@ npx github:redasalem/job-hunter-os eval --baseline
 
 ---
 
-## 2. فاحص التقييم القياسي في CI (`eval --baseline` / `--file`)
+## 2. نتائج التقييم الحية ومصفوفة دعم أنظمة ATS (`eval --baseline` / `--file`)
 
-> **توضيح مهم:** الأمر `eval --baseline` هو **فاحص حتمي في CI للتحقق من سلامة المخططات والنماذج المرجعية** ([`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json)) وليس نتيجة قياس لنموذج ذكاء اصطناعي حي. لاختبار أي نموذج خارجي فعليًا، استخدم [`evals/PROMPT.md`](evals/PROMPT.md) ثم نفّذ `node ./bin/cli.mjs eval --file <output.json>`. راجع [`evals/README.md`](evals/README.md).
+> **توضيح مهم:** الأمر `eval --baseline` هو **فاحص حتمي في CI للتحقق من سلامة المخططات والنماذج المرجعية** ([`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json)) وليس قياسًا لنموذج حي. أما جلسات التقييم الحية للنماذج فتُحفظ منفصلة مثل [`evals/results/live-agent-eval-run.json`](evals/results/live-agent-eval-run.json) وتُقيّم عبر `--file` مقابل ملف الحقيقة الثابت [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json). راجع [`evals/README.md`](evals/README.md).
 
-| مجموعة الفحص | ما يتم التحقق منه حتميًا | النتيجة المرجعية في CI |
+| نوع التقييم | الملف / الأمر | النطاق | النتيجة الحتمية |
+|---|---|---|---|
+| **فحص CI المرجعي (Baseline)** | `node ./bin/cli.mjs eval --baseline` | التحقق الحتمي من المخطط والـ 20 اختبارًا عبر Linux/macOS/Windows | **20 / 20 PASS** |
+| **تشغيل حي لنموذج ذكاء اصطناعي** | `node ./bin/cli.mjs eval --file evals/results/live-agent-eval-run.json` | جلسة Gemini حية نفذت [`evals/PROMPT.md`](evals/PROMPT.md) على 5 وظائف و3 نماذج ATS | **20 / 20 PASS (100%)** |
+
+### مصفوفة دعم منصات التوظيف وأنظمة ATS
+
+| مستوى الجاهزية | المنصات / أنظمة ATS | الحالة والأدلة |
 |---|---|---|
-| **منع الهلوسة (`EVAL-01, 04..07`)** | مطابقة الأرقام والمهارات في السيرة الذاتية، صفر كليشيهات، وضبط الصفحة الواحدة `A4` | `5 / 5 PASS` |
-| **الحماية من حقن الأوامر (`EVAL-03, 08, 17`)** | حظر `SYSTEM OVERRIDE` لتسريب `.env` أو تعديل الراتب، إبقاء `honeypot` فارغًا، والتقاط `PINEAPPLE` | `3 / 3 PASS` |
-| **الوظائف الوهمية والتكرار (`EVAL-02, 09..12`)** | استبعاد الوظائف المغلقة (`>90 يومًا`)، القائمة السوداء، والتكرار عبر المنصات (`company::role_title`) | `5 / 5 PASS` |
-| **نماذج ATS وقاطع الدائرة (`EVAL-13..20`)** | رفع PDF أولًا، قراءة الـ DOM قبل `APPROVE`، وتجميد المنصة 24 ساعة عند أي `CAPTCHA` | `7 / 7 PASS` |
+| **Fixture-Verified (مُختبرة بنماذج HTML محلية)** | **Greenhouse**، **Lever**، **Ashby** | نماذج محلية في [`evals/fixtures/forms/`](evals/fixtures/forms/greenhouse-mock.html) تشمل رفع السيرة أولًا، مصيدة الـ `honeypot`، وقراءة الـ `DOM` قبل `APPROVE` |
+| **Playbook-Ready / Field-Testing** | **Workday**، **SmartRecruiters**، **LinkedIn Easy Apply**، **Wellfound** | كتيبات Markdown كاملة مع فحص حداثة `<60 يومًا` في `doctor` وتحت الاختبار الميداني المستمر |
+| **Help Wanted (مساهمات مفتوحة)** | **بوابات التوظيف الإقليمية** (`GulfTalent` و `Bayt`، `Naukri` الهند، `StepStone` أوروبا) | قضايا `good first issue` مفتوحة للمساهمين |
 
 ---
 
@@ -71,7 +79,7 @@ npx github:redasalem/job-hunter-os eval --baseline
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — المعمارية ودورة حياة التنفيذ.
 - [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) — التوافق مع أكثر من 25 محررًا ونموذجًا.
 - [`PLATFORMS.md`](PLATFORMS.md) — مصفوفة منصات التوظيف العالمية والعربية (`Wuzzuf`، `Bayt`، `LinkedIn`) وشبكات عقود `B2B`.
-- [`HIRED.md`](HIRED.md) & [`CHANGELOG.md`](CHANGELOG.md) — سجل قصص النجاح وتاريخ الإصدارات (`v1.2.2`).
+- [`HIRED.md`](HIRED.md) & [`CHANGELOG.md`](CHANGELOG.md) — سجل قصص النجاح وتاريخ الإصدارات (`v1.2.3`).
 
 مرخص تحت رخصة [MIT](LICENSE) — Reda Salem (`redasalem`).
 

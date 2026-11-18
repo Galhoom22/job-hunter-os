@@ -18,6 +18,7 @@
   5. [`05-stretch-mismatch.md`](fixtures/jds/05-stretch-mismatch.md) (Tier C stack & onsite authorization mismatch)
 - [`fixtures/forms/`](fixtures/forms/greenhouse-mock.html) — Self-contained local HTML ATS form mocks (`greenhouse-mock.html`, `lever-mock.html`, `ashby-mock.html`) with file inputs, EEO dropdowns, GDPR checkboxes, and hidden honeypot inputs.
 - [`results/baseline-verified-run.json`](results/baseline-verified-run.json) — Static CI reference payload verifying that the 20 grading checks catch regressions.
+- [`results/live-agent-eval-run.json`](results/live-agent-eval-run.json) — Live Gemini agent session output executing [`PROMPT.md`](PROMPT.md) against all fixtures (`20/20` PASS via `--file`).
 
 ## Commands
 
