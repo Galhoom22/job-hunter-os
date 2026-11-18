@@ -6,6 +6,10 @@ export const RuntimeControls = z.object({
  active_hours: z.object({ start: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), end: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), timezone: z.string().refine(v=>{try {new Intl.DateTimeFormat("en",{timeZone:v}); return true} catch{return false}},"Invalid timezone") }).default({start:"09:00",end:"20:00",timezone:"UTC"}),
  human_behavior: z.object({ action_delay_seconds: z.tuple([z.number().min(3).max(9),z.number().min(3).max(9)]).refine(([a,b])=>a<=b), scroll_jitter: z.boolean(), max_consecutive_actions: z.number().int().min(1).max(30), cooldown_seconds: z.number().int().min(60) }).default({action_delay_seconds:[3,9],scroll_jitter:false,max_consecutive_actions:15,cooldown_seconds:60}),
  storage_adapters: StorageAdapters.default({local_json:true,notion_mcp:false,csv_export:true,markdown_report:true}),
+ // Two-phase triage: scan/score/pre-render a batch, show the Mission Control table, then wait for the owner's APPLY reply.
+ workflow_mode: z.enum(["batch_review_first","direct_auto"]).default("batch_review_first"),
+ batch_size: z.number().int().min(1).max(20).default(10),
+ pregenerate_stretch_resumes: z.boolean().default(false),
 });
 export type RuntimeControls = z.infer<typeof RuntimeControls>;
 export function effectiveDailyCap(max: number, warmup: RuntimeControls["warmup_mode"], today: string) {

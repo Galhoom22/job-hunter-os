@@ -81,7 +81,7 @@ The orchestrator is `skills/00-daily-run.md`. Never reorder or skip steps 1–3.
    Count today's `applied` entries in `logs/applications-log.json` before every submit.
 5. **Dry run.** If `dry_run: true`, perform everything except the final Submit click; log status `dry_run`.
 6. **Idempotency.** Before applying, check `job_id` in `logs/applications-log.json`. Never apply twice.
-7. **Stop conditions.** CAPTCHA, 2FA, unexpected login wall, account warning, rate-limit banner,
+7. **Stop conditions.** CAPTCHA, 2FA challenge, account warning, rate-limit banner, an unresolved login wall,
    or 3 consecutive errors -> stop the run, log `aborted` with the reason, report.
 8. **Privacy.** Never print cookies, tokens or `.env` values. Never commit `browser-profile/`.
 9. **Minimum match.** Only apply when `match_score >= min_match_score`. Scores 5 to below the minimum -> `needs_review`; below 5 -> `skipped`.
@@ -100,15 +100,11 @@ All records follow `schemas/index.ts` (Zod). Status values:
 - `mcp/mcp.template.json` is the only MCP source; `npm run sync:mcp` generates IDE configs. Why: prevents drift between IDEs.
 
 ## Execution safety additions
-- Follow `docs/execution-safety.md` before every run. It governs locking, uncertain submissions, uploads, trust boundaries and background limitations.
-- Score >=7 is eligible; 5 to below minimum needs_review; <5 skipped. Safety always overrides eligibility.
-- Synthetic data lives in `demo/`; development-only filesystem reads and writes use server functions. Why: hosted public views must never bundle private files.
-- Shared contracts and local locks enforce safety; browser runs require an authorized local process.
-
-- Onboarding and storage use shared runtime contracts; Notion is opt-in, JSON always primary. Why: local operation must not require a third-party tracker.
-- Agent tailoring may rephrase verified facts with an evidence map; optional renderer only reorders exact sentences. Why: preserve meaning without fabrication.
-- Before every action/submission apply active hours, progressive warm-up and cooldown rules in docs/execution-safety.md; no stealth or evasion.
-
+- Follow `docs/execution-safety.md` before every run (locks, uncertain submissions, uploads, trust boundaries, active hours, warm-up, cooldown; no stealth or evasion).
+- Synthetic data lives in `demo/`; dev-only filesystem access uses server functions. Why: hosted views must never bundle private files.
+- Onboarding/storage use shared runtime contracts; Notion opt-in, JSON primary. Why: no third-party tracker required.
+- Tailoring rephrases verified facts with an evidence map; renderers never add facts. Why: no fabrication.
+- Triage tiers (A 8–10, B 5–<8, C <5/dealbreaker) and APPLY replies use schemas/agent-policy.ts; batch mode waits for the owner. Why: no blind applies.
 
 ## Chat-first product and commands
 - Markdown skills/prompts/templates/MCP are the product; leave src/ untouched. Why: no web application is required.
@@ -116,3 +112,4 @@ All records follow `schemas/index.ts` (Zod). Status values:
 - Readiness uses shared bin/readiness.mjs and schemas/readiness.schema.json. Why: doctor/preflight must block stale or unverified facts.
 - Use schemas/agent-policy.ts before submissions: first three distinct authorized run dates cap at 5 alongside calendar warm-up. Why: idle days cannot bypass caution.
 - CLI uses Node built-ins; submits use approval-gate.md. Why: portability and explicit consent.
+- CV intake/rendering: bin/cv-tools.mjs + bin/resume-data.mjs (parse-cv, render-cv); flows in skills/01-resume-ingestion.md and fill-form-answers.md traps. Why: works when models cannot read binaries.

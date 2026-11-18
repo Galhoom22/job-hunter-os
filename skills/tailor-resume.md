@@ -16,17 +16,47 @@ Draft a 2–3 sentence professional summary using only verified claims. Rephrase
 
 For every rewritten sentence record source fact IDs/quotes in `logs/resumes/<job-slug>-<job-id>-evidence.md`. Compare meaning back to the source; if it broadens a claim, revert. New user-supplied facts need confirmation and belong in base context before reuse. Ambiguous phrasing → ask the owner, do not silently certify it. The deterministic fallback renderer reorders exact verified sentences only; do not describe that helper as a generative rewrite.
 
-## 3. Local ATS HTML
-Copy templates/ats-resume-template.html into `logs/resumes/<company>-<role>-<stable-id>.html` using a sanitized slug (no path separators/traversal). Keep names in document text even if the filename is transliterated. Add a stable posting identifier to avoid overwriting two similar roles.
+## 3. One folder per job, every format
+Write all artifacts for one posting into `logs/resumes/<company-slug>-<role-slug>-<job-id-slug>/` (sanitized ASCII slugs, no path separators/traversal; the job ID suffix prevents two similar roles from colliding). Keep real names in document text even when the folder name is transliterated.
 
-Replace each slot with escaped text or agent-generated fixed semantic markup; escape &, <, >, quotes in all source text. Contact links must be owner-provided HTTPS/mailto links. No JavaScript, remote fonts/images, hidden keywords, tables, columns, icons or tracking. Omit absent sections instead of leaving placeholders. Keep professional summary, skills, chronological experience, relevant projects and education in a single reading order.
+Preferred path (deterministic, dependency-free): write a private render payload `payload.json` in that folder = the verified `context/resume-data.json` fields, with only these per-job changes: `summary` rewritten from verified facts, `skills_order` (existing skills only), bullets reordered/rephrased per the evidence map, plus `target: {company, role, job_id}` and `tailoring_notes: {jd_asked[], changes[], gaps[]}`. Then run:
 
-## 4. PDF capability and inspection
-Follow mcp-capabilities.md: if an actual Playwright MCP PDF/print tool is exposed, open the generated local HTML only when permitted by that tool's local-file access policy and render A4 to `logs/resumes/<company>-<role>-<stable-id>.pdf`. Do not relax security flags just to open a file. If local-file access is unavailable, use an approved IDE-local print facility or the existing verified-fact `npm run resume:render` helper. Manual Print → Save as PDF is an owner-controlled fallback. No hosted backend or new remote rendering service.
+```
+node bin/job-hunter.mjs render-cv logs/resumes/<folder>/payload.json
+```
 
-Confirm the PDF exists, begins `%PDF-`, has readable selectable text, correct contact facts, no placeholders/cut-off bullets/blank pages, and matches this employer/role's evidence map. Inspect every page, not only a first-page screenshot. If no local PDF inspection capability exists, ask for human inspection and leave the application needs_review. Validate logs after artifact writes; keep artifacts private. Record exact absolute PDF path and source job URL in the journal's notes; never invent new Application fields.
+It refuses unverified data (`owner_verified` must be true), placeholders, scripts or remote resources, then writes:
 
-## 5. Upload exactly this artifact
-Use the fresh form's accessible resume chooser and actual MCP upload tool. Upload the recorded per-job PDF (never a cached/base resume), then snapshot the form and verify the displayed filename and successful attachment. Missing or ambiguous upload → needs_review, screenshot, ask the owner. Tailoring failure never silently falls back to the base PDF when enabled.
+| File | Use it when the portal… |
+|---|---|
+| `resume.pdf` | asks for a file (default). Single column, Arial, A4, verified under 200 KB and text-selectable. |
+| `resume.docx` | strictly requires Word `.docx`. Real Office Open XML, plain paragraphs. |
+| `resume.doc` | requires legacy `.doc`; Word-compatible HTML with `urn:schemas-microsoft-com:office:word` headers. Prefer `.docx` when both are accepted. |
+| `resume.txt` | says "paste your plain-text resume" — paste its contents, do not upload. |
+| `resume.html` | is the source; also the manual Print → Save as PDF fallback. |
+| `tailoring-notes.md` | is for the owner: JD asked → what changed → gaps. |
+| `resume.render-report.json` | records paths, PDF size and PDF text check. |
 
-Standalone tailoring ends with the PDF path, evidence/gaps and a chat summary; it never applies. Application flow returns to the final safety gate with the verified path, and dry run still never submits.
+Exit codes: 0 ok; 2 PDF not produced (no local Chromium — use the MCP print/PDF tool or ask the owner to print the HTML); 4 PDF over 200 KB or unreadable (do not upload). Hand-written tailored HTML (from `templates/ats-resume-template.html`) can be rendered the same way: `render-cv logs/resumes/<folder>/resume.html` writes the other formats next to it.
+
+Template rules: escape &, <, >, quotes in all source text. Contact links only owner-provided HTTPS/mailto. No JavaScript, remote fonts/images, hidden keywords, tables, columns, icons or tracking. Omit absent sections instead of leaving placeholders. Single reading order: summary, skills, experience, projects, education.
+
+## 4. Cover letters (only when the portal asks for one)
+Text box → 2–3 grounded sentences per skills/grounded-answer.md. File upload required → write about 200 words (renderer accepts 80–250) in 3–4 paragraphs, using only verified facts and the job text; no invented enthusiasm claims about the employer's internal facts. Show the exact text in chat and get the owner's approval, then write `logs/resumes/<folder>/cover-letter.json`:
+
+```json
+{ "document": "cover_letter", "owner_approved": true, "full_name": "...", "contact_text": "email · phone · city",
+  "target": { "company": "...", "role": "...", "job_id": "..." }, "paragraphs": ["...", "...", "..."], "sign_off": "Kind regards," }
+```
+
+`render-cv logs/resumes/<folder>/cover-letter.json --out-dir logs/resumes/<folder>` produces `cover-letter.pdf`, `.docx`, `.doc`, `.txt` and `.html` from `templates/ats-cover-letter-template.html`. Optional cover letters stay empty unless the owner permits them.
+
+## 5. PDF capability and inspection
+If render-cv cannot produce a PDF, follow mcp-capabilities.md: use an actual Playwright MCP PDF/print tool on the local HTML only when its file-access policy permits; otherwise the existing `npm run resume:render` helper or owner-controlled Print → Save as PDF. Do not relax security flags. No hosted backend or new remote rendering service.
+
+Confirm the PDF begins `%PDF-`, has selectable text (`node bin/job-hunter.mjs parse-cv <pdf>` must exit 0), correct contact facts, no placeholders/cut-off bullets/blank pages, and matches this job's evidence map. Inspect every page. If inspection is impossible, ask the owner and leave the application needs_review. Validate logs after artifact writes; keep artifacts private. Record the exact absolute folder path and source job URL in the journal notes; never invent new Application fields.
+
+## 6. Upload exactly this artifact
+Follow skills/fill-form-answers.md (upload FIRST, absolute paths, hidden dropzones). Upload this job's file (never a cached/base resume when tailoring is enabled), then snapshot and verify the displayed filename. Missing or ambiguous upload → needs_review, screenshot, ask the owner. Tailoring failure never silently falls back to the base PDF.
+
+Standalone tailoring ends with the folder path, evidence/gaps and a chat summary; it never applies. Application flow returns to the final safety gate with the verified path, and dry run still never submits.

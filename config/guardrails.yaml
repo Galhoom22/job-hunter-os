@@ -32,6 +32,11 @@ stop_on_captcha: true
 review_min_score: 5
 stop_on_2fa: true
 tailor_resume_per_job: true
+# batch_review_first: scan a batch, pre-generate tailored CV files, show the Mission Control table and wait for APPLY ALL GREEN / APPLY 1,3.
+# direct_auto: legacy one-by-one flow. Both still obey dry_run, approval_mode, caps and every stop rule.
+workflow_mode: batch_review_first
+batch_size: 10
+pregenerate_stretch_resumes: false
 warmup_mode:
   # Also cap the first three distinct non-aborted run dates at 5; see agent-policy.ts.
   enabled: true

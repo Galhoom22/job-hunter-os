@@ -27,7 +27,7 @@ Web ChatGPT, Claude and Gemini may have no MCP/local file tools. Stop automated 
   "dry_run": true,
   "unknown_questions": 0,
   "has_essay": false,
-  "resume_path": "logs/resumes/company-role-stable-id.pdf",
+  "resume_path": "logs/resumes/company-role-stable-id/resume.pdf",
   "safety": { "readiness_verified": false, "caps_and_duplicates_checked": false, "resume_verified": false },
   "answers": [{ "label": "Full name", "value": "Owner-confirmed name", "verified": true }]
 }

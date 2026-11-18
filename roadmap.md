@@ -1,5 +1,14 @@
 # Repository readiness audit
 
+## Bulletproof resume intake, multi-format CVs and batch triage
+- [x] Add resume ingestion playbook and dependency-free `parse-cv` (text, PDF, DOCX, unreadable/scanned detection).
+- [x] Add structured resume data schema/example and validator for deterministic repeater fields.
+- [x] Add `render-cv` (HTML/JSON -> HTML, PDF when Chromium exists, Word .doc, TXT) and cover-letter template; per-job folders with tailoring notes.
+- [x] Rewrite form-filling rules for the five upload/autocomplete/session traps; reconcile mid-run login-wall pause with stop rules.
+- [x] Add two-phase batch triage (workflow_mode, Tier A/B/C, skipped-jobs log, Mission Control table, APPLY replies) and Easy Apply vs external-tab handling.
+- [x] Update AGENTS.md, README and tests; save without src changes.
+- [ ] Live portal behaviour (auto-parse overwrites, cross-origin dropzones, autocomplete, mid-run session expiry, real Easy Apply/redirect tabs): needs owner sessions and real job forms; only synthetic files and local renders were tested.
+
 ## Three-tier browser companion and approval workflow
 - [x] Add a no-build MV3 companion with extraction, reviewed autofill and single-use approval-only submission/profile staging.
 - [x] Add approval policy contracts, private validated prompt bundling and MCP/web-chat/profile/resume skills.

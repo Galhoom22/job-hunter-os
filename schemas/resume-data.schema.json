@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/redasalem/job-hunter-os/schemas/resume-data.schema.json",
+  "title": "Structured owner-verified resume data",
+  "description": "Discrete fields for deterministic form filling (split names, phone country code, location autocomplete, repeater sections). Mirrored by bin/resume-data.mjs. Only owner_verified:true data may be used in forms or rendered.",
+  "type": "object",
+  "required": ["owner_verified", "first_name", "last_name", "email", "phone_country_code", "phone_national", "city_autocomplete", "linkedin_url", "github_url", "portfolio_url", "work_history", "education", "skills_with_years"],
+  "properties": {
+    "owner_verified": { "type": "boolean" },
+    "verified_at": { "type": ["string", "null"], "format": "date-time" },
+    "source": { "type": "string", "description": "Where the facts came from, e.g. context/cv-extracted.txt or chat paste" },
+    "first_name": { "type": "string", "minLength": 1 },
+    "last_name": { "type": "string", "minLength": 1 },
+    "full_name": { "type": "string", "description": "Display name when it differs from first + last" },
+    "headline": { "type": "string" },
+    "summary": { "type": "string" },
+    "email": { "type": "string", "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" },
+    "phone_country_code": { "type": "string", "pattern": "^\\+[1-9]\\d{0,3}$" },
+    "phone_national": { "type": "string", "pattern": "^[0-9][0-9 ()-]*$", "description": "Local number without the country code" },
+    "city": { "type": "string" },
+    "country": { "type": "string" },
+    "city_autocomplete": { "type": "string", "minLength": 1, "maxLength": 80, "description": "Short text typed into location autocomplete fields" },
+    "city_autocomplete_match": { "type": "string", "description": "Exact option text to accept from the dropdown, e.g. 'Cairo, Egypt'" },
+    "linkedin_url": { "type": "string", "pattern": "^$|^https://([a-z0-9-]+\\.)?linkedin\\.com/" },
+    "github_url": { "type": "string", "pattern": "^$|^https://github\\.com/" },
+    "portfolio_url": { "type": "string", "pattern": "^$|^https://" },
+    "work_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["employer", "title", "start_date", "end_date", "current", "bullets"],
+        "properties": {
+          "employer": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "location": { "type": "string" },
+          "start_date": { "type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$" },
+          "end_date": { "type": ["string", "null"], "pattern": "^\\d{4}-(0[1-9]|1[0-2])$" },
+          "current": { "type": "boolean" },
+          "bullets": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["institution", "degree"],
+        "properties": {
+          "institution": { "type": "string", "minLength": 1 },
+          "degree": { "type": "string" },
+          "field_of_study": { "type": "string" },
+          "start_date": { "type": ["string", "null"], "pattern": "^\\d{4}(-(0[1-9]|1[0-2]))?$" },
+          "end_date": { "type": ["string", "null"], "pattern": "^\\d{4}(-(0[1-9]|1[0-2]))?$" },
+          "grade": { "type": "string" }
+        }
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": { "type": "object", "required": ["name", "bullets"], "properties": { "name": { "type": "string", "minLength": 1 }, "url": { "type": "string", "pattern": "^https://" }, "bullets": { "type": "array", "items": { "type": "string" } } } }
+    },
+    "skills_with_years": { "type": "object", "additionalProperties": { "type": "number", "minimum": 0, "maximum": 60 } },
+    "skills_order": { "type": "array", "items": { "type": "string" }, "description": "Per-job ordering; may only contain keys of skills_with_years" },
+    "languages": { "type": "array", "items": { "type": "object", "properties": { "language": { "type": "string" }, "proficiency": { "type": "string" } } } },
+    "certifications": { "type": "array", "items": { "type": "string" } },
+    "target": { "type": "object", "description": "Render-only: job this tailored copy is for", "properties": { "company": { "type": "string" }, "role": { "type": "string" }, "job_id": { "type": "string" } } },
+    "tailoring_notes": { "type": "object", "description": "Render-only brief written to tailoring-notes.md", "properties": { "jd_asked": { "type": "array", "items": { "type": "string" } }, "changes": { "type": "array", "items": { "type": "string" } }, "gaps": { "type": "array", "items": { "type": "string" } } } }
+  }
+}

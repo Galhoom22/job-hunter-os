@@ -2,7 +2,7 @@
 
 **A. Chat setup:** Open your AI IDE in this agent home and say `/setup`. Paste your CV or attach a PDF. The agent asks only missing details in batches of 3–4 questions, waits for your answers, and writes your private files for you.
 
-**B. Folder drop:** Place `resume.pdf` in `context/` or `assets/`, plus optional raw notes/cover letters. Say “Check my folder.” The agent reads locally, verifies the CV, asks what's missing and never treats example files as your facts. Preferred base path: assets/resume.pdf; context/resume.pdf is supported too.
+**B. Folder drop:** Place `resume.pdf`, `resume.docx`, `resume.md` or `resume.txt` in `context/` or `assets/`, plus optional raw notes/cover letters. The agent reads binaries locally with `parse-cv`; a scanned or design-tool PDF that has no readable text is flagged so you can paste the text and get a clean ATS version. No CV yet? Say so — the agent interviews you and builds one. Say “Check my folder.” The agent reads locally, verifies the CV, asks what's missing and never treats example files as your facts. Preferred base path: assets/resume.pdf; context/resume.pdf is supported too.
 
 No employer applications start while any readiness gate is incomplete. Once ready, you see the roles/platforms/caps/score/dry-run briefing and confirm each launch explicitly. Passwords/tokens belong in secure browser/IDE settings, not chat. Optional metrics or portfolio links may be omitted rather than fabricated.
 

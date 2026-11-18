@@ -301,6 +301,8 @@ Prefix with `npx github:redasalem/job-hunter-os` or use `node ./bin/job-hunter.m
 | `sync-mcp [--global]` | Non-destructive Playwright MCP merge | Conflicting server preserved/refused; Notion is a separate opt-in import |
 | `add-platform NAME [--global]` | Copy playbook and disabled `other` target | No working adapter or permission to submit; lowercase slug only |
 | `bundle-prompt [--global]` | Create private master context Markdown for owner-reviewed web-chat upload | Verified non-example context and approved local log validation required; never uploads or overwrites |
+| `parse-cv [FILE] [--global]` | Read a CV (`.pdf`, `.docx`, `.md`, `.txt`, `.json`) locally into `context/cv-extracted.txt` + a quality report | Exit 3 = scanned/garbled/unsupported → paste text in chat. Extraction is heuristic; nothing is verified until you confirm |
+| `render-cv FILE.html\|FILE.json [--out-dir DIR] [--no-pdf]` | Write `.html`, `.pdf` (local Chromium), `.docx`, `.doc`, `.txt` (+ `tailoring-notes.md`) for a resume or cover letter | Refuses unverified data, placeholders, scripts, remote resources; PDF must be ≤200 KB and text-readable |
 
 ### AI IDE chat commands
 
@@ -314,6 +316,66 @@ Prefix with `npx github:redasalem/job-hunter-os` or use `node ./bin/job-hunter.m
 | `/linkedin-growth` | Profile/post/outreach drafts via growth playbooks | Exact-text approval before Save/Post/send; outreach ≤75 words |
 
 Native slash registration is IDE/version-dependent. If a command is not discovered, say “Read my agent home's AGENTS.md and run today's job-hunting workflow” or use [the six portable workflows](docs/chat-commands.md). Never imply an unregistered slash command runs by itself.
+
+## 7a. Bulletproof resume intake, multi-format CVs & form traps
+
+### Five-tier resume ingestion ([skill](skills/01-resume-ingestion.md))
+
+| Tier | Situation | What the agent does |
+|---|---|---|
+| 1 | CV pasted in chat or `.md`/`.txt`/`.json` | Uses the exact text |
+| 2 | `assets/resume.pdf` / `.docx` and a model that cannot read binaries | Runs `parse-cv` locally (or opens the file through Playwright MCP); if both fail, asks you to paste the text |
+| 3 | Scanned or design-tool PDF (<50 words or garbled) | Warns that ATS scanners may see it as blank, asks for the text, rebuilds a clean single-column PDF after you confirm (your original is kept as `resume.original.pdf`) |
+| 4 | No current CV | Interviews you (3–4 questions at a time) from bullet points, a LinkedIn "Save to PDF" export or your GitHub, then builds `profile.md` and a new `assets/resume.pdf` |
+| 5 | Always | Fact table → your confirmation → `context/cv.md`, `profile.md` and structured [`resume-data.json`](schemas/resume-data.schema.json) (split names, phone country code, autocomplete city, work/education rows, skills with years) |
+
+### One folder per job, every format
+
+```text
+logs/resumes/acme-pay-senior-backend-engineer-linkedin-4012/
+  payload.json             verified data + per-job ordering/summary (input)
+  resume.pdf               single column, Arial, ≤200 KB, text-selectable
+  resume.docx / .doc       for portals that only take Word
+  resume.txt               for "paste your plain-text resume" boxes
+  resume.html              source / manual print fallback
+  tailoring-notes.md       JD asked → what changed → gaps
+  cover-letter.pdf/.txt    only when a portal requires a cover-letter file (you approve the text first)
+```
+
+### Five ATS form traps ([rules](skills/fill-form-answers.md#five-ats-form-traps-mandatory))
+1. **Upload first** — upload the resume, wait 4 s for the portal's parser, re-snapshot, then fill and correct every auto-filled field against your verified data.
+2. **Absolute paths only** for `browser_file_upload`.
+3. **Hidden dropzones** — open the chooser through the visible upload control; if a cross-origin dropzone blocks automation, the agent prints the exact path and waits for you to drop the file and reply `CONTINUE`.
+4. **Split name / phone code / location autocomplete** — first/last vs full name, country code matched by dialling code, type the city → wait 2 s → pick the matching suggestion (never a guess).
+5. **Session expired mid-run** — pause, ask you to sign in, reply `CONTINUE`, re-verify, resume the same job.
+
+## 7b. Two-phase batch triage & Mission Control table ([skill](skills/discover-and-triage.md))
+
+`config/guardrails.yaml` → `workflow_mode: batch_review_first` (default) or `direct_auto`, plus `batch_size` (1–20) and `pregenerate_stretch_resumes`.
+
+**Phase 1 — scan, expand, categorize.** For each new job the agent clicks "See more/Show more" so the whole description is visible, scores it, and sorts it:
+
+| Tier | Score | Action |
+|---|---|---|
+| 🟢 A — Strong | 8–10 | Tailored folder generated, ready for your decision |
+| 🟡 B — Stretch | 5 to below 8 | Never auto-applied; explains which real experience to foreground and what is missing |
+| 🔴 C — Mismatch | below 5 or any dealbreaker (stack, location/visa, salary floor) | Skipped immediately; one-line reason in `logs/skipped-jobs.json` |
+
+**Phase 2 — Mission Control briefing in chat, before any Apply click:**
+
+```text
+| # | Company & Role                         | Score | Status      | What changed in tailored CV (or why skipped)            | Tailored files                                               |
+|---|----------------------------------------|-------|-------------|----------------------------------------------------------|--------------------------------------------------------------|
+| 1 | Acme Pay — Senior Backend Engineer     | 8.5   | 🟢 Ready    | Node.js/PostgreSQL first; payments API bullet on top     | logs/resumes/acme-pay-senior-backend-engineer-linkedin-4012/ |
+| 2 | Orbit — Platform Engineer              | 6.5   | 🟡 Stretch  | Needs Kubernetes; would foreground Docker CI work        | — (on request)                                               |
+| 3 | Nilecart — Backend Developer (Node.js) | 8.0   | 🟢 Ready    | Logistics APIs moved up; REST/testing keywords in summary | logs/resumes/nilecart-backend-developer-node-js-wuzzuf-881/  |
+| 4 | Lumen — iOS Developer                  | 2.0   | 🔴 Skipped  | Swift-only role; no iOS experience in CV                 | —                                                            |
+
+I scanned 4 jobs: 2 are 🟢 Ready with tailored PDF/Word CVs, 1 is 🟡 Stretch and 1 was 🔴 Skipped.
+Reply APPLY ALL GREEN, APPLY 1,3, or tell me which CV to tweak before I open any form.
+```
+
+Your reply opens forms only for the selected rows. Dry run, `approve_before_submit`, caps, warm-up and stop rules still apply to each job; a Stretch job below your minimum score is prepared but left for you to submit. Easy Apply modals and "Apply on company site" redirects (new tab → Greenhouse/Lever/Ashby/Workable) are both handled: the agent switches to the new tab, records the final URL, reaches the form, uploads the tailored file first and continues.
 
 ## 8. Multi-IDE & multi-model compatibility
 
@@ -350,7 +412,7 @@ Use appropriately configured local models when privacy requires them, but tool/m
 | Warm-up | First three distinct non-aborted authorized UTC run dates cap at **5/day**, or any lower configured/calendar/platform limit. Calendar days 1–3 also begin at 5; progressive warm-up continues afterward. Idle days alone cannot bypass the distinct-run gate. |
 | Active hours | Owner-confirmed IANA timezone and working window; check before every action and Submit. Outside the window, stop. |
 | Action pacing | Random **3–9 seconds** between actions, full-JD reading pauses ≥10 seconds, and ≥60-second cooldown after the configured consecutive-action limit. |
-| Security stops | CAPTCHA, 2FA, unexpected login wall, account warning, rate-limit banner or three consecutive errors abort the run and notify. Manual setup login is owner-controlled; challenges are never automated. |
+| Security stops | CAPTCHA, 2FA challenge, account warning, rate-limit banner or three consecutive errors abort the run and notify. A session that expires mid-run pauses: you sign in privately in the open window and reply `CONTINUE`; no reply or a repeated wall aborts. Challenges are never automated. |
 | Duplicate/volume control | Stable job ID plus canonical employer-role URL checks, owned local lock and fresh daily/platform caps. Unresolved submission reservations consume allowance. |
 | Dry run / receipt | Default dry run never clicks final Submit. Live submission happens once after reservation and checks; only a verified receipt marks `applied`. |
 | Unknown facts | Review record + private screenshot + chat question; no guessed legal answers, dates, salary or skill years. |

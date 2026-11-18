@@ -81,6 +81,21 @@ export const Insight = z.object({
 
 export const ApplicationsLog = z.array(Application);
 
+/** Tier C quick index (logs/skipped-jobs.json); the applications log still records each skipped disposition. */
+export const SkippedJob = z.object({
+  job_id: DiscoveredJob.shape.job_id,
+  platform: Platform,
+  company: z.string().min(1),
+  title: z.string().min(1),
+  url: z.string().url(),
+  match_score: z.number().min(0).max(10),
+  tier: z.literal("C"),
+  skip_reason: z.string().min(3).max(160).regex(/^[^\n\r]+$/, "skip_reason must be one line"),
+  skipped_at: z.string().datetime(),
+  run_id: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+export const SkippedJobsLog = z.array(SkippedJob);
+
 export type Application = z.infer<typeof Application>;
 export type DailyRun = z.infer<typeof DailyRun>;
 export type Insight = z.infer<typeof Insight>;

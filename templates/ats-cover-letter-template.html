@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="job-hunter-document" content="cover_letter">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>{{FULL_NAME}} — Cover Letter</title>
+  <style>
+    @page { size: A4; margin: 22mm; }
+    body { font: 11pt Arial, Helvetica, sans-serif; color: #111; background: #fff; line-height: 1.5; margin: 0; }
+    h1 { font-size: 16pt; margin: 0 0 3pt; }
+    p { margin: 0 0 9pt; overflow-wrap: anywhere; }
+    .meta { margin-bottom: 14pt; }
+  </style>
+</head>
+<body>
+  <header><h1>{{FULL_NAME}}</h1><p>{{CONTACT_TEXT}}</p></header>
+  <main>
+    <p class="meta">{{DATE_TEXT}}</p>
+    <p>{{RECIPIENT_TEXT}}</p>
+    <p><strong>{{SUBJECT_TEXT}}</strong></p>
+    {{BODY_HTML}}
+    <p>{{SIGNOFF_TEXT}}</p>
+    <p>{{FULL_NAME}}</p>
+  </main>
+</body>
+</html>

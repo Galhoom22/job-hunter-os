@@ -4,7 +4,7 @@ description: Discover remote roles on WeWorkRemotely, RemoteOK, DailyRemote, Wel
 ---
 # Remote job-board playbooks
 
-Live-unverified. Use fresh accessibility snapshots/refs with 3–9s waits, read full JDs and enforce shared preflight/auth/context/safety. Public browsing is allowed only when target.auth_required:false; an unexpected login wall aborts the run. No subscriptions, account creation or newsletter consent as side effects.
+Live-unverified. Use fresh accessibility snapshots/refs with 3–9s waits, read full JDs and enforce shared preflight/auth/context/safety. Public browsing is allowed only when target.auth_required:false; an unexpected login wall pauses per fill-form-answers.md Trap 5 and aborts if unresolved. No subscriptions, account creation or newsletter consent as side effects.
 
 | Board | Discovery and canonical identity | Apply routing / distinctive checks |
 |---|---|---|

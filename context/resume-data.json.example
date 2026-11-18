@@ -1,0 +1,29 @@
+{
+  "owner_verified": false,
+  "verified_at": null,
+  "source": "EXAMPLE ONLY - replace through /setup; never use these values",
+  "first_name": "Example",
+  "last_name": "Person",
+  "headline": "Software Engineer",
+  "summary": "",
+  "email": "first.last@example.com",
+  "phone_country_code": "+20",
+  "phone_national": "1000000000",
+  "city": "Cairo",
+  "country": "Egypt",
+  "city_autocomplete": "Cairo",
+  "city_autocomplete_match": "Cairo, Egypt",
+  "linkedin_url": "https://www.linkedin.com/in/your-handle",
+  "github_url": "https://github.com/your-handle",
+  "portfolio_url": "",
+  "work_history": [
+    { "employer": "Example Employer", "title": "Software Engineer", "location": "Cairo, Egypt", "start_date": "2022-01", "end_date": null, "current": true, "bullets": ["replace-with a verified achievement from your CV"] }
+  ],
+  "education": [
+    { "institution": "Example University", "degree": "BSc", "field_of_study": "Computer Science", "start_date": "2016", "end_date": "2020" }
+  ],
+  "projects": [],
+  "skills_with_years": { "TypeScript": 0 },
+  "languages": [],
+  "certifications": []
+}

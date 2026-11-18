@@ -2,16 +2,26 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawnSync, spawn } from 'node:child_process';
 import { auditReadiness } from './readiness.mjs';
+import { extractPdfText, docxToText, assessText, contactCandidates, htmlToBlocks, blocksToText, blocksToDocx, htmlToWordDoc, htmlProblems, documentKind, fillResumeTemplate, fillCoverLetterTemplate, coverLetterProblems, slug } from './cv-tools.mjs';
+import { checkResumeData } from './resume-data.mjs';
 
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const home = os.homedir();
 const argv = process.argv.slice(2);
 const global = argv.includes('--global') || argv.includes('-g');
-const flags = new Set(['--global', '-g', '--help', '-h']);
-const positional = argv.filter(a => !flags.has(a));
+const flags = new Set(['--global', '-g', '--help', '-h', '--no-pdf']);
+const positional = []; const options = {}; let argError = null;
+for (let i = 0; i < argv.length; i++) {
+  const a = argv[i];
+  if (a === '--out-dir') { options.outDir = argv[++i]; if (!options.outDir || options.outDir.startsWith('-')) argError = '--out-dir needs a directory.'; }
+  else if (a.startsWith('--out-dir=')) options.outDir = a.slice(10) || (argError = '--out-dir needs a directory.');
+  else if (flags.has(a)) options[a] = true;
+  else if (a.startsWith('-')) argError = 'Unknown option. Use --help.';
+  else positional.push(a);
+}
 const command = positional[0] || 'help';
 const explicitLocal = fs.existsSync(path.join(process.cwd(), '.job-hunter-install.json'));
 const root = global ? path.join(home, '.job-hunter-os') : explicitLocal || command === 'init' ? process.cwd() : fs.existsSync(path.join(home, '.job-hunter-os', '.job-hunter-install.json')) ? path.join(home, '.job-hunter-os') : process.cwd();
@@ -229,16 +239,143 @@ function bundlePrompt() {
   } else { fs.unlinkSync(output); throw new Error('Approved local validation helpers are required; complete /setup before bundling.'); }
   say('Private logs/master-chat-prompt.md created. Review/redact it before explicitly uploading to an external AI; no upload was performed.');
 }
+function regularFile(file, maxBytes) {
+  let stat;
+  try { stat = fs.lstatSync(file); } catch { throw new Error('File not found.'); }
+  if (!stat.isFile()) throw new Error('Expected a regular file (symbolic links and folders are refused).');
+  if (stat.size > maxBytes) throw new Error(`File is larger than ${Math.round(maxBytes / 1048576)} MB.`);
+  return fs.readFileSync(file);
+}
+const CV_CANDIDATES = ['assets/resume.pdf', 'assets/resume.docx', 'context/resume.pdf', 'context/resume.docx', 'assets/resume.md', 'assets/resume.txt', 'context/resume.md', 'context/resume.txt'];
+function parseCv(input) {
+  if (!fs.existsSync(path.join(root, 'context'))) throw new Error('No context/ folder here. Run init first or run from the agent home.');
+  const file = input ? path.resolve(process.cwd(), input) : CV_CANDIDATES.map(name => path.join(root, name)).find(name => fs.existsSync(name));
+  if (!file) throw new Error('No CV found. Drop resume.pdf, resume.docx, resume.md or resume.txt into assets/, or paste the CV text in chat.');
+  const buf = regularFile(file, 15 * 1048576);
+  const ext = path.extname(file).toLowerCase();
+  let text = '', format = ext.slice(1) || 'unknown', details = {}, failure = null;
+  try {
+    if (ext === '.pdf' || buf.subarray(0, 5).toString('latin1') === '%PDF-') { format = 'pdf'; const r = extractPdfText(buf); text = r.text; details = { pages: r.pages, images: r.images, encrypted: r.encrypted }; }
+    else if (ext === '.docx') text = docxToText(buf);
+    else if (['.md', '.markdown', '.txt', '.text'].includes(ext)) text = buf.toString('utf8');
+    else if (ext === '.json') text = JSON.stringify(JSON.parse(buf.toString('utf8')), null, 2);
+    else failure = ext === '.doc' ? 'unsupported_legacy_doc' : 'unsupported_format';
+  } catch { failure = 'extraction_failed'; }
+  const assessment = failure ? { quality: failure, words: 0 } : assessText(text);
+  if (details.encrypted && assessment.quality !== 'readable') assessment.quality = 'encrypted';
+  const readable = assessment.quality === 'readable';
+  const tier = readable ? (['pdf', 'docx'].includes(format) ? 'tier2_local_extraction' : 'tier1_text')
+    : details.images && assessment.words < 50 ? 'tier3_scanned_image' : ['garbled', 'unreadable'].includes(assessment.quality) && format === 'pdf' ? 'tier3_unreadable_pdf' : 'tier2_ask_for_text';
+  const outText = path.join(root, 'context', 'cv-extracted.txt');
+  const outReport = path.join(root, 'context', 'cv-extracted.report.json');
+  if (text.trim()) write(outText, text.trim() + '\n');
+  write(outReport, JSON.stringify({ owner_verified: false, source_file: file, format, tier, ...assessment, ...details, extracted_at: new Date().toISOString(), text_file: text.trim() ? outText : null, contact_candidates: readable ? contactCandidates(text) : null }, null, 2) + '\n');
+  say(`CV ${readable ? 'read' : 'NOT readable'}: ${format}, ${assessment.words} words, quality=${assessment.quality}, ${tier}`, readable ? '32' : '33');
+  say(`Report: ${outReport}`, '36');
+  if (readable) {
+    say(`Text: ${outText}`, '36');
+    say('Next: the agent builds context/profile.md, context/cv.md and context/resume-data.json from this text, then confirms every fact with you. Nothing is verified yet.');
+  } else {
+    if (tier.startsWith('tier3')) say('This file has little or no selectable text (scanned image or design-tool export). Applicant tracking systems may see it as blank too.', '33');
+    say('Next: paste your CV text in chat (or provide .txt/.md/.docx). After you confirm the facts, the agent can rebuild a clean ATS-readable PDF with render-cv.', '33');
+    process.exitCode = 3;
+  }
+}
+function readTemplate(name) {
+  for (const base of [root, source]) { const file = path.join(base, 'templates', name); if (fs.existsSync(file)) return fs.readFileSync(file, 'utf8'); }
+  throw new Error(`Template ${name} is missing.`);
+}
+async function loadChromium() {
+  const { createRequire } = await import('node:module');
+  for (const base of [root, source]) {
+    try {
+      const resolved = createRequire(path.join(base, 'package.json')).resolve('playwright');
+      const mod = await import(pathToFileURL(resolved).href);
+      const chromium = mod.chromium ?? mod.default?.chromium;
+      if (chromium) return chromium;
+    } catch { /* not installed here */ }
+  }
+  return null;
+}
+async function renderPdf(chromium, html) {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage({ javaScriptEnabled: false });
+    await page.route('**/*', route => route.abort());
+    await page.setContent(html, { waitUntil: 'load' });
+    return await page.pdf({ format: 'A4', printBackground: false, preferCSSPageSize: true });
+  } finally { await browser.close(); }
+}
+async function renderCv(input, { outDir, pdf }) {
+  if (!input) throw new Error('Usage: render-cv FILE.html|FILE.json [--out-dir DIR] [--no-pdf]');
+  const file = path.resolve(process.cwd(), input);
+  const raw = regularFile(file, 5 * 1048576).toString('utf8');
+  const ext = path.extname(file).toLowerCase();
+  let html, kind, notes = null, defaultDir;
+  if (ext === '.json') {
+    let data; try { data = JSON.parse(raw); } catch { throw new Error('Payload is not valid JSON.'); }
+    if (data?.document === 'cover_letter') {
+      const problems = coverLetterProblems(data);
+      if (problems.length) throw new Error(`Cover letter refused: ${problems.join('; ')}`);
+      html = fillCoverLetterTemplate(readTemplate('ats-cover-letter-template.html'), data); kind = 'cover_letter';
+    } else {
+      const problems = checkResumeData(data, { requireVerified: true });
+      if (problems.length) throw new Error(`Resume refused: ${problems.slice(0, 6).join('; ')}`);
+      html = fillResumeTemplate(readTemplate('ats-resume-template.html'), data); kind = 'resume'; notes = data.tailoring_notes ?? null;
+    }
+    const t = data.target;
+    defaultDir = path.join(root, 'logs', 'resumes', t?.company && t?.role ? [slug(t.company) || 'company', slug(t.role) || 'role', slug(t.job_id)].filter(Boolean).join('-') : 'base');
+  } else if (ext === '.html' || ext === '.htm') { html = raw; kind = documentKind(html); defaultDir = path.dirname(file); }
+  else throw new Error('render-cv accepts a tailored .html file or a .json payload.');
+  const problems = htmlProblems(html);
+  if (problems.length) throw new Error(`Render refused: ${problems.join('; ')}`);
+  const blocks = htmlToBlocks(html);
+  if (!blocks.length) throw new Error('Render refused: no readable headings, paragraphs or bullets found.');
+  const dir = outDir ? path.resolve(process.cwd(), outDir) : defaultDir;
+  safePath(dir); fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+  const base = kind === 'cover_letter' ? 'cover-letter' : 'resume';
+  const files = {};
+  const out = (extension, data) => { const target = path.join(dir, `${base}.${extension}`); write(target, data); files[extension] = target; };
+  out('html', html); out('doc', htmlToWordDoc(html)); out('docx', blocksToDocx(blocks)); out('txt', blocksToText(blocks));
+  if (notes) {
+    const list = items => (Array.isArray(items) && items.length ? items.map(x => `- ${String(x).replace(/\s+/g, ' ')}`).join('\n') : '- (none recorded)');
+    const target = path.join(dir, 'tailoring-notes.md');
+    write(target, `# Tailoring notes\n\n## What the job description asked for\n${list(notes.jd_asked)}\n\n## What changed in this CV version\n${list(notes.changes)}\n\n## Skill gaps (not claimed in the CV)\n${list(notes.gaps)}\n`);
+    files.notes = target;
+  }
+  let pdfStatus = 'skipped', pdfBytes = null, pdfWords = null;
+  if (pdf) {
+    const chromium = await loadChromium();
+    let buffer = null;
+    if (chromium) { try { buffer = await renderPdf(chromium, html); } catch { buffer = null; } }
+    if (!buffer) pdfStatus = 'unavailable';
+    else {
+      out('pdf', buffer); pdfBytes = buffer.length;
+      const check = assessText(extractPdfText(buffer).text); pdfWords = check.words;
+      pdfStatus = pdfBytes > 200 * 1024 ? 'too_large' : check.quality === 'readable' || (kind === 'cover_letter' && check.words >= 50) ? 'ok' : 'unreadable';
+    }
+  }
+  const report = path.join(dir, `${base}.render-report.json`);
+  write(report, JSON.stringify({ kind, source: file, files, pdf: pdfStatus, pdf_bytes: pdfBytes, pdf_words: pdfWords, rendered_at: new Date().toISOString() }, null, 2) + '\n');
+  for (const [key, value] of Object.entries(files)) say(`${key.padEnd(5)} ${value}`, '36');
+  if (pdfStatus === 'ok') say(`PDF ready (${Math.round(pdfBytes / 1024)} KB, text selectable). Upload this exact absolute path.`);
+  else if (pdfStatus === 'unavailable') { say('PDF not produced: Chromium/Playwright is not available here. Use Playwright MCP print, or open the .html in Chrome -> Print -> Save as PDF (A4, no headers).', '33'); process.exitCode = 2; }
+  else if (pdfStatus === 'too_large') { say('PDF is over the 200 KB budget; do not upload it. Shorten content or remove custom styling and render again.', '33'); process.exitCode = 4; }
+  else if (pdfStatus === 'unreadable') { say('PDF text could not be verified as readable; inspect it before any upload.', '33'); process.exitCode = 4; }
+  say(`Report: ${report}`, '36');
+}
 try {
   if (Number(process.versions.node.split('.')[0]) < 18) throw new Error('Node.js 18+ is required.');
-  if (argv.some(a => a.startsWith('-') && !flags.has(a))) throw new Error('Unknown option. Use --help.');
-  if (argv.includes('--help') || argv.includes('-h') || command === 'help') say('job-hunter init [--global|-g] | doctor [--global] | login [--global] | sync-mcp [--global] | add-platform NAME [--global] | bundle-prompt [--global]');
+  if (argError) throw new Error(argError);
+  if (argv.includes('--help') || argv.includes('-h') || command === 'help') say('job-hunter init [--global|-g] | doctor [--global] | login [--global] | sync-mcp [--global] | add-platform NAME [--global] | bundle-prompt [--global] | parse-cv [FILE] [--global] | render-cv FILE.html|FILE.json [--out-dir DIR] [--no-pdf] [--global]');
   else if (command === 'init') init();
   else if (command === 'doctor') doctor();
   else if (command === 'login') login();
   else if (command === 'sync-mcp') syncMcp();
   else if (command === 'add-platform') addPlatform(positional[1]);
   else if (command === 'bundle-prompt') bundlePrompt();
+  else if (command === 'parse-cv') parseCv(positional[1]);
+  else if (command === 'render-cv') await renderCv(positional[1], { outDir: options.outDir, pdf: !options['--no-pdf'] });
   else throw new Error('Unknown command. Use --help.');
 } catch (error) {
   // Errors are controlled messages only: never emit parsing input, env, configs or stack traces.

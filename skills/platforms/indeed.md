@@ -10,4 +10,4 @@ Preconditions: AGENTS.md, successful preflight/auth/context loading, fresh acces
 6. Internal forms use apply-easy-apply.md. External redirects use apply-external-ats.md; inspect destination, snapshot and never guess an ATS. Unknown/account-gated flow is manual_apply + needs_review.
 7. Upload only the owner-verified local resume via fill-form-answers.md. Missing/unknown answers, consent ambiguity or irreversible profile changes stop this application for review.
 8. Any quick-apply button that may submit is a FINAL SUBMIT: reserve the job, validate/reload caps, verify all facts, and never click in dry run. Confirm receipt before marking applied. Uncertain receipt stays needs_review/submission_uncertain.
-9. Local-first journal then idempotent Notion sync; stop immediately on CAPTCHA, 2FA, login wall, warning, rate limit or three consecutive errors.
+9. Local-first journal then idempotent Notion sync; stop immediately on CAPTCHA, 2FA, warning, rate limit or three consecutive errors; a mid-run login wall pauses per fill-form-answers.md Trap 5 and aborts if unresolved.
