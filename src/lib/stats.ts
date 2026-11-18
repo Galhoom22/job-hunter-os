@@ -1,6 +1,6 @@
-import type { Application } from "../../schemas/index";
+import { Platform, type Application } from "../../schemas/index";
 
-export const PLATFORMS = ["linkedin", "wellfound", "wuzzuf", "greenhouse", "lever", "other"] as const;
+export const PLATFORMS = Platform.options;
 
 export function kpis(apps: Application[]) {
   const applied = apps.filter((a) => a.status === "applied").length;
@@ -18,7 +18,7 @@ export function byPlatform(apps: Application[]) {
   for (const a of apps) {
     const r = m.get(a.platform) ?? { platform: a.platform, scanned: 0, applied: 0 };
     r.scanned++;
-    if (a.status === "applied" || a.status === "dry_run") r.applied++;
+    if (a.status === "applied") r.applied++;
     m.set(a.platform, r);
   }
   return [...m.values()].sort((a, b) => b.scanned - a.scanned);

@@ -2,16 +2,16 @@ import { createServerFn } from "@tanstack/react-start";
 import { parse } from "yaml";
 import { z } from "zod";
 import { setDryRunInText } from "./yaml-edit";
-import { ApplicationsLog, DailyRun, Insight } from "../../schemas/index";
+import { ApplicationsLog, DailyRun, Insight, FormAnswers, Targets, Guardrails } from "../../schemas/index";
 
 // Bundled snapshot of the repo files — used when the real filesystem is unavailable
 // (hosted preview). Locally, `npm run dev` reads the live files on every request.
-const bundledAppsGlob = import.meta.glob("../../logs/applications-log.json", { eager: true, import: "default" });
+const bundledAppsGlob = import.meta.glob("../../demo/applications-log.json", { eager: true, import: "default" });
 const bundledApps = Object.values(bundledAppsGlob)[0] ?? [];
-const bundledRuns = import.meta.glob("../../logs/runs/*.json", { eager: true, import: "default" });
-const bundledInsights = import.meta.glob("../../logs/insights/*.json", { eager: true, import: "default" });
+const bundledRuns = import.meta.glob("../../demo/runs/*.json", { eager: true, import: "default" });
+const bundledInsights = import.meta.glob("../../demo/insights/*.json", { eager: true, import: "default" });
 const bundledText = import.meta.glob(
-  ["../../context/targets.yaml", "../../context/form-answers.yaml", "../../config/guardrails.yaml"],
+  ["../../demo/targets.yaml", "../../demo/form-answers.yaml", "../../demo/guardrails.yaml"],
   { eager: true, query: "?raw", import: "default" },
 ) as Record<string, string>;
 
@@ -23,6 +23,7 @@ const EDITABLE = {
 type EditableKey = keyof typeof EDITABLE;
 
 async function fsApi() {
+  if (!import.meta.env.DEV) return null;
   try {
     const fs = await import("node:fs/promises");
     const path = await import("node:path");
@@ -51,12 +52,12 @@ export const getDashboardData = createServerFn({ method: "GET" }).handler(async 
   const runs = (await readJsonDir("logs/runs", bundledRuns))
     .map((r) => DailyRun.safeParse(r))
     .filter((r) => r.success)
-    .map((r) => r.data!)
+    .flatMap((r) => r.success ? [r.data] : [])
     .sort((a, b) => b.run_id.localeCompare(a.run_id));
   const insights = (await readJsonDir("logs/insights", bundledInsights))
     .map((r) => Insight.safeParse(r))
     .filter((r) => r.success)
-    .map((r) => r.data!);
+    .flatMap((r) => r.success ? [r.data] : []);
   return {
     live: !!api,
     applications: apps.success ? apps.data : [],
@@ -68,8 +69,8 @@ export const getDashboardData = createServerFn({ method: "GET" }).handler(async 
 
 async function readText(key: EditableKey) {
   const api = await fsApi();
-  if (api) return api.fs.readFile(api.path.join(api.root, EDITABLE[key]), "utf8");
-  return bundledText[`../../${EDITABLE[key]}`] ?? "";
+  if (api) return api.fs.readFile(api.path.join(api.root, EDITABLE[key]), "utf8").catch(() => bundledText[`../../demo/${EDITABLE[key].split("/").at(-1)}`] ?? "");
+  return bundledText[`../../demo/${EDITABLE[key].split("/").at(-1)}`] ?? "";
 }
 
 export const getConfigFiles = createServerFn({ method: "GET" }).handler(async () => {
@@ -85,7 +86,7 @@ export const getConfigFiles = createServerFn({ method: "GET" }).handler(async ()
 export const saveConfigFile = createServerFn({ method: "POST" })
   .inputValidator(z.object({ key: z.enum(["targets", "formAnswers"]), content: z.string().max(200_000) }))
   .handler(async ({ data }) => {
-    parse(data.content); // throws on invalid YAML
+    (data.key === "targets" ? Targets : FormAnswers).parse(parse(data.content));
     const api = await fsApi();
     if (!api) throw new Error("Read-only: run the dashboard locally with npm run dev to save files.");
     await api.fs.writeFile(api.path.join(api.root, EDITABLE[data.key]), data.content, "utf8");
@@ -98,6 +99,10 @@ export const setDryRun = createServerFn({ method: "POST" })
     const api = await fsApi();
     if (!api) throw new Error("Read-only: run the dashboard locally with npm run dev to save files.");
     const file = api.path.join(api.root, EDITABLE.guardrails);
+    Guardrails.parse(parse(await api.fs.readFile(file, "utf8")));
+    if (!data.dryRun && !FormAnswers.safeParse(parse(await readText("formAnswers"))).success) {
+      throw new Error("Verify your personal answers and resume before turning dry run off.");
+    }
     await api.fs.writeFile(file, setDryRunInText(await api.fs.readFile(file, "utf8"), data.dryRun), "utf8");
     return { ok: true };
   });

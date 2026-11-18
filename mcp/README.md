@@ -38,3 +38,14 @@ Tip: if a session expires, the agent stops at "Auth Verification" and asks you t
 
 - "Browser is already in use": close other Chromium windows that use `./browser-profile`.
 - Notion 401: token missing in the generated config — re-run `npm run sync:mcp`.
+
+## Headed login vs background mode
+
+- First login: `npm run sync:mcp` (headed). Start Playwright MCP from your IDE, open enabled sites and log in yourself, including 2FA. No passwords in prompts. Confirm named account menus in snapshots.
+- Background: close the headed browser, then `npm run sync:mcp -- --headless` and restart the IDE's MCP servers. The SAME absolute browser-profile path is reused. Never run two Chromium instances against that profile.
+- Return to headed with `npm run sync:mcp` when a session expires. CAPTCHA/2FA/login walls pause the entire run; notify the owner and do not solve/bypass them.
+- Claude Code/Cursor read generated configs. Antigravity, Windsurf, Cline/Roo and Copilot may use different MCP settings formats depending on version: copy server definitions locally into the IDE's own supported settings; never commit secret-bearing copies. Instruction pointers do not install MCP tools or grant permissions.
+- An open dashboard cannot run browser automation. Headless is not a scheduler. Use your IDE/model's documented local task mechanism, keep the machine/agent process running, acquire the repo run lock and require successful preflight. No universal unattended scheduling guarantee.
+- Random 3–8 second waits and modest scrolling reduce load; follow platform terms, do not hide automation. Playwright tools/Notion tools must actually appear in the agent before starting.
+
+Generated configs embed the token locally using JSON serialization (safe for quotes/backslashes) and mode 0600 where supported. Do not print/share/commit them. Template uses latest packages as requested; for operational deployments review and pin tested versions in the template before upgrades.

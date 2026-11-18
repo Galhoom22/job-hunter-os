@@ -1,22 +1,10 @@
-# Skill: Log Application (local JSON + Notion) — v1
+# Local Journal & Notion Sync — v2
 
-## 1. Local first (source of truth)
-Append to `logs/applications-log.json` (array) an `Application` object:
-```json
-{ "job_id": "linkedin:4012345678", "title": "", "company": "", "platform": "linkedin", "url": "",
-  "location": "", "status": "applied", "match_score": 8.2, "matched_skills": [], "missing_skills": [],
-  "apply_type": "easy_apply", "open_questions": [], "screenshot": null, "run_id": "2026-11-18",
-  "discovered_at": "ISO", "applied_at": "ISO|null", "notes": "", "notion_synced": false }
-```
-Run `npm run validate:logs`. Fix and rewrite if it fails.
-
-## 2. Notion sync
-Using Notion MCP, create a page in the **Applications** database (`preferences.yaml -> notion.applications_db`)
-mapping fields per `mcp/README.md`. On success set `notion_synced: true` in the local entry.
-On any error: leave `notion_synced: false`, add the error to the run's `errors`, continue (do not retry in a loop).
-
-## 3. Retry pass
-At the start of every daily run (after preflight), sync up to 25 entries with `notion_synced: false`.
-
-## 4. Daily Runs row
-At the end of the run, create a **Daily Runs** page with the counts from `logs/runs/<RUN_ID>.json`.
+1. Local JSON is the source of truth; use schemas/index.ts Application contract. Allowed statuses: discovered, skipped, dry_run, applied, needs_review, failed, aborted. manual_apply is apply_type only.
+2. Under the owned run lock, write an entry JSON locally and use `npm run journal -- ENTRY_JSON_PATH LOCK_TOKEN`. It validates and atomically upserts applications-log.json by job_id, never appends a duplicate or overwrites an applied receipt. Run npm run validate:logs after EACH JSON write including run/insight updates.
+3. Before submission reserve needs_review with submission_uncertain:true, applied_at:null. After verified receipt update SAME entry to applied with timestamp and uncertainty false. Unconfirmed submission is never retried automatically. Failed/discovered entries are not silently resubmitted either; owner review required.
+4. Read preferences.notion IDs: applications_db, daily_runs_db, insights_db. Use Notion MCP discovery to inspect current database/data-source schema and map actual properties; missing IDs/access/schema -> local unsynced record and reported blocker, not made-up IDs.
+5. Applications map title/company/platform/status/match score/missing skills/URL/applied date/job_id. Query target database for exact Job ID first. Existing page -> update; none -> create once. Save returned notion_page_id and notion_synced:true ONLY after confirmed response. Multiple matches -> review.
+6. Timeout/create uncertainty -> notion_synced:false and run error. On retry, QUERY first using stable job_id, never create blindly. At start of next run after auth/context, retry up to 25 unsynced items once each; bounded backoff for rate limits, then defer. Notion failures do not erase local records.
+7. Daily Runs: upsert by run_id/date, save counts including dry_run separately, errors and notes. Query before create on retries; never count dry runs as applied.
+8. Insights: upsert by type + period, retain notion_synced:false on failure. No screenshots/resumes/contact data or full private form answers to Notion unless separately approved. Never print tokens or generated MCP contents.

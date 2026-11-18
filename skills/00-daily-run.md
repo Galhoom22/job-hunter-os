@@ -1,44 +1,12 @@
-# Skill: Daily Run (orchestrator) — v1
+# Daily Run — v2
 
-Trigger: "Start today's job run". Read `AGENTS.md` first. Includes partials:
-`prompts/partials/pacing.md`, `snapshot-first.md`, `stop-conditions.md`.
+Trigger: owner explicitly starts or schedules a run in an authorized local agent environment. Read AGENTS.md, docs/execution-safety.md and pacing/snapshot/stop partials. The dashboard does not launch a runner.
 
-## 0. Setup
-- `RUN_ID = YYYY-MM-DD` (local date). Create `logs/runs/<RUN_ID>.json` per the `DailyRun` schema with `started_at`, empty `steps`.
-- Load `config/guardrails.yaml`. Announce in chat: dry_run on/off, caps, min score.
-
-## 1. Preflight
-- Run `npm run preflight`. Non-zero exit → write `status: "aborted"`, report, stop.
-
-## 2. Auth verification
-For each platform in `context/targets.yaml` with `enabled: true`:
-1. `browser_navigate` to the platform's `auth_check_url`.
-2. `browser_snapshot`. Logged in if you see the account avatar / "Me" menu / no "Sign in" button.
-3. Not logged in → mark platform `auth_failed`, skip it, tell the owner to log in (see `mcp/README.md`).
-
-## 3. Load context
-Read `context/profile.md`, `context/cv.md`, `context/preferences.yaml`, `context/form-answers.yaml`.
-Load `logs/applications-log.json` and build `seen = set(job_id)`, `applied_today`, `applied_today_by_platform`.
-
-## 4. Discover → 5. Score → 6. Apply loop
-```
-for target in enabled targets:
-  jobs = run skills/discover-jobs.md(target)
-  for job in jobs:
-    if job.job_id in seen: continue                      # idempotency
-    score = run skills/score-job.md(job)
-    if score.match_score < min_match_score - 1: log skipped; continue
-    if score.match_score < min_match_score: log needs_review; continue
-    if applied_today >= max_applications_per_day: stop loop (cap reached)
-    if applied_today_by_platform[p] >= max_per_platform[p]: skip platform
-    if job.apply_type == "easy_apply": run skills/apply-easy-apply.md
-    else: run skills/apply-external-ats.md
-    run skills/log-application.md(result)
-    seen.add(job.job_id)
-```
-- `dry_run: true` → apply skills fill everything but **never click the final Submit**; status `dry_run`.
-
-## 7. Report
-- Finish `logs/runs/<RUN_ID>.json` (counts, errors, finished_at). Run `npm run validate:logs`.
-- Create a "Daily Runs" row in Notion (see `log-application.md` → Notion sync).
-- Chat report: scanned / applied / needs_review / skipped / errors, plus a list of `needs_review` jobs with links and the open questions.
+1. Acquire `npm run run:lock -- acquire`; keep returned owner token for journal/release, never run two agents on one browser profile. Then `npm run preflight`; must exit 0. Failure: write schema-valid aborted run, validate, release owned lock, report and STOP. No browser actions first.
+2. Auth verification: open each DISTINCT enabled platform's auth_check_url, pace/snapshot. For auth_required:true require an explicit account indicator. For public boards false logged-out is allowed. Any unexpected login, CAPTCHA, 2FA, warning or rate limit -> abort entire run and notify, never skip and continue.
+3. Load owner profile, CV, preferences, targets, owner-verified form answers and guardrails. Use UTC YYYY-MM-DD for run ID/caps and ISO timestamps. Initialize DailyRun with all zero counts, running status, null finished_at and steps; validate. Do not overwrite an existing day's run: append steps/counts under the lock.
+4. Retry at most 25 unsynced Notion records according to log-application.md, only AFTER steps 1–3. Sync errors remain local and do not trigger blind creation.
+5. Each target uses discover-jobs.md and its platform/ATS playbook. For each canonical job check journal, score honestly, route below 5 skipped, 5 to below minimum review, >=7 eligible. Log every disposition.
+6. Application loop: run applicationDecision from schemas/index.ts. Missing platform cap, unknown facts, existing job or manual_apply overrides score. Re-read logs immediately before each submit. Count unresolved submission reservations against daily/platform caps. Stop when daily cap reached; skip capped platform.
+7. Eligible internal forms use apply-easy-apply.md; external ATS apply-external-ats.md. Before Submit reserve needs_review/submission_uncertain entry using npm run journal -- ENTRY_JSON_PATH LOCK_TOKEN; validate. Only after final receipt update SAME record to applied with applied_at; uncertainty stays review. Dry run never submits or reserves a submission.
+8. End: counts derive from this run's actual journal dispositions; dry_run != applied. Finish JSON, validate, upsert Notion Daily Runs by run_id. Produce weekly/monthly report when due. Release owned lock in finally, including aborted paths. Report counts, review links/questions, errors and blockers. Never say applied without receipt or synced without confirmation.

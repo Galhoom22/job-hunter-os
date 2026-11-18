@@ -1,15 +1,10 @@
-# Skill: Fill Form Answers — v1
+# Fill Form Answers & Resume — v2
 
-Input: a field's label, type and options. Output: value or `UNKNOWN`.
+Input: fresh snapshot field label/type/options. Only owner_verified:true facts may be used.
 
-Resolution order:
-1. Exact/fuzzy match against `context/form-answers.yaml -> questions[].match` (case-insensitive, any keyword).
-2. Profile facts from `context/profile.md` (contact, years of experience, location, notice period).
-3. Numeric "years of experience with X": use `form-answers.yaml -> skills_years[X]`; not listed → `UNKNOWN`.
-4. Select/radio: choose the option that equals or best matches the resolved value; no fit → `UNKNOWN`.
-
-Never:
-- invent numbers, salaries, certifications, or legal statuses;
-- answer "Yes" to a yes/no just to pass a filter.
-
-When `UNKNOWN`: record `{question, field_type, options}` in the application's `open_questions`, so the owner can add it to `form-answers.yaml` (the dashboard Config page edits this file).
+1. For specific years with skill X, FIRST use skills_years[X]; absent -> UNKNOWN. Never let generic "how many years" overwrite a skill-specific answer.
+2. For other questions exact/unambiguous keyword match in questions[].match, then explicit profile fact. Conflicting matches, missing required facts or no matching option -> UNKNOWN, never guess numbers/salary/legal status.
+3. For a resume `<input type="file">`, use resume_pdf_path (default template ./assets/resume.pdf), verified by preflight as an existing PDF. Snapshot and identify the labeled Upload resume/CV control; click it to open the chooser then call Playwright MCP browser_file_upload with the absolute local path. If existing resume selection is offered, verify EXACT filename matches that file and owner confirms version. Never use arbitrary cached resume.
+4. If input is hidden, use its accessible upload button to open the chooser; do not inject scripts or use guessed CSS selectors. If inaccessible, needs_review. Snapshot afterward and verify displayed filename/upload success. Failed or ambiguous upload -> needs_review, no Submit.
+5. Each click/type/select/upload gets random 3–8s pacing; snapshot after every step. Required consents and EEO use explicit owner answers; no prechecked newsletter/company follow unless owner permits.
+6. UNKNOWN: record question, field_type, options in open_questions; screenshot locally (redact sensitive data), leave tab open, needs_review and move on. CAPTCHA/2FA stops whole run, not merely this job.

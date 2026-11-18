@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const Platform = z.enum(["linkedin", "wellfound", "wuzzuf", "greenhouse", "lever", "other"]);
+export const Platform = z.enum(["linkedin", "wellfound", "wuzzuf", "greenhouse", "lever", "ashby", "smartrecruiters", "breezyhr", "workday", "taleo", "indeed", "glassdoor", "dice", "ziprecruiter", "weworkremotely", "remoteok", "builtin", "welcometothejungle", "bayt", "other"]);
 export const Status = z.enum([
   "discovered",
   "skipped",
@@ -24,7 +24,7 @@ export const DiscoveredJob = z.object({
   platform: Platform,
   url: z.string().url(),
   location: z.string().default(""),
-  apply_type: z.enum(["easy_apply", "external"]),
+  apply_type: z.enum(["easy_apply", "external", "manual_apply"]),
   discovered_at: z.string().datetime(),
 });
 
@@ -39,6 +39,8 @@ export const Application = DiscoveredJob.extend({
   applied_at: z.string().datetime().nullable(),
   notes: z.string().default(""),
   notion_synced: z.boolean(),
+  notion_page_id: z.string().optional(),
+  submission_uncertain: z.boolean().default(false),
 });
 
 export const DailyRun = z.object({
@@ -62,6 +64,8 @@ export const DailyRun = z.object({
 });
 
 export const Insight = z.object({
+  notion_synced: z.boolean().default(false),
+  notion_page_id: z.string().optional(),
   type: z.enum(["weekly", "monthly"]),
   period: z.string(),
   generated_at: z.string().datetime(),
@@ -83,14 +87,53 @@ export type DiscoveredJob = z.infer<typeof DiscoveredJob>;
 
 /** Guardrail rule: can another application be submitted right now? */
 export function canApply(
-  apps: Pick<Application, "status" | "platform" | "applied_at">[],
+  apps: (Pick<Application, "status" | "platform" | "applied_at"> & Partial<Pick<Application, "submission_uncertain" | "discovered_at">>)[],
   platform: string,
   today: string,
   limits: { max_applications_per_day: number; max_per_platform: Record<string, number> },
 ): boolean {
-  const todays = apps.filter((a) => a.status === "applied" && a.applied_at?.startsWith(today));
+  const todays = apps.filter((a) => (a.status === "applied" && a.applied_at?.startsWith(today)) || (a.submission_uncertain && a.discovered_at?.startsWith(today)));
   if (todays.length >= limits.max_applications_per_day) return false;
   const cap = limits.max_per_platform[platform];
+  if (cap === undefined && platform !== "__any__") return false;
   if (cap !== undefined && todays.filter((a) => a.platform === platform).length >= cap) return false;
   return true;
+}
+
+export const Guardrails = z.object({
+  dry_run: z.boolean(),
+  max_applications_per_day: z.number().int().min(1).max(20),
+  max_per_platform: z.record(z.number().int().min(0).max(20)),
+  min_match_score: z.number().min(7).max(10),
+  review_min_score: z.literal(5),
+  delay_seconds: z.tuple([z.number().min(3), z.number().max(8)]).refine(([a, b]) => a <= b),
+  max_consecutive_errors: z.number().int().min(1).max(3),
+  stop_on_captcha: z.literal(true),
+  stop_on_2fa: z.literal(true),
+});
+export const FormAnswers = z.object({
+  owner_verified: z.literal(true),
+  resume_pdf_path: z.string().regex(/^\.\/assets\/[^/\\]+\.pdf$/i),
+  questions: z.array(z.object({ match: z.array(z.string().min(1)).min(1), answer: z.string().min(1) })),
+  skills_years: z.record(z.number().nonnegative()),
+  eeo: z.record(z.string()),
+});
+export const Targets = z.object({ targets: z.array(z.object({
+  name: z.string().min(1), platform: Platform, enabled: z.boolean(),
+  url: z.string().url(), auth_check_url: z.string().url(),
+  auth_required: z.boolean().default(true), max_results: z.number().int().min(1).max(100),
+})) });
+export function routeMatchScore(score: number, minimum = 7): "eligible" | "needs_review" | "skipped" {
+  if (!Number.isFinite(score) || score < 0 || score > 10 || minimum < 7 || minimum > 10) throw new Error("Invalid score or minimum");
+  return score >= minimum ? "eligible" : score >= 5 ? "needs_review" : "skipped";
+}
+export function applicationDecision(job: Pick<Application, "job_id" | "match_score" | "apply_type" | "open_questions">,
+  apps: Application[], platform: string, today: string,
+  limits: { dry_run: boolean; min_match_score: number; max_applications_per_day: number; max_per_platform: Record<string, number> }) {
+  if (apps.some(a => a.job_id === job.job_id)) return "duplicate";
+  const route = routeMatchScore(job.match_score, limits.min_match_score);
+  if (route !== "eligible") return route;
+  if (job.apply_type === "manual_apply" || job.open_questions.length) return "needs_review";
+  if (!canApply(apps, platform, today, limits)) return "cap_reached";
+  return limits.dry_run ? "dry_run" : "eligible";
 }

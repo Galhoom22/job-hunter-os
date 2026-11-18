@@ -1,0 +1,25 @@
+import { describe, expect, it } from "vitest";
+import { Application, applicationDecision, canApply, FormAnswers, Guardrails, routeMatchScore } from "../../schemas/index";
+const limits = { dry_run: true, min_match_score: 7, max_applications_per_day: 20, max_per_platform: { linkedin: 12 } };
+const job = { job_id: "linkedin:123", match_score: 7, apply_type: "easy_apply" as const, open_questions: [] };
+const entry = Application.parse({ ...job, title: "Engineer", company: "Example", platform: "linkedin", url: "https://example.org/job/123", discovered_at: "2026-11-18T01:00:00Z", status: "needs_review", matched_skills: [], missing_skills: [], run_id: "2026-11-18", applied_at: null, notion_synced: false });
+describe("submission safety", () => {
+  it("score 7 is eligible", () => expect(routeMatchScore(7)).toBe("eligible"));
+  it("score 5 needs review", () => expect(routeMatchScore(5)).toBe("needs_review"));
+  it("score 6 needs review", () => expect(routeMatchScore(6)).toBe("needs_review"));
+  it("score 6.9 needs review", () => expect(routeMatchScore(6.9)).toBe("needs_review"));
+  it("score below 5 is skipped", () => expect(routeMatchScore(4.9)).toBe("skipped"));
+  it("never resubmits a job_id already logged", () => expect(applicationDecision(job, [entry], "linkedin", "2026-11-18", limits)).toBe("duplicate"));
+  it("dry run never authorizes submission", () => expect(applicationDecision(job, [], "linkedin", "2026-11-18", limits)).toBe("dry_run"));
+  it("manual Workday/Taleo fallback needs review", () => expect(applicationDecision({ ...job, apply_type: "manual_apply" }, [], "linkedin", "2026-11-18", limits)).toBe("needs_review"));
+  it("unknown form answer blocks an eligible job", () => expect(applicationDecision({ ...job, open_questions: [{ question: "Unknown legal status?" }] }, [], "linkedin", "2026-11-18", limits)).toBe("needs_review"));
+  it("missing platform cap fails closed", () => expect(canApply([], "bayt", "2026-11-18", limits)).toBe(false));
+  it("uncertain submissions consume the platform cap", () => expect(canApply(Array.from({length: 12}, () => ({ ...entry, submission_uncertain: true })), "linkedin", "2026-11-18", limits)).toBe(false));
+  it("rejects unverified example answers", () => expect(FormAnswers.safeParse({ owner_verified: false, resume_pdf_path: "./assets/resume.pdf", questions: [], skills_years: {}, eeo: {} }).success).toBe(false));
+  it("rejects resume paths outside assets", () => expect(FormAnswers.safeParse({ owner_verified: true, resume_pdf_path: "../../secret.pdf", questions: [], skills_years: {}, eeo: {} }).success).toBe(false));
+  const safe = { ...limits, review_min_score: 5, delay_seconds: [3,8], max_consecutive_errors: 3, stop_on_captcha: true, stop_on_2fa: true };
+  it("rejects delays shorter than 3 seconds", () => expect(Guardrails.safeParse({ ...safe, delay_seconds: [2,8] }).success).toBe(false));
+  it("rejects delays longer than 8 seconds", () => expect(Guardrails.safeParse({ ...safe, delay_seconds: [3,9] }).success).toBe(false));
+  it("CAPTCHA stop cannot be disabled", () => expect(Guardrails.safeParse({ ...safe, stop_on_captcha: false }).success).toBe(false));
+  it("2FA stop cannot be disabled", () => expect(Guardrails.safeParse({ ...safe, stop_on_2fa: false }).success).toBe(false));
+});

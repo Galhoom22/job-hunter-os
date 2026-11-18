@@ -1,27 +1,23 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { z } from "zod";
 import { ApplicationsLog, DailyRun, Insight } from "../schemas/index.ts";
-
-const root = resolve(import.meta.dirname, "..");
+const root = resolve(import.meta.dirname, "..", process.argv.includes("--demo") ? "demo" : "logs");
 let failed = 0;
-function check(file: string, schema: { safeParse: (v: unknown) => any }) {
-  const r = schema.safeParse(JSON.parse(readFileSync(file, "utf8")));
-  if (!r.success) {
-    failed++;
-    console.error(`✘ ${file}`);
-    for (const i of r.error.issues.slice(0, 10)) console.error(`   ${i.path.join(".")}: ${i.message}`);
-  } else console.log(`✔ ${file}`);
+function check(file: string, schema: z.ZodTypeAny) {
+  try {
+    const r = schema.safeParse(JSON.parse(readFileSync(file, "utf8")));
+    if (!r.success) { failed++; console.error(`Invalid record: ${file} (schema mismatch)`); return null; }
+    console.log(`Valid: ${file}`); return r.data;
+  } catch { failed++; console.error(`Invalid JSON: ${file}`); return null; }
 }
-const log = resolve(root, "logs/applications-log.json");
-if (existsSync(log)) {
-  check(log, ApplicationsLog);
-  const ids = JSON.parse(readFileSync(log, "utf8")).map((a: { job_id: string }) => a.job_id);
-  const dup = ids.filter((id: string, i: number) => ids.indexOf(id) !== i);
-  if (dup.length) { failed++; console.error(`✘ duplicate job_id: ${[...new Set(dup)].join(", ")}`); }
-}
-for (const [dir, schema] of [["logs/runs", DailyRun], ["logs/insights", Insight]] as const) {
+const file = resolve(root, "applications-log.json");
+if (existsSync(file)) {
+  const apps = check(file, ApplicationsLog);
+  if (apps && new Set(apps.map((a: {job_id: string}) => a.job_id)).size !== apps.length) { failed++; console.error("Duplicate job_id in application history"); }
+} else console.log("No application history; preflight requires initialization before running.");
+for (const [dir, schema] of [["runs", DailyRun], ["insights", Insight]] as const) {
   const d = resolve(root, dir);
-  if (!existsSync(d)) continue;
-  for (const f of readdirSync(d).filter((f) => f.endsWith(".json"))) check(resolve(d, f), schema);
+  if (existsSync(d)) for (const f of readdirSync(d).filter(f => f.endsWith(".json"))) check(resolve(d, f), schema);
 }
 process.exit(failed ? 1 : 0);

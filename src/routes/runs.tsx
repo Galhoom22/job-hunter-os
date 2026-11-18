@@ -25,7 +25,8 @@ function Runs() {
               <span className="font-mono text-xs text-muted-foreground">{r.platforms.join(" · ")}</span>
               <span className="ml-auto flex gap-4 font-mono text-xs">
                 <span>scanned <b className="text-foreground">{r.counts.scanned}</b></span>
-                <span className="text-success">applied {r.counts.applied + r.counts.dry_run}</span>
+                <span className="text-success">applied {r.counts.applied}</span>
+                <span className="text-info">dry run {r.counts.dry_run}</span>
                 <span className="text-warning">review {r.counts.needs_review}</span>
                 {r.errors.length > 0 && <span className="text-destructive">errors {r.errors.length}</span>}
               </span>

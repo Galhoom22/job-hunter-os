@@ -1,3 +1,6 @@
+# Example facts below are NOT verified owner answers. Review every fact before setting true.
+owner_verified: false
+resume_pdf_path: "./assets/resume.pdf"
 questions:
   - match: ["years of experience", "how many years"]
     answer: "5"

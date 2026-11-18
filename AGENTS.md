@@ -32,7 +32,7 @@ use the editor.
 
 # Autonomous Job Hunter — Canonical Agent Brain
 
-> Single source of truth for **Antigravity**, **Cursor** and **Claude Code**.
+> Single source of truth for **Antigravity**, **Cursor**, **Claude Code**, **Windsurf**, **Cline/Roo** and **GitHub Copilot**.
 > `CLAUDE.md`, `.cursor/rules/job-hunter.mdc` and `.agent/workflows/daily-run.md` only point here.
 
 ## Identity
@@ -79,10 +79,10 @@ The orchestrator is `skills/00-daily-run.md`. Never reorder or skip steps 1–3.
    Count today's `applied` entries in `logs/applications-log.json` before every submit.
 5. **Dry run.** If `dry_run: true`, perform everything except the final Submit click; log status `dry_run`.
 6. **Idempotency.** Before applying, check `job_id` in `logs/applications-log.json`. Never apply twice.
-7. **Stop conditions.** CAPTCHA, unexpected login wall, account warning, rate-limit banner,
+7. **Stop conditions.** CAPTCHA, 2FA, unexpected login wall, account warning, rate-limit banner,
    or 3 consecutive errors -> stop the run, log `aborted` with the reason, report.
 8. **Privacy.** Never print cookies, tokens or `.env` values. Never commit `browser-profile/`.
-9. **Minimum match.** Only apply when `match_score >= min_match_score`. Borderline (min-1) -> `needs_review`.
+9. **Minimum match.** Only apply when `match_score >= min_match_score`. Scores 5 to below the minimum -> `needs_review`; below 5 -> `skipped`.
 10. **Validate.** After every write to `logs/`, run `npm run validate:logs`. If it fails, fix the entry.
 
 ## Output contracts
@@ -96,3 +96,9 @@ All records follow `schemas/index.ts` (Zod). Status values:
 - Dashboard file access goes through `src/lib/repo-data.functions.ts` server functions with a bundled-demo fallback. Why: works locally with real files and still renders when hosted.
 - Zod schemas in `schemas/index.ts` are shared by scripts and dashboard. Why: one contract for agents and UI.
 - `mcp/mcp.template.json` is the only MCP source; `npm run sync:mcp` generates IDE configs. Why: prevents drift between IDEs.
+
+## Execution safety additions
+- Follow `docs/execution-safety.md` before every run. It governs locking, uncertain submissions, uploads, trust boundaries and background limitations.
+- Score >=7 is eligible; 5 to below minimum needs_review; <5 skipped. Safety always overrides eligibility.
+- Synthetic data lives in `demo/`; development-only filesystem reads and writes use server functions. Why: hosted public views must never bundle private files.
+- Shared schema-backed preflight/submission decisions and local locking/journaling scripts enforce safety. Why: browser runs need a real authorized local process, not hosted workers.

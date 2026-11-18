@@ -14,7 +14,10 @@
     "test:watch": "vitest",
     "sync:mcp": "tsx scripts/sync-mcp.ts",
     "validate:logs": "tsx scripts/validate-logs.ts",
-    "preflight": "tsx scripts/preflight.ts"
+    "preflight": "tsx scripts/preflight.ts",
+    "run:lock": "tsx scripts/run-lock.ts",
+    "journal": "tsx scripts/journal.ts",
+    "insights": "tsx scripts/insights.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/applications")({
 });
 
 function scoreClass(s: number) {
-  return s >= 7 ? "text-success" : s >= 6 ? "text-warning" : "text-muted-foreground";
+  return s >= 7 ? "text-success" : s >= 5 ? "text-warning" : "text-muted-foreground";
 }
 
 function Applications() {

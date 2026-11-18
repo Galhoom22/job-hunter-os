@@ -3,9 +3,9 @@
   "period": "2026-11",
   "generated_at": "2026-11-17T20:00:00Z",
   "scanned": 116,
-  "applied": 37,
-  "match_rate": 0.319,
-  "avg_match_score": 5.91,
+  "applied": 33,
+  "match_rate": 0.3275862068965517,
+  "avg_match_score": 5.905172413793103,
   "top_skills": [
     {
       "skill": "Tailwind CSS",
@@ -72,12 +72,29 @@
     {
       "skill": "Kubernetes",
       "count": 16
+    },
+    {
+      "skill": "Vue",
+      "count": 16
+    },
+    {
+      "skill": "Terraform",
+      "count": 16
+    },
+    {
+      "skill": "Go",
+      "count": 14
+    },
+    {
+      "skill": "Python",
+      "count": 13
     }
   ],
   "recommendations": [
-    "Add a small Storybook project to your CV \u2014 it appeared in 23 scored roles.",
-    "Mention React Native exposure if you have any; it is your second most common gap.",
-    "Lead your CV summary with React + TypeScript performance wins \u2014 they match most roles.",
-    "Add answers for recurring 'years with X' questions in form-answers.yaml to cut needs_review."
-  ]
+    "Synthetic sample only: 116 roles, not a whole-market estimate.",
+    "Consider a truthful Storybook learning/project plan: missing in 23/116 sampled roles; add to CV only after real experience.",
+    "Consider a truthful React Native learning/project plan: missing in 19/116 sampled roles; add to CV only after real experience.",
+    "Consider a truthful Micro-frontends learning/project plan: missing in 18/116 sampled roles; add to CV only after real experience."
+  ],
+  "notion_synced": false
 }

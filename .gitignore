@@ -30,19 +30,14 @@ dist-ssr
 *.sln
 *.sw?
 
-# Job Hunter — private local data
+# Job Hunter — private local data (examples and synthetic demo only are public)
 browser-profile/
 .env
+.env.*
+!.env.example
 .mcp.json
 .cursor/mcp.json
-logs/screenshots/*
-!logs/screenshots/.gitkeep
-# Demo logs are committed so the dashboard works on first run.
-# Once you start real runs, uncomment these to keep your history private:
-# logs/applications-log.json
-# logs/runs/
-# logs/insights/
-# Personal context (examples stay committed). Uncomment after filling in real data:
-# context/*.md
-# context/*.yaml
-context/resume.pdf
+assets/*.pdf
+context/*
+!context/*.example
+logs/

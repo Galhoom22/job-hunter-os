@@ -1,13 +1,10 @@
-# Skill: Weekly & Monthly Insights — v1
+# Weekly & Monthly Market / Skill-Gap Reports — v2
 
-Trigger: "Generate weekly insights" / "monthly insights" (or automatically on Mondays / 1st of month at the end of a daily run).
+1. Load validated local ApplicationsLog; use UTC calendar week (Monday–Sunday) or calendar month, explicitly record period (YYYY-Www / YYYY-MM), count each job_id once. Exclude synthetic demo, outside-period entries and duplicate canonical ATS roles.
+2. scanned = unique scored jobs; applied = confirmed applied receipts only; needs_review and dry_run separately. match_rate = jobs with match_score >= min_match_score / scanned (0 if empty), NOT applications/scanned. avg_match_score = mean scored values (0 if empty).
+3. Demand count each skill once per job in matched_skills union missing_skills. Gaps count missing skills once per job. Compute platform and location breakdown, sample size and uncertain salary coverage; do not infer whole-market trends from sparse sample.
+4. Write 3–5 concrete CV/learning recommendations with measured counts/denominators; never invent experience or claim a skill exists in CV. Include limitations in recommendations if sample is sparse.
+5. Save schema-valid logs/insights/<type>-<period>.json atomically with notion_synced:false; validate immediately. Query Notion insights_db by Type + Period before create/update; on confirmed success persist page_id and synced true, validate again.
+6. Failed sync follows log-application.md bounded retry (query before create); local report is retained. Weekly reports run Monday after completed daily run; monthly reports on first day for prior complete month. Manual requests may specify a partial period explicitly. Report counts, skill gaps and limitations honestly.
 
-1. Load `logs/applications-log.json`; filter by period (last 7 or 30 days on `discovered_at`).
-2. Compute:
-   - scanned, applied, needs_review, match rate = applied / scanned
-   - avg match score, per platform breakdown
-   - top 10 demanded skills = frequency of (matched_skills ∪ missing_skills)
-   - top skill gaps = frequency of missing_skills
-3. Write 3–5 concrete CV / learning recommendations tied to the gaps (e.g. "Add Kubernetes project: appears in 38% of scored roles").
-4. Save `logs/insights/<type>-<period>.json` (`Insight` schema) and run `npm run validate:logs`.
-5. Create a page in Notion **Weekly & Monthly Insights**. Report a summary in chat.
+Use `npm run insights -- weekly|monthly PERIOD START_ISO END_ISO LOCK_TOKEN` for the shared schema-backed calculator and atomic local report writer. Bounds are inclusive start, exclusive end; choose UTC calendar bounds. Then perform Notion upsert through MCP.

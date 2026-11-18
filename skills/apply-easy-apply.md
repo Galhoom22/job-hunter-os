@@ -1,16 +1,8 @@
-# Skill: Apply via Easy Apply (LinkedIn / Wuzzuf / Wellfound internal) — v1
+# Internal / Easy Apply — v2
 
-Precondition: score passed, caps OK, `job_id` not in log.
-
-1. On the job detail page, `browser_snapshot`, click button "Easy Apply" (or "Apply").
-2. A dialog opens (role `dialog`). Loop over steps:
-   a. Snapshot the dialog. For every form field (textbox, combobox, radio group, checkbox):
-      - Run `skills/fill-form-answers.md` to resolve the answer.
-      - Unknown → STOP this application: `browser_take_screenshot` to `logs/screenshots/<job_id>.png`,
-        leave the tab open, return status `needs_review` with the question text.
-   b. Resume upload: choose the existing resume entry matching `profile.md -> resume_file_name`; if upload required use `browser_file_upload` with `context/resume.pdf`.
-   c. Click "Next" / "Review" / "Continue".
-3. On the "Review" step: snapshot and verify name, email, phone.
-4. If `dry_run: true` → do NOT click "Submit application". Close dialog with "Dismiss" → "Discard". Status `dry_run`.
-5. Otherwise click "Submit application", wait, snapshot, confirm text like "Application sent". Status `applied`.
-6. Uncheck "Follow company" if present before submit (unless `preferences.follow_companies: true`).
+1. Precondition: eligible score, correct owner session, duplicates checked, caps available, known internal flow. Snapshot Apply button; any One-click/Quick Apply may submit immediately, so apply final gate BEFORE first click.
+2. Snapshot dialog; resolve all fields using fill-form-answers.md, upload verified resume. Unknown required question -> screenshot, open_questions, needs_review, leave tab open. Do not fabricate answers or modify profile.
+3. Pace/snapshot between steps. Verify contact info, legal facts, resume version, consents and summary. Uncheck Follow company unless preferences.follow_companies:true.
+4. dry_run:true: never Submit (including quick-apply); stop before final action, discard draft only when safe, log dry_run. Do not create a submission reservation.
+5. Otherwise re-read history and apply applicationDecision, including unresolved-reservation caps. Atomically reserve needs_review/submission_uncertain:true before submitting; journal and validate. Submit once only. Confirm explicit receipt/thank-you text and job identity; update same entry to applied/applied_at/submission_uncertain:false.
+6. Timeout or ambiguous outcome: preserve reservation as needs_review and never retry automatically. Stop whole run on CAPTCHA/2FA/login wall/warning/rate limit/three consecutive errors. Local-first journal then Notion sync.

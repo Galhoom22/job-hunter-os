@@ -1,0 +1,30 @@
+# Safety settings read by every skill. Start with dry_run: true.
+dry_run: true
+max_applications_per_day: 20
+max_per_platform:
+  linkedin: 12
+  wellfound: 5
+  wuzzuf: 5
+  ashby: 3
+  smartrecruiters: 3
+  breezyhr: 3
+  indeed: 3
+  glassdoor: 3
+  dice: 3
+  ziprecruiter: 3
+  weworkremotely: 3
+  remoteok: 3
+  builtin: 3
+  welcometothejungle: 3
+  bayt: 3
+  greenhouse: 3
+  lever: 3
+  workday: 0
+  taleo: 0
+  other: 0
+min_match_score: 7
+delay_seconds: [3, 8]
+max_consecutive_errors: 3
+stop_on_captcha: true
+review_min_score: 5
+stop_on_2fa: true

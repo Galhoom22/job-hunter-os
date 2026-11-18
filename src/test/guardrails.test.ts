@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { canApply } from "../../schemas/index";
 
-const limits = { max_applications_per_day: 20, max_per_platform: { linkedin: 12, wellfound: 5, wuzzuf: 5 } };
+const limits = { max_applications_per_day: 20, max_per_platform: { linkedin: 12, wellfound: 5, wuzzuf: 5, greenhouse: 3 } };
 const today = "2026-11-18";
 const applied = (platform: string, n: number) =>
   Array.from({ length: n }, () => ({ status: "applied" as const, platform: platform as "linkedin", applied_at: `${today}T10:00:00Z` }));

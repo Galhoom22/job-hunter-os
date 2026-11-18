@@ -1,0 +1,100 @@
+{
+  "type": "weekly",
+  "period": "2026-W46",
+  "generated_at": "2026-11-17T20:00:00Z",
+  "scanned": 53,
+  "applied": 14,
+  "match_rate": 0.2830188679245283,
+  "avg_match_score": 5.790566037735848,
+  "top_skills": [
+    {
+      "skill": "Playwright",
+      "count": 34
+    },
+    {
+      "skill": "Tailwind CSS",
+      "count": 30
+    },
+    {
+      "skill": "TypeScript",
+      "count": 30
+    },
+    {
+      "skill": "React",
+      "count": 29
+    },
+    {
+      "skill": "Jest",
+      "count": 29
+    },
+    {
+      "skill": "GraphQL",
+      "count": 28
+    },
+    {
+      "skill": "Node.js",
+      "count": 27
+    },
+    {
+      "skill": "Next.js",
+      "count": 26
+    },
+    {
+      "skill": "Docker",
+      "count": 11
+    },
+    {
+      "skill": "Vue",
+      "count": 11
+    }
+  ],
+  "skill_gaps": [
+    {
+      "skill": "Docker",
+      "count": 11
+    },
+    {
+      "skill": "Vue",
+      "count": 11
+    },
+    {
+      "skill": "Micro-frontends",
+      "count": 10
+    },
+    {
+      "skill": "React Native",
+      "count": 10
+    },
+    {
+      "skill": "Terraform",
+      "count": 9
+    },
+    {
+      "skill": "Storybook",
+      "count": 9
+    },
+    {
+      "skill": "Kubernetes",
+      "count": 9
+    },
+    {
+      "skill": "AWS",
+      "count": 7
+    },
+    {
+      "skill": "Python",
+      "count": 6
+    },
+    {
+      "skill": "Go",
+      "count": 5
+    }
+  ],
+  "recommendations": [
+    "Synthetic sample only: 53 roles, not a whole-market estimate.",
+    "Consider a truthful Docker learning/project plan: missing in 11/53 sampled roles; add to CV only after real experience.",
+    "Consider a truthful Vue learning/project plan: missing in 11/53 sampled roles; add to CV only after real experience.",
+    "Consider a truthful Micro-frontends learning/project plan: missing in 10/53 sampled roles; add to CV only after real experience."
+  ],
+  "notion_synced": false
+}

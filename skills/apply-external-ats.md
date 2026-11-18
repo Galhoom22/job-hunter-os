@@ -1,12 +1,7 @@
-# Skill: Apply via External ATS (Greenhouse / Lever / Workday / Ashby) — v1
+# External ATS Dispatcher — v2
 
-1. Click the "Apply" link; if a new tab opens, use `browser_tabs` to switch.
-2. Identify the ATS from the URL: `boards.greenhouse.io`, `jobs.lever.co`, `myworkdayjobs.com`, `jobs.ashbyhq.com`.
-3. **Workday** or any ATS that requires creating an account → status `needs_review` (reason: "account required"). Do not create accounts.
-4. Snapshot the form. Fill every field by label using `skills/fill-form-answers.md`:
-   - Name / Email / Phone / LinkedIn / Portfolio from `profile.md`.
-   - Resume: `browser_file_upload` with `context/resume.pdf`.
-   - Cover letter (optional fields): leave empty unless `preferences.cover_letter: true` — then write 120 words max, truthful, from the CV.
-   - EEO / demographic questions: use `form-answers.yaml -> eeo` (defaults to "Decline to self-identify").
-5. Unknown required question → screenshot, `needs_review`, keep tab open, move on.
-6. `dry_run` → stop before Submit. Else click "Submit application", confirm the thank-you page.
+1. Snapshot and pace before Apply. If a tab opens, list/switch tabs and inspect final HTTPS hostname. Preserve original job_id, record final canonical ATS URL in notes and check duplicates by that URL too.
+2. Route only recognized employer hosts to skills/ats/: Greenhouse (boards.greenhouse.io or job-boards.greenhouse.io), Lever (jobs.lever.co), Ashby (jobs.ashbyhq.com), SmartRecruiters (jobs.smartrecruiters.com), BreezyHR (company.breezy.hr).
+3. Workday (myworkdayjobs.com/myworkdaysite.com), Taleo (taleo.net), other complex portals or account creation -> apply_type:manual_apply, status:needs_review. Unknown hosts or employer mismatch also review. Never create accounts or grant OAuth automatically.
+4. Snapshot form and follow ATS playbook; use verified resume_pdf_path through fill-form-answers.md. Optional cover letter empty unless owner permits; if permitted <=120 words, grounded only in CV. Required unknown question -> review with screenshot/open_questions.
+5. Final safety gate, dry-run behavior, journal reservation and receipt verification are exactly apply-easy-apply.md steps 3–6. Never retry ambiguous submission. CAPTCHA, 2FA, unexpected login or rate limit aborts the entire run immediately.
