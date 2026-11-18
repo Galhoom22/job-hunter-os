@@ -1,6 +1,7 @@
 # Skill: LinkedIn Profile Update (on demand only) — v1
 
 Never run during a daily run. Only when the owner asks.
+Use skills/profile-optimizer.md for a current/proposed evidence table and MCP/extension staging. Exact-text approval is mandatory; the extension never saves. Read back persisted changes before claiming success.
 
 1. Ask which section: Headline, About, Experience entry, Skills.
 2. Draft the new text from `context/profile.md` + latest insights. Show it in chat as a diff (old → new).

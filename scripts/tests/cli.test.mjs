@@ -90,3 +90,31 @@ test('unsupported multi-key YAML cannot be corrupted by registration', t => {
   assert.equal(f.run('add-platform', 'safe-board').status, 1);
   assert.equal(fs.readFileSync(file, 'utf8'), original);
 });
+test('bundle-prompt writes verified private context, validates logs and never overwrites', t => {
+  const f = fixture(t); assert.equal(f.run('init').status, 0);
+  assert.equal(f.run('bundle-prompt').status, 1);
+  readyFixture(f.cwd);
+  const dependencies = fileURLToPath(new URL('../../node_modules/', import.meta.url));
+  fs.symlinkSync(dependencies, path.join(f.cwd, 'node_modules'), 'junction');
+  const result = f.run('bundle-prompt');
+  assert.equal(result.status, 0, result.stdout);
+  const file = path.join(f.cwd, 'logs', 'master-chat-prompt.md');
+  const text = fs.readFileSync(file, 'utf8');
+  assert.ok(text.includes('Source: AGENTS.md'));
+  assert.ok(text.includes('Source: context/profile.md'));
+  assert.ok(text.includes('Source: context/form-answers.yaml'));
+  assert.ok(text.includes('Alex River'));
+  assert.ok(!result.stdout.includes('Alex River'));
+  assert.equal(f.run('bundle-prompt').status, 1);
+  assert.equal(fs.readFileSync(file, 'utf8'), text);
+  assert.ok(fs.existsSync(path.join(f.cwd, 'extension', 'manifest.json')));
+});
+test('bundle-prompt refuses credential-bearing input and missing validation helpers', t => {
+  const f = fixture(t); assert.equal(f.run('init').status, 0); readyFixture(f.cwd);
+  assert.equal(f.run('bundle-prompt').status, 1);
+  assert.ok(!fs.existsSync(path.join(f.cwd, 'logs', 'master-chat-prompt.md')));
+  fs.appendFileSync(path.join(f.cwd, 'context', 'profile.md'), '\napi_key: synthetic-test-marker');
+  const result = f.run('bundle-prompt'); assert.equal(result.status, 1);
+  assert.ok(!result.stdout.includes('synthetic-test-marker'));
+  assert.ok(!fs.existsSync(path.join(f.cwd, 'logs', 'master-chat-prompt.md')));
+});

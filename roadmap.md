@@ -1,5 +1,11 @@
 # Repository readiness audit
 
+## Three-tier browser companion and approval workflow
+- [x] Add a no-build MV3 companion with extraction, reviewed autofill and single-use approval-only submission/profile staging.
+- [x] Add approval policy contracts, private validated prompt bundling and MCP/web-chat/profile/resume skills.
+- [x] Document privacy/fallback limits; verify 117 tests and isolated Chromium form flow without src changes.
+- [ ] Live extension installation, employer forms and persisted profile edits: requires owner-installed Chrome/Edge, authorized sessions, confirmed facts and exact-text approval; test fixtures do not verify real sites.
+
 ## Flagship engineering guide and dynamic search registry
 - [x] Expand disabled target templates with platform URL patterns, parameters and ATS discovery channels.
 - [x] Rewrite the README into ten architecture, setup, lifecycle, compatibility and contribution sections.

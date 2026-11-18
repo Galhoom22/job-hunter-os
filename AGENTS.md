@@ -115,4 +115,4 @@ All records follow `schemas/index.ts` (Zod). Status values:
 - Six commands use docs/chat-commands.md; global cwd uses docs/cli-installation.md. Why: IDE support varies.
 - Readiness uses shared bin/readiness.mjs and schemas/readiness.schema.json. Why: doctor/preflight must block stale or unverified facts.
 - Use schemas/agent-policy.ts before submissions: first three distinct authorized run dates cap at 5 alongside calendar warm-up. Why: idle days cannot bypass caution.
-- CLI uses Node built-ins; tests in scripts/tests/. Why: installation needs no web runtime.
+- CLI uses Node built-ins; submits use approval-gate.md. Why: portability and explicit consent.

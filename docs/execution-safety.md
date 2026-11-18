@@ -1,5 +1,7 @@
 # Local execution safety
 
+All irreversible application clicks also follow skills/approval-gate.md: approve_before_submit defaults on, auto_high_confidence needs >=8/no unknowns/no filled essay, and either dry-run control always forbids Submit. Approval never overrides minimum score, readiness, caps or legal facts. The extension requires human approval in all live modes and cannot verify local logs; see skills/fallback-no-mcp.md. Normal browsers are not immune to security checks.
+
 The dashboard is not an agent runner or scheduler. Background operation requires an authorized local IDE/model process that stays awake, has MCP tools and permissions, and respects each site's automation terms. No claim of unattended reliability is possible from documentation alone.
 
 1. Acquire `npm run run:lock -- acquire` before preflight. It atomically creates logs/run.lock with a random owner token and prints only that non-secret lock token. Refusal means stop. Release using `npm run run:lock -- release TOKEN`. Do not remove stale locks without owner confirmation.

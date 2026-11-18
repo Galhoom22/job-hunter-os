@@ -120,7 +120,7 @@ function inject(isGlobal) {
 }
 function init() {
   safePath(root); fs.mkdirSync(root, { recursive: true, mode: 0o700 });
-  for (const dir of ['skills', 'prompts', 'templates', 'config', 'docs', 'schemas', 'scripts', 'bin', 'commands', 'mcp']) copyTree(path.join(source, dir), path.join(root, dir), name => !name.includes('import.json') && name !== 'tests');
+  for (const dir of ['extension', 'skills', 'prompts', 'templates', 'config', 'docs', 'schemas', 'scripts', 'bin', 'commands', 'mcp']) copyTree(path.join(source, dir), path.join(root, dir), name => !name.includes('import.json') && name !== 'tests');
   for (const name of ['AGENTS.md', 'CLAUDE.md', '.windsurfrules', '.clinerules', 'LICENSE']) write(path.join(root, name), fs.readFileSync(path.join(source, name)), { preserve: true });
   for (const name of fs.readdirSync(path.join(source, 'context')).filter(name => name.endsWith('.example'))) {
     write(path.join(root, 'context', name), fs.readFileSync(path.join(source, 'context', name)), { preserve: true });
@@ -201,15 +201,44 @@ function addPlatform(name) {
   backup(targetsFile); write(file, template, { preserve: true }); write(targetsFile, targets.trimEnd() + '\n' + block);
   say(`Added disabled manual-review platform ${name}. Supply its real URL in chat; other has cap 0 until a reviewed adapter exists.`);
 }
+function bundlePrompt() {
+  const sources = ['AGENTS.md', 'context/profile.md', 'context/form-answers.yaml'];
+  const sections = sources.map(name => {
+    const file = path.join(root, name); safePath(file);
+    if (!fs.existsSync(file)) throw new Error('Complete /setup before bundling; required context is missing.');
+    const text = fs.readFileSync(file, 'utf8');
+    if (name !== 'AGENTS.md') {
+      const example = file + '.example';
+      if ((fs.existsSync(example) && text === fs.readFileSync(example, 'utf8')) || /replace-with|your-handle|example\.com|Acme Fintech|Nile Commerce/.test(text)) throw new Error('Bundle refused: example context is not verified owner data.');
+      if (name.endsWith('.yaml') && !/^owner_verified:\s*true\s*(?:#.*)?$/m.test(text)) throw new Error('Bundle requires owner-verified form answers.');
+      if (/\b(?:NOTION_TOKEN|api[_-]?key|access[_-]?token|password|cookie)\s*[:=]/i.test(text)) throw new Error('Possible credentials detected; review privately before bundling.');
+    }
+    return `## Source: ${name}\n\n${text}`;
+  });
+  const output = path.join(root, 'logs', 'master-chat-prompt.md');
+  safePath(output);
+  if (fs.existsSync(output)) throw new Error('Existing master prompt preserved; remove it privately after review before rebundling.');
+  write(output, '# Private owner-approved chat context\n\nContains personal information. Review/redact before uploading to any external AI. No credentials or browser sessions are included. Read skills/fallback-no-mcp.md; web chat cannot run local tools or authorize submissions by itself.\n\n' + sections.join('\n\n'));
+  // Markdown artifacts do not alter JSON records; validate existing logs after any logs write.
+  const runtime = path.join(root, '.job-hunter-runtime.json');
+  const manifest = configRead(path.join(root, 'package.json'));
+  const expected = fs.existsSync(runtime) ? configRead(runtime).helperScripts?.['validate:logs'] : undefined;
+  if (expected && manifest.scripts?.['validate:logs'] === expected && fs.existsSync(path.join(root, 'node_modules', '.bin', process.platform === 'win32' ? 'tsx.cmd' : 'tsx'))) {
+    const result = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'validate:logs'], { cwd: root, stdio: 'pipe' });
+    if (result.status !== 0) { fs.unlinkSync(output); throw new Error('Log validation failed; no master prompt was kept.'); }
+  } else { fs.unlinkSync(output); throw new Error('Approved local validation helpers are required; complete /setup before bundling.'); }
+  say('Private logs/master-chat-prompt.md created. Review/redact it before explicitly uploading to an external AI; no upload was performed.');
+}
 try {
   if (Number(process.versions.node.split('.')[0]) < 18) throw new Error('Node.js 18+ is required.');
   if (argv.some(a => a.startsWith('-') && !flags.has(a))) throw new Error('Unknown option. Use --help.');
-  if (argv.includes('--help') || argv.includes('-h') || command === 'help') say('job-hunter init [--global|-g] | doctor [--global] | login [--global] | sync-mcp [--global] | add-platform NAME [--global]');
+  if (argv.includes('--help') || argv.includes('-h') || command === 'help') say('job-hunter init [--global|-g] | doctor [--global] | login [--global] | sync-mcp [--global] | add-platform NAME [--global] | bundle-prompt [--global]');
   else if (command === 'init') init();
   else if (command === 'doctor') doctor();
   else if (command === 'login') login();
   else if (command === 'sync-mcp') syncMcp();
   else if (command === 'add-platform') addPlatform(positional[1]);
+  else if (command === 'bundle-prompt') bundlePrompt();
   else throw new Error('Unknown command. Use --help.');
 } catch (error) {
   // Errors are controlled messages only: never emit parsing input, env, configs or stack traces.

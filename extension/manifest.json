@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Job Hunter OS Companion",
+  "version": "0.1.0",
+  "description": "Owner-reviewed job extraction, verified autofill and profile staging. No anti-bot bypass or automatic submissions.",
+  "permissions": ["activeTab", "sidePanel", "storage"],
+  "action": { "default_title": "Open Job Hunter OS" },
+  "background": { "service_worker": "background.js" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "content_scripts": [{
+    "matches": ["https://www.linkedin.com/*", "https://wellfound.com/*", "https://www.indeed.com/*", "https://www.glassdoor.com/*", "https://wuzzuf.net/*", "https://boards.greenhouse.io/*", "https://job-boards.greenhouse.io/*", "https://jobs.lever.co/*", "https://jobs.ashbyhq.com/*"],
+    "js": ["policy.js", "content.js"],
+    "css": ["styles.css"],
+    "run_at": "document_idle"
+  }]
+}

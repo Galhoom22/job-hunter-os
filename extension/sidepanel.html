@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Job Hunter OS Companion</title><link rel="stylesheet" href="styles.css"></head><body class="jh-panel">
+<h1>Job Hunter OS</h1><p>Owner-controlled companion. No anti-bot immunity. Review and redact extracted content before sharing with any AI.</p>
+<button id="extract">Extract Job for AI</button><textarea id="extracted" aria-label="Extracted Markdown" readonly rows="8"></textarea><button id="copy">Copy extracted Markdown</button>
+<label for="payload">Verified autofill JSON</label><textarea id="payload" rows="12" placeholder='{"version":1,"answers":[{"label":"Full name","value":"Your confirmed name","verified":true}],"dry_run":true}'></textarea>
+<input id="file" type="file" accept=".json,.yaml,.yml"><p>JSON is supported. Convert YAML into the verified JSON contract in chat; YAML is never guessed or executed. Resume upload remains manual.</p>
+<button id="fill">Auto-Fill Form</button><button id="profile">Apply Profile Edits (stage only)</button>
+<section aria-label="Submission approval"><h2>Review before Submit</h2><p id="review">No prepared form.</p><label><input type="checkbox" id="attest"> I reviewed the exact answers, uploaded PDF, readiness, permission, active hours, current caps and duplicates. I approve this one submission.</label><button id="submit" disabled>Approve &amp; Submit</button></section>
+<p role="status" id="status"></p><button id="forget">Clear private panel data</button><script src="policy.js"></script><script src="sidepanel.js"></script></body></html>

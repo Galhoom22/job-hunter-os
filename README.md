@@ -300,6 +300,7 @@ Prefix with `npx github:redasalem/job-hunter-os` or use `node ./bin/job-hunter.m
 | `login [--global]` | Open installed Chrome/Chromium with dedicated profile | Manual LinkedIn/Wellfound/Wuzzuf/Indeed tabs; no credential reading or silent browser install |
 | `sync-mcp [--global]` | Non-destructive Playwright MCP merge | Conflicting server preserved/refused; Notion is a separate opt-in import |
 | `add-platform NAME [--global]` | Copy playbook and disabled `other` target | No working adapter or permission to submit; lowercase slug only |
+| `bundle-prompt [--global]` | Create private master context Markdown for owner-reviewed web-chat upload | Verified non-example context and approved local log validation required; never uploads or overwrites |
 
 ### AI IDE chat commands
 
@@ -359,7 +360,57 @@ Use appropriately configured local models when privacy requires them, but tool/m
 
 Never print cookies/tokens, commit `browser-profile/`, share unredacted screenshots or ask owners to paste credentials. Git ignore does not remove history; rotate any exposed secrets without rewriting published history. See [SECURITY.md](SECURITY.md), [execution safety](docs/execution-safety.md) and [the agent policy](schemas/agent-policy.ts).
 
-## 10. Contribute & open-source roadmap
+## 10. Three ways to run: MCP, browser companion & web chat fallback
+
+```text
+Verified CV once -> owner-confirmed context/profile.md + CV provenance
+                                 |
+        +------------------------+-------------------------+
+        v                        v                         v
+MCP-capable local IDE    Chrome/Edge companion      Web AI without MCP
+skills + browser tools   normal owner browser       paste reviewed job/context
+gates + form + PDF       extract / verified JSON    receive truthful HTML + JSON
+        |                        ^                         |
+        |                        +--- owner paste/import --+
+        v                        v
+approval-gate.md          stage fields / manual PDF upload
+        |                        |
+        +---- dry run: NO SUBMIT + live: fresh approval ----+
+                                 |
+                  receipt -> local journal -> optional Notion
+```
+
+### Chrome/Edge companion (no build, no React)
+
+Load [extension/](extension/README.md): unzip a source download if necessary, open `chrome://extensions` (Edge: `edge://extensions`), enable **Developer mode**, select **Load unpacked**, and choose the `extension/` folder. Reload a supported site; click its floating action bar or the extension toolbar icon to open the side panel. Chrome/Edge with side-panel support are the target; other Chromium browsers are not guaranteed. No automatic installation/Web Store release is included.
+
+Extract Job for AI captures visible main content and labeled form questions; **review/redact before copying to an external AI**. Paste confirmed JSON in the panel or load a JSON file, then Auto-Fill Form. YAML must be explicitly converted to this [verified JSON contract](skills/fallback-no-mcp.md). Exact visible conventional fields only; unsupported custom widgets/iframes/ambiguous labels need manual entry. Resume upload is manual. Green highlights show staged fields, not truth or successful acceptance. The extension makes no network uploads and does not persist answers.
+
+**Approve & Submit** requires a fresh owner click plus review of the exact answers/PDF, permission, active hours, readiness and current local caps/duplicates. A single unambiguous final button in the reviewed form may be clicked once; ambiguous flows fall back to the site manually. The extension cannot inspect local logs/readiness or verify receipts. Always journal the actual result locally. Dry run never submits; normal browsers are **not immune to anti-bot checks** and challenges stop automated assistance.
+
+### Approval modes (all existing safety rules still apply)
+
+| `approval_mode` | Behavior |
+|---|---|
+| `approve_before_submit` (default) | Prepare eligible form/PDF, show company/role/score/PDF/answers and wait for exact **APPROVE**, **EDIT <field>**, or **SKIP** |
+| `auto_high_confidence` | Local MCP may submit at score ≥8 with zero unknowns and no filled essay, only after all other gates. Score 7..<8 or an essay needs approval; score 6 remains review under minimum 7. |
+| `dry_run` | Fill/inspect/screenshots only; never final Submit |
+
+Legacy `dry_run: true` always overrides every mode, including APPROVE. Changed answers/form/resume invalidate approval. See [approval-gate.md](skills/approval-gate.md); pass its job-bound approval/essay context to the shared application policy. The extension always requires human approval, even for auto_high_confidence. Profile changes/posts are never auto-approved.
+
+### Web-chat bridge & private master prompt
+
+```bash
+npx github:redasalem/job-hunter-os bundle-prompt --global
+```
+
+After verified setup and approved local validation helpers, this creates private `logs/master-chat-prompt.md` from canonical instructions, profile and verified form answers. It refuses placeholder context, likely credentials and an existing export, validates local logs, and **does not upload anything**. Review/redact before choosing to upload to Custom GPTs, Claude Projects or Gemini Gems; their data policies apply. Web chat cannot execute local files/MCP gates or prove an application happened. See [fallback-no-mcp.md](skills/fallback-no-mcp.md).
+
+The dual-format pipeline is **CV PDF/text once → confirmed structured profile + provenance → per-job evidence map + escaped ATS HTML → fresh inspected PDF with stable job ID → exact employer upload**. Web-chat owners save/print/inspect/upload manually; MCP uses only exposed authorized capabilities. Job keywords never become invented experience. [Tailoring playbook](skills/tailor-resume.md) covers collisions, PDF inspection and source conflicts.
+
+For LinkedIn, Wellfound and Wuzzuf, [profile-optimizer.md](skills/profile-optimizer.md) compares exact current/proposed Headline, Summary, Skills and Experience against verified facts. Exact-text chat approval precedes mutations; MCP can Save only when explicitly included in approval and must read back the result. Extension stages approved Headline/About/Summary in an owner-opened modal and **never clicks Save**; skills/experience/custom editors remain manual.
+
+## 11. Contribute & open-source roadmap
 
 Help make careful job hunting work across countries and career paths. Submit PRs for regional boards, accessible ATS flows, truthful tailoring, localization and meaningful safety tests—**not** stealth plugins, fabricated answers or private employer/user records.
 

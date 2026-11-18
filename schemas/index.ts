@@ -103,6 +103,7 @@ export function canApply(
 
 export const Guardrails = z.object({
   dry_run: z.boolean(),
+  approval_mode: z.enum(["approve_before_submit", "auto_high_confidence", "dry_run"]).default("approve_before_submit"),
   max_applications_per_day: z.number().int().min(1).max(20),
   max_per_platform: z.record(z.number().int().min(0).max(20)),
   min_match_score: z.number().min(7).max(10),
@@ -130,7 +131,8 @@ export function routeMatchScore(score: number, minimum = 7): "eligible" | "needs
 }
 export function applicationDecision(job: Pick<Application, "job_id" | "match_score" | "apply_type" | "open_questions">,
   apps: Application[], platform: string, today: string,
-  limits: { dry_run: boolean; min_match_score: number; max_applications_per_day: number; max_per_platform: Record<string, number> } & Partial<import("./runtime").RuntimeControls>) {
+  limits: { dry_run: boolean; min_match_score: number; max_applications_per_day: number; max_per_platform: Record<string, number>; approval_mode?: "approve_before_submit" | "auto_high_confidence" | "dry_run" } & Partial<import("./runtime").RuntimeControls>,
+  approval: { approved?: boolean; has_essay?: boolean } = {}) {
   if (apps.some(a => a.job_id === job.job_id)) return "duplicate";
   const route = routeMatchScore(job.match_score, limits.min_match_score);
   if (route !== "eligible") return route;
@@ -138,5 +140,7 @@ export function applicationDecision(job: Pick<Application, "job_id" | "match_sco
   if (limits.active_hours && !withinActiveHours(new Date(), limits.active_hours)) return "outside_active_hours";
   const max = limits.warmup_mode ? effectiveDailyCap(limits.max_applications_per_day, limits.warmup_mode, today) : limits.max_applications_per_day;
   if (!canApply(apps, platform, today, {...limits,max_applications_per_day:max})) return "cap_reached";
-  return limits.dry_run ? "dry_run" : "eligible";
+  if (limits.dry_run || limits.approval_mode === "dry_run") return "dry_run";
+  if (limits.approval_mode === "auto_high_confidence" && job.match_score >= 8 && !approval.has_essay) return "eligible";
+  return approval.approved ? "eligible" : "approval_required";
 }

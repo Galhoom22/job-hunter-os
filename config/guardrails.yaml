@@ -1,5 +1,7 @@
 # Safety settings read by every skill. Start with dry_run: true.
 dry_run: true
+# Legacy dry_run:true always overrides this mode; owner confirmation is required to change it.
+approval_mode: approve_before_submit
 max_applications_per_day: 20
 max_per_platform:
   linkedin: 12

@@ -1,0 +1,4 @@
+# Browser companion architecture
+- Use vanilla Manifest V3 scripts with no remote code or network upload; private answers remain ephemeral. Why: normal-browser fallback must not become a hidden data service.
+- Content helpers stage exact visible labeled fields and never save profiles; submissions require a single-use owner click and conservative validation. Why: unknown forms and irreversible actions require human control.
+- Keep browser approval policy in policy.js and test it against the shared application rules. Why: dry-run, score and unknown-answer guards must remain consistent across execution channels.
