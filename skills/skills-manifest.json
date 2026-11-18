@@ -55,10 +55,12 @@
         "repository root or agent home readable with IDE file tools"
       ],
       "requires_skills": [
-        "resume-ingestion"
+        "resume-ingestion",
+        "portfolio-and-github-auditor"
       ],
       "verification": [
         "context/profile.md, context/cv.md, context/preferences.yaml, context/form-answers.yaml, and context/targets.yaml exist with zero placeholder strings",
+        "all URLs in context/profile.md and context/resume-data.json (GitHub, LinkedIn, Portfolio, Live Demos) are well-formed https:// links and verified reachable (no dead 404 links)",
         "context/form-answers.yaml has owner_verified true and all core skill years confirmed",
         "owner gave fresh explicit launch confirmation after seeing the Mission Briefing"
       ],
@@ -1381,6 +1383,94 @@
         "local JSON/YAML/Markdown-link/security checks pass with zero broken links and zero tracked personal data before proposing commit"
       ],
       "path": "skills/20-skill-authoring-standard.md"
+    },
+    {
+      "name": "ats-keyword-heatmap",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load before exporting any tailored resume PDF to compute and display a deterministic Before vs. After ATS Keyword Match % table across Hard Skills, Tools/Infra, Domain Terms, and Seniority Signals using only verified facts from context/cv.md.",
+      "triggers": [
+        "ATS keyword heatmap",
+        "before vs after keyword match percentage",
+        "check resume keyword coverage before PDF export",
+        "compare JD keywords against tailored CV"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "full expanded job description text is captured",
+        "base CV (context/cv.md) and draft tailored HTML/bullets are available for comparison"
+      ],
+      "requires_skills": [
+        "tailor-resume-and-verify",
+        "discover-and-triage"
+      ],
+      "verification": [
+        "deterministic 4-row heatmap table (Hard Skills, Tools/Infra, Domain Terms, Seniority Signals) shows exact matched/total counts and Before % vs. After %",
+        "every newly surfaced keyword in the After column maps to a real verified fact in context/cv.md or context/profile.md",
+        "missing keywords that the owner does not possess are listed transparently under True Gaps rather than hallucinated into the CV"
+      ],
+      "path": "skills/21-ats-keyword-heatmap.md"
+    },
+    {
+      "name": "technical-assessment-architect",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when the owner receives a take-home coding challenge, system design prompt, or technical homework assignment from an employer; produces a clean architecture blueprint, requirement/edge-case matrix, test strategy, and code-review defense Q&A grounded in the owner's stack without generating detectable copy-paste AI slop.",
+      "triggers": [
+        "analyze take-home coding assignment",
+        "technical assessment architect",
+        "system design prompt prep",
+        "review take-home challenge requirements"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "take-home prompt, specification document, or system design problem statement is provided by the owner",
+        "context/cv.md and context/profile.md are readable so architectural choices match the owner's actual engineering stack and style"
+      ],
+      "requires_skills": [
+        "outreach-and-interview-prep",
+        "company-due-diligence",
+        "meta-self-verification"
+      ],
+      "verification": [
+        "unpaid commercial-exploitation red flags (>4-6 hours of free production feature work) are checked first via company-due-diligence rules",
+        "output includes Architecture Blueprint, Hidden Rubric & Edge-Case Checklist, Verification Test Plan, and Live Defense Q&A",
+        "zero generic AI-slop boilerplate comments or unfamiliar frameworks outside the owner's verified stack are introduced"
+      ],
+      "path": "skills/22-technical-assessment-architect.md"
+    },
+    {
+      "name": "contract-and-nda-auditor",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when the owner receives an employment contract, offer letter, B2B Independent Contractor Agreement (MSA/SOW), or NDA; audits clauses for IP overreach, non-compete traps, unilateral termination, and net-60/90 payment delays, and drafts polite counter-clause proposals (educational analysis only, not formal legal representation).",
+      "triggers": [
+        "audit employment contract or NDA",
+        "review B2B contractor agreement or MSA",
+        "check offer contract for red flags",
+        "contract and NDA auditor"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "contract, offer letter, MSA/SOW, or NDA text is provided by the owner in chat or local file",
+        "context/preferences.yaml and context/form-answers.yaml are readable to cross-check agreed compensation, notice period, and work mode"
+      ],
+      "requires_skills": [
+        "offer-negotiator",
+        "privacy-pii-shield"
+      ],
+      "verification": [
+        "includes explicit educational-review disclaimer (not a substitute for licensed legal counsel in the owner's jurisdiction)",
+        "audits all 6 core clause categories (Compensation/Payment Terms, IP Assignment & Prior Inventions, Non-Compete/Non-Solicit, Termination & Notice, Liability/Indemnification, Remote/Tax Classification)",
+        "every flagged YELLOW/RED clause includes an exact quote from the document and a polite DRAFT_ONLY redline/counter-proposal"
+      ],
+      "path": "skills/23-contract-and-nda-auditor.md"
     }
   ]
 }

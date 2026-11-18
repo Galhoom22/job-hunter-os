@@ -23,5 +23,8 @@ This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**.
 - Condition-based browser waiting -> `skills/18-condition-based-browser-waiting.md`
 - On-demand MCP routing -> `skills/19-on-demand-mcp-routing.md`
 - Authoring new skills -> `skills/20-skill-authoring-standard.md`
+- ATS keyword heatmap -> `skills/21-ats-keyword-heatmap.md`
+- Take-home / system design architect -> `skills/22-technical-assessment-architect.md`
+- Contract & B2B NDA auditor -> `skills/23-contract-and-nda-auditor.md`
 
 See `adapters/models/gemini.md` for Gemini-specific multimodal & snapshot verification guidance. Respect `dry_run: true`, verified facts only, caps, and explicit `APPROVE` gates.

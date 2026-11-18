@@ -13,8 +13,10 @@ preconditions:
   - repository root or agent home readable with IDE file tools
 requires_skills:
   - resume-ingestion
+  - portfolio-and-github-auditor
 verification:
   - context/profile.md, context/cv.md, context/preferences.yaml, context/form-answers.yaml, and context/targets.yaml exist with zero placeholder strings
+  - all URLs in context/profile.md and context/resume-data.json (GitHub, LinkedIn, Portfolio, Live Demos) are well-formed https:// links and verified reachable (no dead 404 links)
   - context/form-answers.yaml has owner_verified true and all core skill years confirmed
   - owner gave fresh explicit launch confirmation after seeing the Mission Briefing
 ---
@@ -27,20 +29,22 @@ Run at the start of `/setup`, `/daily-run`, `/apply-url`, or `"Check my folder"`
 - **Load when:** `/setup`; `/daily-run` (Step 0); `/apply-url` (Step 0); `Check my folder`.
 - **Preconditions (stop if any is false):**
   - repository root or agent home readable with IDE file tools
-- **Requires skills:** `resume-ingestion`. **MCP:** playwright.
+- **Requires skills:** `resume-ingestion`, `portfolio-and-github-auditor`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
-### 1. Audit the 5 Readiness Gates directly in `context/`
+### 1. Audit the 5 Readiness Gates & Live Profile Links directly in `context/`
 Read these files yourself and check for missing files or placeholder tokens (`example.com`, `example.invalid`, `your-handle`, `your-site`, `replace-with`, `Acme Fintech`, `Nile Commerce`, `Jane Doe`, `John Doe`, `reda@example.com`, `owner_verified: false`):
 
 | Gate | Files inspected | Pass condition |
 |---|---|---|
-| 1 · CV & Profile | `context/profile.md`, `context/cv.md`, `context/resume-data.json`, `assets/resume.pdf` (or `context/resume.pdf`) | Real owner facts confirmed, no placeholders, readable base PDF exists |
+| 1 · CV, Profile & Live Links | `context/profile.md`, `context/cv.md`, `context/resume-data.json`, `assets/resume.pdf` (or `context/resume.pdf`) | Real owner facts confirmed, no placeholders, readable base PDF exists, and every GitHub/LinkedIn/Portfolio/Demo URL is well-formed (`https://`) and reachable (zero `404` dead links) |
 | 2 · Target Strategy | `context/preferences.yaml` | Confirmed `roles`, `seniority`, `work_modes` (Remote/Hybrid/Onsite), `regions`, `timezones`, and `blacklisted_companies` (empty `[]` is valid if confirmed) |
 | 3 · Terms & Legal | `context/form-answers.yaml` | `owner_verified: true`, minimum salary + currency + period, notice period / earliest start date, work authorization countries, visa sponsorship needs, and `eeo_and_compliance_defaults` |
 | 4 · Skills Matrix | `context/form-answers.yaml` (`skills_years`) | Exact confirmed hands-on years for every core skill (`0` is allowed; guessing is forbidden) |
 | 5 · Platform Access | `context/targets.yaml` + Playwright MCP | At least one target with `enabled: true` and real URL; headed browser session verified within 24 h |
+
+- **Live Link Verification Pass:** Extract all URLs from `context/profile.md` and `context/resume-data.json`. Verify each link is well-formed `https://` and contains zero placeholder domains. During `/setup` (or via `npx job-hunter-os doctor`), verify reachability so a broken `404` portfolio or GitHub project URL is never sent to a recruiter (`skills/11-portfolio-and-github-auditor.md`).
 
 If `.example` templates exist and private `context/` files are absent, copy the structure from `context/*.example` only after replacing placeholders with real owner-confirmed values.
 

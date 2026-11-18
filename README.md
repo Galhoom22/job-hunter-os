@@ -26,13 +26,18 @@ npx job-hunter-os init --global
 # 2. Open Chrome/Chromium once with your dedicated local browser-profile/ to sign in to LinkedIn, Wellfound, and Wuzzuf
 npx job-hunter-os login --global
 
-# 3. Verify OS, paths, readiness gates, and MCP config health
+# 3. Verify OS, paths, readiness gates, live profile URLs, and MCP config health
 npx job-hunter-os doctor
+
+# 4. View pipeline status, export a web-chat prompt bundle, or open the local HTML Kanban dashboard
+npx job-hunter-os status
+npx job-hunter-os bundle
+npx job-hunter-os dashboard
 ```
 
 > **Want to test-drive in 15 seconds with zero personal data?** Run `/demo` inside any supported AI IDE (or inspect [`examples/sandbox-demo/`](examples/sandbox-demo/expected-mission-control.md) and [`examples/outputs/`](examples/outputs/sample-interview-dossier.md)) to see live Mission Control scoring, Company Health vetting, `<= 75`-word outreach drafts, and PII shielding without setting up `context/` first.
 
-> **CLI Commands:** `init [--global|-g] [--ide <name>]` · `update` · `doctor` · `login [--global]` · `sync-mcp [--global]`
+> **CLI Commands:** `init [--global|-g] [--ide <name>]` · `update` · `doctor` · `status` · `bundle` · `dashboard [--no-open]` · `login [--global]` · `sync-mcp [--global]`
 
 ### Native OS One-Line Installers (Optional Fallback)
 
@@ -124,10 +129,10 @@ Paste the exact configuration from [`mcp/mcp.template.json`](mcp/mcp.template.js
 
 ## 3. Modular `agent_skills` Architecture & Progressive Disclosure
 
-To keep the AI model fast and prevent blowing up the context window with **51 skills** at once, every skill follows the **`agentskills.io` / `SKILL.md` standard** (plus `.agents/skills/*/SKILL.md` auto-discovery) with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
+To keep the AI model fast and prevent blowing up the context window with **54 skills** at once, every skill follows the **`agentskills.io` / `SKILL.md` standard** (plus `.agents/skills/*/SKILL.md` auto-discovery) with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
 
 1. **Progressive Disclosure ([`skills/REGISTRY.md`](skills/REGISTRY.md) & [`skills/skills-manifest.json`](skills/skills-manifest.json)):** At the start of a session, the AI reads `AGENTS.md` and `skills/REGISTRY.md` only. It loads a specific skill's full Markdown playbook **only** when its trigger matches the active step.
-2. **Core & Career-Ops Playbooks (51-Skill Catalog):**
+2. **Core & Career-Ops Playbooks (54-Skill Catalog):**
    - [`skills/00-daily-run.md`](skills/00-daily-run.md) — End-to-end orchestrator for `/daily-run` and `/apply-url`.
    - [`skills/00-interrogate-and-onboard.md`](skills/00-interrogate-and-onboard.md) — **Pure-Chat Readiness Gatekeeper**: inspects `context/` directly, halts on placeholders/missing data, interviews you 3–4 questions at a time, and saves answers.
    - [`skills/01-resume-ingestion.md`](skills/01-resume-ingestion.md) — **Pure-AI CV Ingestion**: reads pasted text, Markdown, or local PDFs via Playwright MCP (`file:///`), confirms facts, and warns if a PDF is scanned/unreadable.
@@ -150,6 +155,9 @@ To keep the AI model fast and prevent blowing up the context window with **51 sk
    - [`skills/18-condition-based-browser-waiting.md`](skills/18-condition-based-browser-waiting.md) — **Condition-Based Browser Waiting** (*`obra/superpowers` inspired*): verifies upload badges, spinner clearance, and modal readiness in `browser_snapshot` using `Role -> Label -> Placeholder -> Text` priority.
    - [`skills/19-on-demand-mcp-routing.md`](skills/19-on-demand-mcp-routing.md) — **On-Demand MCP Routing**: keeps local JSON/Markdown tasks zero-MCP and invokes Playwright/Notion strictly by workflow phase.
    - [`skills/20-skill-authoring-standard.md`](skills/20-skill-authoring-standard.md) — **Skill Authoring Standard** (*`anthropics/skills` & `obra/superpowers` inspired*): contributor TDD, progressive disclosure, and CI contract guide for authoring new skills.
+   - [`skills/21-ats-keyword-heatmap.md`](skills/21-ats-keyword-heatmap.md) — **ATS Keyword Heatmap**: computes a deterministic **Before vs. After ATS Keyword Match %** table (`Hard Skills`, `Tools/Infra`, `Domain Terms`, `Seniority Signals`) before exporting any PDF.
+   - [`skills/22-technical-assessment-architect.md`](skills/22-technical-assessment-architect.md) — **Technical Assessment Architect**: turns take-home challenges and system design prompts into stack-aligned blueprints, edge-case checklists, and live code-review defense Q&A.
+   - [`skills/23-contract-and-nda-auditor.md`](skills/23-contract-and-nda-auditor.md) — **Contract & NDA Auditor**: reviews employment contracts, B2B MSAs, and NDAs for IP overreach, non-competes, and Net-60/90 payment delays, drafting polite counter-clauses.
 3. **Four Agent Reliability Meta-Skills:**
    - [`skills/meta-self-verification.md`](skills/meta-self-verification.md) — Forbids reporting `"applied"` or `"updated"` without a fresh post-click `browser_snapshot` receipt quote.
    - [`skills/meta-dom-recovery.md`](skills/meta-dom-recovery.md) — Recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded job lists.
@@ -358,16 +366,16 @@ Every major AI IDE, CLI harness, desktop client, and LLM family works out of the
 | Path | Purpose |
 |---|---|
 | [`AGENTS.md`](AGENTS.md), [`GEMINI.md`](GEMINI.md), [`CLAUDE.md`](CLAUDE.md), [`WARP.md`](WARP.md), [`CRUSH.md`](CRUSH.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
-| [`bin/cli.mjs`](bin/cli.mjs), [`scripts/`](scripts/install.sh) | Zero-dependency cross-platform CLI installer (`init`, `update`, `doctor`, `login`, `sync-mcp`) and OS one-liners |
+| [`bin/cli.mjs`](bin/cli.mjs), [`scripts/`](scripts/install.sh) | Zero-dependency cross-platform CLI (`init`, `update`, `doctor`, `status`, `bundle`, `dashboard`, `login`, `sync-mcp`) and OS one-liners |
 | [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | Official `agentskills.io` auto-discovery mirror (`/skills` in VS Code, Cursor, Codex, OpenCode, Goose, Zed) |
-| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, 51-skill catalog (`00–20`, `fallback-no-mcp`, 4 `meta-*`, 17 platforms, 7 ATS) |
-| [`PLATFORMS.md`](PLATFORMS.md), [`llms.txt`](llms.txt), [`HIRED.md`](HIRED.md) | Global regional/B2B/ATS compatibility matrix, `llmstxt.org` map, and community success ledger |
+| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, 54-skill catalog (`00–23`, `fallback-no-mcp`, 4 `meta-*`, 17 platforms, 7 ATS) |
+| [`PLATFORMS.md`](PLATFORMS.md), [`llms.txt`](llms.txt), [`HIRED.md`](HIRED.md), [`CHANGELOG.md`](CHANGELOG.md) | Global regional/B2B/ATS compatibility matrix, `llmstxt.org` map, community success ledger, and release history |
 | [`examples/`](examples/sandbox-demo/expected-mission-control.md) | 15-second `/demo` sandbox fixture and real generated outputs ([dossier](examples/outputs/sample-interview-dossier.md), [75-word outreach](examples/outputs/sample-outreach-75-words.md), [interrogation transcript](examples/outputs/sample-interrogation-transcript.md)) |
 | [`adapters/`](adapters/models/claude.md) | Model tuning guides (`adapters/models/`) and app/harness adapters (`adapters/apps/`) |
 | [`.agent/workflows/`](.agent/workflows/daily-run.md), [`commands/`](commands/daily-run.md), [`.github/prompts/`](.github/prompts/daily-run.prompt.md) | Portable slash-command & prompt entrypoints across 25+ AI apps |
 | [`context/`](context/DROP_YOUR_FILES_HERE.md) | Synthetic `.example` templates (`profile.md.example`, `form-answers.yaml.example`, `targets.yaml.example`, etc.); real files & `personas/` stay private |
 | [`config/guardrails.yaml`](config/guardrails.yaml) | Default `dry_run: true`, warm-up caps, active hours, 3–9 s pacing, and `batch_review_first` settings |
-| [`templates/`](templates/ats-resume-template.html) | Clean single-column ATS resume & cover-letter HTML templates |
+| [`templates/`](templates/ats-resume-template.html) | Single-column ATS resume/cover-letter HTML templates + zero-server [`analytics-dashboard.html`](templates/analytics-dashboard.html) Kanban board |
 | [`mcp/`](mcp/mcp.template.json), [`opencode.json`](opencode.json) | Canonical Playwright & optional Notion MCP definitions (`mcp.template.json`, `claude_desktop_config.example.json`, `opencode.json`) |
 | [`docs/`](docs/repository-audit.md) | Chat command matrix, safety rules, platform registry, and repository audit |
 

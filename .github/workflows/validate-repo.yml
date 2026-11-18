@@ -164,12 +164,17 @@ jobs:
             cd "$ISO_PROJ"
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" init
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" doctor
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" status
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" bundle
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" dashboard --no-open
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" sync-mcp
           )
 
           test -f "$ISO_PROJ/AGENTS.md"
           test -f "$ISO_PROJ/skills/REGISTRY.md"
           test -f "$ISO_PROJ/.agents/skills/daily-run/SKILL.md"
+          test -f "$ISO_PROJ/logs/exports/web-chat-master-prompt.md"
+          test -f "$ISO_PROJ/logs/exports/dashboard.html"
           test -f "$ISO_PROJ/.mcp.json"
           test -f "$ISO_PROJ/.cursor/mcp.json"
 

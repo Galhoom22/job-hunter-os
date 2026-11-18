@@ -76,6 +76,9 @@ At the start of every session, read `AGENTS.md` and `skills/REGISTRY.md` first. 
   - `skills/18-condition-based-browser-waiting.md` — Snapshot condition checks & `Role -> Label -> Placeholder -> Text` priority
   - `skills/19-on-demand-mcp-routing.md` — Strict phase-based MCP loading to eliminate token bloat
   - `skills/20-skill-authoring-standard.md` — Anthropic/agentskills.io/TDD contributor authoring & CI verification standard
+  - `skills/21-ats-keyword-heatmap.md` — Deterministic Before vs. After ATS keyword coverage table (`Hard Skills`, `Tools/Infra`, `Domain Terms`, `Seniority Signals`)
+  - `skills/22-technical-assessment-architect.md` — Take-home assignment & system design blueprint, edge-case checklist & live defense Q&A
+  - `skills/23-contract-and-nda-auditor.md` — Employment contract, B2B MSA & NDA red-flag clause auditor & counter-clause drafter
   - `skills/platforms/b2b-contract-networks.md` — Curated B2B contract networks (Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing)
   - `skills/fallback-no-mcp.md` — Non-MCP web chat fallback (ChatGPT / Claude Web / Gemini Web)
 - **Auto-discovery mirror:** `.agents/skills/*/SKILL.md` (`agentskills.io` compatible wrappers pointing to `skills/`).

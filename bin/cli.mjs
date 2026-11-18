@@ -20,9 +20,9 @@ const info = msg => console.log(paint('36', `[i] ${msg}`));
 const fail = msg => console.error(paint('31', `[✗] ${msg}`));
 
 // ---------------- CLI args ----------------
-const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--strict', '--yes', '-y']);
+const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--strict', '--yes', '-y', '--no-open']);
 const positional = [];
-const opts = { global: false, ide: 'all', help: false, strict: false };
+const opts = { global: false, ide: 'all', help: false, strict: false, noOpen: false };
 let argErr = null;
 
 for (let i = 0; i < ARGV.length; i++) {
@@ -31,6 +31,7 @@ for (let i = 0; i < ARGV.length; i++) {
   else if (a === '--help' || a === '-h') opts.help = true;
   else if (a === '--strict') opts.strict = true;
   else if (a === '--yes' || a === '-y') opts.yes = true;
+  else if (a === '--no-open') opts.noOpen = true;
   else if (a === '--ide') {
     const val = ARGV[++i];
     if (!val || val.startsWith('-')) argErr = '--ide requires an IDE name (e.g., all, claude, cursor, antigravity, codex, opencode, windsurf, devin, cline).';
@@ -326,7 +327,7 @@ function scaffoldFrom(srcRoot, targetRoot, { isUpdate = false } = {}) {
   }
 
   // Ensure runtime directories & starter logs (preserve existing logs)
-  for (const d of ['logs/runs', 'logs/resumes', 'logs/screenshots', 'logs/insights', 'assets', 'browser-profile']) {
+  for (const d of ['logs/runs', 'logs/resumes', 'logs/screenshots', 'logs/insights', 'logs/exports', 'assets', 'browser-profile']) {
     const p = path.join(targetRoot, d);
     refuseSymlink(p);
     fs.mkdirSync(p, { recursive: true });
@@ -396,7 +397,93 @@ function isPopulated(root, relPath) {
   return { exists: true, ready };
 }
 
-function cmdDoctor() {
+function extractProfileUrls(root) {
+  const urls = new Set();
+  for (const rel of ['context/profile.md', 'context/resume-data.json']) {
+    const f = path.join(root, rel);
+    if (!fs.existsSync(f)) continue;
+    const text = fs.readFileSync(f, 'utf8');
+    const matches = text.match(/https?:\/\/[^\s)"'>\],]+/gi) || [];
+    for (const raw of matches) {
+      const cleaned = raw.replace(/[.;:]+$/, '');
+      if (cleaned) urls.add(cleaned);
+    }
+  }
+  return [...urls];
+}
+
+async function verifyProfileLinks(root, isProfileReady) {
+  const urls = extractProfileUrls(root);
+  if (!urls.length) {
+    return { validSyntax: 0, placeholderCount: 0, deadUrls: [], checkedReachable: 0 };
+  }
+  let validSyntax = 0;
+  let placeholderCount = 0;
+  let checkedReachable = 0;
+  const deadUrls = [];
+
+  for (const u of urls) {
+    let parsed;
+    try {
+      parsed = new URL(u);
+      validSyntax++;
+    } catch {
+      deadUrls.push(`${u} (malformed URL)`);
+      continue;
+    }
+    if (PLACEHOLDER_RE.test(u) || /example\.|your-handle|your-site/i.test(parsed.hostname)) {
+      placeholderCount++;
+      continue;
+    }
+    if (isProfileReady && typeof fetch === 'function' && !process.env.CI) {
+      checkedReachable++;
+      try {
+        let res = await fetch(u, {
+          method: 'HEAD',
+          redirect: 'follow',
+          signal: AbortSignal.timeout(3500),
+          headers: { 'User-Agent': 'job-hunter-os-link-check/1.0' },
+        });
+        if (res.status === 405 || res.status === 403) {
+          res = await fetch(u, {
+            method: 'GET',
+            redirect: 'follow',
+            signal: AbortSignal.timeout(3500),
+            headers: { 'User-Agent': 'job-hunter-os-link-check/1.0' },
+          });
+        }
+        if (res.status === 404 || res.status === 410 || res.status >= 500) {
+          deadUrls.push(`${u} (HTTP ${res.status})`);
+        }
+      } catch {
+        deadUrls.push(`${u} (unreachable)`);
+      }
+    }
+  }
+  return { validSyntax, placeholderCount, deadUrls, checkedReachable, total: urls.length };
+}
+
+function evaluateGates(root) {
+  const prof = isPopulated(root, 'context/profile.md');
+  const cv = isPopulated(root, 'context/cv.md');
+  const hasPdf = ['assets/resume.pdf', 'context/resume.pdf'].some(rel => {
+    const f = path.join(root, rel);
+    try { return fs.existsSync(f) && fs.readFileSync(f).subarray(0, 5).toString() === '%PDF-'; } catch { return false; }
+  });
+  const g1 = prof.ready && cv.ready && hasPdf;
+  const g2 = isPopulated(root, 'context/preferences.yaml').ready;
+  const ansFile = path.join(root, 'context', 'form-answers.yaml');
+  const ans = isPopulated(root, 'context/form-answers.yaml');
+  const ownerVerified = fs.existsSync(ansFile) && /^owner_verified:\s*true\s*(?:#.*)?$/m.test(fs.readFileSync(ansFile, 'utf8'));
+  const g3 = ans.ready && ownerVerified;
+  const g4 = g3;
+  const targetsFile = path.join(root, 'context', 'targets.yaml');
+  const g5 = fs.existsSync(targetsFile) && /^\s+enabled:\s*true\s*(?:#.*)?$/m.test(fs.readFileSync(targetsFile, 'utf8'));
+  const passed = [g1, g2, g3, g4, g5].filter(Boolean).length;
+  return { g1, g2, g3, g4, g5, passed, profReady: prof.ready };
+}
+
+async function cmdDoctor() {
   let criticalFailures = 0;
   let readinessPending = 0;
   const isGlobal = opts.global || ROOT === path.join(HOME, '.job-hunter-os');
@@ -420,25 +507,22 @@ function cmdDoctor() {
     else { warn(`${label} — ${hint}`); readinessPending++; }
   };
 
-  const prof = isPopulated(ROOT, 'context/profile.md');
-  const cv = isPopulated(ROOT, 'context/cv.md');
-  const hasPdf = ['assets/resume.pdf', 'context/resume.pdf'].some(rel => {
-    const f = path.join(ROOT, rel);
-    try { return fs.existsSync(f) && fs.readFileSync(f).subarray(0, 5).toString() === '%PDF-'; } catch { return false; }
-  });
-  checkGate('Gate 1 · CV & Profile', prof.ready && cv.ready && hasPdf, 'run /setup in your IDE to confirm CV & add resume.pdf');
+  const gates = evaluateGates(ROOT);
+  checkGate('Gate 1 · CV & Profile', gates.g1, 'run /setup in your IDE to confirm CV & add resume.pdf');
+  checkGate('Gate 2 · Target Preferences', gates.g2, 'confirm target roles, regions & work modes in /setup');
+  checkGate('Gate 3/4 · Legal, Comp & Skills', gates.g3, 'confirm salary, visa, and skill years in /setup');
+  checkGate('Gate 5 · Enabled Targets', gates.g5, 'enable at least one board in context/targets.yaml via /setup');
 
-  const prefs = isPopulated(ROOT, 'context/preferences.yaml');
-  checkGate('Gate 2 · Target Preferences', prefs.ready, 'confirm target roles, regions & work modes in /setup');
-
-  const ansFile = path.join(ROOT, 'context', 'form-answers.yaml');
-  const ans = isPopulated(ROOT, 'context/form-answers.yaml');
-  const ownerVerified = fs.existsSync(ansFile) && /^owner_verified:\s*true\s*(?:#.*)?$/m.test(fs.readFileSync(ansFile, 'utf8'));
-  checkGate('Gate 3/4 · Legal, Comp & Skills', ans.ready && ownerVerified, 'confirm salary, visa, and skill years in /setup');
-
-  const targetsFile = path.join(ROOT, 'context', 'targets.yaml');
-  const hasEnabledTarget = fs.existsSync(targetsFile) && /^\s+enabled:\s*true\s*(?:#.*)?$/m.test(fs.readFileSync(targetsFile, 'utf8'));
-  checkGate('Gate 5 · Enabled Targets', hasEnabledTarget, 'enable at least one board in context/targets.yaml via /setup');
+  // Profile & Resume Live Link Verifier
+  const linkAudit = await verifyProfileLinks(ROOT, gates.profReady);
+  if (linkAudit.deadUrls.length > 0) {
+    warn(`Profile & Resume Links: ${linkAudit.deadUrls.length} broken/dead URL(s): ${linkAudit.deadUrls.join(', ')}`);
+    readinessPending++;
+  } else if (linkAudit.placeholderCount > 0) {
+    info(`Profile & Resume Links: ${linkAudit.placeholderCount} placeholder URL(s) in context/ (replace via /setup)`);
+  } else if (linkAudit.validSyntax > 0) {
+    ok(`Profile & Resume Links: ${linkAudit.validSyntax} well-formed URL(s) verified`);
+  }
 
   const profileExists = fs.existsSync(path.join(ROOT, 'browser-profile'));
   checkGate('Browser Profile Directory', profileExists, 'run `login` to initialize browser-profile/');
@@ -538,13 +622,207 @@ function cmdLogin() {
   info('Log in manually to LinkedIn, Wellfound, and Wuzzuf, then close the browser window before starting Playwright MCP.');
 }
 
+function readApplicationsLog(root) {
+  const logFile = path.join(root, 'logs', 'applications-log.json');
+  if (!fs.existsSync(logFile)) return [];
+  try {
+    const parsed = JSON.parse(fs.readFileSync(logFile, 'utf8'));
+    if (Array.isArray(parsed)) return parsed;
+    if (isObj(parsed) && Array.isArray(parsed.applications)) return parsed.applications;
+  } catch { /* ignore invalid JSON */ }
+  return [];
+}
+
+function cmdStatus() {
+  const gates = evaluateGates(ROOT);
+  const stateFile = path.join(ROOT, 'context', 'readiness-state.json');
+  let stateReady = false;
+  if (fs.existsSync(stateFile)) {
+    try {
+      const st = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+      stateReady = Boolean(st?.overall_ready);
+    } catch { /* ignore */ }
+  }
+  const gateScore = stateReady ? 5 : gates.passed;
+
+  // Read config/guardrails.yaml
+  const guardFile = [path.join(ROOT, 'config', 'guardrails.yaml'), path.join(SOURCE, 'config', 'guardrails.yaml')].find(f => fs.existsSync(f));
+  let maxPerDay = 15;
+  let dryRun = true;
+  if (guardFile) {
+    const gText = fs.readFileSync(guardFile, 'utf8');
+    const mCap = gText.match(/max_applications_per_day:\s*(\d+)/);
+    if (mCap) maxPerDay = Number(mCap[1]);
+    const mDry = gText.match(/^\s*dry_run:\s*(true|false)/m);
+    if (mDry) dryRun = mDry[1] === 'true';
+  }
+
+  const records = readApplicationsLog(ROOT);
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const runDates = new Set();
+  let todayApplied = 0;
+  let totalApplied = 0;
+  let interviewing = 0;
+  let assessment = 0;
+  let offers = 0;
+  let rejected = 0;
+  const platStats = new Map();
+
+  for (const r of records) {
+    const status = String(r?.status || '').toLowerCase();
+    const datePrefix = String(r?.applied_at || r?.date || '').slice(0, 10);
+    if (status === 'dry_run' || status === 'skipped' || status === 'aborted' || status === 'needs_review') continue;
+
+    totalApplied++;
+    if (datePrefix) runDates.add(datePrefix);
+    if (datePrefix === todayStr) todayApplied++;
+
+    const plat = String(r?.platform || 'direct').toLowerCase();
+    if (!platStats.has(plat)) platStats.set(plat, { submitted: 0, callbacks: 0 });
+    const ps = platStats.get(plat);
+    ps.submitted++;
+
+    if (status.includes('offer') || status === 'hired') {
+      offers++;
+      ps.callbacks++;
+    } else if (status.includes('assess') || status.includes('take_home')) {
+      assessment++;
+      ps.callbacks++;
+    } else if (status.includes('interview') || status.includes('screen') || status.includes('responded')) {
+      interviewing++;
+      ps.callbacks++;
+    } else if (status.includes('reject') || status.includes('ghost') || status.includes('withdraw')) {
+      rejected++;
+    } else if (datePrefix) {
+      const ageDays = (Date.now() - Date.parse(datePrefix)) / 86400000;
+      if (!Number.isNaN(ageDays) && ageDays >= 14) rejected++;
+    }
+  }
+
+  const warmupActive = runDates.size < 3;
+  const effectiveCap = warmupActive ? Math.min(5, maxPerDay) : maxPerDay;
+
+  let topPlatform = 'n/a (no submitted applications yet)';
+  if (platStats.size > 0) {
+    const sorted = [...platStats.entries()].sort((a, b) => (b[1].callbacks - a[1].callbacks) || (b[1].submitted - a[1].submitted));
+    const [name, st] = sorted[0];
+    const pct = ((st.callbacks / st.submitted) * 100).toFixed(0);
+    topPlatform = `${name} (${st.callbacks}/${st.submitted} callbacks · ${pct}%)`;
+  }
+
+  console.log(paint('36', `\nJob Hunter OS Status — ${ROOT}\n`));
+  ok(`Readiness Gates:        ${gateScore}/5 ${gateScore === 5 ? '(READY)' : '(run /setup to complete)'}`);
+  info(`Today vs. Daily Cap:    ${todayApplied}/${effectiveCap} applications (${warmupActive ? 'Warm-up Days 1-3 cap: 5/day' : `Standard cap: ${maxPerDay}/day`}, dry_run: ${dryRun ? 'ON' : 'OFF'})`);
+  info(`Pipeline Summary:       Applied: ${totalApplied} | Interviewing: ${interviewing} | Assessment: ${assessment} | Offers: ${offers} | Rejected/Ghosted: ${rejected}`);
+  info(`Top Performing Channel: ${topPlatform}`);
+}
+
+function readContextOrExample(root, srcRoot, relPath) {
+  const candidates = [
+    path.join(root, relPath),
+    path.join(root, `${relPath}.example`),
+    path.join(srcRoot, relPath),
+    path.join(srcRoot, `${relPath}.example`),
+  ];
+  const found = candidates.find(f => fs.existsSync(f));
+  return found ? fs.readFileSync(found, 'utf8') : `<!-- ${relPath} not found -->\n`;
+}
+
+function cmdBundle() {
+  const outFile = path.join(ROOT, 'logs', 'exports', 'web-chat-master-prompt.md');
+  const sections = [
+    '# Job Hunter OS — Portable Web-Chat Master Prompt Bundle',
+    '',
+    '> Paste or upload this single file into ChatGPT Web, Claude Web, or Gemini Web when running without Playwright MCP (`skills/fallback-no-mcp.md`).',
+    '> Then paste any job description to get an honest 0-10 match score, ATS Keyword Heatmap (`skills/21-ats-keyword-heatmap.md`), and a tailored single-column HTML resume.',
+    '',
+    '---',
+    '## 1. Canonical Agent Rules (`AGENTS.md`)',
+    '',
+    readContextOrExample(ROOT, SOURCE, 'AGENTS.md'),
+    '',
+    '---',
+    '## 2. Web-Chat No-MCP Fallback Playbook (`skills/fallback-no-mcp.md`)',
+    '',
+    readContextOrExample(ROOT, SOURCE, 'skills/fallback-no-mcp.md'),
+    '',
+    '---',
+    '## 3. Skill Registry (`skills/REGISTRY.md`)',
+    '',
+    readContextOrExample(ROOT, SOURCE, 'skills/REGISTRY.md'),
+    '',
+    '---',
+    '## 4. Candidate Profile (`context/profile.md`)',
+    '',
+    readContextOrExample(ROOT, SOURCE, 'context/profile.md'),
+    '',
+    '---',
+    '## 5. Candidate CV (`context/cv.md`)',
+    '',
+    readContextOrExample(ROOT, SOURCE, 'context/cv.md'),
+    '',
+    '---',
+    '## 6. Target Preferences (`context/preferences.yaml`)',
+    '',
+    '```yaml',
+    readContextOrExample(ROOT, SOURCE, 'context/preferences.yaml').trim(),
+    '```',
+    '',
+    '---',
+    '## 7. Verified Form Answers & Comp Floor (`context/form-answers.yaml`)',
+    '',
+    '```yaml',
+    readContextOrExample(ROOT, SOURCE, 'context/form-answers.yaml').trim(),
+    '```',
+    '',
+  ];
+  writeAtomic(outFile, sections.join('\n'), { mode: 0o600 });
+  ok(`Bundled portable web-chat prompt -> ${outFile}`);
+  info('Upload or paste this file into ChatGPT Web, Claude Web, or Gemini Web along with any target job description.');
+}
+
+function openFileInBrowser(targetFile) {
+  if (opts.noOpen || process.env.CI) return;
+  try {
+    if (process.platform === 'win32') {
+      const child = spawn('cmd', ['/c', 'start', '', targetFile], { detached: true, stdio: 'ignore' });
+      child.unref();
+    } else if (process.platform === 'darwin') {
+      const child = spawn('open', [targetFile], { detached: true, stdio: 'ignore' });
+      child.unref();
+    } else {
+      const child = spawn('xdg-open', [targetFile], { detached: true, stdio: 'ignore' });
+      child.unref();
+    }
+  } catch { /* ignore headless browser launch errors */ }
+}
+
+function cmdDashboard() {
+  const tplPath = [
+    path.join(ROOT, 'templates', 'analytics-dashboard.html'),
+    path.join(SOURCE, 'templates', 'analytics-dashboard.html'),
+  ].find(f => fs.existsSync(f));
+  if (!tplPath) throw new Error('templates/analytics-dashboard.html not found.');
+
+  const records = readApplicationsLog(ROOT);
+  const tpl = fs.readFileSync(tplPath, 'utf8');
+  const injected = tpl.replace('/*__APPLICATIONS_DATA__*/[]', JSON.stringify(records));
+  const outFile = path.join(ROOT, 'logs', 'exports', 'dashboard.html');
+  writeAtomic(outFile, injected);
+  ok(`Generated local Kanban & Analytics Dashboard (${records.length} record(s)) -> ${outFile}`);
+  openFileInBrowser(outFile);
+}
+
 function cmdHelp() {
   console.log(`job-hunter-os v1.0.0 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
   job-hunter init [--global | -g] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
   job-hunter update [--global | -g] [--ide <name>] Refresh skills/adapters/templates (preserves context/ & logs/)
-  job-hunter doctor [--global | -g] [--strict]     Run cross-platform installation & readiness diagnostics
+  job-hunter doctor [--global | -g] [--strict]     Run cross-platform installation, readiness & live URL diagnostics
+  job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
+  job-hunter bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
+  job-hunter dashboard [--global | -g] [--no-open] Generate & open local Kanban dashboard at logs/exports/dashboard.html
   job-hunter login [--global | -g]                 Open Chrome/Chromium with persistent browser-profile/
   job-hunter sync-mcp [--global | -g]              Safely merge Playwright & optional Notion MCP configs
   job-hunter --help                                Show this help message`);
@@ -557,7 +835,10 @@ try {
   if (command === 'help' || opts.help) cmdHelp();
   else if (command === 'init') cmdInit();
   else if (command === 'update') cmdUpdate();
-  else if (command === 'doctor') cmdDoctor();
+  else if (command === 'doctor') await cmdDoctor();
+  else if (command === 'status') cmdStatus();
+  else if (command === 'bundle') cmdBundle();
+  else if (command === 'dashboard') cmdDashboard();
   else if (command === 'login') cmdLogin();
   else if (command === 'sync-mcp') syncMcp();
   else throw new Error(`Unknown command "${command}". Run with --help for usage.`);
