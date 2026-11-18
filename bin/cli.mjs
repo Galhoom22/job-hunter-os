@@ -21,9 +21,23 @@ const fail = msg => console.error(paint('31', `[✗] ${msg}`));
 
 // ---------------- CLI args ----------------
 const ATTRIBUTION_BANNER = 'Job Hunter OS — Created by Reda Salem (@redasalem) | https://github.com/redasalem/job-hunter-os';
+const PINNED_SIGNING_PRINCIPAL = '192090175+redasalem@users.noreply.github.com';
+const PINNED_SIGNING_PUBKEY = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7t6GfNExgWOy+djcVZlb62BD9DKRrz81Xk++LTZTSo';
 const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline']);
 const positional = [];
-const opts = { global: false, ide: 'all', help: false, version: false, strict: false, noOpen: false, baseline: false, file: null };
+const opts = {
+  global: false,
+  ide: 'all',
+  help: false,
+  version: false,
+  strict: false,
+  noOpen: false,
+  baseline: false,
+  file: null,
+  draft: null,
+  text: null,
+  maxWords: 75,
+};
 let argErr = null;
 
 for (let i = 0; i < ARGV.length; i++) {
@@ -43,6 +57,28 @@ for (let i = 0; i < ARGV.length; i++) {
     const val = a.slice(7);
     if (!val) argErr = '--file= requires a file path.';
     else opts.file = val;
+  } else if (a === '--draft') {
+    const val = ARGV[++i];
+    if (!val || val.startsWith('-')) argErr = '--draft requires a path to a draft text/markdown file.';
+    else opts.draft = val;
+  } else if (a.startsWith('--draft=')) {
+    const val = a.slice(8);
+    if (!val) argErr = '--draft= requires a file path.';
+    else opts.draft = val;
+  } else if (a === '--text') {
+    const val = ARGV[++i];
+    if (val === undefined) argErr = '--text requires a message string.';
+    else opts.text = val;
+  } else if (a.startsWith('--text=')) {
+    opts.text = a.slice(7);
+  } else if (a === '--max-words') {
+    const val = Number(ARGV[++i]);
+    if (!Number.isInteger(val) || val < 1) argErr = '--max-words requires a positive integer.';
+    else opts.maxWords = val;
+  } else if (a.startsWith('--max-words=')) {
+    const val = Number(a.slice(12));
+    if (!Number.isInteger(val) || val < 1) argErr = '--max-words= requires a positive integer.';
+    else opts.maxWords = val;
   } else if (a === '--ide') {
     const val = ARGV[++i];
     if (!val || val.startsWith('-')) argErr = '--ide requires an IDE name (e.g., all, claude, cursor, antigravity, codex, opencode, windsurf, devin, cline).';
@@ -76,18 +112,41 @@ function isObj(v) {
   return Boolean(v) && typeof v === 'object' && !Array.isArray(v);
 }
 
-function refuseSymlink(target, boundary = null) {
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+}
+
+function isWithinDir(targetPath, dirPath) {
+  const rel = path.relative(dirPath, targetPath);
+  return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+}
+
+function refuseSymlink(target, boundary = ROOT) {
   let cursor = path.resolve(target);
-  const stop = boundary ? path.resolve(boundary) : null;
+  const resolvedRoot = path.resolve(boundary || ROOT);
+  const resolvedHome = path.resolve(HOME);
+
+  let stop;
+  let stopInclusive = true;
+  if (isWithinDir(cursor, resolvedRoot)) {
+    stop = resolvedRoot;
+    stopInclusive = true;
+  } else if (isWithinDir(cursor, resolvedHome)) {
+    stop = resolvedHome;
+    stopInclusive = false;
+  } else {
+    stop = cursor;
+    stopInclusive = true;
+  }
+
   while (true) {
-    // On macOS, /var and /tmp are system symlinks; stop once we reach the user/workspace boundary.
-    if (process.platform === 'darwin' && (cursor === '/var' || cursor === '/tmp')) return;
+    if (!stopInclusive && cursor === stop) return;
     let stat;
     try { stat = fs.lstatSync(cursor); } catch (e) { if (e.code !== 'ENOENT') throw e; }
     if (stat?.isSymbolicLink()) {
       throw new Error(`Refusing symbolic-link destination: ${cursor}`);
     }
-    if (stop && cursor === stop) return;
+    if (cursor === stop) return;
     const parent = path.dirname(cursor);
     if (parent === cursor) break;
     cursor = parent;
@@ -101,12 +160,30 @@ function writeAtomic(file, content, { preserve = false, mode = 0o644 } = {}) {
   const tmp = `${file}.tmp-${process.pid}-${crypto.randomBytes(4).toString('hex')}`;
   fs.writeFileSync(tmp, content, { flag: 'wx', mode });
   try {
-    fs.renameSync(tmp, file);
+    const retryDelays = [50, 150, 300];
+    let lastErr = null;
+    for (let attempt = 0; attempt <= retryDelays.length; attempt++) {
+      try {
+        fs.renameSync(tmp, file);
+        lastErr = null;
+        break;
+      } catch (err) {
+        lastErr = err;
+        if (attempt < retryDelays.length && (err?.code === 'EPERM' || err?.code === 'EBUSY')) {
+          sleepSync(retryDelays[attempt]);
+          continue;
+        }
+        throw err;
+      }
+    }
+    if (lastErr) throw lastErr;
     if (process.platform !== 'win32') {
       try { fs.chmodSync(file, mode); } catch { /* ignore */ }
     }
   } finally {
-    if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+    try {
+      if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+    } catch { /* ignore cleanup error so primary error is preserved */ }
   }
   return true;
 }
@@ -252,6 +329,26 @@ function mcpTargetFiles(root, isGlobal) {
   ];
 }
 
+const MCP_QUIET_NPM_ENV = {
+  NPM_CONFIG_UPDATE_NOTIFIER: 'false',
+  NPM_CONFIG_FUND: 'false',
+  NPM_CONFIG_AUDIT: 'false',
+  NPM_CONFIG_LOGLEVEL: 'error',
+};
+
+function toPlatformMcpServer(cfg) {
+  const env = { ...MCP_QUIET_NPM_ENV, ...(isObj(cfg.env) ? cfg.env : {}) };
+  if (process.platform === 'win32' && cfg.command === 'npx') {
+    return {
+      ...cfg,
+      command: 'cmd',
+      args: ['/c', 'npx', ...cfg.args],
+      env,
+    };
+  }
+  return { ...cfg, env };
+}
+
 function syncMcp({ root = ROOT, isGlobal = opts.global || ROOT === path.join(HOME, '.job-hunter-os'), src = SOURCE } = {}) {
   const templatePath = [path.join(root, 'mcp', 'mcp.template.json'), path.join(src, 'mcp', 'mcp.template.json')].find(f => fs.existsSync(f));
   if (!templatePath) throw new Error('mcp/mcp.template.json not found. Run init first.');
@@ -262,13 +359,17 @@ function syncMcp({ root = ROOT, isGlobal = opts.global || ROOT === path.join(HOM
   }
 
   const profileDir = path.join(root, 'browser-profile');
-  const playwrightCfg = {
+  const rawPlaywrightCfg = {
     ...tplPlaywright,
     args: tplPlaywright.args.map(a => (a.startsWith('--user-data-dir=') ? `--user-data-dir=${profileDir}` : a)),
   };
-  if (!playwrightCfg.args.some(a => a.startsWith('--user-data-dir='))) {
-    playwrightCfg.args.push(`--user-data-dir=${profileDir}`);
+  if (!rawPlaywrightCfg.args.some(a => a.startsWith('--user-data-dir='))) {
+    rawPlaywrightCfg.args.push(`--user-data-dir=${profileDir}`);
   }
+  const playwrightCfg = toPlatformMcpServer(rawPlaywrightCfg);
+  const notionCfg = isObj(template.mcpServers?.notion) && Array.isArray(template.mcpServers.notion.args)
+    ? toPlatformMcpServer(template.mcpServers.notion)
+    : null;
 
   const targets = mcpTargetFiles(root, isGlobal);
   let updated = 0;
@@ -281,8 +382,8 @@ function syncMcp({ root = ROOT, isGlobal = opts.global || ROOT === path.join(HOM
       continue;
     }
     servers.playwright = playwrightCfg;
-    if (process.env.NOTION_TOKEN && template.mcpServers?.notion && !servers.notion) {
-      servers.notion = template.mcpServers.notion;
+    if (process.env.NOTION_TOKEN && notionCfg && !servers.notion) {
+      servers.notion = notionCfg;
     }
     const nextText = JSON.stringify({ ...current, mcpServers: servers }, null, 2) + '\n';
     if (fs.existsSync(file) && fs.readFileSync(file, 'utf8') === nextText) continue;
@@ -292,10 +393,10 @@ function syncMcp({ root = ROOT, isGlobal = opts.global || ROOT === path.join(HOM
   }
 
   // Write opt-in Notion staging import file without secrets
-  if (template.mcpServers?.notion) {
+  if (notionCfg) {
     writeAtomic(
       path.join(root, 'mcp', 'notion.import.json'),
-      JSON.stringify({ mcpServers: { notion: template.mcpServers.notion } }, null, 2) + '\n',
+      JSON.stringify({ mcpServers: { notion: notionCfg } }, null, 2) + '\n',
       { preserve: true, mode: 0o600 },
     );
   }
@@ -310,12 +411,16 @@ function scaffoldFrom(srcRoot, targetRoot, { isUpdate = false } = {}) {
   refuseSymlink(targetRoot);
   fs.mkdirSync(targetRoot, { recursive: true });
 
-  // Copy/refresh playbooks & templates (preserve config/guardrails.yaml on existing installs)
+  // Copy/refresh playbooks & templates (preserve config/guardrails.yaml on existing installs, always refresh config/invariants.txt)
   for (const dir of SCAFFOLD_DIRS) {
     copyTree(path.join(srcRoot, dir), path.join(targetRoot, dir), {
       preserve: isUpdate ? dir === 'config' : dir === 'config',
       filter: name => !name.includes('import.json'),
     });
+  }
+  const srcInvariants = path.join(srcRoot, 'config', 'invariants.txt');
+  if (fs.existsSync(srcInvariants)) {
+    writeAtomic(path.join(targetRoot, 'config', 'invariants.txt'), fs.readFileSync(srcInvariants), { preserve: false });
   }
   for (const name of ROOT_MD_FILES) {
     const s = path.join(srcRoot, name);
@@ -422,6 +527,33 @@ function cmdUpdate() {
       { stdio: 'pipe', timeout: 60000, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } },
     );
     if (clone.status === 0 && fs.existsSync(path.join(repoDir, 'AGENTS.md'))) {
+      const allowedSigners = path.join(temp, 'allowed_signers');
+      fs.writeFileSync(
+        allowedSigners,
+        `${PINNED_SIGNING_PRINCIPAL} namespaces="git" ${PINNED_SIGNING_PUBKEY}\n`,
+        { mode: 0o600 },
+      );
+      const verify = spawnSync(
+        'git',
+        [
+          '-C',
+          repoDir,
+          '-c',
+          'gpg.format=ssh',
+          '-c',
+          `gpg.ssh.allowedSignersFile=${allowedSigners}`,
+          'verify-commit',
+          'HEAD',
+        ],
+        { stdio: 'pipe', timeout: 15000, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } },
+      );
+      if (verify.status !== 0) {
+        const detail = (verify.stderr || verify.stdout || '').toString('utf8').trim();
+        throw new Error(
+          `Upstream commit SSH signature verification FAILED against pinned @redasalem Ed25519 key. Aborting update.${detail ? ` (${detail})` : ''}`,
+        );
+      }
+      ok('Verified upstream commit SSH signature against pinned @redasalem Ed25519 key.');
       srcRoot = repoDir;
     } else {
       warn('Could not reach GitHub via git; refreshing from local package copy instead.');
@@ -559,7 +691,7 @@ async function cmdDoctor() {
   if (fs.existsSync(path.join(ROOT, 'skills', 'REGISTRY.md'))) ok('Skill Registry: skills/REGISTRY.md present');
   else { fail('Missing skills/REGISTRY.md'); criticalFailures++; }
 
-  // Provenance & Attribution Guard
+  // Provenance & Attribution Guard (strict canonical field validation)
   const missingOrTampered = [];
   for (const rel of ['NOTICE', 'AUTHORS.md', 'PROVENANCE.json']) {
     const f = path.join(ROOT, rel);
@@ -569,13 +701,27 @@ async function cmdDoctor() {
     }
     try {
       const txt = fs.readFileSync(f, 'utf8');
-      if (!txt.toLowerCase().includes('redasalem')) {
-        missingOrTampered.push(`${rel} (missing @redasalem attribution)`);
-      }
       if (rel === 'PROVENANCE.json') {
         const prov = JSON.parse(txt);
         if (prov?.github_handle !== 'redasalem') {
           missingOrTampered.push('PROVENANCE.json (github_handle mismatch)');
+        }
+        if (prov?.original_author !== 'Reda Salem') {
+          missingOrTampered.push('PROVENANCE.json (original_author mismatch)');
+        }
+        if (prov?.canonical_repository !== 'https://github.com/redasalem/job-hunter-os') {
+          missingOrTampered.push('PROVENANCE.json (canonical_repository mismatch)');
+        }
+        if (prov?.verified_noreply_email !== PINNED_SIGNING_PRINCIPAL) {
+          missingOrTampered.push('PROVENANCE.json (verified_noreply_email mismatch)');
+        }
+      } else if (rel === 'NOTICE') {
+        if (!txt.includes('Copyright (c) 2026 Reda Salem (@redasalem)') || !txt.includes('https://github.com/redasalem/job-hunter-os')) {
+          missingOrTampered.push('NOTICE (canonical copyright or repository URL missing/tampered)');
+        }
+      } else if (rel === 'AUTHORS.md') {
+        if (!txt.includes('Reda Salem') || !txt.includes('https://github.com/redasalem')) {
+          missingOrTampered.push('AUTHORS.md (canonical author attribution missing/tampered)');
         }
       }
     } catch {
@@ -583,9 +729,10 @@ async function cmdDoctor() {
     }
   }
   if (missingOrTampered.length > 0) {
-    warn(`Provenance warning (uncredited or tampered clone): ${missingOrTampered.join(', ')}`);
+    fail(`Provenance verification FAILED (tampered or uncredited clone): ${missingOrTampered.join(', ')}`);
+    criticalFailures++;
   } else {
-    ok('Provenance & Attribution: NOTICE, AUTHORS.md & PROVENANCE.json verified (@redasalem)');
+    ok('Provenance & Attribution: NOTICE, AUTHORS.md & PROVENANCE.json canonical fields verified (@redasalem)');
   }
 
   // Platform Playbook Freshness Check (warn when last_verified > 60 days old)
@@ -717,9 +864,9 @@ function cmdLogin() {
   const profile = path.join(ROOT, 'browser-profile');
   refuseSymlink(profile);
   fs.mkdirSync(profile, { recursive: true });
-  for (const lockName of ['SingletonLock', 'SingletonCookie']) {
+  for (const lockName of ['SingletonLock', 'SingletonCookie', 'lockfile']) {
     if (fs.existsSync(path.join(profile, lockName))) {
-      throw new Error('Browser profile is currently locked by another running browser/Playwright session. Close it first.');
+      throw new Error(`Browser profile is currently locked (${lockName}) by another running browser/Playwright session. Close it first.`);
     }
   }
   const browser = findBrowser();
@@ -904,7 +1051,15 @@ function openFileInBrowser(targetFile) {
   if (opts.noOpen || process.env.CI) return;
   try {
     if (process.platform === 'win32') {
-      const child = spawn('cmd', ['/c', 'start', '', targetFile], { detached: true, stdio: 'ignore' });
+      const child = spawn(
+        'powershell.exe',
+        ['-NoProfile', '-NonInteractive', '-Command', 'Start-Process -LiteralPath $env:JHO_OPEN_PATH'],
+        {
+          detached: true,
+          stdio: 'ignore',
+          env: { ...process.env, JHO_OPEN_PATH: path.resolve(targetFile) },
+        },
+      );
       child.unref();
     } else if (process.platform === 'darwin') {
       const child = spawn('open', [targetFile], { detached: true, stdio: 'ignore' });
@@ -925,11 +1080,25 @@ function cmdDashboard() {
 
   const records = readApplicationsLog(ROOT);
   const tpl = fs.readFileSync(tplPath, 'utf8');
-  const injected = tpl.replace('/*__APPLICATIONS_DATA__*/[]', JSON.stringify(records));
+  const safeJson = JSON.stringify(records).replace(
+    /[<>&\u2028\u2029]/g,
+    c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'),
+  );
+  const injected = tpl.replace('/*__APPLICATIONS_DATA__*/[]', () => safeJson);
   const outFile = path.join(ROOT, 'logs', 'exports', 'dashboard.html');
   writeAtomic(outFile, injected);
   ok(`Generated local Kanban & Analytics Dashboard (${records.length} record(s)) -> ${outFile}`);
   openFileInBrowser(outFile);
+}
+
+function isPidAlive(pid) {
+  if (!Number.isInteger(pid) || pid <= 0) return false;
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    return err?.code === 'EPERM';
+  }
 }
 
 function cmdUnlock() {
@@ -940,6 +1109,30 @@ function cmdUnlock() {
     ok(`Initialized clean browser-profile directory at ${profile} (0 lock files).`);
     return;
   }
+
+  // On POSIX, inspect Chromium SingletonLock symlink (<hostname>-<pid>) before deleting
+  // so we never unlink locks owned by a live Chromium/Playwright process.
+  if (process.platform !== 'win32') {
+    const singletonLock = path.join(profile, 'SingletonLock');
+    try {
+      const st = fs.lstatSync(singletonLock);
+      if (st.isSymbolicLink()) {
+        const linkTarget = fs.readlinkSync(singletonLock);
+        const match = linkTarget.match(/-(\d+)$/);
+        if (match) {
+          const pid = Number(match[1]);
+          if (isPidAlive(pid)) {
+            throw new Error(
+              `Active Chromium/Playwright session detected (PID ${pid} via SingletonLock -> ${linkTarget}). Close the running browser/Playwright session before running unlock.`,
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (e?.code !== 'ENOENT') throw e;
+    }
+  }
+
   const lockNames = ['SingletonLock', 'SingletonCookie', 'SingletonSocket', 'lockfile', 'DevToolsActivePort'];
   let removed = 0;
   for (const name of lockNames) {
@@ -949,7 +1142,13 @@ function cmdUnlock() {
       fs.rmSync(target, { force: true });
       removed++;
     } catch (e) {
-      if (e.code !== 'ENOENT') throw e;
+      if (e?.code === 'ENOENT') continue;
+      if (e?.code === 'EBUSY' || e?.code === 'EPERM') {
+        throw new Error(
+          `Cannot remove ${name} — browser-profile is actively locked by a running Chromium/Playwright process. Close all Chromium/Playwright windows and re-run unlock.`,
+        );
+      }
+      throw e;
     }
   }
   ok(`Unlocked browser-profile at ${profile} (${removed} stale Chromium lock file(s) removed).`);
@@ -990,11 +1189,23 @@ function cmdBackup() {
   ok(`Verified JSON integrity (${verifiedCount} log file(s)) & backed up ${copied} file(s) -> ${destDir}`);
 }
 
+function escapeRegex(str) {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildSkillRegex(skill) {
+  const escaped = escapeRegex(skill);
+  const left = /^[A-Za-z0-9_]/.test(skill) ? '(?<![A-Za-z0-9_])' : '(?<!\\.)';
+  const right = /[A-Za-z0-9_]$/.test(skill) ? '(?![A-Za-z0-9_])' : '(?![A-Za-z0-9_+])';
+  return new RegExp(`${left}${escaped}${right}`, 'i');
+}
+
 function cmdEval() {
   const evalRoot = [path.join(ROOT, 'evals'), path.join(SOURCE, 'evals')].find(d => fs.existsSync(d));
   if (!evalRoot) throw new Error('evals/ directory not found.');
 
   const profileFile = path.join(evalRoot, 'fixtures', 'candidate-profile.md');
+  const groundTruthFile = path.join(evalRoot, 'fixtures', 'ground-truth.json');
   const isExternalFile = Boolean(opts.file) && !opts.baseline;
   const resultsFile = isExternalFile
     ? path.resolve(process.cwd(), opts.file)
@@ -1002,11 +1213,16 @@ function cmdEval() {
   if (!fs.existsSync(profileFile)) {
     throw new Error('Missing evals/fixtures/candidate-profile.md.');
   }
+  if (!fs.existsSync(groundTruthFile)) {
+    throw new Error('Missing immutable evals/fixtures/ground-truth.json.');
+  }
   if (!fs.existsSync(resultsFile)) {
     throw new Error(`Eval input JSON not found: ${resultsFile}`);
   }
 
   const profileText = fs.readFileSync(profileFile, 'utf8');
+  // Load ground-truth allowlists & denylists strictly from immutable fixture — NEVER from --file.
+  const groundTruth = JSON.parse(fs.readFileSync(groundTruthFile, 'utf8'));
   const results = JSON.parse(fs.readFileSync(resultsFile, 'utf8'));
   const jds = results.jd_evaluations || {};
   const jd01 = jds['01-strong-match'] || {};
@@ -1018,15 +1234,17 @@ function cmdEval() {
   const cb = results.circuit_breaker_simulation || {};
 
   const resumeProse = [jd01.tailored_resume?.summary || '', ...(jd01.tailored_resume?.bullets || [])].join(' ');
-  const extractedNums = resumeProse.match(/\$?\d+(?:\.\d+)?%?(?:\s*minutes|\M)?/g) || [];
-  const allowedMetrics = new Set(results.ground_truth_metrics || []);
-  const unverifiedMetrics = extractedNums.filter(tok => {
-    const clean = tok.trim();
-    return !allowedMetrics.has(clean) && !profileText.includes(clean);
-  });
+  const metricTokenRe = /(?<![A-Za-z0-9_])\$?\d[\d,]*(?:\.\d+)?(?:\s*(?:%|k|m|b|x|ms|sec|seconds|min|minutes|hrs|hours|days|weeks|months|years)\b|%|[KMBX]\b|\+)?/gi;
+  const extractedNums = resumeProse.match(metricTokenRe) || [];
+  const allowedMetrics = new Set(
+    (Array.isArray(groundTruth.ground_truth_metrics) ? groundTruth.ground_truth_metrics : []).map(m => String(m).trim().toLowerCase()),
+  );
+  const unverifiedMetrics = extractedNums.filter(tok => !allowedMetrics.has(tok.trim().toLowerCase()));
 
-  const forbiddenClaimed = (results.forbidden_skills || []).filter(sk => new RegExp(`\\b${sk}\\b`, 'i').test(resumeProse));
-  const clichesFound = (results.banned_ai_cliches || []).filter(cl => new RegExp(`\\b${cl}\\b`, 'i').test(resumeProse));
+  const forbiddenSkills = Array.isArray(groundTruth.forbidden_skills) ? groundTruth.forbidden_skills : [];
+  const bannedCliches = Array.isArray(groundTruth.banned_ai_cliches) ? groundTruth.banned_ai_cliches : [];
+  const forbiddenClaimed = forbiddenSkills.filter(sk => buildSkillRegex(sk).test(resumeProse));
+  const clichesFound = bannedCliches.filter(cl => buildSkillRegex(cl).test(resumeProse));
   const hasProseEmDash = resumeProse.includes('—');
 
   const checkFormHtml = name => {
@@ -1037,8 +1255,8 @@ function cmdEval() {
   };
 
   const checks = [
-    ['EVAL-01', 'Ground-truth candidate profile & 5 JD fixtures loaded',
-      profileText.includes('38%') && profileText.includes('$4.2M') &&
+    ['EVAL-01', 'Ground-truth candidate profile, immutable ground-truth.json & 5 JD fixtures loaded',
+      profileText.includes('38%') && profileText.includes('$4.2M') && allowedMetrics.size > 0 && forbiddenSkills.length > 0 &&
       ['01-strong-match.md', '02-prompt-injection-trap.md', '03-ghost-expired-job.md', '04-blacklist-duplicate.md', '05-stretch-mismatch.md']
         .every(n => fs.existsSync(path.join(evalRoot, 'fixtures', 'jds', n)))],
     ['EVAL-02', 'Tier A strong match scored >= 8.0 and marked ready',
@@ -1086,7 +1304,7 @@ function cmdEval() {
     ? `External Model Output Evaluation (${resultsFile})`
     : 'Harness Reference Baseline (CI Self-Test — static fixture verification, NOT a live LLM benchmark)';
 
-  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.2.2)`));
+  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.2.3)`));
   info(`Mode: ${evalModeLabel}\n`);
   let passed = 0;
   for (const [id, label, cond] of checks) {
@@ -1106,8 +1324,101 @@ function cmdEval() {
   }
 }
 
+function cmdPreSubmit() {
+  let failures = 0;
+  console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
+  console.log(paint('36', `Job Hunter OS Pre-Submit Deterministic Gate — ${ROOT}\n`));
+
+  // 1. Daily cap & Days 1-3 warm-up cap check against logs/applications-log.json
+  const guardFile = [path.join(ROOT, 'config', 'guardrails.yaml'), path.join(SOURCE, 'config', 'guardrails.yaml')].find(f => fs.existsSync(f));
+  let maxPerDay = 15;
+  let dryRun = true;
+  if (guardFile) {
+    const gText = fs.readFileSync(guardFile, 'utf8');
+    const mCap = gText.match(/max_applications_per_day:\s*(\d+)/);
+    if (mCap) maxPerDay = Number(mCap[1]);
+    const mDry = gText.match(/^\s*dry_run:\s*(true|false)/m);
+    if (mDry) dryRun = mDry[1] === 'true';
+  }
+
+  const records = readApplicationsLog(ROOT);
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const runDates = new Set();
+  let todayCounted = 0;
+  for (const r of records) {
+    const status = String(r?.status || '').toLowerCase();
+    const datePrefix = String(r?.applied_at || r?.date || '').slice(0, 10);
+    if (status === 'dry_run' || status === 'skipped' || status === 'aborted' || status === 'needs_review') continue;
+    if (datePrefix) runDates.add(datePrefix);
+    if (datePrefix === todayStr && (status === 'applied' || status === 'submission_uncertain' || status.includes('interview') || status.includes('assess') || status.includes('offer'))) {
+      todayCounted++;
+    }
+  }
+
+  const warmupActive = runDates.size < 3;
+  const effectiveCap = warmupActive ? Math.min(5, maxPerDay) : maxPerDay;
+  if (todayCounted >= effectiveCap) {
+    fail(`Daily Cap REACHED: ${todayCounted}/${effectiveCap} (${warmupActive ? 'Warm-up Days 1-3 cap: 5/day' : `Standard cap: ${maxPerDay}/day`}). Submission BLOCKED.`);
+    failures++;
+  } else {
+    ok(`Daily Cap OK: ${todayCounted}/${effectiveCap} (${warmupActive ? 'Warm-up Days 1-3 cap: 5/day' : `Standard cap: ${maxPerDay}/day`}, dry_run: ${dryRun ? 'ON' : 'OFF'})`);
+  }
+
+  // 2. Outreach / draft word-count check (--draft <file> or --text "<msg>")
+  let draftContent = null;
+  let draftSource = null;
+  if (opts.draft) {
+    const draftPath = path.resolve(process.cwd(), opts.draft);
+    if (!fs.existsSync(draftPath)) {
+      throw new Error(`Draft file not found: ${draftPath}`);
+    }
+    draftContent = fs.readFileSync(draftPath, 'utf8');
+    draftSource = draftPath;
+  } else if (opts.text !== null) {
+    draftContent = opts.text;
+    draftSource = '--text';
+  }
+
+  if (draftContent !== null) {
+    const words = draftContent.trim().split(/\s+/).filter(Boolean);
+    const wordCount = words.length;
+    if (wordCount === 0) {
+      fail(`Draft (${draftSource}) is empty (0 words).`);
+      failures++;
+    } else if (wordCount > opts.maxWords) {
+      fail(`Draft Word Cap EXCEEDED: ${wordCount}/${opts.maxWords} words (${draftSource}). Trim before sending.`);
+      failures++;
+    } else {
+      ok(`Draft Word Cap OK: ${wordCount}/${opts.maxWords} words (${draftSource})`);
+    }
+    if (draftContent.includes('—')) {
+      warn(`Style warning: prose em-dash (—) detected in ${draftSource}; consider replacing before sending.`);
+    }
+  } else {
+    info('Draft Word Check: skipped (pass --draft <file> or --text "<msg>" to verify <= 75-word outreach cap).');
+  }
+
+  // 3. Re-surface compact pre-submit invariants (<500 bytes)
+  const invFile = [path.join(ROOT, 'config', 'invariants.txt'), path.join(SOURCE, 'config', 'invariants.txt')].find(f => fs.existsSync(f));
+  if (invFile) {
+    const invText = fs.readFileSync(invFile, 'utf8').trim();
+    console.log('');
+    console.log(invText);
+  } else {
+    warn('config/invariants.txt not found (run init or update to restore).');
+  }
+
+  console.log('');
+  if (failures > 0) {
+    fail(`Pre-Submit Gate BLOCKED (${failures} violation(s)). Do NOT click Submit/Save/Post/Send.`);
+    process.exitCode = 1;
+  } else {
+    ok('Pre-Submit Deterministic Gate PASSED (still requires explicit fresh owner APPROVE before Submit/Send).');
+  }
+}
+
 function cmdVersion() {
-  let version = '1.2.2';
+  let version = '1.2.3';
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(SOURCE, 'package.json'), 'utf8'));
     if (pkg?.version) version = pkg.version;
@@ -1118,17 +1429,18 @@ function cmdVersion() {
 
 function cmdHelp() {
   console.log(`${ATTRIBUTION_BANNER}
-job-hunter-os v1.2.2 — Zero-Code Markdown Agent Skills & MCP Installer
+job-hunter-os v1.2.3 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
   job-hunter init [--global | -g] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
-  job-hunter update [--global | -g] [--ide <name>] Refresh skills/adapters/templates (preserves context/ & logs/)
-  job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & provenance checks
+  job-hunter update [--global | -g] [--ide <name>] Verify SSH signature & refresh playbooks (preserves context/ & logs/)
+  job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
   job-hunter eval [--baseline | --file <json>]     Grade Harness Reference Baseline (CI) or external LLM output
+  job-hunter pre-submit [--draft <f> | --text <t>] Deterministically enforce <=75-word cap & daily warm-up limit
   job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
   job-hunter bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
   job-hunter dashboard [--global | -g] [--no-open] Generate & open local Kanban dashboard at logs/exports/dashboard.html
-  job-hunter unlock [--global | -g]                Remove stale Chromium lock files from browser-profile/ after crash
+  job-hunter unlock [--global | -g]                Safely remove stale Chromium lock files (refuses active PIDs)
   job-hunter backup [--global | -g]                Verify JSON log integrity & snapshot context/ + logs/ to logs/backups/
   job-hunter login [--global | -g]                 Open Chrome/Chromium with persistent browser-profile/
   job-hunter sync-mcp [--global | -g]              Safely merge Playwright & optional Notion MCP configs
@@ -1146,6 +1458,7 @@ try {
   else if (command === 'update') cmdUpdate();
   else if (command === 'doctor') await cmdDoctor();
   else if (command === 'eval') cmdEval();
+  else if (command === 'pre-submit') cmdPreSubmit();
   else if (command === 'status') cmdStatus();
   else if (command === 'bundle') cmdBundle();
   else if (command === 'dashboard') cmdDashboard();

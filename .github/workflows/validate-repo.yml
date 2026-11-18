@@ -141,6 +141,29 @@ jobs:
           print(f"Security audit passed across {len(tracked)} tracked files.")
           PY
 
+      - name: Security audit — scan skills for invisible Unicode / BiDi injection
+        run: |
+          python3 - <<'PY'
+          import pathlib
+
+          hits = []
+          for base in ("skills", ".agents/skills"):
+              root = pathlib.Path(base)
+              if not root.exists():
+                  continue
+              for p in sorted(root.rglob("*")):
+                  if not p.is_file():
+                      continue
+                  text = p.read_text(encoding="utf-8")
+                  for idx, ch in enumerate(text):
+                      cp = ord(ch)
+                      if (0xE0000 <= cp <= 0xE007F) or (0x202A <= cp <= 0x202E) or (0x2066 <= cp <= 0x2069):
+                          hits.append(f"{p.as_posix()}@offset {idx}: U+{cp:04X}")
+          if hits:
+              raise SystemExit("Invisible Unicode Tag or BiDi control characters detected:\n" + "\n".join(hits))
+          print("Unicode/BiDi security audit passed across skills/ and .agents/skills/ (0 suspicious control chars).")
+          PY
+
       - name: Provenance & Attribution Integrity Check
         run: |
           python3 - <<'PY'
@@ -155,9 +178,15 @@ jobs:
               if "redasalem" not in text.lower():
                   raise SystemExit(f"Provenance file tampered (missing redasalem attribution): {rel}")
 
+          notice = pathlib.Path("NOTICE").read_text(encoding="utf-8")
+          assert "Copyright (c) 2026 Reda Salem (@redasalem)" in notice, "NOTICE copyright line mismatch"
+          assert "https://github.com/redasalem/job-hunter-os" in notice, "NOTICE canonical URL mismatch"
+
           prov = json.loads(pathlib.Path("PROVENANCE.json").read_text(encoding="utf-8"))
           assert prov.get("github_handle") == "redasalem", "PROVENANCE.json github_handle mismatch"
+          assert prov.get("original_author") == "Reda Salem", "PROVENANCE.json original_author mismatch"
           assert prov.get("canonical_repository") == "https://github.com/redasalem/job-hunter-os", "PROVENANCE.json canonical_repository mismatch"
+          assert prov.get("verified_noreply_email") == "192090175+redasalem@users.noreply.github.com", "PROVENANCE.json verified_noreply_email mismatch"
           print("Provenance & attribution integrity check passed for all 5 required files.")
           PY
 
@@ -194,6 +223,7 @@ jobs:
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" init
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" doctor
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" eval --baseline
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" pre-submit --text "Short grounded hiring manager note under 75 words."
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" status
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" bundle
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" dashboard --no-open
@@ -203,6 +233,7 @@ jobs:
           )
 
           test -f "$ISO_PROJ/AGENTS.md"
+          test -f "$ISO_PROJ/config/invariants.txt"
           test -f "$ISO_PROJ/skills/REGISTRY.md"
           test -f "$ISO_PROJ/.agents/skills/daily-run/SKILL.md"
           test -f "$ISO_PROJ/logs/exports/web-chat-master-prompt.md"

@@ -9,6 +9,7 @@
 - [`RUBRIC.md`](RUBRIC.md) — Exact specification of all **20 assertions (`EVAL-01`..`EVAL-20`)**.
 - [`PROMPT.md`](PROMPT.md) — Copy-paste zero-shot evaluation prompt for testing external LLMs (`Claude`, `Gemini`, `GPT`, `DeepSeek`).
 - [`fixtures/candidate-profile.md`](fixtures/candidate-profile.md) — Synthetic candidate ground truth (`Alex Rivera`) with permitted numeric metrics and forbidden (`0`-year) skills.
+- [`fixtures/ground-truth.json`](fixtures/ground-truth.json) — Immutable allowlist/denylist fixture (`ground_truth_metrics`, `forbidden_skills` including aliases like `K8s`/`Rustacean`/`SwiftUI`/`C++`/`.NET`, and `banned_ai_cliches`) loaded strictly by `bin/cli.mjs eval` (never trusted from `--file`).
 - [`fixtures/jds/`](fixtures/jds/01-strong-match.md) — 5 edge-case job descriptions:
   1. [`01-strong-match.md`](fixtures/jds/01-strong-match.md) (Tier A match + recruiter codeword `PINEAPPLE`)
   2. [`02-prompt-injection-trap.md`](fixtures/jds/02-prompt-injection-trap.md) (adversarial hidden `SYSTEM OVERRIDE`)

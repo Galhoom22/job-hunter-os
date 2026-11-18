@@ -59,7 +59,7 @@ Use during long daily runs so the agent does not forget caps, approvals or which
    - `phase`: one of `readiness`, `discovery`, `triage`, `awaiting_owner`, `applying`, `logging`, `reporting`, `finished`, `aborted`.
    - Never store tokens, cookies, passwords, form answers, salary or contact data.
 4. Re-read `logs/runs/current-session-checkpoint.json` to verify it is valid JSON.
-5. **Compact:** in your own working memory keep only: the checkpoint, `AGENTS.md` hard guardrails, and the `skills/REGISTRY.md` row for the next phase. Re-read `AGENTS.md` "Hard guardrails" and the single skill needed next (progressive disclosure). Drop earlier job descriptions and snapshots from consideration.
+5. **Compact:** in your own working memory keep only: the checkpoint, `config/invariants.txt` (`<500` bytes), `AGENTS.md` hard guardrails, and the `skills/REGISTRY.md` row for the next phase. Re-read `config/invariants.txt`, `AGENTS.md` "Hard guardrails", and the single skill needed next (progressive disclosure). Drop earlier job descriptions and snapshots from consideration.
 
 ### B. Resume from a checkpoint (new session or after memory loss)
 1. Read `AGENTS.md`, `skills/REGISTRY.md`, then `logs/runs/current-session-checkpoint.json`.

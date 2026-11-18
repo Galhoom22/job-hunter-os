@@ -41,7 +41,7 @@ npx github:redasalem/job-hunter-os doctor
 npx github:redasalem/job-hunter-os eval --baseline
 ```
 
-- **All CLI Commands:** `init [--global] [--ide <name>]` · `update` · `doctor` · `eval [--baseline | --file <json>]` · `status` · `bundle` · `dashboard [--no-open]` · `unlock` · `backup` · `login` · `sync-mcp` (plus [`scripts/install.sh`](scripts/install.sh) and [`scripts/install.ps1`](scripts/install.ps1)).
+- **All CLI Commands:** `init [--global] [--ide <name>]` · `update` · `doctor` · `eval [--baseline | --file <json>]` · `pre-submit [--draft <f> | --text <t>]` · `status` · `bundle` · `dashboard [--no-open]` · `unlock` · `backup` · `login` · `sync-mcp` (plus [`scripts/install.sh`](scripts/install.sh) and [`scripts/install.ps1`](scripts/install.ps1)).
 
 ---
 
@@ -100,7 +100,7 @@ npx github:redasalem/job-hunter-os eval --baseline
 | [**`PLATFORMS.md`**](PLATFORMS.md) & [**`context/targets.yaml.example`**](context/targets.yaml.example) | Global, Remote, Regional (Europe, MENA, APAC, LATAM), B2B Contract Networks, and Employer ATS matrix |
 | [**`evals/README.md`**](evals/README.md), [**`RUBRIC.md`**](evals/RUBRIC.md) & [**`PROMPT.md`**](evals/PROMPT.md) | Deterministic CI harness validator, 20-assertion rubric, and reproducible external LLM prompt |
 | [**`mcp/mcp.template.json`**](mcp/mcp.template.json) | Portable Playwright MCP (`-y`, `--caps=pdf`, `./browser-profile`) and optional Notion MCP configuration |
-| [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) | Community success ledger and release history (`v1.0.0` -> `v1.2.2`) |
+| [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) | Community success ledger and release history (`v1.0.0` -> `v1.2.3`) |
 
 ---
 

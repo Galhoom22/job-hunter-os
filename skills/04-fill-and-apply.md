@@ -63,6 +63,7 @@ Read `eeo_and_compliance_defaults` (or `eeo`) from `context/form-answers.yaml`:
 - Free-text `"Why us?"` questions: Draft 2–3 grounded sentences using `context/profile.md` + observed JD text, filtered through `skills/03-tailor-resume-and-verify.md` (zero AI slop, zero em-dashes).
 
 ### 4. Final DOM Read-Back Verification & Hard `APPROVE` Trust Boundary
+- Re-read `config/invariants.txt` (`<500` bytes) and run `node ./bin/cli.mjs pre-submit` (passing `--draft <file>` for any outreach note) so daily/warm-up caps and `<= 75`-word limits are deterministically enforced even after IDE context compaction.
 - Recheck `logs/applications-log.json` via `skills/26-deduplication-and-blacklist-guard.md` (canonical `company::role_title` fingerprint + today's `applied` / `submission_uncertain` counts vs daily & platform caps) and active hours.
 - **Hard Operational Trust Boundary (`APPROVE` + 3–9 s Human Pacing):** The `APPROVE` gate and human pacing jitter (`3–9 s`) are **non-negotiable operational trust boundaries**. Never auto-submit, batch-approve across multiple jobs, or skip a fresh `browser_snapshot` read-back.
 - **Mandatory Final DOM Read-Back Gate:** Before asking for `APPROVE` (or logging `dry_run`), take a **fresh `browser_snapshot`** of the completed form and inspect the *actual live values currently rendered in the browser DOM* (never rely on what you intended to type earlier, because ATS resume parsers or autocomplete widgets frequently overwrite or reset fields!).

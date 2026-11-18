@@ -4,19 +4,29 @@
       "command": "npx",
       "args": [
         "-y",
-        "@playwright/mcp@latest",
+        "@playwright/mcp@0.0.86",
         "--caps=pdf",
         "--user-data-dir=/ABS/PATH/TO/job-hunter-os/browser-profile"
-      ]
+      ],
+      "env": {
+        "NPM_CONFIG_UPDATE_NOTIFIER": "false",
+        "NPM_CONFIG_FUND": "false",
+        "NPM_CONFIG_AUDIT": "false",
+        "NPM_CONFIG_LOGLEVEL": "error"
+      }
     },
     "notion": {
       "command": "npx",
       "args": [
         "-y",
-        "@notionhq/notion-mcp-server"
+        "@notionhq/notion-mcp-server@2.6.1"
       ],
       "env": {
-        "NOTION_TOKEN": "REPLACE_WITH_YOUR_NOTION_TOKEN"
+        "NOTION_TOKEN": "REPLACE_WITH_YOUR_NOTION_TOKEN",
+        "NPM_CONFIG_UPDATE_NOTIFIER": "false",
+        "NPM_CONFIG_FUND": "false",
+        "NPM_CONFIG_AUDIT": "false",
+        "NPM_CONFIG_LOGLEVEL": "error"
       }
     }
   }

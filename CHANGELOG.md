@@ -5,6 +5,25 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-11-19 — Security & Cross-Platform Hardening
+
+### Security
+- **Stored XSS & `$`-Substitution Fix in `cmdDashboard`:** Replaced raw `String.prototype.replace` injection in [`bin/cli.mjs`](bin/cli.mjs) with a replacer function that Unicode-escapes HTML/script-unsafe characters (`<`, `>`, `&`, `\u2028`, `\u2029`) before embedding `logs/applications-log.json` into `dashboard.html`.
+- **Immutable Eval Trust Boundary (`evals/fixtures/ground-truth.json`):** Hardened `cmdEval` to load `ground_truth_metrics`, `forbidden_skills` (including aliases `K8s`, `Rustacean`, `SwiftUI`, `iOS`, `C++`, `.NET`), and `banned_ai_cliches` strictly from immutable [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json) rather than the untrusted `--file` payload, fixed metric regex extraction & exact-token matching, and escaped regex metacharacters.
+- **Cryptographic `cmdUpdate` Verification & Strict Provenance Enforcement:** Embedded the pinned `@redasalem` Ed25519 signing public key inside [`bin/cli.mjs`](bin/cli.mjs) and required `git verify-commit HEAD` to pass before `update` overwrites local `bin/` or `skills/`. Upgraded `doctor` / `doctor --strict` to enforce exact canonical fields in `PROVENANCE.json`, `NOTICE`, and `AUTHORS.md` and fail non-zero on tampering.
+- **CI Invisible-Unicode & BiDi Injection Scanner:** Added a security scan in [`.github/workflows/validate-repo.yml`](.github/workflows/validate-repo.yml) that fails CI if any skill under `skills/` or `.agents/skills/` contains invisible Unicode Tag characters (`U+E0000–U+E007F`) or BiDi override/isolate control characters (`U+202A–U+202E`, `U+2066–U+2069`).
+
+### Added
+- **Executable `pre-submit` Gate & Micro-Invariants (`config/invariants.txt`):** Added a `<500`-byte [`config/invariants.txt`](config/invariants.txt) file and `node ./bin/cli.mjs pre-submit [--draft <file> | --text "<msg>"]` to deterministically enforce the `<= 75`-word outreach cap and daily/warm-up application cap against `logs/applications-log.json` so hard rules survive IDE context compaction.
+
+### Fixed
+- **Cross-Platform CLI & Windows Hardening (`bin/cli.mjs`):**
+  - Scoped `refuseSymlink` strictly within `ROOT` (and inside `HOME` for external IDE configs) to eliminate false positives on Windows NTFS junctions/OneDrive and Fedora Silverblue/NixOS.
+  - Added 3-attempt retry backoff (`50ms`, `150ms`, `300ms`) on `EPERM`/`EBUSY` in `writeAtomic`.
+  - Hardened `cmdUnlock` to verify POSIX `SingletonLock` PIDs via `process.kill(pid, 0)` before deleting and report active Windows lock errors cleanly; added Windows `lockfile` detection to `cmdLogin`.
+  - Replaced Windows `cmd /c start` in `openFileInBrowser` with shell-metacharacter-safe `powershell.exe` `Start-Process -LiteralPath $env:JHO_OPEN_PATH`.
+- **Pinned Playwright MCP & Stdio Noise Suppression:** Pinned `@playwright/mcp@0.0.86` and `@notionhq/notion-mcp-server@2.6.1` with `NPM_CONFIG_UPDATE_NOTIFIER=false`, `NPM_CONFIG_FUND=false`, `NPM_CONFIG_AUDIT=false`, and `NPM_CONFIG_LOGLEVEL=error` across [`mcp/mcp.template.json`](mcp/mcp.template.json), [`mcp/claude_desktop_config.example.json`](mcp/claude_desktop_config.example.json), and [`opencode.json`](opencode.json), and emitted Windows-safe `cmd /c npx` server entries in `sync-mcp`.
+
 ## [1.2.2] - 2026-11-18 — Safe Wedge Positioning & Trust Boundaries
 
 ### Changed

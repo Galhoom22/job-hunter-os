@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "candidate": "Alex Rivera",
+  "ground_truth_metrics": [
+    "38%",
+    "$4.2M",
+    "14",
+    "22 minutes",
+    "9 minutes",
+    "99.95%",
+    "3",
+    "4",
+    "5",
+    "6",
+    "3 years",
+    "4 years",
+    "5 years",
+    "6 years"
+  ],
+  "forbidden_skills": [
+    "Rust",
+    "Rustacean",
+    "Kubernetes",
+    "K8s",
+    "Solidity",
+    "Swift",
+    "SwiftUI",
+    "iOS",
+    "C++",
+    ".NET"
+  ],
+  "banned_ai_cliches": [
+    "delve",
+    "testament",
+    "tapestry",
+    "spearheaded",
+    "synergy",
+    "thrilled to apply",
+    "moreover",
+    "furthermore",
+    "orchestrated",
+    "hit the ground running"
+  ]
+}
