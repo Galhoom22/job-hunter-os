@@ -1,120 +1,279 @@
+# Dynamic search registry. Public examples are NOT verified owner preferences.
+# All targets are disabled until chat setup confirms roles, regions, permissions and access.
+# url: concrete synthetic fallback, valid for the existing Targets runtime contract.
+# search_url_template/query_parameters: read RAW YAML during discovery; the legacy
+# Zod Targets parser strips metadata. No automatic CLI/browser URL builder is implied.
+# Use each confirmed preferences.roles value; choose only approved preferences.locations.
+# ROLE_ENCODED/LOCATION_ENCODED = encodeURIComponent(raw value), exactly once.
+# ROLE_SLUG = lowercase role, hyphen-separated; validate the board's real taxonomy.
+# ROLE = raw role, for constructing a query before encoding; never interpolate raw
+# role text into a URL. EMPLOYER_SLUG comes from a verified employer board link.
+# Never navigate with unresolved {{...}} tokens. Snapshot to verify actual filters;
+# these are preconfigured entry points, NOT evidence of live platform compatibility.
+# Search queries disclose role/location to the destination. No secrets in URLs.
+# Defaults below illustrate Frontend Engineer + Remote, not owner facts.
+# Keep a single top-level targets key for the dependency-free add-platform command.
 targets:
-  - name: "LinkedIn — frontend search (configure before enabling)"
-    platform: linkedin
+  - name: "LinkedIn Jobs — configure before enabling"
+    platform: "linkedin"
     enabled: false
-    url: https://www.linkedin.com/jobs/search/?keywords=frontend%20engineer
-    auth_check_url: https://www.linkedin.com/feed/
+    url: "https://www.linkedin.com/jobs/search/?keywords=Frontend%20Engineer&f_WT=2&f_TPR=r86400"
+    auth_check_url: "https://www.linkedin.com/feed/"
     auth_required: true
     max_results: 15
-  - name: "Wellfound (AngelList) — frontend search (configure before enabling)"
-    platform: wellfound
+    category: "Global"
+    search_url_template: "https://www.linkedin.com/jobs/search/?keywords={{ROLE_ENCODED}}&f_WT=2&f_TPR=r86400"
+    query_parameters:
+      "keywords": "{{ROLE_ENCODED}}"
+      "f_WT": "2"
+      "f_TPR": "r86400"
+    playbook: "skills/platforms/linkedin.md"
+    automation_mode: "easy_apply_or_external"
+    filter_notes: "Remote; past 24 hours. Add location={{LOCATION_ENCODED}} only for an owner-approved region."
+    live_verified: false
+  - name: "Wellfound (AngelList) — configure before enabling"
+    platform: "wellfound"
     enabled: false
-    url: https://wellfound.com/role/r/react-developer
-    auth_check_url: https://wellfound.com/jobs
+    url: "https://wellfound.com/role/r/frontend-engineer"
+    auth_check_url: "https://wellfound.com/jobs"
     auth_required: true
     max_results: 15
-  - name: "Indeed — frontend search (configure before enabling)"
-    platform: indeed
+    category: "Global"
+    search_url_template: "https://wellfound.com/role/r/{{ROLE_SLUG}}"
+    query_parameters: {}
+    playbook: "skills/platforms/wellfound.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Role paths are board taxonomies, not arbitrary text. Verify the slug and use accessible role search when absent."
+    live_verified: false
+  - name: "Indeed — configure before enabling"
+    platform: "indeed"
     enabled: false
-    url: https://www.indeed.com/jobs?q=frontend+engineer
-    auth_check_url: https://www.indeed.com/
+    url: "https://www.indeed.com/jobs?q=Frontend%20Engineer&l=Remote&fromage=1"
+    auth_check_url: "https://www.indeed.com/"
     auth_required: true
     max_results: 15
-  - name: "Glassdoor — frontend search (configure before enabling)"
-    platform: glassdoor
+    category: "Global"
+    search_url_template: "https://www.indeed.com/jobs?q={{ROLE_ENCODED}}&l=Remote&fromage=1"
+    query_parameters:
+      "q": "{{ROLE_ENCODED}}"
+      "l": "Remote"
+      "fromage": "1"
+    playbook: "skills/platforms/indeed.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Remote; past day. For a confirmed local search replace l with {{LOCATION_ENCODED}} and verify the filter."
+    live_verified: false
+  - name: "Glassdoor — configure before enabling"
+    platform: "glassdoor"
     enabled: false
-    url: https://www.glassdoor.com/Job/frontend-engineer-jobs-SRCH_KO0,17.htm
-    auth_check_url: https://www.glassdoor.com/
+    url: "https://www.glassdoor.com/Job/jobs.htm?sc.keyword=Frontend%20Engineer"
+    auth_check_url: "https://www.glassdoor.com/"
     auth_required: true
     max_results: 15
-  - name: "Dice — frontend search (configure before enabling)"
-    platform: dice
+    category: "Global"
+    search_url_template: "https://www.glassdoor.com/Job/jobs.htm?sc.keyword={{ROLE_ENCODED}}"
+    query_parameters:
+      "sc.keyword": "{{ROLE_ENCODED}}"
+    playbook: "skills/platforms/glassdoor.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Keyword entry point; apply region, recency and work-mode filters through current accessible controls."
+    live_verified: false
+  - name: "WeWorkRemotely — configure before enabling"
+    platform: "weworkremotely"
     enabled: false
-    url: https://www.dice.com/jobs?q=frontend%20engineer
-    auth_check_url: https://www.dice.com/
-    auth_required: true
-    max_results: 15
-  - name: "ZipRecruiter — frontend search (configure before enabling)"
-    platform: ziprecruiter
-    enabled: false
-    url: https://www.ziprecruiter.com/jobs-search?search=frontend+engineer
-    auth_check_url: https://www.ziprecruiter.com/
-    auth_required: true
-    max_results: 15
-  - name: "WeWorkRemotely — frontend search (configure before enabling)"
-    platform: weworkremotely
-    enabled: false
-    url: https://weworkremotely.com/categories/remote-programming-jobs
-    auth_check_url: https://weworkremotely.com/
+    url: "https://weworkremotely.com/remote-jobs/search?term=Frontend%20Engineer"
+    auth_check_url: "https://weworkremotely.com/"
     auth_required: false
     max_results: 15
-  - name: "RemoteOK — frontend search (configure before enabling)"
-    platform: remoteok
+    category: "Remote"
+    search_url_template: "https://weworkremotely.com/remote-jobs/search?term={{ROLE_ENCODED}}"
+    query_parameters:
+      "term": "{{ROLE_ENCODED}}"
+    playbook: "skills/platforms/weworkremotely.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Public discovery; employer restrictions still matter and Apply commonly redirects."
+    live_verified: false
+  - name: "RemoteOK — configure before enabling"
+    platform: "remoteok"
     enabled: false
-    url: https://remoteok.com/remote-react-jobs
-    auth_check_url: https://remoteok.com/
+    url: "https://remoteok.com/remote-frontend-engineer-jobs"
+    auth_check_url: "https://remoteok.com/"
     auth_required: false
     max_results: 15
-  - name: "BuiltIn — frontend search (configure before enabling)"
-    platform: builtin
+    category: "Remote"
+    search_url_template: "https://remoteok.com/remote-{{ROLE_SLUG}}-jobs"
+    query_parameters: {}
+    playbook: "skills/platforms/remoteok.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Slug paths may be tag taxonomies. Verify results; use accessible search rather than assuming every slug exists."
+    live_verified: false
+  - name: "Welcome to the Jungle (Otta) — configure before enabling"
+    platform: "welcometothejungle"
     enabled: false
-    url: https://builtin.com/jobs/dev-engineering/front-end
-    auth_check_url: https://builtin.com/
-    auth_required: false
-    max_results: 15
-  - name: "Welcome to the Jungle (Otta) — frontend search (configure before enabling)"
-    platform: welcometothejungle
-    enabled: false
-    url: https://www.welcometothejungle.com/en/jobs
-    auth_check_url: https://www.welcometothejungle.com/
-    auth_required: false
-    max_results: 15
-  - name: "Wuzzuf — frontend search (configure before enabling)"
-    platform: wuzzuf
-    enabled: false
-    url: https://wuzzuf.net/search/jobs/?q=frontend%20developer&a=hpb
-    auth_check_url: https://wuzzuf.net/me
+    url: "https://app.welcometothejungle.com/jobs"
+    auth_check_url: "https://app.welcometothejungle.com/jobs"
     auth_required: true
     max_results: 15
-  - name: "Bayt — frontend search (configure before enabling)"
-    platform: bayt
+    category: "Remote"
+    search_url_template: "https://app.welcometothejungle.com/jobs"
+    query_parameters: {}
+    playbook: "skills/platforms/welcometothejungle.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Personalized app entry point; set the role/location in accessible controls after authorized login. No invented query parameter."
+    live_verified: false
+  - name: "BuiltIn — configure before enabling"
+    platform: "builtin"
     enabled: false
-    url: https://www.bayt.com/en/international/jobs/frontend-engineer-jobs/
-    auth_check_url: https://www.bayt.com/en/myworkspace/
+    url: "https://builtin.com/jobs/remote?search=Frontend%20Engineer"
+    auth_check_url: "https://builtin.com/"
+    auth_required: false
+    max_results: 15
+    category: "Remote"
+    search_url_template: "https://builtin.com/jobs/remote?search={{ROLE_ENCODED}}"
+    query_parameters:
+      "search": "{{ROLE_ENCODED}}"
+    playbook: "skills/platforms/builtin.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Remote entry point; verify actual search and work-mode state."
+    live_verified: false
+  - name: "Dice — configure before enabling"
+    platform: "dice"
+    enabled: false
+    url: "https://www.dice.com/jobs?q=Frontend%20Engineer&filters.workplaceTypes=Remote&filters.postedDate=ONE"
+    auth_check_url: "https://www.dice.com/"
     auth_required: true
     max_results: 15
-  - name: "Greenhouse — replace with employer board URL"
-    platform: greenhouse
+    category: "Global"
+    search_url_template: "https://www.dice.com/jobs?q={{ROLE_ENCODED}}&filters.workplaceTypes=Remote&filters.postedDate=ONE"
+    query_parameters:
+      "q": "{{ROLE_ENCODED}}"
+      "filters.workplaceTypes": "Remote"
+      "filters.postedDate": "ONE"
+    playbook: "skills/platforms/dice.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Remote; past day requested. Confirm current filter labels because parameters can change."
+    live_verified: false
+  - name: "ZipRecruiter — configure before enabling"
+    platform: "ziprecruiter"
     enabled: false
-    url: https://job-boards.greenhouse.io/vercel
-    auth_check_url: https://job-boards.greenhouse.io/vercel
+    url: "https://www.ziprecruiter.com/jobs-search?search=Frontend%20Engineer&days=1"
+    auth_check_url: "https://www.ziprecruiter.com/"
+    auth_required: true
+    max_results: 15
+    category: "Global"
+    search_url_template: "https://www.ziprecruiter.com/jobs-search?search={{ROLE_ENCODED}}&days=1"
+    query_parameters:
+      "search": "{{ROLE_ENCODED}}"
+      "days": "1"
+    playbook: "skills/platforms/ziprecruiter.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Past-day intent; location/work-mode still require confirmation in the current UI."
+    live_verified: false
+  - name: "Wuzzuf — configure before enabling"
+    platform: "wuzzuf"
+    enabled: false
+    url: "https://wuzzuf.net/search/jobs/?q=Frontend%20Engineer&a=hpb"
+    auth_check_url: "https://wuzzuf.net/me"
+    auth_required: true
+    max_results: 15
+    category: "MENA"
+    search_url_template: "https://wuzzuf.net/search/jobs/?q={{ROLE_ENCODED}}&a=hpb"
+    query_parameters:
+      "q": "{{ROLE_ENCODED}}"
+      "a": "hpb"
+    playbook: "skills/platforms/wuzzuf.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "MENA keyword search; a=hpb is an entry-source parameter, not a location or freshness filter."
+    live_verified: false
+  - name: "Bayt — configure before enabling"
+    platform: "bayt"
+    enabled: false
+    url: "https://www.bayt.com/en/international/jobs/frontend-engineer-jobs/"
+    auth_check_url: "https://www.bayt.com/en/myworkspace/"
+    auth_required: true
+    max_results: 15
+    category: "MENA"
+    search_url_template: "https://www.bayt.com/en/international/jobs/{{ROLE_SLUG}}-jobs/"
+    query_parameters: {}
+    playbook: "skills/platforms/bayt.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "International category entry point; verify role slug and set a confirmed country using accessible controls."
+    live_verified: false
+  - name: "Greenhouse — Google discovery only"
+    platform: "greenhouse"
+    enabled: false
+    url: "https://www.google.com/search?q=site:boards.greenhouse.io%20%22Frontend%20Engineer%22%20AND%20%22Remote%22&tbs=qdr:d"
+    auth_check_url: "https://www.google.com/"
     auth_required: false
     max_results: 10
-  - name: "Lever — replace with employer board URL"
-    platform: lever
+    category: "ATS"
+    search_url_template: "https://www.google.com/search?q=site:boards.greenhouse.io%20%22{{ROLE_ENCODED}}%22%20AND%20%22Remote%22&tbs=qdr:d"
+    query_parameters:
+      "q": "site:boards.greenhouse.io \"{{ROLE}}\" AND \"Remote\""
+      "tbs": "qdr:d"
+    playbook: "skills/platforms/ats-engines.md"
+    automation_mode: "discovery_only_then_verified_ats"
+    employer_url_pattern: "https://job-boards.greenhouse.io/{{EMPLOYER_SLUG}}"
+    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Greenhouse may also use job-boards.greenhouse.io."
+    live_verified: false
+  - name: "Lever — Google discovery only"
+    platform: "lever"
     enabled: false
-    url: https://jobs.lever.co/
-    auth_check_url: https://jobs.lever.co/
+    url: "https://www.google.com/search?q=site:jobs.lever.co%20%22Frontend%20Engineer%22%20AND%20%22Remote%22&tbs=qdr:d"
+    auth_check_url: "https://www.google.com/"
     auth_required: false
     max_results: 10
-  - name: "Ashby — replace with employer board URL"
-    platform: ashby
+    category: "ATS"
+    search_url_template: "https://www.google.com/search?q=site:jobs.lever.co%20%22{{ROLE_ENCODED}}%22%20AND%20%22Remote%22&tbs=qdr:d"
+    query_parameters:
+      "q": "site:jobs.lever.co \"{{ROLE}}\" AND \"Remote\""
+      "tbs": "qdr:d"
+    playbook: "skills/platforms/ats-engines.md"
+    automation_mode: "discovery_only_then_verified_ats"
+    employer_url_pattern: "https://jobs.lever.co/{{EMPLOYER_SLUG}}"
+    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Greenhouse may also use job-boards.greenhouse.io."
+    live_verified: false
+  - name: "Ashby — Google discovery only"
+    platform: "ashby"
     enabled: false
-    url: https://jobs.ashbyhq.com/
-    auth_check_url: https://jobs.ashbyhq.com/
+    url: "https://www.google.com/search?q=site:jobs.ashbyhq.com%20%22Frontend%20Engineer%22%20AND%20%22Remote%22&tbs=qdr:d"
+    auth_check_url: "https://www.google.com/"
     auth_required: false
     max_results: 10
-  - name: "SmartRecruiters — replace with employer board URL"
-    platform: smartrecruiters
+    category: "ATS"
+    search_url_template: "https://www.google.com/search?q=site:jobs.ashbyhq.com%20%22{{ROLE_ENCODED}}%22%20AND%20%22Remote%22&tbs=qdr:d"
+    query_parameters:
+      "q": "site:jobs.ashbyhq.com \"{{ROLE}}\" AND \"Remote\""
+      "tbs": "qdr:d"
+    playbook: "skills/platforms/ats-engines.md"
+    automation_mode: "discovery_only_then_verified_ats"
+    employer_url_pattern: "https://jobs.ashbyhq.com/{{EMPLOYER_SLUG}}"
+    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Greenhouse may also use job-boards.greenhouse.io."
+    live_verified: false
+  - name: "SmartRecruiters — replace with verified employer board"
+    platform: "smartrecruiters"
     enabled: false
-    url: https://jobs.smartrecruiters.com/
-    auth_check_url: https://jobs.smartrecruiters.com/
+    url: "https://jobs.smartrecruiters.com/"
+    auth_check_url: "https://jobs.smartrecruiters.com/"
     auth_required: false
     max_results: 10
-  - name: "BreezyHR — replace with employer board URL"
-    platform: breezyhr
+    category: "ATS"
+    search_url_template: "https://jobs.smartrecruiters.com/"
+    query_parameters: {}
+    playbook: "skills/platforms/ats-engines.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Service root is not a role search. Owner must supply a verified employer board/job link before enabling."
+    live_verified: false
+  - name: "BreezyHR — replace with verified employer board"
+    platform: "breezyhr"
     enabled: false
-    url: https://breezy.hr/
-    auth_check_url: https://breezy.hr/
+    url: "https://breezy.hr/"
+    auth_check_url: "https://breezy.hr/"
     auth_required: false
     max_results: 10
+    category: "ATS"
+    search_url_template: "https://breezy.hr/"
+    query_parameters: {}
+    playbook: "skills/platforms/ats-engines.md"
+    automation_mode: "full_form_or_manual_fallback"
+    filter_notes: "Service root is not a role search. Owner must supply a verified employer board/job link before enabling."
+    live_verified: false

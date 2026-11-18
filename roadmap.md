@@ -1,5 +1,10 @@
 # Repository readiness audit
 
+## Flagship engineering guide and dynamic search registry
+- [x] Expand disabled target templates with platform URL patterns, parameters and ATS discovery channels.
+- [x] Rewrite the README into ten architecture, setup, lifecycle, compatibility and contribution sections.
+- [x] Validate 107 tests, installation preservation, registry contracts and documentation links; leave src untouched.
+
 ## Strict readiness gatekeeper
 - [x] Add five-gate schema, private state template, shared audit and CLI/preflight enforcement.
 - [x] Add 3–4-question interview, CV drop guide, scoped answer learning and per-run launch confirmation.
