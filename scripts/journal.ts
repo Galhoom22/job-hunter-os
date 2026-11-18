@@ -1,3 +1,4 @@
+import { writeExports } from "./export-lib";
 import { readFileSync, writeFileSync, renameSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { Application, ApplicationsLog } from "../schemas/index.ts";
@@ -20,6 +21,7 @@ try {
   const temp = `${file}.tmp`;
   writeFileSync(temp, JSON.stringify(apps, null, 2) + "\n", { mode: 0o600 });
   renameSync(temp, file);
+  writeExports(root, apps);
   execFileSync(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "validate:logs"], { cwd: root, stdio: "inherit" });
 } catch {
   console.error("Journal rejected. Check schema, lock ownership and existing application; no automatic submit.");

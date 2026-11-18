@@ -28,3 +28,24 @@ max_consecutive_errors: 3
 stop_on_captcha: true
 review_min_score: 5
 stop_on_2fa: true
+tailor_resume_per_job: true
+warmup_mode:
+  enabled: true
+  started_on: null
+  initial_cap: 5
+  stage_days: 3
+  increment: 5
+active_hours:
+  start: "09:00"
+  end: "20:00"
+  timezone: UTC
+human_behavior:
+  action_delay_seconds: [3, 9]
+  scroll_jitter: false
+  max_consecutive_actions: 15
+  cooldown_seconds: 60
+storage_adapters:
+  local_json: true
+  notion_mcp: false
+  csv_export: true
+  markdown_report: true

@@ -4,7 +4,7 @@
 
 ```bash
 npm install
-cp .env.example .env          # put your NOTION_TOKEN here
+cp .env.example .env          # optional: NOTION_TOKEN only if enabling Notion
 npm run sync:mcp              # writes .mcp.json (Claude Code) and .cursor/mcp.json (Cursor)
 ```
 
@@ -23,7 +23,9 @@ Playwright MCP launches Chromium with `--user-data-dir=./browser-profile`. Cooki
 
 Tip: if a session expires, the agent stops at "Auth Verification" and asks you to log in again.
 
-## 2. Connect Notion
+## 2. Connect Notion (optional)
+
+First enable storage_adapters.notion_mcp in config/guardrails.yaml. Without it, no token or databases are needed; generated configs contain Playwright only.
 
 1. Go to https://www.notion.so/profile/integrations → **New integration** (internal). Copy the secret (`ntn_...`).
 2. Put it in `.env` as `NOTION_TOKEN=ntn_...` and re-run `npm run sync:mcp`.

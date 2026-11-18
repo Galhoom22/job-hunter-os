@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { parse } from "yaml";
+import { effectiveDailyCap, withinActiveHours } from "../schemas/runtime";
 import { ApplicationsLog, Guardrails, FormAnswers, Targets, canApply } from "../schemas/index.ts";
 const root = resolve(import.meta.dirname, "..");
 const p = (f: string) => resolve(root, f);
@@ -25,7 +26,7 @@ if (answers.success) {
   const pdf = p(answers.data.resume_pdf_path);
   if (!existsSync(pdf) || readFileSync(pdf).subarray(0, 5).toString() !== "%PDF-") problems.push("resume PDF missing or invalid");
 }
-for (const key of ["applications_db", "daily_runs_db", "insights_db"]) {
+if (g.success && g.data.storage_adapters.notion_mcp) for (const key of ["applications_db", "daily_runs_db", "insights_db"]) {
   if (!/^[a-f0-9]{32}$/i.test(String(preferences?.notion?.[key] ?? "").replace(/-/g, ""))) problems.push(`set Notion ${key}`);
 }
 const configFile = [".mcp.json", ".cursor/mcp.json"].find(f => existsSync(p(f)));
@@ -35,7 +36,7 @@ else {
     const c = JSON.parse(readFileSync(p(configFile), "utf8"));
     if (!c.mcpServers?.playwright?.args?.some((a: string) => a.startsWith("--user-data-dir="))) problems.push("persistent browser profile missing in MCP config");
     const token = c.mcpServers?.notion?.env?.NOTION_TOKEN;
-    if (!token || /replace|xxx/i.test(token)) problems.push("Notion token is not configured");
+    if (g.success && g.data.storage_adapters.notion_mcp && (!token || /replace|xxx/i.test(token))) problems.push("Notion token is not configured");
   } catch { problems.push("MCP config is invalid JSON"); }
 }
 if (!existsSync(p("browser-profile"))) problems.push("browser profile missing: complete headed login first");
@@ -44,10 +45,11 @@ catch { problems.push("logs invalid: run npm run validate:logs"); }
 if (!existsSync(p("logs/applications-log.json"))) problems.push("initialize private applications log to [] before first run");
 else try {
   const apps = ApplicationsLog.parse(JSON.parse(readFileSync(p("logs/applications-log.json"), "utf8")));
-  if (g.success && !canApply(apps, "__any__", new Date().toISOString().slice(0, 10), g.data)) problems.push("daily cap reached");
+  if (g.success && !canApply(apps, "__any__", new Date().toISOString().slice(0, 10), {...g.data,max_applications_per_day:effectiveDailyCap(g.data.max_applications_per_day,g.data.warmup_mode,new Date().toISOString().slice(0,10))})) problems.push("daily cap reached");
 } catch { problems.push("application history invalid"); }
 if (g.success && targets.success) for (const t of targets.data.targets.filter(t => t.enabled)) {
   if (g.data.max_per_platform[t.platform] === undefined) problems.push(`missing cap for ${t.platform}`);
 }
+if(g.success && !withinActiveHours(new Date(),g.data.active_hours)) problems.push("outside configured active hours");
 if (problems.length) { console.error("Preflight blocked:\n- " + problems.join("\n- ")); process.exit(1); }
 console.log("Preflight passed locally; browser login and Notion access still require live verification.");

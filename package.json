@@ -1,5 +1,5 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "job-hunter-os",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -17,7 +17,12 @@
     "preflight": "tsx scripts/preflight.ts",
     "run:lock": "tsx scripts/run-lock.ts",
     "journal": "tsx scripts/journal.ts",
-    "insights": "tsx scripts/insights.ts"
+    "insights": "tsx scripts/insights.ts",
+    "setup": "tsx scripts/setup.ts",
+    "setup:check": "tsx scripts/setup.ts --check",
+    "browser:login": "tsx scripts/browser-login.ts",
+    "resume:render": "tsx scripts/render-resume.ts",
+    "export": "tsx scripts/export.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -94,6 +99,7 @@
     "globals": "^15.15.0",
     "jsdom": "^20.0.3",
     "nitro": "3.0.260603-beta",
+    "playwright": "1.59.0",
     "prettier": "^3.7.3",
     "tsx": "^4.23.15",
     "typescript": "^5.8.3",

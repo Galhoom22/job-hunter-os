@@ -42,7 +42,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className="text-foreground">config/</span> from this repo.
         </div>
       </aside>
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <nav className="flex gap-1 overflow-x-auto border-b p-2 md:hidden">
           {nav.map(({ to, label }) => (
             <Link key={to} to={to} activeOptions={{ exact: to === "/" }} className="rounded px-3 py-1.5 text-sm text-muted-foreground" activeProps={{ className: "bg-secondary !text-primary" }}>

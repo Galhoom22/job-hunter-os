@@ -1,5 +1,6 @@
+import { RuntimeControls } from "../../schemas/runtime";
 import { createServerFn } from "@tanstack/react-start";
-import { parse } from "yaml";
+import { parse, stringify } from "yaml";
 import { z } from "zod";
 import { setDryRunInText } from "./yaml-edit";
 import { ApplicationsLog, DailyRun, Insight, FormAnswers, Targets, Guardrails } from "../../schemas/index";
@@ -106,3 +107,29 @@ export const setDryRun = createServerFn({ method: "POST" })
     await api.fs.writeFile(file, setDryRunInText(await api.fs.readFile(file, "utf8"), data.dryRun), "utf8");
     return { ok: true };
   });
+
+export const getSetupHealth = createServerFn({method:"GET"}).handler(async()=>{
+ const api=await fsApi(); if(!api)return {live:false,profile:false,resume:false,mcp:false,browser:false,notion:false,notionVerified:false};
+ const read=async(p:string)=>api.fs.readFile(api.path.join(api.root,p),"utf8").catch(()=>"");
+ const exists=async(p:string)=>api.fs.access(api.path.join(api.root,p)).then(()=>true).catch(()=>false);
+ let verified=false;try{verified=FormAnswers.safeParse(parse(await read("context/form-answers.yaml"))).success}catch{}
+ const profile=await read("context/profile.md"); const cv=await read("context/cv.md");
+ let resume=false;try{resume=(await api.fs.readFile(api.path.join(api.root,"assets/resume.pdf"))).subarray(0,5).toString()==="%PDF-"}catch{}
+ let mcp=false,notion=false;try{const c=JSON.parse(await read(".mcp.json"));mcp=!!c.mcpServers?.playwright?.args?.some((a:string)=>a.startsWith("--user-data-dir="));notion=!!c.mcpServers?.notion?.env?.NOTION_TOKEN}catch{}
+ return {live:true,profile:verified&&!!profile&&!!cv&&!/example\.com|your-handle|Acme Fintech|Nile Commerce/i.test(profile+cv),resume,mcp,browser:await exists("browser-profile/Default"),notion,notionVerified:false};
+});
+export const initializeSetup = createServerFn({method:"POST"}).handler(async()=>{
+ const api=await fsApi();if(!api)throw new Error("Setup is available in the local companion only.");
+ for(const name of ["profile.md","cv.md","preferences.yaml","targets.yaml","form-answers.yaml"]){const path=api.path.join(api.root,"context",name);if(!await api.fs.access(path).then(()=>true).catch(()=>false))await api.fs.copyFile(path+".example",path);}
+ await api.fs.mkdir(api.path.join(api.root,"assets"),{recursive:true});await api.fs.mkdir(api.path.join(api.root,"logs"),{recursive:true});
+ const log=api.path.join(api.root,"logs/applications-log.json");if(!await api.fs.access(log).then(()=>true).catch(()=>false))await api.fs.writeFile(log,"[]\n",{mode:0o600});return {ok:true};
+});
+export const saveSetupProfile = createServerFn({method:"POST"}).inputValidator(z.object({name:z.string().min(1).max(200),email:z.string().email(),facts:z.string().min(1).max(20000)})).handler(async({data})=>{
+ const api=await fsApi();if(!api)throw new Error("Profile editing is local-only.");
+ const file=api.path.join(api.root,"context/profile.md");await api.fs.writeFile(file,`# Profile\n- full_name: ${data.name}\n- email: ${data.email}\n\n## Verified facts\n${data.facts}\n`,{mode:0o600});
+ await api.fs.writeFile(api.path.join(api.root,"context/cv.md"),`# Verified CV\n${data.facts}\n`,{mode:0o600});return {ok:true};
+});
+export const saveRuntimeControls = createServerFn({method:"POST"}).inputValidator(RuntimeControls).handler(async({data})=>{
+ const api=await fsApi();if(!api)throw new Error("Controls are read-only in hosted preview.");
+ const path=api.path.join(api.root,"config/guardrails.yaml");const original=parse(await api.fs.readFile(path,"utf8"));const merged=Guardrails.parse({...original,...data});await api.fs.writeFile(path,stringify(merged),{mode:0o600});return {ok:true};
+});

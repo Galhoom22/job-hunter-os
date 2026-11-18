@@ -1,47 +1,77 @@
-# Autonomous AI Job Hunter (portable, zero-backend)
+# job-hunter-os
 
-Clone this repo and open it in **Antigravity**, **Cursor** or **Claude Code**. Then say *"Start today's job run"*.
+**A local-first career companion for AI-powered IDEs. Honest matching. Human review where it matters.**
 
-- **Brain:** `AGENTS.md` + `skills/*.md` (pointers: `CLAUDE.md`, `.cursor/rules/`, `.agent/workflows/`)
-- **Hands:** Playwright MCP with a persistent local browser profile (`browser-profile/`, gitignored)
-- **Memory:** Notion MCP + `logs/*.json` (validated by `schemas/index.ts`)
-- **Dashboard:** `npm run dev` → http://localhost:8080 (Overview, Applications, Runs, Insights, Config)
+![MIT license](https://img.shields.io/badge/license-MIT-green)
+![Local first](https://img.shields.io/badge/data-local--first-black)
+![Playwright MCP](https://img.shields.io/badge/browser-Playwright_MCP-45ba4b)
+![Multi IDE](https://img.shields.io/badge/IDE-Antigravity_%7C_Cursor_%7C_Claude_Code_%7C_Windsurf_%7C_Cline-blue)
 
-## Quick start
+## Quick start in 3 steps
 ```bash
-npm install
-cp .env.example .env            # add NOTION_TOKEN
-npm run sync:mcp                # generates .mcp.json + .cursor/mcp.json
-# fill in context/*.md / *.yaml (templates in *.example), put your CV PDF at context/resume.pdf
-npm run preflight
-npm run dev                     # dashboard
+git clone https://github.com/redasalem/job-hunter-os.git
+# Open the cloned folder in a terminal, then:
+npm install && npm run setup
+# In your AI IDE: “Start today's job run” (or /daily-run if that IDE supports it).
 ```
-Log in once to LinkedIn and Google in the agent's browser — see `mcp/README.md`.
-`config/guardrails.yaml` ships with `dry_run: true`. Only disable it after verified owner facts and a successful live dry run.
+Setup initializes missing files without overwriting them, collects profile facts and preferred IDEs, creates private MCP configs and keeps Notion optional. An initial setup can be quick; real resume preparation, legal-answer review, Chromium download and manual login may take longer than two minutes. No invented personal facts.
 
-## Scripts
-| Command | What it does |
+Put the base PDF at assets/resume.pdf. `npx playwright install chromium` if needed, then `npm run browser:login` for manual login. Review all form answers before owner_verified:true. `npm run dev` opens the companion at localhost:8080. `npm run setup:check` reports incomplete prerequisites without modifying files. A real run requires successful preflight and enabled permitted targets; templates begin disabled.
+
+## Two layers, one source of truth
+```text
+YOUR MACHINE
++-----------------------+      +--------------------------+
+| Authorized AI IDE     | ---> | AGENTS.md + playbooks     |
+| local agent process   |      | safety / CV / preferences |
++-----------+-----------+      +------------+-------------+
+            | Playwright MCP               |
+            v                              v
+  Persistent Chromium             Private local JSON
+  manual login / apply            logs / resumes / exports
+            |                              |
+            v                              v
+  Employers / job boards          Local Companion Dashboard
+                                  overview / review / reports
+                                           |
+                                  optional Notion MCP sync
+HOSTED PREVIEW: synthetic read-only demo, not a runner
+```
+
+## Feature matrix
+| Capability | Included | Boundary |
+|---|---|---|
+| Setup + health checks | CLI + dashboard | Local files only; login/access still verified manually |
+| CV matching | >=7 eligible, 5–6 review, <5 skip | Never overrides consent or safety |
+| Resume tailoring | Verified sentence/skill/bullet ordering, local PDF | No invented keywords or new experience |
+| Safety | Dry run, caps, warm-up, active hours, cooldown | No stealth/bypass, no anti-ban guarantee |
+| Tracking | Local JSON, CSV, Markdown; optional Notion | Local JSON always primary |
+| Exports | CSV / JSON downloads and Markdown clipboard | Personal downloads stay private |
+| Agent runs | Canonical playbooks + local run lock | Requires an authorized, running IDE/model process |
+
+## Supported IDEs
+Antigravity, Cursor, Claude Code, Windsurf, Cline/Roo and GitHub Copilot have canonical instruction pointers. Claude/Cursor MCP configs are generated; other IDE versions may require importing server definitions into their supported MCP settings. Instruction files do not install tools, grant permissions or universally register slash commands.
+
+## Platform playbooks
+Global: LinkedIn, Wellfound, Indeed, Glassdoor, Dice, ZipRecruiter.
+Remote: WeWorkRemotely, RemoteOK, BuiltIn, Welcome to the Jungle (Otta).
+Regional: Wuzzuf, Bayt. Community template ready for StepStone, Xing, Naukri and other boards—not yet implemented.
+ATS: Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR. Workday/Taleo: manual_apply + needs_review.
+See [registry](docs/platform-registry.md). Playbooks are conservative guides, not a guarantee against changing interfaces or platform restrictions.
+
+## Daily commands
+| Command | Outcome |
 |---|---|
-| `npm run sync:mcp` | Template → IDE MCP configs |
-| `npm run validate:logs` | Schema + duplicate check of everything in `logs/` |
-| `npm run preflight` | Files, MCP config, caps, and log validity before a run |
-| `npm test` | Guardrail rule tests |
+| npm run setup / setup:check | Interactive onboarding / read-only readiness |
+| npm run browser:login | Headed persistent manual login |
+| npm run sync:mcp -- --headless | Same profile, background browser mode |
+| npm run preflight | Fail-closed eligibility/settings check |
+| npm run resume:render -- COMPANY ROLE KEYWORD... | Verified-fact tailored PDF |
+| npm run export | Private CSV + Markdown artifacts |
+| npm run validate:logs | Validate real local history |
+| npm test | Unit/schema safety tests |
 
-`demo/` contains public synthetic data. Initialize private `logs/` to empty before your first real run; privacy exclusions are already active.
+## Privacy, without impossible promises
+Cookies, PDFs, personal context, history and generated configs are ignored and untracked; only synthetic demo data ships in hosted builds. Applications send chosen facts/resumes to employers; optional Notion and your selected AI IDE/model have their own data policies. No claim that all data never leaves your machine. Read [SECURITY.md](SECURITY.md).
 
-## Readiness & privacy (audit update)
-
-Real context/history, resume PDFs, browser profile and generated MCP configs are ignored and untracked. Public synthetic data lives in `demo/` only; published dashboards are read-only demo views, never personal-history hosts. Local editing is development-only. Git history still contains earlier synthetic examples; ignoring does not remove history.
-
-Fresh local setup:
-1. Copy context/*.example to the corresponding real filenames. Replace every synthetic contact/CV/legal/experience answer; set owner_verified:true ONLY after reviewing every fact.
-2. Put your real PDF at assets/resume.pdf and set resume_pdf_path. Initialize logs/applications-log.json to [] (do not use demo as real history).
-3. Set actual Notion database IDs in preferences and your token locally; generate MCP configs and complete headed platform login.
-4. Enable only configured, permitted platform targets. All template targets start disabled. Set per-platform caps and retain dry_run:true for first end-to-end testing.
-5. npm run preflight; npm run validate:logs; npm test. Follow AGENTS.md and docs/execution-safety.md. Run a real dry-run with verified sessions/Notion before enabling submissions.
-
-Scoring: >=7 eligible, 5–6 review, <5 skipped. Eligibility is NOT authorization to submit: unknown facts, duplicate jobs, caps, complex ATS and uncertain receipts override it. Workday/Taleo use manual_apply + needs_review.
-
-Headless: npm run sync:mcp -- --headless; then restart MCP tools. Keep an authorized local IDE/model process running; no hosted/background runner is installed by this audit. Check mcp/README.md for mode/session details.
-
-See docs/repository-audit.md for the file-by-file upgrade inventory and unverified live-service checks.
+MIT licensed. Contributions welcome via [CONTRIBUTING.md](CONTRIBUTING.md). Live applications, Notion read-back and unattended behavior must be verified in your actual authorized environment before enabling real submission. No scheduler is installed by opening this dashboard.

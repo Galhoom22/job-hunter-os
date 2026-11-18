@@ -10,3 +10,7 @@ Trigger: owner explicitly starts or schedules a run in an authorized local agent
 6. Application loop: run applicationDecision from schemas/index.ts. Missing platform cap, unknown facts, existing job or manual_apply overrides score. Re-read logs immediately before each submit. Count unresolved submission reservations against daily/platform caps. Stop when daily cap reached; skip capped platform.
 7. Eligible internal forms use apply-easy-apply.md; external ATS apply-external-ats.md. Before Submit reserve needs_review/submission_uncertain entry using npm run journal -- ENTRY_JSON_PATH LOCK_TOKEN; validate. Only after final receipt update SAME record to applied with applied_at; uncertainty stays review. Dry run never submits or reserves a submission.
 8. End: counts derive from this run's actual journal dispositions; dry_run != applied. Finish JSON, validate, upsert Notion Daily Runs by run_id. Produce weekly/monthly report when due. Release owned lock in finally, including aborted paths. Report counts, review links/questions, errors and blockers. Never say applied without receipt or synced without confirmation.
+
+Notion is optional: if storage_adapters.notion_mcp:false, skip sync and retry work entirely; keep local records/exports. If enabled, token/database access must be verified. Local JSON is always primary.
+
+Before each action and Submit enforce warm-up effective cap, local active hours and 60s cooldown after max_consecutive_actions. Before eligible applications run skills/tailor-resume.md when enabled.

@@ -1,5 +1,13 @@
 # Repository readiness audit
 
+## Open-source companion upgrade
+- [x] Interactive setup, optional Notion, browser login and dashboard readiness.
+- [x] Verified-fact resume tailoring and deterministic PDF renderer.
+- [x] Conservative warm-up, active hours and cooldown controls (no stealth/evasion).
+- [x] Local JSON/CSV/Markdown adapters and dashboard exports.
+- [x] Community platform template, MIT license and contributor/security documentation.
+- [x] Test scripts and dashboard flows; record live-service limitations.
+
 - [x] Add multi-IDE pointers and safe MCP headed/headless generation.
 - [x] Expand platform and ATS playbooks and disabled target templates.
 - [x] Enforce scoring, uploads, deduplication, run locking and stop rules.

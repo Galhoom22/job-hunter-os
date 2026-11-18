@@ -1,3 +1,4 @@
+import { ExportControls } from "@/components/export-controls";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -19,6 +20,7 @@ function Insights() {
   return (
     <>
       <PageHeader title="Insights" subtitle="What the market asks for, and where your CV falls short." />
+      <div className="mb-4"><ExportControls apps={data.applications} /></div>
       <Panel title="Demanded skills vs. your gaps">
         <ResponsiveContainer width="100%" height={Math.max(260, skills.length * 30)}>
           <BarChart data={skills} layout="vertical" margin={{ left: 40 }}>

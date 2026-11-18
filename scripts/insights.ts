@@ -1,3 +1,4 @@
+import { writeExports } from "./export-lib";
 import { readFileSync, writeFileSync, mkdirSync, renameSync } from "node:fs";
 import { resolve } from "node:path";
 import { execFileSync } from "node:child_process";
@@ -15,5 +16,6 @@ try {
   mkdirSync(resolve(root,"logs/insights"),{recursive:true});
   const file=resolve(root,`logs/insights/${type}-${period}.json`);
   writeFileSync(`${file}.tmp`,JSON.stringify(report,null,2)+"\n",{mode:0o600}); renameSync(`${file}.tmp`,file);
+  writeExports(root, apps);
   execFileSync(process.platform === "win32" ? "npm.cmd" : "npm",["run","validate:logs"],{cwd:root,stdio:"inherit"});
 } catch { console.error("Report rejected: check lock, period and validated history."); process.exit(1); }

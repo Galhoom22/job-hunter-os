@@ -8,3 +8,5 @@
 6. Failed sync follows log-application.md bounded retry (query before create); local report is retained. Weekly reports run Monday after completed daily run; monthly reports on first day for prior complete month. Manual requests may specify a partial period explicitly. Report counts, skill gaps and limitations honestly.
 
 Use `npm run insights -- weekly|monthly PERIOD START_ISO END_ISO LOCK_TOKEN` for the shared schema-backed calculator and atomic local report writer. Bounds are inclusive start, exclusive end; choose UTC calendar bounds. Then perform Notion upsert through MCP.
+
+Notion is optional: if storage_adapters.notion_mcp:false, skip sync and retry work entirely; keep local records/exports. If enabled, token/database access must be verified. Local JSON is always primary.

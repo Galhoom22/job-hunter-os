@@ -1,0 +1,4 @@
+import type { Application } from "./index";
+function cell(value: unknown) { let text=String(value??""); if (/^[\s]*[=+\-@]/.test(text)) text="'"+text; return '"'+text.replace(/"/g,'""')+'"'; }
+export function applicationsCSV(apps: Application[]) { const keys=["job_id","title","company","platform","status","match_score","url","applied_at"] as const; return keys.join(",")+"\r\n"+apps.map(a=>keys.map(k=>cell(a[k])).join(",")).join("\r\n")+"\r\n"; }
+export function markdownReport(apps: Application[]) {return `# Job hunt summary\n\n- Scanned: ${apps.length}\n- Confirmed applications: ${apps.filter(a=>a.status==="applied").length}\n- Dry runs: ${apps.filter(a=>a.status==="dry_run").length}\n- Needs review: ${apps.filter(a=>a.status==="needs_review").length}\n\n`+apps.map(a=>`- ${a.company.replace(/[\r\n]/g," ")} — ${a.title.replace(/[\r\n]/g," ")} (${a.status}, ${a.match_score}/10)`).join("\n")+"\n";}

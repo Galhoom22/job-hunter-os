@@ -1,3 +1,4 @@
+import { QuickSetup } from "@/components/quick-setup";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -25,6 +26,7 @@ function Overview() {
   return (
     <>
       <PageHeader title="Overview" subtitle="Everything your agent has scanned, scored and applied to." right={<SourceBadge live={data.live} />} />
+      <QuickSetup />
       {data.invalidLog && (
         <div className="mb-6 rounded-md border border-destructive/40 bg-destructive/10 p-4 font-mono text-xs text-destructive">
           applications-log.json failed validation: {data.invalidLog.join(" · ")}

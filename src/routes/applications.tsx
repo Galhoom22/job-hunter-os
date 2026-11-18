@@ -1,3 +1,4 @@
+import { ExportControls } from "@/components/export-controls";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -36,6 +37,7 @@ function Applications() {
   return (
     <>
       <PageHeader title="Applications" subtitle={`${rows.length} of ${data.applications.length} jobs`} />
+      <div className="mb-4"><ExportControls apps={rows} /></div>
       <div className="mb-4 flex flex-wrap gap-3">
         <Input placeholder="Search title, company, location…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-xs" />
         <Select value={status} onValueChange={setStatus}>

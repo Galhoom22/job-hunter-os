@@ -1,3 +1,4 @@
+import { RuntimeControls } from "@/components/runtime-controls";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -36,6 +37,7 @@ function ConfigPage() {
   return (
     <>
       <PageHeader title="Config" subtitle="Changes are written straight to the files in this repo." right={<SourceBadge live={data.live} />} />
+      <RuntimeControls key={data.guardrails} text={data.guardrails} live={data.live} />
       <Panel className="mb-6">
         <div className="flex items-center justify-between gap-4">
           <div>

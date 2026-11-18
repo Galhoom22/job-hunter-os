@@ -8,3 +8,5 @@
 6. Timeout/create uncertainty -> notion_synced:false and run error. On retry, QUERY first using stable job_id, never create blindly. At start of next run after auth/context, retry up to 25 unsynced items once each; bounded backoff for rate limits, then defer. Notion failures do not erase local records.
 7. Daily Runs: upsert by run_id/date, save counts including dry_run separately, errors and notes. Query before create on retries; never count dry runs as applied.
 8. Insights: upsert by type + period, retain notion_synced:false on failure. No screenshots/resumes/contact data or full private form answers to Notion unless separately approved. Never print tokens or generated MCP contents.
+
+Notion is optional: if storage_adapters.notion_mcp:false, skip sync and retry work entirely; keep local records/exports. If enabled, token/database access must be verified. Local JSON is always primary.

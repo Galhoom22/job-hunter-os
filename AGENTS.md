@@ -71,7 +71,7 @@ The orchestrator is `skills/00-daily-run.md`. Never reorder or skip steps 1–3.
 1. **Never invent answers.** If a form question has no answer in `context/form-answers.yaml`
    or `context/profile.md`, do NOT guess. Leave the tab open, take a screenshot to
    `logs/screenshots/<job_id>.png`, set status `needs_review`, and move on.
-2. **Human-like pacing.** Wait a random **3–8 seconds** (`config/guardrails.yaml -> delay_seconds`)
+2. **Human-like pacing.** Wait a random **3–9 seconds** (`config/guardrails.yaml -> delay_seconds`)
    between every navigation and click. Never burst.
 3. **LinkedIn profile edits and posts require explicit approval in chat.** Draft, show the
    exact text, and wait for the owner to reply "approve". No approval = no Save/Post click.
@@ -101,4 +101,8 @@ All records follow `schemas/index.ts` (Zod). Status values:
 - Follow `docs/execution-safety.md` before every run. It governs locking, uncertain submissions, uploads, trust boundaries and background limitations.
 - Score >=7 is eligible; 5 to below minimum needs_review; <5 skipped. Safety always overrides eligibility.
 - Synthetic data lives in `demo/`; development-only filesystem reads and writes use server functions. Why: hosted public views must never bundle private files.
-- Shared schema-backed preflight/submission decisions and local locking/journaling scripts enforce safety. Why: browser runs need a real authorized local process, not hosted workers.
+- Shared contracts and local locks enforce safety; browser runs require an authorized local process.
+
+- Onboarding and storage use shared runtime contracts; Notion is opt-in, JSON always primary. Why: local operation must not require a third-party tracker.
+- Tailoring reorders owner-verified fact sentences only; renderer has no network. Why: deterministic truth-preserving output.
+- Before every action/submission apply active hours, progressive warm-up and cooldown rules in docs/execution-safety.md; no stealth or evasion.

@@ -14,3 +14,10 @@ The dashboard is not an agent runner or scheduler. Background operation requires
 10. Missing platform cap forbids submission. Public boards may be read logged-out only with auth_required:false; redirects demanding login stop the run. Profile edits and posts remain approval-only.
 
 Historical commits may still contain old synthetic context/logs. Ignoring/untracking prevents future publication, not history removal. If real secrets were ever committed, rotate them; do not rewrite repository history here.
+
+## Companion runtime controls
+Read RuntimeControls with guardrails before each action. Local active_hours gate uses IANA timezone, start inclusive/end exclusive, including overnight windows; stop outside hours. UTC dates remain journal IDs. Warmup starts at initial_cap (5) for days 1–3, adds increment every stage_days until max; null started_on stays at first stage. Set started_on once at first authorized run, never reset to bypass limits. Recheck effectiveDailyCap and pending reservations before Submit.
+
+Use human_behavior.action_delay_seconds (3–9s), overriding legacy delay_seconds. Count clicks, navigations, uploads and selections; at max_consecutive_actions pause at least cooldown_seconds (60s), then reset counter. Scroll only as needed; no stealth jitter or anti-detection. Security prompts always abort. These instructions require the local agent to obey; the dashboard is not an enforcement daemon.
+
+Notion off by default: skip all sync/ID/token prerequisites and retry work. Local JSON, CSV and Markdown suffice. Turning Notion on requires regenerated MCP config and verified database access. Resume tailoring requires tailor-resume.md before eligible applications and exact per-job PDF upload.

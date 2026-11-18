@@ -8,3 +8,5 @@ Input: fresh snapshot field label/type/options. Only owner_verified:true facts m
 4. If input is hidden, use its accessible upload button to open the chooser; do not inject scripts or use guessed CSS selectors. If inaccessible, needs_review. Snapshot afterward and verify displayed filename/upload success. Failed or ambiguous upload -> needs_review, no Submit.
 5. Each click/type/select/upload gets random 3–8s pacing; snapshot after every step. Required consents and EEO use explicit owner answers; no prechecked newsletter/company follow unless owner permits.
 6. UNKNOWN: record question, field_type, options in open_questions; screenshot locally (redact sensitive data), leave tab open, needs_review and move on. CAPTCHA/2FA stops whole run, not merely this job.
+
+When tailoring is on, upload the specific verified logs/resumes PDF produced by tailor-resume.md and recorded in this job notes; do NOT replace it with the base resume or edit global form answers.

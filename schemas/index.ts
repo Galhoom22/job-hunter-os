@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { RuntimeControls, effectiveDailyCap, withinActiveHours } from "./runtime";
 
 export const Platform = z.enum(["linkedin", "wellfound", "wuzzuf", "greenhouse", "lever", "ashby", "smartrecruiters", "breezyhr", "workday", "taleo", "indeed", "glassdoor", "dice", "ziprecruiter", "weworkremotely", "remoteok", "builtin", "welcometothejungle", "bayt", "other"]);
 export const Status = z.enum([
@@ -110,7 +111,7 @@ export const Guardrails = z.object({
   max_consecutive_errors: z.number().int().min(1).max(3),
   stop_on_captcha: z.literal(true),
   stop_on_2fa: z.literal(true),
-});
+}).merge(RuntimeControls);
 export const FormAnswers = z.object({
   owner_verified: z.literal(true),
   resume_pdf_path: z.string().regex(/^\.\/assets\/[^/\\]+\.pdf$/i),
@@ -129,11 +130,13 @@ export function routeMatchScore(score: number, minimum = 7): "eligible" | "needs
 }
 export function applicationDecision(job: Pick<Application, "job_id" | "match_score" | "apply_type" | "open_questions">,
   apps: Application[], platform: string, today: string,
-  limits: { dry_run: boolean; min_match_score: number; max_applications_per_day: number; max_per_platform: Record<string, number> }) {
+  limits: { dry_run: boolean; min_match_score: number; max_applications_per_day: number; max_per_platform: Record<string, number> } & Partial<import("./runtime").RuntimeControls>) {
   if (apps.some(a => a.job_id === job.job_id)) return "duplicate";
   const route = routeMatchScore(job.match_score, limits.min_match_score);
   if (route !== "eligible") return route;
   if (job.apply_type === "manual_apply" || job.open_questions.length) return "needs_review";
-  if (!canApply(apps, platform, today, limits)) return "cap_reached";
+  if (limits.active_hours && !withinActiveHours(new Date(), limits.active_hours)) return "outside_active_hours";
+  const max = limits.warmup_mode ? effectiveDailyCap(limits.max_applications_per_day, limits.warmup_mode, today) : limits.max_applications_per_day;
+  if (!canApply(apps, platform, today, {...limits,max_applications_per_day:max})) return "cap_reached";
   return limits.dry_run ? "dry_run" : "eligible";
 }
