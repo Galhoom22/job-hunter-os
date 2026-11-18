@@ -1,5 +1,12 @@
 # Repository readiness audit
 
+## Modular agent_skills architecture and skill package manager
+- [ ] Add strict SKILL.md frontmatter and the three mandatory sections to every skill; support skills/<name>/SKILL.md folders alongside flat files.
+- [ ] Generate skills/REGISTRY.md and skills/skills-manifest.json; add the Progressive Disclosure rule to AGENTS.md and IDE pointers.
+- [ ] Add four meta-skills (self-verification, DOM recovery, context compaction + checkpoint contract, structured debugging) and wire them into the run.
+- [ ] Add `skills list|validate|sync|install|enable|disable|export` to the CLI (Node built-ins only; community skills disabled until reviewed).
+- [ ] README section and tests for manifest, frontmatter, list/validate/install/export.
+
 ## Bulletproof resume intake, multi-format CVs and batch triage
 - [x] Add resume ingestion playbook and dependency-free `parse-cv` (text, PDF, DOCX, unreadable/scanned detection).
 - [x] Add structured resume data schema/example and validator for deterministic repeater fields.

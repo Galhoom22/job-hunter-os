@@ -1,8 +1,34 @@
 ---
 name: ats-engines
-description: Route recognized employer ATS forms and handle exact snapshot-driven filling, uploads, review and receipt checks.
+version: "1.1.0"
+description: Load when an application lands on a recognized employer ATS and routing, exact snapshot-driven filling, uploads, review and receipt checks are needed across engines.
+triggers:
+  - ATS hostname recognized
+  - apply-external-ats routing
+requires_mcp:
+  - playwright
+preconditions:
+  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+requires_skills:
+  - apply-external-ats
+  - fill-form-answers
+verification:
+  - hostname matched to a supported engine or routed to manual review
+  - upload verified by filename
+  - receipt verified after submit
 ---
 # ATS engines: form-by-form playbook
+
+## When to Use & Preconditions
+
+Use as the cross-ATS reference; engine-specific files live in skills/ats/.
+
+- **Load when:** ATS hostname recognized; apply-external-ats routing.
+- **Preconditions (stop if any is false):**
+  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+- **Requires skills:** `apply-external-ats`, `fill-form-answers`. **MCP:** playwright.
+
+## Deterministic Step-by-Step Execution
 
 Live-unverified; labels are illustrative, current snapshots authoritative. Preflight/auth/context, owner authorization, permitted automation, score, duplicates, caps, active hours and pacing still apply. Preserve original discovery job_id and record canonical ATS URL in notes; check both before filling. Custom/lookalike or employer-mismatched hosts require manual review.
 
@@ -16,7 +42,7 @@ Live-unverified; labels are illustrative, current snapshots authoritative. Prefl
 | BreezyHR: verified employer subdomain of breezy.hr | Capture `/p/<id>`; Apply To Position → contact/resume → questions/optional cover letter → review | Don't confuse optional portfolio/cover letter with resume. Verify attachment and exact employer after redirects. No blind retry after ambiguous send. See ../ats/breezyhr.md. |
 | Workday: myworkdayjobs.com / myworkdaysite.com; Taleo: taleo.net | Identify role and external URL; capture facts/review link only | Always apply_type:manual_apply + status:needs_review. Complex account/work-history/assessment steps are owner-controlled; no new accounts or auto-submit. |
 
-## Exact shared field loop
+### Exact shared field loop
 1. Before clicking Apply inspect accessible name/description and any irreversible wording. If uncertain it may submit, treat as final action, not a harmless form-open.
 2. Snapshot active form and build a checklist of label/type/required/options/current value. Resolve confirmed contact facts and exact question mappings; skill-specific years before generic years. Never populate a fact solely because resume parsing guessed it.
 3. Use roles/labels/current refs for type/select actions; no CSS selectors/DOM injection. Wait randomly 3–9s before every action, re-snapshot after conditional changes, read inline errors before continuing. Missing/ambiguous controls → review rather than repeated clicks.
@@ -25,3 +51,17 @@ Live-unverified; labels are illustrative, current snapshots authoritative. Prefl
 6. Real submission: run skills/approval-gate.md; acquire/retain run lock; reload journal/caps and apply all gates; reserve needs_review/submission_uncertain:true, validate, submit once. Do not call duplicate gating on the newly created self-reservation as a new job; recheck limits excluding only your own reservation while retaining other pending entries.
 7. Verify explicit receipt and job identity. Update same record applied/applied_at/uncertainty false. Timeout or vague confirmation → keep uncertain, do not retry. CAPTCHA/2FA/unexpected login/warning/rate limit aborts the whole run; unknown questions alone block this job.
 8. Journal locally first, optional Notion query-before-create afterward. Never claim applied from an HTTP 200, disabled button, or form disappearance alone.
+
+## Anti-Patterns (What NEVER To Do) & Self-Verification Check
+
+### Anti-patterns
+- ❌ Treating a lookalike domain as the real ATS → ✅ mismatches go to review.
+- ❌ Creating an ATS account → ✅ manual_apply.
+- ❌ Retrying an ambiguous submit → ✅ never.
+
+### Self-verification check (before reporting this step complete)
+- [ ] hostname matched to a supported engine or routed to manual review
+- [ ] upload verified by filename
+- [ ] receipt verified after submit
+
+Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.

@@ -1,4 +1,36 @@
+---
+name: remoteok
+version: "1.1.0"
+description: Load when an enabled target has platform remoteok (RemoteOK) and jobs must be discovered, read in full and routed to the right apply flow.
+triggers:
+  - target.platform == remoteok
+  - job URL on RemoteOK
+requires_mcp:
+  - playwright
+preconditions:
+  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - RemoteOK target enabled in context/targets.yaml
+requires_skills:
+  - discover-jobs
+  - score-job
+verification:
+  - each job has a stable remoteok:<posting id> or is routed to review
+  - full description captured before scoring
+  - apply flow chosen from the observed button (in-page vs external) with a snapshot
+---
 # RemoteOK playbook
+
+## When to Use & Preconditions
+
+Use only for RemoteOK; grouped guidance lives in the board-family playbooks.
+
+- **Load when:** target.platform == remoteok; job URL on RemoteOK.
+- **Preconditions (stop if any is false):**
+  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - RemoteOK target enabled in context/targets.yaml
+- **Requires skills:** `discover-jobs`, `score-job`. **MCP:** playwright.
+
+## Deterministic Step-by-Step Execution
 
 Preconditions: AGENTS.md, successful preflight/auth/context loading, fresh accessibility snapshots, platform terms permit automation. Never bypass bot defenses.
 
@@ -11,3 +43,17 @@ Preconditions: AGENTS.md, successful preflight/auth/context loading, fresh acces
 7. Upload only the owner-verified local resume via fill-form-answers.md. Missing/unknown answers, consent ambiguity or irreversible profile changes stop this application for review.
 8. Any quick-apply button that may submit is a FINAL SUBMIT: reserve the job, validate/reload caps, verify all facts, and never click in dry run. Confirm receipt before marking applied. Uncertain receipt stays needs_review/submission_uncertain.
 9. Local-first journal then idempotent Notion sync; stop immediately on CAPTCHA, 2FA, warning, rate limit or three consecutive errors; a mid-run login wall pauses per fill-form-answers.md Trap 5 and aborts if unresolved.
+
+## Anti-Patterns (What NEVER To Do) & Self-Verification Check
+
+### Anti-patterns
+- ❌ Treating the absence of "Sign in" as logged in → ✅ require a named account indicator when auth is required.
+- ❌ Scrolling the whole list in one go → ✅ small increments, snapshot, stop at max_results.
+- ❌ Clicking a quick-apply button during discovery → ✅ discovery never applies.
+
+### Self-verification check (before reporting this step complete)
+- [ ] each job has a stable remoteok:<posting id> or is routed to review
+- [ ] full description captured before scoring
+- [ ] apply flow chosen from the observed button (in-page vs external) with a snapshot
+
+Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.

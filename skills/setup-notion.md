@@ -1,8 +1,35 @@
 ---
 name: setup-notion
-description: Provision optional job tracking in Notion after the owner opts in and shares a parent page with the MCP integration.
+version: "1.1.0"
+description: Load when the owner opts in to Notion tracking and shares a parent page with the integration; finds or creates the three trackers and verifies read-back before enabling sync.
+triggers:
+  - Set up Notion
+  - storage_adapters.notion_mcp to be enabled
+requires_mcp:
+  - notion
+preconditions:
+  - explicit owner opt-in
+  - Notion MCP connected through the IDE's secure flow
+requires_skills:
+  - mcp-capabilities
+verification:
+  - all three trackers retrieved with expected property types
+  - a synthetic probe row was created, read back and archived
+  - tracker IDs saved in private context/preferences.yaml before notion_mcp:true
 ---
 # Optional Notion provisioning
+
+## When to Use & Preconditions
+
+Use only after opt-in; local JSON remains primary either way.
+
+- **Load when:** Set up Notion; storage_adapters.notion_mcp to be enabled.
+- **Preconditions (stop if any is false):**
+  - explicit owner opt-in
+  - Notion MCP connected through the IDE's secure flow
+- **Requires skills:** `mcp-capabilities`. **MCP:** notion.
+
+## Deterministic Step-by-Step Execution
 
 Local JSON stays primary. Ask for the parent-page link/ID and explicit permission to create the three trackers; explain which fields leave the machine. The owner authorizes the integration through their IDE's secure connection flow or stores NOTION_TOKEN locally outside Git/chat. Never print or inspect secret values in output.
 
@@ -21,3 +48,17 @@ Local JSON stays primary. Ask for the parent-page link/ID and explicit permissio
 6. Only after success set storage_adapters.notion_mcp:true, regenerate local configs as needed, and report verified tracking. Failed/declined setup retains local-only mode without blocking onboarding. For later outages keep unsynced JSON and follow log-application.md query-before-create retries.
 
 Never sync CV PDFs, screenshots, contact details or legal/EEO answers without separate informed approval. A Notion connection is not a guarantee that all future writes will succeed.
+
+## Anti-Patterns (What NEVER To Do) & Self-Verification Check
+
+### Anti-patterns
+- ❌ Asking the owner to paste NOTION_TOKEN in chat → ✅ use the IDE's secure connection.
+- ❌ Reporting "Notion connected" after a search → ✅ only read-back of a probe proves it.
+- ❌ Replacing an existing property type → ✅ report incompatibility instead.
+
+### Self-verification check (before reporting this step complete)
+- [ ] all three trackers retrieved with expected property types
+- [ ] a synthetic probe row was created, read back and archived
+- [ ] tracker IDs saved in private context/preferences.yaml before notion_mcp:true
+
+Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.

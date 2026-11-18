@@ -1,8 +1,33 @@
 ---
 name: fallback-no-mcp
-description: Owner-controlled clipboard bridge for web AI chats without local files or browser MCP.
+version: "1.1.0"
+description: Load when the agent runs in a web chat (ChatGPT, Claude, Gemini) or an IDE without browser MCP or local file tools, and the owner wants manual help via the clipboard and browser companion.
+triggers:
+  - no Playwright MCP tools available
+  - web chat session
+  - browser companion / Extract Job for AI
+requires_mcp:
+  - none
+preconditions:
+  - automated daily run stopped (no MCP)
+requires_skills: []
+verification:
+  - the owner was told clearly that the chat cannot navigate, write files or submit
+  - any JSON payload produced is marked dry_run until the owner confirms safety evidence
+  - no claim of automated verification was made
 ---
 # Clipboard + browser companion bridge
+
+## When to Use & Preconditions
+
+Use as a manual bridge only; never pretend the chat performed actions.
+
+- **Load when:** no Playwright MCP tools available; web chat session; browser companion / Extract Job for AI.
+- **Preconditions (stop if any is false):**
+  - automated daily run stopped (no MCP)
+- **Requires skills:** none. **MCP:** none.
+
+## Deterministic Step-by-Step Execution
 
 Web ChatGPT, Claude and Gemini may have no MCP/local file tools. Stop automated daily-run execution; offer manual assistance, never pretend chat can navigate, write context or submit. Browser blocks are not an invitation to evade defenses: normal browsers can also encounter CAPTCHA, rate limits and account restrictions. Handle setup login manually; stop application automation at warnings.
 
@@ -14,7 +39,7 @@ Web ChatGPT, Claude and Gemini may have no MCP/local file tools. Stop automated 
 6. Paste JSON (or load a JSON file) in the side panel. YAML has NO automatic parser: ask for explicit conversion of confirmed values to this JSON contract. Click Auto-Fill Form; visible exact labels only, ambiguous controls stop, inaccessible/cross-origin/custom widgets require manual filling. Green highlights show staged fields, NOT confirmed truth or employer acceptance. Some sites reject synthetic input events; inspect values yourself.
 7. For real submission, review exact answers/upload, permission, active hours, current local caps/duplicates/readiness and complete the safety attestation. The companion never applies automatically. Its single-use Approve & Submit can click only one unambiguous final button in the reviewed form. If unsupported use the site manually with the same checks. Dry run cannot Submit. After the click verify the receipt and record locally; no blind retry and no fake applied/Notion status.
 
-## Verified JSON contract
+### Verified JSON contract
 
 ```json
 {
@@ -34,3 +59,17 @@ Web ChatGPT, Claude and Gemini may have no MCP/local file tools. Stop automated 
 ```
 
 This example is deliberately dry-run and safety-unconfirmed. Only the owner may confirm actual evidence; generated booleans do not establish it. Every answer uses exact visible label + string value; checkbox values are "true"/"false", select values match exact option text/value. Radio groups must resolve one unique option; otherwise manual. Password/security fields, hidden inputs, file uploads and profile Save are not automated. Panel data is ephemeral, not uploaded/stored automatically; clearing it does not undo site changes. Local JSON remains primary, optional Notion manual/approved sync only.
+
+## Anti-Patterns (What NEVER To Do) & Self-Verification Check
+
+### Anti-patterns
+- ❌ Saying "I filled the form" from a web chat → ✅ the owner fills it via the companion.
+- ❌ Setting safety booleans to true in a generated payload → ✅ only the owner confirms evidence.
+- ❌ Including credentials or cookies in the bundle → ✅ never bundle secrets.
+
+### Self-verification check (before reporting this step complete)
+- [ ] the owner was told clearly that the chat cannot navigate, write files or submit
+- [ ] any JSON payload produced is marked dry_run until the owner confirms safety evidence
+- [ ] no claim of automated verification was made
+
+Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.

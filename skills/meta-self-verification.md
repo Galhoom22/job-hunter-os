@@ -1,0 +1,70 @@
+---
+name: meta-self-verification
+version: "1.0.0"
+description: Load when the agent is about to report any outcome as done (application submitted, file uploaded, profile updated, post published, record logged or synced); forbids claiming success without concrete evidence observed after the action and logs that proof.
+triggers:
+  - verify-before-complete
+  - right after a Submit / Save / Post / Send click
+  - before writing status applied or reporting success in chat
+requires_mcp:
+  - playwright
+preconditions:
+  - the action being verified has actually been attempted in this session
+  - a fresh browser_snapshot (or file read / command output) can be taken now
+requires_skills:
+  - log-application
+verification:
+  - a quoted confirmation string or state observed AFTER the action is stored in the journal notes
+  - the evidence names the same company/role (or profile section/post text) as the action
+  - claims without evidence were reported as unverified/needs_review, not as done
+---
+# Verify before complete
+
+## When to Use & Preconditions
+
+Use every time you are about to say, write or log that something succeeded. "I clicked Submit" is an action; "Application submitted" is a claim that needs proof. Do not use it to decide WHETHER to submit — that is skills/approval-gate.md.
+
+- **Load when:** verify-before-complete; right after a Submit / Save / Post / Send click; before writing status applied or reporting success in chat.
+- **Preconditions (stop if any is false):**
+  - the action being verified has actually been attempted in this session
+  - a fresh snapshot, file read or command output can be taken now
+- **Requires skills:** `log-application`. **MCP:** playwright.
+
+## Deterministic Step-by-Step Execution
+
+1. **Wait, then observe fresh.** Wait 3–9 s after the click, then take a NEW `browser_snapshot`. Never reuse a snapshot taken before the action; never rely on remembered page state.
+2. **Match the claim to its required evidence.** Only the evidence in this table counts:
+
+| Claim | Required evidence (observed after the action) | Not evidence |
+|---|---|---|
+| Application submitted | Confirmation text such as "Application submitted", "Thank you for applying", "We received your application", an "Applied" badge/state on this job, or a confirmation URL — on a page that still identifies this company/role | The Submit button disappeared; the modal closed; a spinner stopped; no error shown |
+| File uploaded | The form shows the exact expected filename in the correct slot (resume vs cover letter) | The file chooser closed; "upload complete" without a filename |
+| Profile section updated | Re-opened public/profile view shows text identical to the approved text | Text inside the edit modal; a "Saved" toast alone |
+| Post published | Post visible on the feed/profile with identical text, plus its URL | The editor closed |
+| Message sent | Message bubble in the thread with identical text and the right recipient | The Send button greyed out |
+| Record logged | `npm run validate:logs` exits 0 and re-reading the entry shows the new status | The write command ran |
+| Notion synced | MCP response returned a page id AND a query by Job ID finds exactly one page | No error was printed |
+
+3. **Check identity.** The evidence must name the same company and role (or same profile section/post text). A generic "Thanks!" page on a different employer domain is not proof.
+4. **Record the proof.** Append to the SAME journal entry's `notes` (existing field; never invent new fields): `receipt: "<quoted text, max 160 chars>" | url: <final URL> | observed_at: <ISO time>`. Save a screenshot to `logs/screenshots/<safe-job-id>-receipt.png` when one can be taken without personal data in view. Then write via `npm run journal` and run `npm run validate:logs`.
+5. **Decide the status from the evidence only.**
+   - Evidence found → `applied`, `applied_at` set, `submission_uncertain:false`.
+   - No evidence, or ambiguous (timeout, blank page, network error) → keep `needs_review` with `submission_uncertain:true`; never click Submit again; tell the owner exactly what was and was not seen.
+   - Validation errors visible instead → nothing was submitted; go to skills/meta-structured-debugging.md.
+6. **Report in chat with the same words as the evidence:** "Submitted — the page showed 'Thank you for applying to Acme' (screenshot saved)", or "Clicked Submit, but no confirmation appeared; marked for your review".
+
+## Anti-Patterns (What NEVER To Do) & Self-Verification Check
+
+### Anti-patterns
+- ❌ "The modal closed, so it was submitted" → ✅ a closed modal is not a receipt; look for confirmation text or the Applied state.
+- ❌ Checking the snapshot taken just before clicking Submit → ✅ always a new snapshot after the wait.
+- ❌ Clicking Submit again because no confirmation appeared → ✅ keep submission_uncertain and ask the owner; a second click can create a duplicate application.
+- ❌ Writing "Profile updated" after typing into the edit field → ✅ re-open the profile and compare the persisted text.
+- ❌ Logging `applied` and planning to "verify later" → ✅ the status is decided only after the evidence is observed.
+
+### Self-verification check (before reporting this step complete)
+- [ ] a quoted confirmation string or state observed AFTER the action is stored in the journal notes
+- [ ] the evidence names the same company/role (or profile section/post text) as the action
+- [ ] claims without evidence were reported as unverified/needs_review, not as done
+
+If any box cannot be ticked, the outcome is "unverified" — say so plainly.

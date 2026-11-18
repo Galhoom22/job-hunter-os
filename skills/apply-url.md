@@ -1,8 +1,39 @@
 ---
 name: apply-url
-description: Process one job URL requested in chat without bypassing daily safety gates.
+version: "1.1.0"
+description: Load when the owner pastes one job URL and asks to apply (/apply-url); processes that single job through every daily safety gate without broader discovery.
+triggers:
+  - /apply-url <url>
+  - "Apply to this job: <url>"
+requires_mcp:
+  - playwright
+preconditions:
+  - readiness_state.overall_ready == true and fresh launch consent for this run
+  - URL is HTTPS with no embedded credentials
+requires_skills:
+  - interrogate-and-onboard
+  - score-job
+  - tailor-resume
+  - approval-gate
+  - log-application
+verification:
+  - the run lock was acquired before and released after the job
+  - the logged disposition (applied/dry_run/needs_review/skipped) matches observed evidence
+  - npm run validate:logs exits 0
 ---
 # Apply to one supplied URL
+
+## When to Use & Preconditions
+
+Use for exactly one owner-supplied URL. Do not start discovery on other jobs.
+
+- **Load when:** /apply-url <url>; Apply to this job: <url>.
+- **Preconditions (stop if any is false):**
+  - readiness_state.overall_ready == true and fresh launch consent for this run
+  - URL is HTTPS with no embedded credentials
+- **Requires skills:** `interrogate-and-onboard`, `score-job`, `tailor-resume`, `approval-gate`, `log-application`. **MCP:** playwright.
+
+## Deterministic Step-by-Step Execution
 
 0. Follow skills/00-interrogate-and-onboard.md: readiness audit, hard block/interview if incomplete, and fresh mission briefing/launch confirmation before proceeding. Initial URL request is not that final confirmation.
 
@@ -12,3 +43,17 @@ description: Process one job URL requested in chat without bypassing daily safet
 4. Eligible and safe → tailor-resume.md, exact verified PDF upload, fill-form-answers.md/grounded-answer.md. Unknown legal/factual questions screenshot, open tab, needs_review and chat question. Workday/Taleo/unsupported portal is manual_apply + needs_review.
 5. Follow shared applicationDecision with agentDailyCap, per-platform caps/active hours/cooldown. Dry run never submits. Real submission requires reservation under lock, fresh checks, single submit and explicit job-identifiable receipt; uncertain stays reserved, no retry.
 6. Local validated journal/report first, optional Notion query-before-create. Update today's run without destroying earlier counts. Security challenges abort. Release only your owned lock in finally. Report actual disposition and blockers, never claim applied without receipt.
+
+## Anti-Patterns (What NEVER To Do) & Self-Verification Check
+
+### Anti-patterns
+- ❌ Treating the pasted URL as launch consent → ✅ still show the mission briefing and wait.
+- ❌ Auto-enabling an unapproved platform for this URL → ✅ it stays needs_review.
+- ❌ Saying "applied" without a receipt → ✅ report the actual disposition.
+
+### Self-verification check (before reporting this step complete)
+- [ ] the run lock was acquired before and released after the job
+- [ ] the logged disposition (applied/dry_run/needs_review/skipped) matches observed evidence
+- [ ] npm run validate:logs exits 0
+
+Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.

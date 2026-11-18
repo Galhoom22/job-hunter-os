@@ -1,4 +1,48 @@
-# Daily Run — v2
+---
+name: daily-run
+version: "2.1.0"
+description: Load when the owner starts today's run ("/daily-run", "Run today's job run", "ابدأ التقديم"); orchestrates every phase from readiness to the final report.
+triggers:
+  - /daily-run
+  - Run today's job run
+  - ابدأ التقديم
+  - Start applying
+requires_mcp:
+  - playwright
+preconditions:
+  - authorized local agent with file, shell and Playwright MCP tools
+  - readiness_state.overall_ready == true and fresh launch consent for this run
+  - no other run holds logs/run.lock
+requires_skills:
+  - interrogate-and-onboard
+  - mcp-capabilities
+  - discover-and-triage
+  - discover-jobs
+  - score-job
+  - approval-gate
+  - log-application
+  - meta-self-verification
+  - meta-context-compaction
+verification:
+  - npm run validate:logs exits 0 after the final run JSON write
+  - logs/runs/<run_id>.json has status completed or aborted, finished_at set and counts derived from journal dispositions
+  - every reported "applied" job has a recorded receipt quote in its journal notes
+  - the owned run lock was released (logs/run.lock absent or owned by another run)
+---
+# Daily Run
+
+## When to Use & Preconditions
+
+Use for a full multi-job run. Do NOT use for a single URL (apply-url), standalone tailoring (tailor-resume) or setup (onboarding-chat).
+
+- **Load when:** /daily-run; Run today's job run; ابدأ التقديم; Start applying.
+- **Preconditions (stop if any is false):**
+  - authorized local agent with file, shell and Playwright MCP tools
+  - readiness_state.overall_ready == true and fresh launch consent for this run
+  - no other run holds logs/run.lock
+- **Requires skills:** `interrogate-and-onboard`, `mcp-capabilities`, `discover-and-triage`, `discover-jobs`, `score-job`, `approval-gate`, `log-application`, `meta-self-verification`, `meta-context-compaction`. **MCP:** playwright.
+
+## Deterministic Step-by-Step Execution
 
 Trigger: owner explicitly starts or schedules a run in an authorized local agent environment. Read AGENTS.md, docs/execution-safety.md and pacing/snapshot/stop partials. Markdown does not launch a runner. New CV/setup requests use skills/00-onboarding-chat.md first, outside this run.
 
@@ -22,3 +66,22 @@ Before each action and Submit enforce warm-up effective cap, local active hours 
 Run-date warm-up: inspect schema-valid real logs/runs/*.json (never demo). Count DISTINCT non-aborted authorized dates through today, including the current date once; do not count duplicate files, future dates or aborted preflight probes. On the first three such dates cap at 5 (or lower configured/calendar/platform cap). Afterwards retain existing progressive calendar warm-up and maximum; idle days alone cannot advance this gate. Set started_on once at the first authorized run with owner-approved setup, never reset it. Recompute agentDailyCap before every possible submission.
 
 Read each complete JD for at least 10 seconds and longer as needed, in addition to 3–9-second action waits. Motivation drafts use grounded-answer.md; missing factual/legal answers remain blocking. These waits limit volume, not conceal automation or guarantee against restrictions. Never use stealth/bypass.
+
+Meta-skills during the run: after every Submit click run skills/meta-self-verification.md before logging applied; after every 3–5 applications (or when the conversation grows long) run skills/meta-context-compaction.md; on stale refs, hidden elements or lazy lists use skills/meta-dom-recovery.md; when a form refuses to advance or submit use skills/meta-structured-debugging.md.
+
+
+## Anti-Patterns (What NEVER To Do) & Self-Verification Check
+
+### Anti-patterns
+- ❌ Opening a job board before preflight exits 0 → ✅ always lock → preflight → auth → context, in that order.
+- ❌ Reporting "5 applied" from memory → ✅ recount from logs/applications-log.json entries with status applied and a receipt in notes.
+- ❌ Treating the batch `APPLY 1,3` reply as Submit approval → ✅ it only opens forms; approval-gate.md still decides each Submit.
+- ❌ Leaving the lock behind after an abort → ✅ release your own lock in finally, never someone else's.
+
+### Self-verification check (before reporting this step complete)
+- [ ] npm run validate:logs exits 0 after the final run JSON write
+- [ ] logs/runs/<run_id>.json has status completed or aborted, finished_at set and counts derived from journal dispositions
+- [ ] every reported "applied" job has a recorded receipt quote in its journal notes
+- [ ] the owned run lock was released (logs/run.lock absent or owned by another run)
+
+Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.
