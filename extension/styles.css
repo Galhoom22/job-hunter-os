@@ -1,6 +1,0 @@
-:root { --jh-bg:#fff; --jh-text:#18252a; --jh-accent:#17684c; --jh-border:#c8d3d0; --jh-fill:#c9efd9; --jh-shadow:0 2px 12px #0002; }
-#job-hunter-companion { position:fixed; bottom:16px; right:16px; z-index:2147483646; display:flex; flex-wrap:wrap; max-width:min(90vw,520px); gap:6px; background:var(--jh-bg); padding:8px; border:1px solid var(--jh-border); border-radius:6px; box-shadow:var(--jh-shadow); }
-#job-hunter-companion button,.jh-panel button { background:var(--jh-accent); color:var(--jh-bg); border:0; border-radius:4px; padding:10px; cursor:pointer; font:inherit; }
-.job-hunter-filled { outline:2px solid var(--jh-accent) !important; background-color:var(--jh-fill) !important; }
-.jh-panel { color:var(--jh-text); background:var(--jh-bg); font:14px/1.5 system-ui,sans-serif; margin:0; padding:16px; }
-.jh-panel h1 { font-size:24px; }.jh-panel h2 { font-size:18px; }.jh-panel textarea { box-sizing:border-box; width:100%; margin:8px 0; padding:8px; border:1px solid var(--jh-border); font:12px/1.4 monospace; }.jh-panel button { margin:5px 4px 5px 0; }.jh-panel button:disabled { opacity:.45; cursor:not-allowed; }.jh-panel section { border-top:1px solid var(--jh-border); margin-top:16px; }#review { white-space:pre-wrap; overflow-wrap:anywhere; }#status { overflow-wrap:anywhere; }

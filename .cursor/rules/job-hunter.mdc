@@ -1,11 +1,9 @@
 ---
-description: Chat-first job hunting; always read AGENTS.md and route owner prompts to canonical workflows
+description: Zero-code job hunting agent; read AGENTS.md and skills/REGISTRY.md first and follow progressive disclosure
 globs: ["skills/**/*.md", "context/**", "config/**", "logs/**"]
 alwaysApply: true
 ---
 
-Read AGENTS.md and skills/REGISTRY.md first (progressive disclosure: load a skill body only when its trigger matches the current phase). Use docs/chat-commands.md for /setup, /daily-run, /tailor-cv, /weekly-report and /linkedin-growth and fallback chat prompts. Route setup/CV drops to skills/00-onboarding-chat.md, daily runs to skills/00-daily-run.md, tailoring to skills/tailor-resume.md, reports to skills/weekly-insights.md, and growth to LinkedIn profile/post skills. Exact-text approval is required before Save/Post.
+Read AGENTS.md and skills/REGISTRY.md first (progressive disclosure: load a full skill body only when its trigger matches the current phase). Use docs/chat-commands.md for /setup, /daily-run, /tailor-cv, /apply-url, /weekly-report, and /linkedin-growth.
 
-Native slash commands are version-dependent; .agent/workflows contains portable instructions, not universal registration. MCP config comes from mcp/mcp.template.json; see mcp/README.md. Actual tools/permissions and persistent local profile required; Notion opt-in, local JSON primary. Run helpers for the owner when authorized. Daily order: owned lock, preflight, auth, context; never skip safety. Markdown skills are the product; leave src/ untouched.
-
-Before /daily-run, /apply-url or any application request, mandatory Step 0 is skills/00-interrogate-and-onboard.md: five verified gates, no placeholders, 3–4-question interview until complete and fresh mission-briefing launch consent. Then preserve lock/preflight/auth/context order. Never treat READY_100% as blanket submission approval.
+Route `/setup` to `skills/00-interrogate-and-onboard.md` + `skills/01-resume-ingestion.md`, `/daily-run` and `/apply-url` to `skills/00-daily-run.md`, `/tailor-cv` to `skills/03-tailor-resume-and-verify.md`, `/linkedin-growth` to `skills/05-outreach-and-interview-prep.md`, and `/weekly-report` to `skills/06-log-and-insights.md`. Connect Playwright MCP and optional Notion MCP using `mcp/mcp.template.json`. Respect dry run, verified facts, caps, and explicit approval gates.

@@ -1,0 +1,74 @@
+---
+name: fill-and-apply
+version: "2.0.0"
+description: Load when filling any Easy Apply modal or external ATS application form; enforces the Upload-First rule, absolute paths, EEO/GDPR compliance defaults, unknown-question pause, and job-bound APPROVE gate before Submit.
+triggers:
+  - selected job from APPLY reply
+  - Easy Apply modal or external ATS form open
+  - about to click Submit / Apply
+requires_mcp:
+  - playwright
+preconditions:
+  - job is not a duplicate in logs/applications-log.json and caps / active hours allow it
+  - verified context/form-answers.yaml, context/resume-data.json, and exact tailored resume.pdf path ready
+requires_skills:
+  - tailor-resume-and-verify
+  - meta-dom-recovery
+  - meta-structured-debugging
+  - meta-self-verification
+verification:
+  - resume was uploaded FIRST and verified by filename in a fresh snapshot after waiting 4 seconds
+  - every filled answer and EEO/GDPR option matches verified context/form-answers.yaml or context/resume-data.json
+  - dry_run stopped before Submit; live submit received exact job-bound APPROVE (or met auto_high_confidence) and was verified by skills/meta-self-verification.md
+---
+# Form Filling, Upload-First Rule, EEO/Consent Defaults & Approval Gate
+
+## When to Use & Preconditions
+
+Use for every internal Easy Apply modal and external ATS redirect (Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR; Workday/Taleo remain `manual_apply` + `needs_review`). Always use fresh `browser_snapshot` refs and roles/labels—never CSS selectors.
+
+- **Load when:** selected job from `APPLY` reply; Easy Apply modal or external ATS form open; about to click Submit / Apply.
+- **Preconditions (stop if any is false):**
+  - job is not a duplicate in `logs/applications-log.json` and daily/platform caps & active hours allow it
+  - verified `context/form-answers.yaml`, `context/resume-data.json`, and exact tailored `resume.pdf` path ready
+- **Requires skills:** `tailor-resume-and-verify`, `meta-dom-recovery`, `meta-structured-debugging`, `meta-self-verification`. **MCP:** playwright.
+
+## Deterministic Step-by-Step Execution
+
+### 1. Redirect & Portal Check (Wait 3–9 s per navigation/click)
+- If clicking Apply opens a new tab, switch to it (`browser_tabs`), take a `browser_snapshot`, verify HTTPS hostname and that company + role match the original posting.
+- Load the matching playbook (`skills/ats/<engine>.md` or `skills/platforms/<platform>.md`).
+- If the site requires creating a new account, solving a CAPTCHA/2FA, or is Workday/Taleo/unsupported, set `apply_type: "manual_apply"`, `status: "needs_review"`, leave the tab open, and inform the owner.
+- **Mid-run expired session:** Pause, ask the owner to log in privately in the open browser and reply `CONTINUE`, re-verify auth, then resume this same job.
+
+### 2. Five Mandatory ATS Form Traps
+1. **Trap 1 — Upload FIRST:** Upload the job's exact tailored `resume.pdf` BEFORE typing anything into text boxes (ATS parsers overwrite fields!). Wait **4 seconds**, take a NEW `browser_snapshot`, then inspect and fix every auto-parsed field against `context/resume-data.json`.
+2. **Trap 2 — Absolute paths only:** Pass the exact absolute OS path (never `./logs/...` or `~`) to `browser_file_upload`.
+3. **Trap 3 — Hidden drag-and-drop zones:** Click the visible upload button (`"Upload resume"`, `"Attach"`, `"Browse"`). Never inject JS to unhide inputs. If a cross-origin dropzone blocks the chooser, print the exact absolute path in chat and wait for the owner to drag-and-drop and reply `CONTINUE`.
+4. **Trap 4 — Split fields & autocomplete:** Match `first_name`/`last_name`, select `phone_country_code` by dialling code (e.g. `+20`) before `phone_national`, and for City/Location autocomplete type `city_autocomplete`, wait 2 s, snapshot the listbox, and click the exact matching option.
+5. **Trap 5 — Unknown questions:** Never guess numbers, salary, visa/sponsorship, or legal answers. Leave the tab open, save a screenshot to `logs/screenshots/<job_id>.png` (redact/avoid secrets), log `needs_review` with `open_questions`, ask the exact question in chat, and **save the owner's confirmed answer back into `context/form-answers.yaml`** (`questions[]` with context comment) before resuming.
+
+### 3. EEO, Demographics & Consent Auto-Handler (`context/form-answers.yaml`)
+Read `eeo_and_compliance_defaults` (or `eeo`) from `context/form-answers.yaml`:
+- `gender`, `ethnicity`, `veteran_status`, `disability_status`: Select the owner's configured value or closest neutral opt-out option (`"Decline to self-identify"`, `"Prefer not to say"`, `"I do not wish to answer"`).
+- `referral_source`: Match `"LinkedIn"` / `"Company Careers Page"` / configured default (never invent an employee referral name).
+- `gdpr_privacy_consent: true`: Automatically check ONLY the required candidate privacy policy / GDPR data-processing consent box at the bottom of Greenhouse/Lever/Ashby forms. Leave optional marketing, newsletter, `"Future job alerts"`, and `"Follow company"` checkboxes **unchecked**.
+- Free-text `"Why us?"` questions: Draft 2–3 grounded sentences using `context/profile.md` + observed JD text, filtered through `skills/03-tailor-resume-and-verify.md` (zero AI slop, zero em-dashes).
+
+### 4. Job-Bound Approval Gate & Safe Submission
+- Recheck `logs/applications-log.json` (duplicates + today's `applied` / `submission_uncertain` counts vs daily & platform caps) and active hours.
+- **If `dry_run: true` (or `approval_mode: dry_run`):** Stop BEFORE clicking final Submit, take a screenshot if helpful, discard draft if needed, and log `dry_run`.
+- **If `approve_before_submit` (default), or `auto_high_confidence` with score `< 8` or any filled essay:** Show company, role, URL, score, gaps, exact `resume.pdf` path, and every filled answer in chat, and ask: **"Reply `APPROVE` to submit this exact application, `EDIT <field>` to revise, or `SKIP`."** Wait for exact `APPROVE`. Any edit or page change invalidates approval.
+- **Submit once:** Before clicking Submit, write a `needs_review` + `submission_uncertain: true` reservation in `logs/applications-log.json`. Click Submit **once**, wait 3–9 s, and run `skills/meta-self-verification.md` on a fresh `browser_snapshot` to verify confirmation text before updating the entry to `applied`. Never retry an uncertain/timed-out submit.
+
+## Anti-Patterns (What NEVER To Do) & Self-Verification Check
+
+### Anti-patterns
+- ❌ Filling contact/experience fields before uploading the resume → ✅ upload first, wait 4 s, re-snapshot, then correct.
+- ❌ Ticking `"Subscribe to talent community"` alongside GDPR consent → ✅ check only required privacy policy consent when `gdpr_privacy_consent: true`.
+- ❌ Clicking Submit twice when a spinner is slow → ✅ keep `submission_uncertain: true` and `needs_review`; never double-submit.
+
+### Self-verification check (before reporting this step complete)
+- [ ] resume was uploaded FIRST and verified by filename in a fresh snapshot after waiting 4 seconds
+- [ ] every filled answer and EEO/GDPR option matches verified `context/form-answers.yaml` or `context/resume-data.json`
+- [ ] `dry_run` stopped before Submit; live submit received exact job-bound `APPROVE` (or met `auto_high_confidence`) and was verified by `skills/meta-self-verification.md`

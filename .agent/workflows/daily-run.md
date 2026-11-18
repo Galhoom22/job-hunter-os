@@ -1,9 +1,7 @@
 ---
-description: Run authorized discovery, truthful tailoring, safe applications and reporting
+description: Run authorized discovery, ghost filtering, CV tailoring, Mission Control triage, and gated applications
 ---
 
-1. Read AGENTS.md, docs/execution-safety.md and docs/chat-commands.md.
-2. Follow skills/00-daily-run.md in order: owned lock → preflight → auth → context. Respect dry run, run-date/calendar warm-up, active hours/cooldown, exact PDF, duplicate checks, uncertain reservations and stop conditions. Local journal first; optional Notion. Release only your own lock in finally. Report actual receipts, questions and blockers.
-3. Actual MCP tools and local permissions must be available; instructions alone do not install servers or schedule tasks.
-
-Mandatory Step 0 for application requests: read skills/00-interrogate-and-onboard.md, audit the five readiness gates, hard-block incomplete/placeholders, interview in 3–4-question batches, and obtain fresh mission-briefing launch confirmation. This precedes and preserves lock/preflight → auth → context. Setup/Check my folder uses the same interview but does not launch applications. Other commands do not grant application permission.
+1. Read `AGENTS.md` and `skills/REGISTRY.md` first.
+2. Follow `skills/00-daily-run.md` in strict order: `skills/00-interrogate-and-onboard.md` (5 gates + fresh launch consent) -> Playwright auth verification -> load `context/` & `config/guardrails.yaml` -> `skills/02-discover-and-triage.md` -> `skills/03-tailor-resume-and-verify.md` -> `skills/04-fill-and-apply.md` -> `skills/05-outreach-and-interview-prep.md` -> `skills/06-log-and-insights.md`.
+3. Respect `dry_run` (default true), daily/platform caps, 3–9 s pacing, job-bound `APPROVE` before Submit, `skills/meta-self-verification.md`, and stop conditions.

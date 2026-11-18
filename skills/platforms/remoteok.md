@@ -8,11 +8,10 @@ triggers:
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
   - RemoteOK target enabled in context/targets.yaml
 requires_skills:
-  - discover-jobs
-  - score-job
+  - discover-and-triage
 verification:
   - each job has a stable remoteok:<posting id> or is routed to review
   - full description captured before scoring
@@ -26,23 +25,23 @@ Use only for RemoteOK; grouped guidance lives in the board-family playbooks.
 
 - **Load when:** target.platform == remoteok; job URL on RemoteOK.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
   - RemoteOK target enabled in context/targets.yaml
-- **Requires skills:** `discover-jobs`, `score-job`. **MCP:** playwright.
+- **Requires skills:** `discover-and-triage`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
-Preconditions: AGENTS.md, successful preflight/auth/context loading, fresh accessibility snapshots, platform terms permit automation. Never bypass bot defenses.
+Preconditions: AGENTS.md, readiness gates, auth verification and context loading, fresh accessibility snapshots, platform terms permit automation. Never bypass bot defenses.
 
 1. For auth_required:true, open the auth check URL and snapshot. Confirm a named account/menu, not merely absence of Sign in. Public boards with auth_required:false may be read logged-out; a new login/2FA wall stops the whole run.
 2. Pace every navigation/click/type/select/upload by a random 3–9 seconds. Snapshot results; use roles/names/refs, not CSS selectors.
 3. Snapshot role rows; open title details, capture numeric posting ID/canonical link and country limits. Read Apply destination after opening it; avoid newsletter/account prompts. No direct automation where terms disallow it.
 4. Extract company, title, location, timestamp (unknown stays unknown), full description, canonical URL and remoteok:<stable posting id>. If no reliable identifier exists, review; do not invent one. Limit collection to target.max_results; scroll small increments only when more results are needed.
-5. Apply preferences filters and score-job.md. Read the existing journal before every application. Below 5 skipped; 5 to below 7 review; >=7 eligible subject to all safety gates.
-6. Internal forms use apply-easy-apply.md. External redirects use apply-external-ats.md; inspect destination, snapshot and never guess an ATS. Unknown/account-gated flow is manual_apply + needs_review.
-7. Upload only the owner-verified local resume via fill-form-answers.md. Missing/unknown answers, consent ambiguity or irreversible profile changes stop this application for review.
+5. Apply preferences filters and 02-discover-and-triage.md. Read the existing journal before every application. Below 5 skipped; 5 to below 7 review; >=7 eligible subject to all safety gates.
+6. Internal forms use 04-fill-and-apply.md. External redirects use 04-fill-and-apply.md; inspect destination, snapshot and never guess an ATS. Unknown/account-gated flow is manual_apply + needs_review.
+7. Upload only the owner-verified local resume via 04-fill-and-apply.md. Missing/unknown answers, consent ambiguity or irreversible profile changes stop this application for review.
 8. Any quick-apply button that may submit is a FINAL SUBMIT: reserve the job, validate/reload caps, verify all facts, and never click in dry run. Confirm receipt before marking applied. Uncertain receipt stays needs_review/submission_uncertain.
-9. Local-first journal then idempotent Notion sync; stop immediately on CAPTCHA, 2FA, warning, rate limit or three consecutive errors; a mid-run login wall pauses per fill-form-answers.md Trap 5 and aborts if unresolved.
+9. Local-first journal then idempotent Notion sync; stop immediately on CAPTCHA, 2FA, warning, rate limit or three consecutive errors; a mid-run login wall pauses per 04-fill-and-apply.md Trap 5 and aborts if unresolved.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

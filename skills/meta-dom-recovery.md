@@ -22,7 +22,7 @@ verification:
 
 ## When to Use & Preconditions
 
-Use when a click/type/upload fails or a needed element cannot be found and the page is otherwise normal. Do NOT use it to get past CAPTCHA, 2FA, account warnings, rate limits or login walls — those follow AGENTS.md stop rules or fill-form-answers.md Trap 5.
+Use when a click/type/upload fails or a needed element cannot be found and the page is otherwise normal. Do NOT use it to get past CAPTCHA, 2FA, account warnings, rate limits or login walls — those follow `AGENTS.md` stop rules or `skills/04-fill-and-apply.md` Trap 5.
 
 - **Load when:** self-healing-navigation; stale or unknown element ref error; expected button/field not in snapshot; list shows fewer jobs than expected.
 - **Preconditions (stop if any is false):**
@@ -38,12 +38,12 @@ Always: wait 3–9 s between actions, take a fresh `browser_snapshot` before eve
 2. **Element not in the snapshot:**
    a. It may be below the fold: scroll the relevant container in small steps (about one screen), snapshot after each, at most 5 steps.
    b. It may be collapsed: look for "See more", "Show more", "More options", an accordion or a "Next" step; expand it, then snapshot.
-   c. It may live in an iframe: check the snapshot for an iframe/frame node; Playwright MCP exposes same-origin and many cross-origin frame contents with their own refs. Use those refs. If the frame content is absent (blocked cross-origin widget), hand off to the owner per fill-form-answers.md Trap 3.
-   d. Still absent → the UI changed. Record `ui_drift: <page>, expected "<label>"` in the run's steps and route this job to needs_review with a screenshot. Do not hunt with guesses.
+   c. It may live in an iframe: check the snapshot for an iframe/frame node; Playwright MCP exposes same-origin and many cross-origin frame contents with their own refs. Use those refs. If the frame content is absent (blocked cross-origin widget), hand off to the owner per `skills/04-fill-and-apply.md` Trap 3.
+   d. Still absent → the UI changed. Record `ui_drift: <page>, expected "<label>"` in the run's steps and route this job to `needs_review` with a screenshot. Do not hunt with guesses.
 3. **Overlay or cookie banner blocks clicks:** close it with a clearly labelled control. Prefer "Reject non-essential" / "Necessary only" / "Close". Never accept marketing consent or sign up for newsletters to dismiss a banner. If no neutral option exists, ask the owner.
-4. **Focus stuck (typing goes nowhere, dropdown keeps closing):** click the field's label or the field itself by ref from a fresh snapshot, then type. For autocomplete, type, wait 2 s, snapshot the listbox, click the matching option (fill-form-answers.md Trap 4).
+4. **Focus stuck (typing goes nowhere, dropdown keeps closing):** click the field's label or the field itself by ref from a fresh snapshot, then type. For autocomplete, type, wait 2 s, snapshot the listbox, click the matching option (`skills/04-fill-and-apply.md` Trap 4).
 5. **Lazy-loaded job lists:** loop — snapshot, collect new stable job IDs, scroll a small step, wait 3–9 s. Stop when `max_results` is reached, or when two consecutive scrolls add no new IDs, or after 10 scrolls. Prefer a visible "Next page"/"Load more" control over endless scrolling.
-6. **Page navigated unexpectedly** (new tab, redirect): list tabs, select the right one, snapshot, confirm the URL/hostname before acting (apply-external-ats.md).
+6. **Page navigated unexpectedly** (new tab, redirect): list tabs, select the right one, snapshot, confirm the URL/hostname before acting (`skills/04-fill-and-apply.md`).
 7. **After recovery** continue the original step exactly where it stopped. If the recovery changed anything already filled in a form (re-render, reload), re-check every field before continuing.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check

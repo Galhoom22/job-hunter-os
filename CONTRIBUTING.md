@@ -1,24 +1,22 @@
 # Contributing to job-hunter-os
 
-Improve the **chat + skills + MCP playbooks**, not the compatibility web preview. Submit focused Markdown, prompts, templates, MCP guidance and safety-contract changes. Leave `src/` untouched for this product direction.
+`job-hunter-os` is a **100% zero-code Markdown skills, templates, and MCP playbook repository**. Submit focused Markdown playbooks, YAML/JSON examples, HTML templates, and MCP documentation—never add custom application backends, runtime scripts, or browser extensions.
 
 ## Add or improve a board
-1. Copy [skills/platforms/_template.md](skills/platforms/_template.md). Describe triggers, supported host/canonical IDs, auth indicators, snapshot-driven filters, resume chooser, consent, final-submit semantics, receipt and recovery.
-2. Prefer fresh accessibility snapshots and actual roles/labels/refs. Do not ship brittle CSS recipes or claim fixed labels always exist. Cover the board's distinctive workflow; refer to shared safety skills rather than copying them.
-3. Add a registry entry. A documentation-only/unknown platform uses `other` with cap 0 and manual review. To enable automatic submission, also add its contract key, disabled target example, explicit cap and meaningful safety test. Never enable targets by default.
-4. Record tested date, tool version, authorized environment and limitations, or explicitly mark live-unverified. Do not fabricate employer applications, receipts or screenshots as evidence.
+1. Copy [`skills/platforms/_template.md`](skills/platforms/_template.md). Describe triggers, supported host/canonical IDs, auth indicators, accessibility-snapshot filters, resume upload, consent, final-submit semantics, receipt verification, and recovery.
+2. Always use `browser_snapshot` roles, accessible names, and refs—never brittle CSS selectors.
+3. Add a disabled (`enabled: false`) synthetic example entry in `context/targets.yaml.example` and register the playbook in `skills/REGISTRY.md` and `skills/skills-manifest.json`.
+4. Mark live UI compatibility accurately (`UNVERIFIED` until tested in an authorized session). Never fabricate employer receipts or screenshots.
 
-## Skills and workflow entries
-Give each new skill a trigger/input description, ordered steps, observable success and blocker handling. Reference AGENTS.md for invariants. Keep six command entrypoints synchronized through docs/chat-commands.md; native slash registration is version-dependent. Never duplicate secret-bearing MCP files: mcp/mcp.template.json is canonical.
+## Skills and progressive disclosure
+- Every skill in `skills/` must include YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and the three mandatory body sections (`## When to Use & Preconditions`, `## Deterministic Step-by-Step Execution`, `## Anti-Patterns (What NEVER To Do) & Self-Verification Check`).
+- Keep `skills/REGISTRY.md` and `skills/skills-manifest.json` updated whenever adding or editing a skill.
+- Never duplicate secret-bearing MCP configs: `mcp/mcp.template.json` is canonical.
 
 ## Resume templates and truth
-Single-column semantic HTML, escaped facts, no scripts/remote assets/hidden keywords. Rewrites must preserve evidence, dates, scope and achievements. Missing legal/factual answers are blockers, not generative-writing tasks. Test rules with concrete values, not prose or markup snapshots.
+- Single-column semantic HTML (`templates/ats-resume-template.html`, `templates/ats-cover-letter-template.html`), escaped facts, zero scripts/remote assets/hidden keywords.
+- Tailoring must preserve verified dates, employers, metrics, and skills (`skills/03-tailor-resume-and-verify.md`).
 
-## Validation
-Use Node 22+ and `npm install` for helper development. Run `npm run test:cli`, `npm test`, `npm run test:agent-rules`, and `npm run validate:logs -- --demo`; new non-frontend safety tests belong under scripts/tests/ with its isolated configuration. Use synthetic temporary fixtures only. Check relative Markdown links and keep referenced files in the same PR.
-
-Real browser testing needs owner-authorized sessions and platform permission. No stealth plugins, CAPTCHA/2FA solving, automatic account creation, or unapproved LinkedIn writes. Delay rules limit volume and do not guarantee immunity from restrictions.
-
-Never include real CVs, contacts, application logs, browser profiles, tokens, screenshots or generated configs in a commit/issue. Review staged files and ignore rules; forced adds bypass protection. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
-
-CLI code under bin/ must use Node 18+ built-ins only. Keep production dependencies empty; preview/tools remain development-only. CLI tests use isolated HOME/temp directories and must not alter a developer’s real IDE files. Never automatically update Git checkouts or overwrite existing MCP servers.
+## Privacy & safety
+- Real browser testing needs owner-authorized sessions and platform permission. No stealth plugins, CAPTCHA/2FA solving, or unapproved LinkedIn writes.
+- Never commit real CVs, contacts, `logs/`, `browser-profile/`, tokens, screenshots, or `.env`. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).

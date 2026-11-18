@@ -1,138 +1,27 @@
-# Repository audit — 2026-11-18
+# Repository Audit — Zero-Code Markdown Skills & MCP Architecture
 
-## Outcome
-Repository safety and portability upgraded; NOT certified 100% production-ready. No real application or Notion synchronization was performed. No background scheduler or universally compatible IDE runner was installed. Playbooks cannot guarantee changing platform interfaces or permit automation where platform terms prohibit it.
+## Status
+Audited and reset to a **100% Pure Zero-Code AI Agent Skills, Templates, Context, and MCP Configuration** repository (retaining only the minimal Lovable build placeholder in `src/` and `package.json` without referencing it in docs or workflows).
 
-## Verified
-- 40 tests pass: routing, YAML editing, caps, exact score routing, unknown answers, dry-run, manual fallback, reservation caps, privacy and analytics.
-- Real and synthetic JSON validation passed.
-- Preview build log reports build OK; no manual build invoked.
-- All five dashboard pages render; no browser page errors. Turning dry run off with unverified answers is rejected and stays ON.
-- Mobile applications view checked; table scrolls for remaining columns.
-- Preflight correctly refuses synthetic facts, unverified answers, disabled targets, missing Notion IDs/config and missing browser profile. MCP generation refuses missing token without printing secrets.
-- Private context and logs untracked but preserved locally. Previous commits are not erased; examples previously committed were synthetic.
+## Purged Code & Bloat
+- Removed `bin/` (all CLI `.mjs` scripts)
+- Removed `scripts/` (TypeScript helpers, log validators, and test suites)
+- Removed `extension/` (Chrome/Edge MV3 JS extension)
+- Removed `schemas/*.ts` custom TypeScript policy/analytics code and `vitest`/`eslint` configs
+- Replaced dashboard UI in `src/` with a minimal single-page static placeholder for Lovable build compatibility
 
-## Live-run prerequisites / unverified checks
-Owner-confirmed profile, CV, legal/form answers and real resume PDF; Notion token + three shared database IDs; authorized persistent platform login; approved enabled targets and a permitted local agent/MCP environment. Browser resume upload, live receipt confirmation, Notion upsert/retry/read-back and full unattended runs remain UNVERIFIED. Complete a real dry run before disabling dry_run. Never promise all IDEs run indefinitely without testing each actual version and permissions.
+## Verified Pure-Markdown Repository Structure
+- `AGENTS.md`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.cursor/rules/job-hunter.mdc`, `.github/copilot-instructions.md` — canonical instructions enforcing Progressive Disclosure (`AGENTS.md` -> `skills/REGISTRY.md` -> active skill only).
+- `skills/`:
+  - `skills/REGISTRY.md` & `skills/skills-manifest.json` — progressive-disclosure index of all 35 playbooks.
+  - Core numbered workflow playbooks: `00-daily-run.md`, `00-interrogate-and-onboard.md`, `01-resume-ingestion.md`, `02-discover-and-triage.md`, `03-tailor-resume-and-verify.md`, `04-fill-and-apply.md`, `05-outreach-and-interview-prep.md`, `06-log-and-insights.md`.
+  - Four meta-skills: `meta-self-verification.md`, `meta-dom-recovery.md`, `meta-context-compaction.md`, `meta-structured-debugging.md`.
+  - Sixteen job-board playbooks (`skills/platforms/*.md` + `_template.md`) and seven ATS engine playbooks (`skills/ats/*.md`).
+- `.agent/workflows/` & `commands/` — six portable chat/slash commands (`/setup`, `/daily-run`, `/tailor-cv`, `/apply-url`, `/weekly-report`, `/linkedin-growth`).
+- `context/*.example` & `config/guardrails.yaml` — synthetic templates (including `eeo_and_compliance_defaults` and `board_tokens`).
+- `templates/` — single-column semantic HTML templates (`ats-resume-template.html`, `ats-cover-letter-template.html`).
+- `mcp/mcp.template.json` — canonical Playwright MCP (`--user-data-dir=./browser-profile`) and optional Notion MCP definition.
+- `demo/` — synthetic read-only sample JSON/YAML fixtures.
 
-## Additions
-- `.clinerules`
-- `.github/copilot-instructions.md`
-- `.windsurfrules`
-- `demo/applications-log.json`
-- `demo/form-answers.yaml`
-- `demo/guardrails.yaml`
-- `demo/insights/monthly-2026-11.json`
-- `demo/insights/weekly-2026-W46.json`
-- `demo/runs/2026-10-28.json`
-- `demo/runs/2026-10-29.json`
-- `demo/runs/2026-10-30.json`
-- `demo/runs/2026-10-31.json`
-- `demo/runs/2026-11-01.json`
-- `demo/runs/2026-11-02.json`
-- `demo/runs/2026-11-03.json`
-- `demo/runs/2026-11-04.json`
-- `demo/runs/2026-11-05.json`
-- `demo/runs/2026-11-06.json`
-- `demo/runs/2026-11-07.json`
-- `demo/runs/2026-11-08.json`
-- `demo/runs/2026-11-09.json`
-- `demo/runs/2026-11-10.json`
-- `demo/runs/2026-11-11.json`
-- `demo/runs/2026-11-12.json`
-- `demo/runs/2026-11-13.json`
-- `demo/runs/2026-11-14.json`
-- `demo/runs/2026-11-15.json`
-- `demo/runs/2026-11-16.json`
-- `demo/runs/2026-11-17.json`
-- `demo/targets.yaml`
-- `docs/execution-safety.md`
-- `roadmap.md`
-- `schemas/analytics.ts`
-- `scripts/insights.ts`
-- `scripts/journal.ts`
-- `scripts/run-lock.ts`
-- `skills/ats/ashby.md`
-- `skills/ats/breezyhr.md`
-- `skills/ats/greenhouse.md`
-- `skills/ats/lever.md`
-- `skills/ats/smartrecruiters.md`
-- `skills/ats/taleo.md`
-- `skills/ats/workday.md`
-- `skills/platforms/bayt.md`
-- `skills/platforms/builtin.md`
-- `skills/platforms/dice.md`
-- `skills/platforms/glassdoor.md`
-- `skills/platforms/indeed.md`
-- `skills/platforms/linkedin.md`
-- `skills/platforms/remoteok.md`
-- `skills/platforms/welcometothejungle.md`
-- `skills/platforms/wellfound.md`
-- `skills/platforms/weworkremotely.md`
-- `skills/platforms/wuzzuf.md`
-- `skills/platforms/ziprecruiter.md`
-- `src/test/analytics.test.ts`
-- `src/test/privacy.test.ts`
-- `src/test/submission-safety.test.ts`
-
-## Upgraded or untracked files
-- `.agent/workflows/daily-run.md`
-- `.gitignore`
-- `AGENTS.md`
-- `README.md`
-- `config/guardrails.yaml`
-- `context/cv.md` — untracked, retained privately on disk
-- `context/form-answers.yaml` — untracked, retained privately on disk
-- `context/form-answers.yaml.example`
-- `context/preferences.yaml` — untracked, retained privately on disk
-- `context/profile.md` — untracked, retained privately on disk
-- `context/targets.yaml` — untracked, retained privately on disk
-- `context/targets.yaml.example`
-- `logs/applications-log.json` — untracked, retained privately on disk
-- `logs/insights/monthly-2026-11.json` — untracked, retained privately on disk
-- `logs/insights/weekly-2026-W46.json` — untracked, retained privately on disk
-- `logs/runs/2026-10-28.json` — untracked, retained privately on disk
-- `logs/runs/2026-10-29.json` — untracked, retained privately on disk
-- `logs/runs/2026-10-30.json` — untracked, retained privately on disk
-- `logs/runs/2026-10-31.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-01.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-02.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-03.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-04.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-05.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-06.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-07.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-08.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-09.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-10.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-11.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-12.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-13.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-14.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-15.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-16.json` — untracked, retained privately on disk
-- `logs/runs/2026-11-17.json` — untracked, retained privately on disk
-- `logs/screenshots/.gitkeep` — untracked, retained privately on disk
-- `mcp/README.md`
-- `package.json`
-- `prompts/partials/pacing.md`
-- `prompts/partials/stop-conditions.md`
-- `schemas/index.ts`
-- `scripts/preflight.ts`
-- `scripts/sync-mcp.ts`
-- `scripts/validate-logs.ts`
-- `skills/00-daily-run.md`
-- `skills/apply-easy-apply.md`
-- `skills/apply-external-ats.md`
-- `skills/discover-jobs.md`
-- `skills/fill-form-answers.md`
-- `skills/log-application.md`
-- `skills/score-job.md`
-- `skills/weekly-insights.md`
-- `src/lib/repo-data.functions.ts`
-- `src/lib/stats.ts`
-- `src/routes/applications.tsx`
-- `src/routes/runs.tsx`
-- `src/test/guardrails.test.ts`
-
-Public synthetic log/run/insight copies are in demo/; private data is never bundled in production. Original MCP template already meets requested persistent-browser and Notion settings and remains unchanged. Existing Claude/Cursor pointers remain canonical.
+## Live-Run Prerequisites (Handled by the AI Agent in Chat)
+Real CV/profile facts in `context/`, authorized browser sessions in `./browser-profile/`, optional Notion database IDs/token, and owner launch/submit approvals are collected interactively via `skills/00-interrogate-and-onboard.md`.

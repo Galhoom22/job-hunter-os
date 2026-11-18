@@ -7,11 +7,10 @@ triggers:
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
 requires_skills:
-  - discover-jobs
-  - score-job
-  - grounded-answer
+  - discover-and-triage
+  - fill-and-apply
 verification:
   - stable wellfound posting ID captured
   - founder note grounded in verified facts and approved when required
@@ -25,8 +24,8 @@ Use for Wellfound only.
 
 - **Load when:** target.platform == wellfound.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
-- **Requires skills:** `discover-jobs`, `score-job`, `grounded-answer`. **MCP:** playwright.
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
+- **Requires skills:** `discover-and-triage`, `fill-and-apply`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
@@ -39,7 +38,7 @@ Live-unverified. Follow AGENTS.md, shared safety, fresh snapshot/refs and 3–9s
 
 ### Founder note / application
 1. Snapshot Apply and determine whether it sends immediately or opens a draft. Treat Send application/one-click actions as final submission from the start.
-2. For a requested note use grounded-answer.md: 2–3 sentences connecting an observed mission/product need to one or two verified skills/projects. No invented founder familiarity, lifelong interest, referrals, startup metrics or achievements. Unknown mandatory experience/legal answers still block.
+2. For a requested note use 04-fill-and-apply.md: 2–3 sentences connecting an observed mission/product need to one or two verified skills/projects. No invented founder familiarity, lifelong interest, referrals, startup metrics or achievements. Unknown mandatory experience/legal answers still block.
 3. Show a standalone founder-message draft for owner approval; do not send unsolicited outreach. A note inside an already authorized application follows the application review/safety gate. Shared profile edits require a separate owner request/approval.
 4. Use exact per-job PDF, verify required fields, preferences and consent. External employer link → ATS dispatcher; account creation/manual form → needs_review.
 5. Run final gate/reservation, obey dry run and submit once only when allowed. Confirm employer/role receipt, not a changed Apply label. Uncertainty stays review. Journal first, optional Notion second; security challenges abort the entire run.

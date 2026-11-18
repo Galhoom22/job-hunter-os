@@ -1,9 +1,7 @@
 ---
-description: Tailor a verified CV to one job URL without submitting
+description: Tailor an ATS resume for one job URL with fact-check and humanizer guards (never applies)
 ---
 
-1. Read AGENTS.md, docs/execution-safety.md and docs/chat-commands.md.
-2. Ask for the job URL if missing; read skills/tailor-resume.md and skills/mcp-capabilities.md. Produce truthful local HTML/PDF and evidence map, inspect every page, report gaps. Never start a daily run or apply from this command. Missing PDF tooling/facts needs owner review.
-3. Actual MCP tools and local permissions must be available; instructions alone do not install servers or schedule tasks.
-
-Mandatory Step 0 for application requests: read skills/00-interrogate-and-onboard.md, audit the five readiness gates, hard-block incomplete/placeholders, interview in 3–4-question batches, and obtain fresh mission-briefing launch confirmation. This precedes and preserves lock/preflight → auth → context. Setup/Check my folder uses the same interview but does not launch applications. Other commands do not grant application permission.
+1. Read `AGENTS.md` and `skills/REGISTRY.md` first.
+2. Inspect the supplied job URL via Playwright MCP (read-only), verify `context/profile.md`, `context/cv.md`, and `context/resume-data.json`, and follow `skills/03-tailor-resume-and-verify.md`.
+3. Enforce the Anti-Hallucination Fact-Check Guard (zero unverified metrics/entities) and Anti-AI Slop filter, save HTML/PDF under `logs/resumes/<company>-<role>-<job-id>/`, and create `interview-dossier.md` (`skills/05-outreach-and-interview-prep.md`). Never click Apply or Submit.

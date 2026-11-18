@@ -8,10 +8,9 @@ triggers:
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
 requires_skills:
-  - discover-jobs
-  - score-job
+  - discover-and-triage
 verification:
   - remote region/timezone restrictions captured
   - external apply links resolved to the employer ATS
@@ -25,12 +24,12 @@ Use for remote-focused boards.
 
 - **Load when:** target.platform in weworkremotely/remoteok/welcometothejungle/builtin; remote-only search.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
-- **Requires skills:** `discover-jobs`, `score-job`. **MCP:** playwright.
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
+- **Requires skills:** `discover-and-triage`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
-Live-unverified. Use fresh accessibility snapshots/refs with 3–9s waits, read full JDs and enforce shared preflight/auth/context/safety. Public browsing is allowed only when target.auth_required:false; an unexpected login wall pauses per fill-form-answers.md Trap 5 and aborts if unresolved. No subscriptions, account creation or newsletter consent as side effects.
+Live-unverified. Use fresh accessibility snapshots/refs with 3–9s waits, read full JDs and enforce readiness gates, auth verification, context loading and safety. Public browsing is allowed only when target.auth_required:false; an unexpected login wall pauses per 04-fill-and-apply.md Trap 5 and aborts if unresolved. No subscriptions, account creation or newsletter consent as side effects.
 
 | Board | Discovery and canonical identity | Apply routing / distinctive checks |
 |---|---|---|

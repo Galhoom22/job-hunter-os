@@ -7,11 +7,10 @@ triggers:
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
   - PLATFORM target enabled with a real URL
 requires_skills:
-  - discover-jobs
-  - score-job
+  - discover-and-triage
 verification:
   - each job has a stable PLATFORM:<posting id> or is routed to review
   - full description captured before scoring
@@ -25,9 +24,9 @@ Community template: fill every section with verified, live-tested details before
 
 - **Load when:** target.platform == PLATFORM.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
   - PLATFORM target enabled with a real URL
-- **Requires skills:** `discover-jobs`, `score-job`. **MCP:** playwright.
+- **Requires skills:** `discover-and-triage`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
@@ -46,9 +45,9 @@ Live-tested: UNVERIFIED (replace only with genuine date, tool version and author
 
 ### Form and hand-off
 1. State whether Apply opens a draft, redirects, sends email or may submit in one click. Possible irreversible action requires final gate before click.
-2. Fresh snapshot per step; exact verified per-job PDF; factual/legal unknowns → open_questions/screenshot/open tab/chat question. Motivation follows grounded-answer.md.
+2. Fresh snapshot per step; exact verified per-job PDF; factual/legal unknowns → open_questions/screenshot/open tab/chat question. Motivation follows 04-fill-and-apply.md.
 3. Recognized ATS → dispatcher; Workday/Taleo/unsupported/account creation → manual_apply + needs_review.
-4. Dry run no Submit. Real gate, local owned lock/reservation, cap/dedup checks and receipt verification. Uncertainty never retries; security challenge/warning aborts whole run.
+4. Dry run no Submit. Real gate, local reservation, cap/dedup checks and receipt verification. Uncertainty never retries; security challenge/warning aborts whole run.
 5. Local JSON first, optional Notion second. No secrets or private evidence in PRs.
 
 ### Contribution checklist

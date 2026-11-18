@@ -1,555 +1,265 @@
 # job-hunter-os
 
-**Your CV. Your AI IDE. A careful job-hunting agent—not a blind auto-apply bot.**
+**100% Pure Zero-Code AI Agent Skills & MCP Playbook Repository — Your CV, Your AI IDE, Your Browser.**
 
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
+[![Zero Code](https://img.shields.io/badge/Runtime-Zero_Code_Markdown-167d60)](AGENTS.md)
 [![Playwright MCP](https://img.shields.io/badge/Browser-Playwright_MCP-167d60)](mcp/README.md)
-[![Notion MCP optional](https://img.shields.io/badge/Tracking-Notion_MCP_optional-356ac3)](skills/setup-notion.md)
-[![Local-first privacy](https://img.shields.io/badge/Privacy-Local--first-555555)](SECURITY.md)
-[![Multi-IDE ready](https://img.shields.io/badge/IDE-Multi--IDE_ready-167d60)](docs/chat-commands.md)
+[![Notion MCP optional](https://img.shields.io/badge/Tracking-Notion_MCP_optional-356ac3)](mcp/mcp.template.json)
+[![Multi-IDE ready](https://img.shields.io/badge/IDE-Antigravity_%7C_Cursor_%7C_Claude_%7C_Windsurf_%7C_Cline-167d60)](docs/chat-commands.md)
 
-## 1. One agent home, five reasons to exist
+There is **no custom CLI, no Node/Python automation script, no browser extension, and no backend server** executing your job search. **The AI model inside your IDE is the runtime engine.** It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), interviews you in chat, drives Chrome via **Playwright MCP** using accessibility snapshots, tailors HTML/PDF resumes, fills forms safely, and logs everything to local JSON (plus optional **Notion MCP**).
 
-- **Zero mandatory cloud lock-in.** Markdown playbooks, local JSON records and a Node.js 18+ installer with zero production dependencies. Your IDE supplies the model and MCP tools.
-- **Persistent local browser sessions.** A dedicated `browser-profile/`, owner-controlled login and fresh access checks—not credential sharing in chat.
-- **Job-specific ATS resumes.** Rephrase and reorder verified facts, keep an evidence map, inspect the PDF and upload exactly that artifact.
-- **Readiness before execution.** Five verified gates, focused chat interviews and explicit consent for every launch. No guessed salary, legal answers or skill tenure.
-- **Conservative pacing, not “anti-ban stealth.”** Warm-up caps, 3–9-second action waits and security hard stops limit load; no evasion or guarantee against restrictions.
+---
 
-This is a **chat + Markdown skills + MCP product**. No web app, application backend or scheduler is required. The retained `src/` compatibility preview is not the agent runner. Platform playbooks describe supported workflows; they do **not** certify current live compatibility or grant permission to violate a site's terms.
+## 1. How to Install (Zero Coding or `npm install` Needed!)
 
-## 2. Architecture & execution lifecycle
-
-### System architecture
-
-```text
-USER CHAT: /setup | /daily-run | /apply-url URL | /tailor-cv URL
-                               |
-                               v
-+--------------------------------------------------------------------+
-| AI IDE + chosen model                                              |
-| Antigravity / Cursor / Claude Code / Windsurf / Cline / Copilot     |
-| Actual file/browser tools + explicit permissions required           |
-+-------------------------------+------------------------------------+
-                                | reads canonical AGENTS.md
-                                v
-+--------------------------------------------------------------------+
-| MARKDOWN SKILLS: skills/ + prompts/ + templates/                    |
-| Readiness -> discovery -> scoring -> tailoring -> form -> journal   |
-+-------------------------------+------------------------------------+
-                                |
-                  +-------------v--------------+
-                  | READINESS GATEKEEPER       |
-                  | context/ + bin/readiness   |
-                  | 5 verified gates + consent|
-                  +-------------+--------------+
-                                |
-              owned lock -> preflight -> auth -> load context
-                                |
-             +------------------+-------------------+
-             v                                      v
-+-----------------------------+      +-------------------------------+
-| Playwright MCP              |      | Local JSON: PRIMARY TRACKER   |
-| browser-profile/ (private)  |----->| logs/applications-log.json    |
-| snapshots / refs / labels   |      | runs + PDFs + evidence        |
-| employer pages receive data|      +---------------+---------------+
-+-----------------------------+                      |
-                                                     v (opt-in)
-                                      +------------------------------+
-                                      | Notion MCP                   |
-                                      | Applications / Daily Runs /  |
-                                      | Weekly & Monthly Insights    |
-                                      +------------------------------+
-```
-
-The IDE/model coordinates the skills; Markdown does not execute itself. Local files are primary; Notion is optional and cannot replace the journal. Resolve everything against the **agent home**, not an unrelated editor project.
-
-### How the agent reads, decides and acts
-
-```text
-Phase 0  AUDIT readiness-state.json + actual source evidence
-         |
-         +-- incomplete/stale -> HARD BLOCK -> 3-4 questions -> verify
-         |                                      -> private writes -> audit again
-         +-- complete --------> mission briefing -> fresh explicit consent
-                                                     |
-          OWNED LOCK -> PREFLIGHT (exit 0) -> AUTH -> LOAD CONTEXT
-                                                     |
-Phase 1  CONSTRUCT URL from confirmed roles + target template
-         -> paced browser_navigate -> verify applied filters
-                                                     |
-Phase 2  browser_snapshot -> accessible names/roles/refs -> full JD
-         -> stable posting identity + duplicate checks
-                                                     |
-Phase 3  SCORE verified CV/profile against JD
-         <5: skipped | 5..<minimum: needs_review | >=minimum: eligible
-                                                     |
-Phase 4  TAILOR supported facts -> evidence map -> local HTML -> PDF
-         -> inspect every page -> record exact per-job path
-                                                     |
-Phase 5  SNAPSHOT FORM -> type/select -> exact PDF upload -> verify
-         unknown required fact -> needs_review + screenshot + chat question
-         -> scoped owner-confirmed answer -> revalidate before resuming
-                                                     |
-         FINAL GATES: permissions / hours / caps / dedup / answers / PDF
-         dry run -> STOP BEFORE SUBMIT
-         live -> reserve locally -> validate -> SUBMIT ONCE -> verify receipt
-                                                     |
-Phase 6  LOCAL JSON -> validate -> optional Notion upsert -> run report
-         receipt confirmed: applied | uncertain: needs_review, NEVER blind retry
-         release owned lock (including aborted paths)
-```
-
-**Preserve the order:** Phase 0 is mandatory, then lock → `npm run preflight` → auth verification → context loading. URL discovery never precedes these steps. See [daily-run orchestration](skills/00-daily-run.md) and [execution safety](docs/execution-safety.md).
-
-<details>
-<summary><strong>URL construction: encoding, parameters and verification</strong></summary>
-
-Read raw `context/targets.yaml` and owner-confirmed `context/preferences.yaml`. The registry contains:
-
-| Field | Meaning |
-|---|---|
-| `url` | Concrete synthetic fallback accepted by the existing runtime contract; not an owner preference |
-| `search_url_template` | Entry point to resolve per confirmed role; never navigate unresolved tokens |
-| `query_parameters` | Human/agent-readable parameter map; not an additional query to append twice |
-| `auth_check_url`, `auth_required` | Where and whether observable signed-in evidence is needed |
-| `playbook`, `automation_mode`, `filter_notes` | Routing and limitations; metadata is not submission permission |
-| `enabled`, `max_results` | Explicit opt-in and bounded discovery; all shipped targets are disabled |
-
-`{{ROLE}}` means raw verified role text; `{{ROLE_ENCODED}}` and `{{LOCATION_ENCODED}}` mean `encodeURIComponent(rawValue)` **once**. `{{ROLE_SLUG}}` means lowercase/hyphenated role text, but Wellfound/RemoteOK/category routes may need a real board taxonomy slug. `{{EMPLOYER_SLUG}}` comes from an actual verified employer link, never a guessed company name. For multilingual or unmapped slugs use the board's accessible search controls.
-
-```js
-// Illustrative construction recipe, NOT a new CLI command or browser runner.
-const role = "Frontend Engineer"; // example only; read a confirmed role at runtime
-const location = "Remote";       // example only; respect approved regions
-const url = template
-  .replaceAll("{{ROLE_ENCODED}}", encodeURIComponent(role))
-  .replaceAll("{{LOCATION_ENCODED}}", encodeURIComponent(location));
-// Resolve any required taxonomy/employer slug from verified board evidence.
-if (/\{\{[^}]+\}\}/.test(url)) throw new Error("Unresolved search template");
-// Verify HTTPS + intended hostname; then paced browser_navigate and snapshot.
-```
-
-For LinkedIn the example resolves to `keywords=Frontend%20Engineer&f_WT=2&f_TPR=r86400`. Do not run `encodeURIComponent` on the whole URL. For a raw query map, use `URLSearchParams` on raw values instead of pre-encoding and encoding again. Search URLs are starting points: verify the current visible role, region, remote and date filters after navigation. A Remote filter does not establish worldwide eligibility. The legacy `Targets` Zod parser strips metadata, so the agent reads the raw registry; no automatic runtime URL builder is claimed.
-
-Google ATS discovery encodes the complete query `site:boards.greenhouse.io "Frontend Engineer" AND "Remote"` with `tbs=qdr:d`. This filters Google's index recency, **not** reliably the job posting date. Follow actual employer results, verify host/company/job ID, then dispatch to the ATS playbook. Never submit to Google or invent an employer board URL.
-
-</details>
-
-<details>
-<summary><strong>Snapshots, scoring, tailoring and the unknown-answer loop</strong></summary>
-
-- `browser_snapshot` exposes the DOM accessibility tree: named links/buttons/inputs and current `ref` IDs. Use a fresh snapshot and its refs with `browser_click`, `browser_type`, `browser_select_option` and `browser_file_upload` **only if those tools are actually exposed**. No fragile CSS selectors, guessed refs or blind pixel clicks. Re-snapshot after navigation, modal changes, conditional questions and uploads.
-- Read the **complete** description, including geographic restrictions, for at least 10 seconds and longer as needed. Compare with `context/profile.md` and `context/cv.md`. Default routing is ≥7 eligible, 5 to <7 review, <5 skip. A higher configured minimum changes the review band; a score is never submission authorization. See [scoring](skills/score-job.md).
-- Copy [the ATS HTML template](templates/ats-resume-template.html) to private `logs/resumes/<company>-<role>-<stable-id>.html`. Only surface keywords supported by confirmed facts. Never add a tool, achievement or years of experience just because a JD requests it. Escape source text, keep single-column selectable text and an evidence map. Inspect `logs/resumes/<company>-<role>-<stable-id>.pdf` page by page before upload.
-- PDF printing is capability-dependent: use an exposed MCP PDF/print facility, an approved local renderer or owner-controlled Print → Save as PDF. Do not invent a PDF tool or relax local-file security. See [capability negotiation](skills/mcp-capabilities.md) and [truthful tailoring](skills/tailor-resume.md).
-- Unknown required factual/legal/consent answers block the job. Save `needs_review`, a private screenshot and the exact question, leave the tab open and ask the owner. Confirm and save the **context-scoped** answer in `context/form-answers.yaml`; never treat a salary, visa answer or consent as universally valid forever. Reconfirm if its meaning, employer, jurisdiction or facts change. No background work continues while waiting.
-- Check `job_id` and employer/role/canonical ATS URL **before filling**, then reload the journal and caps immediately before submission. Local reservation precedes live Submit; a confirmed job-identifiable receipt is required for `applied`. Notion uses query-before-create/update and read-back when enabled. An outage leaves a valid local unsynced record, not a repeated employer submission.
-
-</details>
-
-## 3. Quick installation: the “30-second” entry point
-
-Scaffolding is quick; Git/network access, MCP/browser downloads, fact verification and login can take longer. **No 30-second readiness guarantee.** The installation CLI supports Node.js 18+ with zero production dependencies; mandatory application helpers separately need Node.js 22+ and an owner-approved local dependency install.
-
-### A. Run from any directory
-
-```bash
-npx github:redasalem/job-hunter-os init --global
-npx github:redasalem/job-hunter-os doctor --global
-```
-
-Global agent home: `~/.job-hunter-os/`. For a project-local home use `init` without `--global`. Later commands prefer an installed current folder, otherwise the installed global home; `--global` selects it explicitly. Doctor returning nonzero for incomplete setup is expected.
-
-### B. OS one-liners
-
-**Review remote scripts before executing them.** Raw GitHub URLs need a publicly accessible repository; private-repository access is not magically handled by these commands.
-
-macOS / Linux / Git Bash:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/redasalem/job-hunter-os/main/scripts/install.sh | bash
-```
-
-Windows PowerShell:
-
-```powershell
-irm https://raw.githubusercontent.com/redasalem/job-hunter-os/main/scripts/install.ps1 | iex
-```
-
-Installers keep a separate source checkout and private runtime home, preserve existing files and require no elevation. They do not automatically update existing checkouts.
-
-### C. Standard clone
+### Option A — Project Mode (Recommended)
+Clone the repo and open the folder directly in **Antigravity, Cursor, Claude Code, Windsurf, or Cline**:
 
 ```bash
 git clone https://github.com/redasalem/job-hunter-os.git
 cd job-hunter-os
-node ./bin/job-hunter.mjs init
 ```
 
-Scaffolding needs no `npm install`. During `/setup`, approve a dedicated local helper install when required; never bypass preflight because dependencies are missing or blindly execute an unrelated project's scripts.
+Open `job-hunter-os/` in your IDE, connect Playwright MCP (below), and type `/setup` (or *"Read AGENTS.md and set up my profile"*).
 
-**Next:** `login` → close the manual browser → open your IDE → `/setup` with your CV → `/daily-run`. **Dry run is on by default: no final Submit.** Re-running `init` is additive and preserves owner files, not a destructive upgrade. See [installation paths and runtime details](docs/cli-installation.md).
+### Option B — Global Skills Mode (Use Across Any Workspace)
+Copy `skills/` and `.agent/workflows/` (or `commands/`) straight into your IDE's global configuration folder—zero packages or installers required:
 
-## 4. Smart readiness interrogation: no manual config editing
+**macOS / Linux / Git Bash:**
+```bash
+# Antigravity global workflows + skills
+mkdir -p ~/.antigravity/workflows ~/.antigravity/skills
+cp -r .agent/workflows/* ~/.antigravity/workflows/
+cp -r skills/* ~/.antigravity/skills/
 
-Typing `/daily-run` does **not** mean “submit immediately.” The shared [readiness audit](bin/readiness.mjs) checks actual sources and [the state contract](schemas/readiness.schema.json), not only a self-declared `READY_100%` string.
+# Claude Code global commands + skills
+mkdir -p ~/.claude/commands ~/.claude/skills
+cp -r commands/* ~/.claude/commands/
+cp -r skills/* ~/.claude/skills/
 
-| Gate | Required verified evidence |
-|---|---|
-| 1 · CV | Real CV/profile, approved facts and inspected base PDF |
-| 2 · Targets | Roles, seniority, work mode, regions, timezone and blacklist choices |
-| 3 · Terms & legal facts | Compensation amount/currency/period, notice/start date, authorization and sponsorship |
-| 4 · Skills | Exact hands-on years for every core skill; zero is allowed, guessing is not |
-| 5 · Platform access | Selected platforms and recent observable session/access evidence |
+# Cursor global rules
+mkdir -p ~/.cursor/rules
+cp .cursor/rules/job-hunter.mdc ~/.cursor/rules/
+```
 
-<details open>
-<summary><strong>Example chat: first /daily-run (fictional owner, not stored personal facts)</strong></summary>
+**Windows (CMD / PowerShell):**
+```powershell
+# Antigravity global workflows + skills
+xcopy /E /I /Y .agent\workflows %USERPROFILE%\.antigravity\workflows
+xcopy /E /I /Y skills %USERPROFILE%\.antigravity\skills
+
+# Claude Code global commands + skills
+xcopy /E /I /Y commands %USERPROFILE%\.claude\commands
+xcopy /E /I /Y skills %USERPROFILE%\.claude\skills
+
+# Cursor global rules
+mkdir %USERPROFILE%\.cursor\rules 2>nul
+copy /Y .cursor\rules\job-hunter.mdc %USERPROFILE%\.cursor\rules\job-hunter.mdc
+```
+
+---
+
+## 2. How to Connect MCP
+
+Paste the exact configuration from [`mcp/mcp.template.json`](mcp/mcp.template.json) into your IDE's MCP settings (`~/.claude.json`, `.cursor/mcp.json`, `~/.gemini/antigravity/mcp_config.json`, or Windsurf/Cline MCP settings):
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--user-data-dir=./browser-profile"]
+    },
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_TOKEN": "${NOTION_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+- **Playwright MCP** runs Chromium with a persistent private `./browser-profile` directory so you log in manually once (never share passwords or cookies in chat).
+- **Notion MCP** is completely optional (`storage_adapters.notion_mcp: false` by default in `config/guardrails.yaml`). Local JSON files under `logs/` are always the primary source of truth.
+
+---
+
+## 3. Modular `agent_skills` Architecture & Progressive Disclosure
+
+To keep the AI model fast and prevent blowing up the context window with 35+ playbooks at once, every skill follows the **`agent_skills` / `SKILL.md` standard** with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
+
+1. **Progressive Disclosure ([`skills/REGISTRY.md`](skills/REGISTRY.md) & [`skills/skills-manifest.json`](skills/skills-manifest.json)):** At the start of a session, the AI reads `AGENTS.md` and `skills/REGISTRY.md` only. It loads a specific skill's full Markdown playbook **only** when its trigger matches the active step.
+2. **Seven Core Numbered Playbooks:**
+   - [`skills/00-daily-run.md`](skills/00-daily-run.md) — End-to-end orchestrator for `/daily-run` and `/apply-url`.
+   - [`skills/00-interrogate-and-onboard.md`](skills/00-interrogate-and-onboard.md) — **Pure-Chat Readiness Gatekeeper**: inspects `context/` directly, halts on placeholders/missing data, interviews you 3–4 questions at a time, and saves answers.
+   - [`skills/01-resume-ingestion.md`](skills/01-resume-ingestion.md) — **Pure-AI CV Ingestion**: reads pasted text, Markdown, or local PDFs via Playwright MCP (`file:///`), confirms facts, and warns if a PDF is scanned/unreadable.
+   - [`skills/02-discover-and-triage.md`](skills/02-discover-and-triage.md) — **Batch Discovery, Ghost-Job Filter & Mission Control Table**: builds URLs from `context/targets.yaml`, checks `datePosted` / closed banners / ATS status (`reason: "ghost_or_expired"`), scores `0–10`, and waits for `APPLY ALL GREEN` or `APPLY 1,3`.
+   - [`skills/03-tailor-resume-and-verify.md`](skills/03-tailor-resume-and-verify.md) — **Pure-AI Tailoring, Anti-Hallucination Fact-Check & Anti-AI Slop Filter**: updates [`templates/ats-resume-template.html`](templates/ats-resume-template.html), blocks any invented metric/company/tool, strips AI clichés (`delve`, `spearheaded`, `tapestry`, `moreover`, em-dash overuse), and prints PDF via Playwright MCP.
+   - [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) — **Upload-First Form Filling, EEO/GDPR Defaults & Approval Gate**: uploads PDF first, waits 4 s, handles hidden dropzones & autocomplete, applies `eeo_and_compliance_defaults` (`Decline to self-identify`, `gdpr_privacy_consent: true`), pauses on unknown questions, and requires exact `APPROVE` before Submit.
+   - [`skills/05-outreach-and-interview-prep.md`](skills/05-outreach-and-interview-prep.md) — **Outreach, Cold Email & Interview Dossier**: saves `interview-dossier.md` (archived full JD + top 5 prep questions), `<= 75`-word draft-only `outreach-draft.md` for `Score >= 8`, and `email-draft.md` for email-apply posts.
+   - [`skills/06-log-and-insights.md`](skills/06-log-and-insights.md) — **Local JSON + Optional Notion Sync & Weekly Reports**: maintains `logs/applications-log.json`, `logs/skipped-jobs.json`, `logs/runs/YYYY-MM-DD.json`, and `/weekly-report` skill-gap analysis.
+3. **Four Agent Reliability Meta-Skills:**
+   - [`skills/meta-self-verification.md`](skills/meta-self-verification.md) — Forbids reporting `"applied"` or `"updated"` without a fresh post-click `browser_snapshot` receipt quote.
+   - [`skills/meta-dom-recovery.md`](skills/meta-dom-recovery.md) — Recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded job lists.
+   - [`skills/meta-context-compaction.md`](skills/meta-context-compaction.md) — Checkpoints long runs to `logs/runs/current-session-checkpoint.json` every 3–5 applications.
+   - [`skills/meta-structured-debugging.md`](skills/meta-structured-debugging.md) — Diagnoses inline form validation errors from the accessibility tree and repairs only with verified facts.
+
+---
+
+## 4. How the AI Executes Everything Step-by-Step
+
+### System Architecture & Lifecycle
+
+```text
+USER CHAT: /setup | /daily-run | /apply-url URL | /tailor-cv URL | /weekly-report | /linkedin-growth
+                               |
+                               v
++--------------------------------------------------------------------+
+| AI IDE + Model (Antigravity / Cursor / Claude / Windsurf / Cline)  |
+| Reads AGENTS.md + skills/REGISTRY.md (Progressive Disclosure)      |
++-------------------------------+------------------------------------+
+                                |
+          +---------------------v---------------------+
+          | 00-interrogate-and-onboard (5 Gates)      |
+          | Audits context/ -> 3-4 Q interview -> Go  |
+          +---------------------+---------------------+
+                                |
+             +------------------+------------------+
+             v                                     v
++-----------------------------+      +-------------------------------+
+| Playwright MCP              |      | Local Files (Primary Truth)   |
+| ./browser-profile (private) |----->| context/  + templates/        |
+| snapshots / refs / uploads  |      | logs/applications-log.json    |
++-----------------------------+      | logs/resumes/<company-role>/  |
+                                     +---------------+---------------+
+                                                     | (opt-in)
+                                                     v
+                                      +------------------------------+
+                                      | Notion MCP                   |
+                                      | Applications / Runs / Insights|
+                                      +------------------------------+
+```
+
+```text
+Phase 0  READ context/ -> missing or .example placeholders?
+         +-- YES -> HARD BLOCK -> 3-4 questions in chat -> save to context/
+         +-- NO  -> Mission Briefing -> wait for explicit launch confirmation
+
+Phase 1  AUTH CHECK on enabled targets via Playwright MCP (3-9 s pacing)
+
+Phase 2  CONSTRUCT URL from context/targets.yaml -> browser_navigate
+         -> click "See more" -> ghost-job check (>30d / closed -> skipped-jobs.json)
+         -> honest 0-10 score -> Tier A (8-10) / Tier B (5-<8) / Tier C (<5)
+         -> show Mission Control Table in chat -> WAIT for "APPLY ALL GREEN" / "APPLY 1,3"
+
+Phase 3  TAILOR templates/ats-resume-template.html -> Fact-Check Guard (0 hallucinations)
+         -> Humanizer Filter (0 AI slop) -> print PDF via Playwright MCP
+
+Phase 4  UPLOAD PDF FIRST -> wait 4 s -> fresh snapshot -> fill verified answers + EEO/GDPR
+         -> unknown question? screenshot + pause + ask user + save to form-answers.yaml
+         -> dry_run stops before Submit | live waits for exact "APPROVE"
+         -> reserve needs_review -> Submit ONCE -> verify receipt (meta-self-verification)
+
+Phase 5  SAVE interview-dossier.md + outreach-draft.md (<=75w) / email-draft.md
+         -> update logs/applications-log.json + logs/runs/YYYY-MM-DD.json + optional Notion
+```
+
+---
+
+## 5. Readiness Interrogation Example in Chat
 
 > **Developer:** `/daily-run`
 >
-> **Agent:** Applications are blocked. CV, preferences, legal/compensation facts, skill years and platform access are not verified. First four questions: (1) Attach your real CV/PDF. (2) Which roles and seniority? (3) Remote/hybrid/on-site, allowed regions and timezone? (4) Any excluded companies or role keywords?
+> **Agent:** Applications are blocked until all 5 gates are verified:
+> - ❌ Gate 1 (CV & Profile): `context/profile.md` still has `.example` placeholders.
+> - ❌ Gate 2 (Targets): `context/preferences.yaml` missing target roles/regions.
+> - ❌ Gate 3 (Legal & Comp): `context/form-answers.yaml` has `owner_verified: false`.
+> - ❌ Gate 4 (Skills Matrix): Core skill years unconfirmed.
+> - ❌ Gate 5 (Platforms): No enabled targets in `context/targets.yaml`.
 >
-> **Developer:** Here is my CV. Mid-level frontend roles; remote roles accepting Egypt, Africa/Cairo; no unpaid work. No company blacklist.
+> First 4 questions: (1) Paste your CV or drop `assets/resume.pdf`. (2) What target roles & seniority? (3) Remote/Hybrid/Onsite, allowed regions, and timezone? (4) Any blacklisted companies?
 >
-> **Agent:** I extracted these CV facts for your confirmation; I have not inferred missing experience. Next four: (1) Minimum salary, currency and monthly/annual basis? (2) Notice period or earliest start date? (3) Countries where you are authorized to work and sponsorship needs? (4) Exact hands-on years for each extracted core skill—React, TypeScript and testing?
+> **Developer:** *[Shares CV]* Mid-level Frontend Engineer, Remote accepting Egypt (UTC+2), no blacklist.
 >
-> **Developer:** USD 2,500 gross/month, 30-day notice, Egypt authorization only and sponsorship needed elsewhere; React 3, TypeScript 2, testing 1 year. Those CV facts are correct.
+> **Agent:** Extracted and saved your CV facts for confirmation. Next 4 questions: (1) Minimum salary, currency, and monthly/annual basis? (2) Notice period / earliest start date? (3) Work authorization & visa sponsorship needs? (4) Exact hands-on years for React, TypeScript, and Next.js?
 >
-> **Agent:** I saved your confirmed answers privately and will not infer foreign work rights from remote availability. Three final checks: (1) Which platforms do you approve? (2) Please inspect this base PDF and confirm it accurately reflects your CV. (3) May I open the dedicated browser for manual login and verify current access? Keep credentials out of chat.
+> **Developer:** USD 2,500 gross/month, 30 days notice, Egypt authorized / sponsorship needed elsewhere, React 4, TypeScript 3, Next.js 2.
 >
-> **Developer:** LinkedIn and Wuzzuf. PDF confirmed; open the browser. [Owner logs in manually; agent observes signed-in evidence.]
+> **Agent:** Saved to `context/`. Final check: which platforms in `context/targets.yaml` should I enable and open in Playwright MCP for your manual login?
 >
-> **Agent:** All five gates now pass against current evidence. Mission: approved frontend roles accepting Egypt, LinkedIn/Wuzzuf, default minimum score 7, effective cap no more than 5 on your first authorized run date (lower platform limits still apply), **dry run ON**. No final submission. Start this round?
+> **Developer:** LinkedIn and Wuzzuf; I'm logged in now.
 >
-> **Developer:** Yes, start this dry run.
->
-> **Agent:** I will acquire the lock, run preflight, verify access again, then load context. If any check fails, I stop.
+> **Agent:** All 5 gates ✅. Mission Briefing: Frontend Engineer (Remote/Egypt), LinkedIn + Wuzzuf, warm-up cap 5/day, min score 7, **dry_run: ON**. Confirm to launch?
 
-</details>
+---
 
-The agent writes confirmed answers automatically to private context files. Missing or stale evidence returns to focused **3–4-question batches**; optional metrics/portfolio links may be omitted. You can drop a PDF into `context/` or `assets/` and say “Check my folder”; see [the CV drop guide](context/DROP_YOUR_FILES_HERE.md). Readiness is **not** blanket submission consent or a permanent login guarantee. Switching to live mode requires a new explicit briefing and all normal gates.
+## 6. URL Construction Table (`context/targets.yaml`) & Platform Playbooks
 
-## 5. Platform registry, direct ATS search & URL matrix
+Read [`context/targets.yaml.example`](context/targets.yaml.example) for the complete registry of preconfigured URL templates (all shipped `enabled: false`). Replace `{{ROLE_ENCODED}}` / `{{LOCATION_ENCODED}}` with single `encodeURIComponent(...)` values:
 
-Patterns below match [the public registry template](context/targets.yaml.example). They are preconfigured navigation recipes, **live-unverified**, and shipped disabled. Search terms come from verified owner preferences. “Full form” describes a possible approved flow, not guaranteed automation; inaccessible controls, unsupported hosts and account creation fall back to manual review.
-
-| Platform | Category | Default search URL pattern | Playbook | Automation mode |
-|---|---|---|---|---|
-| LinkedIn Jobs | Global | `https://www.linkedin.com/jobs/search/?keywords={{ROLE_ENCODED}}&f_WT=2&f_TPR=r86400` | [linkedin.md](skills/platforms/linkedin.md) | Easy Apply / verified external ATS / manual fallback |
-| Wellfound (AngelList) | Global | `https://wellfound.com/role/r/{{ROLE_SLUG}}` | [wellfound.md](skills/platforms/wellfound.md) | Full form / manual fallback; verify taxonomy slug |
-| Indeed | Global | `https://www.indeed.com/jobs?q={{ROLE_ENCODED}}&l=Remote&fromage=1` | [indeed.md](skills/platforms/indeed.md) | Full form / external ATS / manual fallback |
-| Glassdoor | Global | `https://www.glassdoor.com/Job/jobs.htm?sc.keyword={{ROLE_ENCODED}}` | [glassdoor.md](skills/platforms/glassdoor.md) | Discovery / redirect / manual fallback |
-| WeWorkRemotely | Remote | `https://weworkremotely.com/remote-jobs/search?term={{ROLE_ENCODED}}` | [weworkremotely.md](skills/platforms/weworkremotely.md) | Discovery → external ATS / manual fallback |
-| RemoteOK | Remote | `https://remoteok.com/remote-{{ROLE_SLUG}}-jobs` | [remoteok.md](skills/platforms/remoteok.md) | Discovery → external ATS; validate tag slug |
-| Welcome to the Jungle (Otta) | Remote | `https://app.welcometothejungle.com/jobs` | [welcometothejungle.md](skills/platforms/welcometothejungle.md) | Signed-in app filters / full form / manual fallback |
-| BuiltIn | Remote | `https://builtin.com/jobs/remote?search={{ROLE_ENCODED}}` | [builtin.md](skills/platforms/builtin.md) | Discovery → external ATS / manual fallback |
-| Dice | Global | `https://www.dice.com/jobs?q={{ROLE_ENCODED}}&filters.workplaceTypes=Remote&filters.postedDate=ONE` | [dice.md](skills/platforms/dice.md) | Full form / external ATS / manual fallback |
-| ZipRecruiter | Global | `https://www.ziprecruiter.com/jobs-search?search={{ROLE_ENCODED}}&days=1` | [ziprecruiter.md](skills/platforms/ziprecruiter.md) | Full form / external ATS / manual fallback |
-| Wuzzuf | MENA | `https://wuzzuf.net/search/jobs/?q={{ROLE_ENCODED}}&a=hpb` | [wuzzuf.md](skills/platforms/wuzzuf.md) | Full form / screening / manual fallback |
-| Bayt | MENA | `https://www.bayt.com/en/international/jobs/{{ROLE_SLUG}}-jobs/` | [bayt.md](skills/platforms/bayt.md) | Full form / manual fallback; confirm country |
-| Greenhouse via Google | ATS | `https://www.google.com/search?q=site:boards.greenhouse.io%20%22{{ROLE_ENCODED}}%22%20AND%20%22Remote%22&tbs=qdr:d` | [ats-engines.md](skills/platforms/ats-engines.md) + [greenhouse.md](skills/ats/greenhouse.md) | Discovery only → verified employer full form |
-| Lever via Google | ATS | `https://www.google.com/search?q=site:jobs.lever.co%20%22{{ROLE_ENCODED}}%22%20AND%20%22Remote%22&tbs=qdr:d` | [ats-engines.md](skills/platforms/ats-engines.md) + [lever.md](skills/ats/lever.md) | Discovery only → verified employer full form |
-| Ashby via Google | ATS | `https://www.google.com/search?q=site:jobs.ashbyhq.com%20%22{{ROLE_ENCODED}}%22%20AND%20%22Remote%22&tbs=qdr:d` | [ats-engines.md](skills/platforms/ats-engines.md) + [ashby.md](skills/ats/ashby.md) | Discovery only → verified employer full form |
-| SmartRecruiters | ATS | `https://jobs.smartrecruiters.com/` + actual employer/job link | [ats-engines.md](skills/platforms/ats-engines.md) | Verified employer full form; root is not role search |
-| BreezyHR | ATS | `https://breezy.hr/` → verified employer subdomain `/p/<id>` | [ats-engines.md](skills/platforms/ats-engines.md) | Verified employer full form; root is not role search |
-| Workable | ATS | Actual employer link under `https://apply.workable.com/` | [ats-engines.md](skills/platforms/ats-engines.md) | Documentation/manual only via `other`, cap 0 |
-| Workday / Taleo | ATS | Actual employer links on recognized ATS hosts | [ats-engines.md](skills/platforms/ats-engines.md) | Manual fallback only; never automated account creation |
-| DailyRemote | Remote | `https://dailyremote.com/` → accessible search | [remote-boards.md](skills/platforms/remote-boards.md) | Documentation/manual only via `other`, cap 0 |
-
-Google dorks are a **discovery channel**, not an ATS form. Also check verified Greenhouse results on `job-boards.greenhouse.io`; the legacy-host dork can miss them. Remote tags and date parameters require visible confirmation; authentication requirements can change. Nothing in the matrix overrides owner authorization, permitted automation, live access or exact resume/answer checks.
-
-## 6. Add a niche platform: a two-minute scaffold, not a certified adapter
-
-StepStone, Xing, Naukri, GulfTalent and Hacker News Who's Hiring can all begin as **manual-review discovery** playbooks. Two minutes can create the scaffold; genuine validation takes longer.
-
-1. **Create a disabled target and playbook:**
-
-   ```bash
-   npx github:redasalem/job-hunter-os add-platform stepstone --global
-   ```
-
-   `add-platform` copies [the platform template](skills/platforms/_template.md), adds a disabled `platform: other` target and preserves existing files. Its `https://example.invalid/` URL is deliberately nonfunctional until confirmed in chat. Run `init` first; simple single-root block-style target YAML is supported.
-
-2. **Provide the real board URL in chat.** Ask the agent to add `search_url_template`, parameters, auth evidence and a concrete resolved `url` in private `context/targets.yaml`. It must verify host/path and accessible filters rather than invent a StepStone/Naukri query syntax. Contributors add only public synthetic examples to `context/targets.yaml.example`, never private preferences.
-
-3. **Define four board-specific rules in `skills/platforms/stepstone.md`:**
-
-   | Rule | Required evidence |
-   |---|---|
-   | Search URL | Actual route, role/location encoding, filter verification and auth policy |
-   | Job card extraction | Accessible titles/links, stable posting ID, canonical employer URL, full JD |
-   | Apply trigger | Current accessible button/link; draft vs redirect vs irreversible one-click action |
-   | Submission confirmation | Job-identifiable receipt, upload verification and uncertainty handling; no blind retry |
-
-4. **Keep manual mode until reviewed.** `other` has cap 0. Automatic submission needs a schema-backed key, explicit cap, safe ATS dispatch and meaningful tests; a Markdown file alone cannot grant it. Retain all readiness, dedup, dry-run, unknown-question and security-stop rules.
-
-See [community registry](docs/platform-registry.md), [contribution guidance](CONTRIBUTING.md) and [shared contracts](schemas/index.ts). Hacker News/email-style applications may require owner hand-off, not a generic form automation adapter.
-
-## 7. Complete CLI & chat command reference
-
-### Terminal commands
-
-Prefix with `npx github:redasalem/job-hunter-os` or use `node ./bin/job-hunter.mjs` from a clone.
-
-| Command | Result | Important boundary |
-|---|---|---|
-| `init` | Scaffold current directory | Preserves CV, context, journal, settings and existing manifest |
-| `init --global` / `init -g` | Create `~/.job-hunter-os/` and IDE pointers | Discovery/import support varies by IDE version |
-| `doctor [--global]` | Audit readiness, paths and structural prerequisites | Nonzero until complete; not live auth or submission consent |
-| `login [--global]` | Open installed Chrome/Chromium with dedicated profile | Manual LinkedIn/Wellfound/Wuzzuf/Indeed tabs; no credential reading or silent browser install |
-| `sync-mcp [--global]` | Non-destructive Playwright MCP merge | Conflicting server preserved/refused; Notion is a separate opt-in import |
-| `add-platform NAME [--global]` | Copy playbook and disabled `other` target | No working adapter or permission to submit; lowercase slug only |
-| `bundle-prompt [--global]` | Create private master context Markdown for owner-reviewed web-chat upload | Verified non-example context and approved local log validation required; never uploads or overwrites |
-| `parse-cv [FILE] [--global]` | Read a CV (`.pdf`, `.docx`, `.md`, `.txt`, `.json`) locally into `context/cv-extracted.txt` + a quality report | Exit 3 = scanned/garbled/unsupported → paste text in chat. Extraction is heuristic; nothing is verified until you confirm |
-| `render-cv FILE.html\|FILE.json [--out-dir DIR] [--no-pdf]` | Write `.html`, `.pdf` (local Chromium), `.docx`, `.doc`, `.txt` (+ `tailoring-notes.md`) for a resume or cover letter | Refuses unverified data, placeholders, scripts, remote resources; automatically runs `verify-cv` when verified context exists; PDF must be ≤200 KB and text-readable |
-| `verify-cv FILE [--strict-humanize]` | Audit every number, metric, date, employer, degree, project, and skill in a tailored resume against verified owner context | Blocks PDF rendering on unverified claims; `--strict-humanize` also fails on AI-slop clichés or em-dash overuse |
-| `pull-ats [--board ats:token] [--role KW] [--all]` | Fetch fresh postings directly from public Greenhouse, Lever, and Ashby JSON APIs into `logs/ats-harvest.json` | Read-only allowlisted ATS endpoints only; filters locally by role/location and feeds discovery without auto-applying |
-| `skills list\|validate\|sync\|install\|enable\|disable\|export` | Manage modular `SKILL.md` playbooks, lint frontmatter, sync registry/manifest, install community skills, and export to IDEs | Community skills install disabled under `skills/community/` until owner-reviewed and enabled |
-
-### AI IDE chat commands
-
-| Request | Skill / result | Submission policy |
-|---|---|---|
-| `/setup` | [Conversational onboarding](skills/00-onboarding-chat.md): CV facts, preferences, access, optional Notion | No daily-run submission |
-| `/daily-run` | [Daily orchestration](skills/00-daily-run.md): gated discovery → score → tailor → form → journal → report | Fresh briefing; dry run default |
-| `/tailor-cv JOB_URL` | [Tailor resume](skills/tailor-resume.md): evidence map, local HTML/PDF, gaps | Never applies |
-| `/apply-url JOB_URL` | [Single-job application](skills/apply-url.md) | All five gates, fresh consent and normal safety checks |
-| `/weekly-report` | [Weekly insights](skills/weekly-insights.md): local skill-demand/gap report, optional Notion | No applications |
-| `/linkedin-growth` | Profile/post/outreach drafts via growth playbooks | Exact-text approval before Save/Post/send; outreach ≤75 words |
-
-Native slash registration is IDE/version-dependent. If a command is not discovered, say “Read my agent home's AGENTS.md and run today's job-hunting workflow” or use [the six portable workflows](docs/chat-commands.md). Never imply an unregistered slash command runs by itself.
-
-## 7a. Bulletproof resume intake, multi-format CVs & form traps
-
-### Five-tier resume ingestion ([skill](skills/01-resume-ingestion.md))
-
-| Tier | Situation | What the agent does |
-|---|---|---|
-| 1 | CV pasted in chat or `.md`/`.txt`/`.json` | Uses the exact text |
-| 2 | `assets/resume.pdf` / `.docx` and a model that cannot read binaries | Runs `parse-cv` locally (or opens the file through Playwright MCP); if both fail, asks you to paste the text |
-| 3 | Scanned or design-tool PDF (<50 words or garbled) | Warns that ATS scanners may see it as blank, asks for the text, rebuilds a clean single-column PDF after you confirm (your original is kept as `resume.original.pdf`) |
-| 4 | No current CV | Interviews you (3–4 questions at a time) from bullet points, a LinkedIn "Save to PDF" export or your GitHub, then builds `profile.md` and a new `assets/resume.pdf` |
-| 5 | Always | Fact table → your confirmation → `context/cv.md`, `profile.md` and structured [`resume-data.json`](schemas/resume-data.schema.json) (split names, phone country code, autocomplete city, work/education rows, skills with years) |
-
-### One folder per job, every format
-
-```text
-logs/resumes/acme-pay-senior-backend-engineer-linkedin-4012/
-  payload.json             verified data + per-job ordering/summary (input)
-  resume.pdf               single column, Arial, ≤200 KB, text-selectable
-  resume.docx / .doc       for portals that only take Word
-  resume.txt               for "paste your plain-text resume" boxes
-  resume.html              source / manual print fallback
-  tailoring-notes.md       JD asked → what changed → gaps
-  cover-letter.pdf/.txt    only when a portal requires a cover-letter file (you approve the text first)
-```
-
-### Five ATS form traps ([rules](skills/fill-form-answers.md#five-ats-form-traps-mandatory))
-1. **Upload first** — upload the resume, wait 4 s for the portal's parser, re-snapshot, then fill and correct every auto-filled field against your verified data.
-2. **Absolute paths only** for `browser_file_upload`.
-3. **Hidden dropzones** — open the chooser through the visible upload control; if a cross-origin dropzone blocks automation, the agent prints the exact path and waits for you to drop the file and reply `CONTINUE`.
-4. **Split name / phone code / location autocomplete** — first/last vs full name, country code matched by dialling code, type the city → wait 2 s → pick the matching suggestion (never a guess).
-5. **Session expired mid-run** — pause, ask you to sign in, reply `CONTINUE`, re-verify, resume the same job.
-
-## 7b. Two-phase batch triage & Mission Control table ([skill](skills/discover-and-triage.md))
-
-`config/guardrails.yaml` → `workflow_mode: batch_review_first` (default) or `direct_auto`, plus `batch_size` (1–20) and `pregenerate_stretch_resumes`.
-
-**Phase 1 — scan, expand, categorize.** For each new job the agent clicks "See more/Show more" so the whole description is visible, scores it, and sorts it:
-
-| Tier | Score | Action |
-|---|---|---|
-| 🟢 A — Strong | 8–10 | Tailored folder generated, ready for your decision |
-| 🟡 B — Stretch | 5 to below 8 | Never auto-applied; explains which real experience to foreground and what is missing |
-| 🔴 C — Mismatch | below 5 or any dealbreaker (stack, location/visa, salary floor) | Skipped immediately; one-line reason in `logs/skipped-jobs.json` |
-
-**Phase 2 — Mission Control briefing in chat, before any Apply click:**
-
-```text
-| # | Company & Role                         | Score | Status      | What changed in tailored CV (or why skipped)            | Tailored files                                               |
-|---|----------------------------------------|-------|-------------|----------------------------------------------------------|--------------------------------------------------------------|
-| 1 | Acme Pay — Senior Backend Engineer     | 8.5   | 🟢 Ready    | Node.js/PostgreSQL first; payments API bullet on top     | logs/resumes/acme-pay-senior-backend-engineer-linkedin-4012/ |
-| 2 | Orbit — Platform Engineer              | 6.5   | 🟡 Stretch  | Needs Kubernetes; would foreground Docker CI work        | — (on request)                                               |
-| 3 | Nilecart — Backend Developer (Node.js) | 8.0   | 🟢 Ready    | Logistics APIs moved up; REST/testing keywords in summary | logs/resumes/nilecart-backend-developer-node-js-wuzzuf-881/  |
-| 4 | Lumen — iOS Developer                  | 2.0   | 🔴 Skipped  | Swift-only role; no iOS experience in CV                 | —                                                            |
-
-I scanned 4 jobs: 2 are 🟢 Ready with tailored PDF/Word CVs, 1 is 🟡 Stretch and 1 was 🔴 Skipped.
-Reply APPLY ALL GREEN, APPLY 1,3, or tell me which CV to tweak before I open any form.
-```
-
-Your reply opens forms only for the selected rows. Dry run, `approve_before_submit`, caps, warm-up and stop rules still apply to each job; a Stretch job below your minimum score is prepared but left for you to submit. Easy Apply modals and "Apply on company site" redirects (new tab → Greenhouse/Lever/Ashby/Workable) are both handled: the agent switches to the new tab, records the final URL, reaches the form, uploads the tailored file first and continues.
-
-## 🧩 Modular agent_skills Architecture & Skill Package Manager
-
-`job-hunter-os` adopts the modular [`agent_skills`](https://github.com/janestreet/agent_skills) / `SKILL.md` packaging standard across both flat `skills/*.md` playbooks and modular `skills/<name>/SKILL.md` directories.
-
-- **Progressive Disclosure (`skills/REGISTRY.md` & `skills/skills-manifest.json`):** At session start, the agent reads `AGENTS.md` and `skills/REGISTRY.md` (a compact routing table of skill names, load-when descriptions, triggers, preconditions, and paths) instead of loading all 58 playbooks into context at once. Full skill bodies load only when their trigger matches the active phase.
-- **Strict `SKILL.md` Contract:** Every core, meta, platform, and ATS skill begins with machine-readable YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections:
-  1. `## When to Use & Preconditions`
-  2. `## Deterministic Step-by-Step Execution`
-  3. `## Anti-Patterns (What NEVER To Do) & Self-Verification Check`
-- **Four Foundational Meta-Skills:**
-  - [Verify Before Complete](skills/meta-self-verification.md) (`verify-before-complete`) — forbids claiming `"applied"`, `"uploaded"`, or `"updated"` without fresh `browser_snapshot` receipt evidence and a saved proof quote.
-  - [Self-Healing Navigation](skills/meta-dom-recovery.md) (`self-healing-navigation`) — recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded lists with bounded fresh-snapshot retries.
-  - [Long-Run Memory Compaction](skills/meta-context-compaction.md) (`long-run-memory-compaction`) — checkpoints progress to `logs/runs/current-session-checkpoint.json` every 3–5 applications so long runs survive context resets.
-  - [Diagnose Automation Failure](skills/meta-structured-debugging.md) (`diagnose-automation-failure`) — extracts accessibility-tree validation errors, repairs verified format issues within a 2-retry budget, and re-runs `approval-gate.md`.
-
-### Skill Package Manager (`npx github:redasalem/job-hunter-os skills ...`)
-
-```bash
-npx github:redasalem/job-hunter-os skills list
-npx github:redasalem/job-hunter-os skills validate
-npx github:redasalem/job-hunter-os skills sync
-npx github:redasalem/job-hunter-os skills install https://github.com/janestreet/agent_skills
-npx github:redasalem/job-hunter-os skills enable <skill-name>
-npx github:redasalem/job-hunter-os skills export --ide claude --global
-```
-
-Community skills installed via `skills install` are placed under `skills/community/<name>/` and remain **disabled by default** in `skills/community/.trust.json` until you inspect them and run `skills enable <name>`. `skills export --ide <claude|cursor|antigravity|windsurf|all>` writes generated pointers into each IDE's native skill/workflow/rule folder without overwriting user-authored files.
-
-## 🔥 Advanced Career-Ops Capabilities
-
-1. **Ghost-Job & Live-Status Detector ([ghost-job-detector.md](skills/ghost-job-detector.md)):** Checks for closed/filled banners, JSON-LD `datePosted` (>30 days) / `validThrough`, and canonical ATS presence before wasting tokens tailoring. Ghost/expired roles are logged to `logs/skipped-jobs.json` with `reason: "ghost_or_expired"`.
-2. **Anti-Hallucination Resume Fact-Checker ([fact-check-guard.md](skills/fact-check-guard.md) + `verify-cv`):** Deterministically audits every percentage, currency figure, multiplier, date, employer, degree, project, and skill in tailored CVs against `context/profile.md` and `context/resume-data.json`. Automatically blocks `render-cv` PDF generation if any unverified claim is found.
-3. **Anti-AI Slop & Humanizer Filter ([humanize-writing.md](skills/humanize-writing.md)):** Strips generic LLM clichés (`"delve"`, `"testament"`, `"tapestry"`, `"spearheaded"`, `"synergy"`, `"thrilled to apply"`, `"fast-paced environment"`, `"moreover"`, `"furthermore"`) and em-dash overuse (`—`) from summaries, cover letters, outreach notes, and form answers.
-4. **Hiring Manager Radar & 75-Word Outreach Drafter ([hiring-manager-outreach.md](skills/hiring-manager-outreach.md)):** For `Score >= 8` roles, identifies likely Engineering Managers, Tech Leads, or Technical Recruiters and writes a strictly `<= 75`-word, humanized, draft-only note to `logs/resumes/<company>-<role>-<job-id>/outreach-draft.md` (never auto-sent).
-5. **Direct Email Application Drafter ([direct-email-drafter.md](skills/direct-email-drafter.md)):** When Wuzzuf, LinkedIn Posts, or Hacker News Who's Hiring postings ask to email `careers@...` with a subject code, writes `logs/resumes/<company>-<role>-<job-id>/email-draft.md` with exact `To:`, `Subject:`, plain-text `Body:`, and the tailored PDF path—never auto-sending.
-6. **EEO, Demographics & Consent Auto-Handler ([eeo-consent-handler.md](skills/eeo-consent-handler.md) + [form-answers.yaml.example](context/form-answers.yaml.example)):** Adds explicit `eeo_and_compliance_defaults` (`gender`, `ethnicity`, `veteran_status`, `disability_status`, `referral_source`, `gdpr_privacy_consent: true`) so voluntary demographics default to neutral opt-outs and required candidate-data privacy boxes are checked without opting into marketing emails.
-7. **Post-Application Interview Prep & Archived JD Dossier ([interview-dossier.md](skills/interview-dossier.md)):** Saves `logs/resumes/<company>-<role>-<job-id>/interview-dossier.md` with the verbatim archived JD, foregrounded CV evidence, and top 5 tailored technical & behavioral questions based on JD-vs-profile gaps before postings disappear.
-8. **Fast Direct ATS JSON Feed Harvester ([direct-ats-harvester.md](skills/direct-ats-harvester.md) + `pull-ats`):** Queries official public Greenhouse, Lever, and Ashby JSON endpoints directly for configured `board_tokens` in seconds, filters locally by role/location, and writes `logs/ats-harvest.json` for Mission Control triage.
-
-## 8. Multi-IDE & multi-model compatibility
-
-The model reads the same canonical instructions and Markdown skills; it must actually expose local file tools, an authorized browser MCP connection and required permissions. Model choice does not bypass factual verification or safety rules. Capability gaps trigger an explicit fallback, not invented tools.
-
-| IDE | Repository instruction entry | Command/workflow entry | Compatibility caveat |
+| Platform | Category | URL Template Pattern | Playbook |
 |---|---|---|---|
-| Antigravity | `AGENTS.md` | `.agent/workflows/` | Global workflow discovery varies; import if needed |
-| Cursor | `.cursor/rules/job-hunter.mdc` → `AGENTS.md` | Portable command prompts | Verify supported user-rule and MCP paths |
-| Claude Code | `CLAUDE.md` → `AGENTS.md` | `.claude/commands/*.md` after init | Slash names/namespaces depend on version |
-| Windsurf | `.windsurfrules` → `AGENTS.md` | `.windsurf/workflows/` after init | Verify local/global discovery for your version |
-| Cline / Roo | `.clinerules` → `AGENTS.md` | Portable chat prompts | Import `mcp/cline.import.json` explicitly; editor settings paths vary |
-| GitHub Copilot | `.github/copilot-instructions.md` → `AGENTS.md` | Portable chat prompts | Requires a local agent mode supporting MCP/tools; no guaranteed global injection |
+| LinkedIn Jobs | Global | `https://www.linkedin.com/jobs/search/?keywords={{ROLE_ENCODED}}&f_WT=2&f_TPR=r86400` | [linkedin.md](skills/platforms/linkedin.md) |
+| Wellfound | Global | `https://wellfound.com/role/r/{{ROLE_SLUG}}` | [wellfound.md](skills/platforms/wellfound.md) |
+| Indeed | Global | `https://www.indeed.com/jobs?q={{ROLE_ENCODED}}&l=Remote&fromage=1` | [indeed.md](skills/platforms/indeed.md) |
+| Glassdoor | Global | `https://www.glassdoor.com/Job/jobs.htm?sc.keyword={{ROLE_ENCODED}}` | [glassdoor.md](skills/platforms/glassdoor.md) |
+| WeWorkRemotely | Remote | `https://weworkremotely.com/remote-jobs/search?term={{ROLE_ENCODED}}` | [weworkremotely.md](skills/platforms/weworkremotely.md) |
+| RemoteOK | Remote | `https://remoteok.com/remote-{{ROLE_SLUG}}-jobs` | [remoteok.md](skills/platforms/remoteok.md) |
+| Welcome to the Jungle | Remote | `https://app.welcometothejungle.com/jobs` | [welcometothejungle.md](skills/platforms/welcometothejungle.md) |
+| BuiltIn | Remote | `https://builtin.com/jobs/remote?search={{ROLE_ENCODED}}` | [builtin.md](skills/platforms/builtin.md) |
+| Dice | Global | `https://www.dice.com/jobs?q={{ROLE_ENCODED}}&filters.workplaceTypes=Remote&filters.postedDate=ONE` | [dice.md](skills/platforms/dice.md) |
+| ZipRecruiter | Global | `https://www.ziprecruiter.com/jobs-search?search={{ROLE_ENCODED}}&days=1` | [ziprecruiter.md](skills/platforms/ziprecruiter.md) |
+| Wuzzuf | MENA | `https://wuzzuf.net/search/jobs/?q={{ROLE_ENCODED}}&a=hpb` | [wuzzuf.md](skills/platforms/wuzzuf.md) |
+| Bayt | MENA | `https://www.bayt.com/en/international/jobs/{{ROLE_SLUG}}-jobs/` | [bayt.md](skills/platforms/bayt.md) |
+| Greenhouse / Lever / Ashby | ATS | Direct employer boards or Google dorks (`site:boards.greenhouse.io`, `site:jobs.lever.co`, `site:jobs.ashbyhq.com`) + JSON feeds | [ats-engines.md](skills/platforms/ats-engines.md) |
 
-<details>
-<summary><strong>Global IDE injection and MCP locations</strong></summary>
+Engine playbooks: [greenhouse.md](skills/ats/greenhouse.md), [lever.md](skills/ats/lever.md), [ashby.md](skills/ats/ashby.md), [smartrecruiters.md](skills/ats/smartrecruiters.md), [breezyhr.md](skills/ats/breezyhr.md), [workday.md](skills/ats/workday.md), [taleo.md](skills/ats/taleo.md).
 
-Global install writes non-overwriting pointers/commands in `~/.claude/commands/`, `~/.cursor/rules/`, `~/.antigravity/workflows/`, `~/.windsurf/workflows/`, `~/.windsurf/rules/` and `~/.clinerules/`. Some are version-dependent import locations, not universally discovered native commands.
+---
 
-MCP merges target Claude `~/.claude.json`, Cursor `~/.cursor/mcp.json`, Antigravity `~/.gemini/antigravity/mcp_config.json`, Windsurf `~/.codeium/windsurf/mcp_config.json`, plus the agent-home `.mcp.json`. Cline receives a private import file. Local initialization may still touch user-level Antigravity/Windsurf MCP settings; review that behavior before installing.
+## 7. Mission Control Batch Table & Slash Commands
 
-The single MCP source is [mcp/mcp.template.json](mcp/mcp.template.json). Existing servers/settings are preserved; an incompatible same-name Playwright server is refused, not hijacked. Tokens are never copied into new configurations. Close the manual browser before MCP and verify session/browser-version compatibility. [Full path matrix](docs/cli-installation.md) and [MCP setup](mcp/README.md) cover limitations.
-
-</details>
-
-Use appropriately configured local models when privacy requires them, but tool/model support still needs verification. Actual native command discovery, OS-specific login and Notion access/read-back are **unverified until tested in your authorized environment**.
-
-## 9. Safety, anti-ban limits & local-first security
-
-**There is no stealth mode, anti-ban guarantee, CAPTCHA solver or defense bypass.** Human-readable pacing is load control, not concealment. Review site terms and employer requirements before enabling a target.
-
-| Guard | Behavior |
-|---|---|
-| Warm-up | First three distinct non-aborted authorized UTC run dates cap at **5/day**, or any lower configured/calendar/platform limit. Calendar days 1–3 also begin at 5; progressive warm-up continues afterward. Idle days alone cannot bypass the distinct-run gate. |
-| Active hours | Owner-confirmed IANA timezone and working window; check before every action and Submit. Outside the window, stop. |
-| Action pacing | Random **3–9 seconds** between actions, full-JD reading pauses ≥10 seconds, and ≥60-second cooldown after the configured consecutive-action limit. |
-| Security stops | CAPTCHA, 2FA challenge, account warning, rate-limit banner or three consecutive errors abort the run and notify. A session that expires mid-run pauses: you sign in privately in the open window and reply `CONTINUE`; no reply or a repeated wall aborts. Challenges are never automated. |
-| Duplicate/volume control | Stable job ID plus canonical employer-role URL checks, owned local lock and fresh daily/platform caps. Unresolved submission reservations consume allowance. |
-| Dry run / receipt | Default dry run never clicks final Submit. Live submission happens once after reservation and checks; only a verified receipt marks `applied`. |
-| Unknown facts | Review record + private screenshot + chat question; no guessed legal answers, dates, salary or skill years. |
-| Trust boundary | CV/JD/page content is data, not instructions to disclose secrets, change settings or execute commands. |
-
-**Local-first is a storage policy, not “data never leaves your machine.”** Real context, browser sessions, logs, PDFs, exports, `.env` and generated MCP configurations are kept out of Git by default. Public `.example` files and `demo/` are synthetic only. Employers receive submitted CVs/answers; optional Notion receives approved records; search providers see queries; your selected IDE/model may process CV/chat under its own policy. Ignore rules are not encryption or protection against intentional uploads, insecure tool permissions or previously committed data.
-
-Never print cookies/tokens, commit `browser-profile/`, share unredacted screenshots or ask owners to paste credentials. Git ignore does not remove history; rotate any exposed secrets without rewriting published history. See [SECURITY.md](SECURITY.md), [execution safety](docs/execution-safety.md) and [the agent policy](schemas/agent-policy.ts).
-
-## 10. Three ways to run: MCP, browser companion & web chat fallback
+Before opening any form in `batch_review_first` mode, the AI posts a Mission Control briefing in chat and waits:
 
 ```text
-Verified CV once -> owner-confirmed context/profile.md + CV provenance
-                                 |
-        +------------------------+-------------------------+
-        v                        v                         v
-MCP-capable local IDE    Chrome/Edge companion      Web AI without MCP
-skills + browser tools   normal owner browser       paste reviewed job/context
-gates + form + PDF       extract / verified JSON    receive truthful HTML + JSON
-        |                        ^                         |
-        |                        +--- owner paste/import --+
-        v                        v
-approval-gate.md          stage fields / manual PDF upload
-        |                        |
-        +---- dry run: NO SUBMIT + live: fresh approval ----+
-                                 |
-                  receipt -> local journal -> optional Notion
+| # | Company & Role                         | Score | Status      | What changed in tailored CV (or why skipped)             | Tailored files                                               |
+|---|----------------------------------------|-------|-------------|----------------------------------------------------------|--------------------------------------------------------------|
+| 1 | Acme Pay — Senior Backend Engineer     | 8.5   | 🟢 Ready    | Node.js/PostgreSQL first; payments bullet moved to top   | logs/resumes/acme-pay-senior-backend-engineer-linkedin-4012/ |
+| 2 | Orbit — Platform Engineer              | 6.5   | 🟡 Stretch  | Needs Kubernetes; foreground Docker CI. Gap: Kubernetes  | — (on request)                                               |
+| 3 | Lumen — iOS Developer                  | 2.0   | 🔴 Skipped  | Swift-only role; no iOS experience in CV                 | —                                                            |
+
+I scanned 3 jobs: 1 is 🟢 Ready, 1 is 🟡 Stretch, and 1 was 🔴 Skipped.
+Reply APPLY ALL GREEN, APPLY 1, or tell me which CV to tweak before I open any form.
 ```
 
-### Chrome/Edge companion (no build, no React)
+### Slash Commands (or Plain-Text Chat Prompts)
 
-Load [extension/](extension/README.md): unzip a source download if necessary, open `chrome://extensions` (Edge: `edge://extensions`), enable **Developer mode**, select **Load unpacked**, and choose the `extension/` folder. Reload a supported site; click its floating action bar or the extension toolbar icon to open the side panel. Chrome/Edge with side-panel support are the target; other Chromium browsers are not guaranteed. No automatic installation/Web Store release is included.
+| Command | Workflow | What it does |
+|---|---|---|
+| `/setup` | [`.agent/workflows/setup.md`](.agent/workflows/setup.md) | Runs readiness audit, CV ingestion, 3–4-question interview, and headed Playwright login |
+| `/daily-run` | [`.agent/workflows/daily-run.md`](.agent/workflows/daily-run.md) | Full gated run: readiness -> auth -> discovery/ghost check -> Mission Control -> tailor -> fill/approve -> dossier/log |
+| `/tailor-cv URL` | [`.agent/workflows/tailor-cv.md`](.agent/workflows/tailor-cv.md) | Tailors CV + fact-check + humanizer + `interview-dossier.md` for one URL (never applies) |
+| `/apply-url URL` | [`.agent/workflows/apply-url.md`](.agent/workflows/apply-url.md) | Runs all safety gates and processes one supplied HTTPS job URL |
+| `/weekly-report` | [`.agent/workflows/weekly-report.md`](.agent/workflows/weekly-report.md) | Generates local skill-gap & funnel analytics from `logs/applications-log.json` |
+| `/linkedin-growth` | [`.agent/workflows/linkedin-growth.md`](.agent/workflows/linkedin-growth.md) | Drafts profile updates, posts, or `<= 75`-word outreach; waits for explicit `approve` |
 
-Extract Job for AI captures visible main content and labeled form questions; **review/redact before copying to an external AI**. Paste confirmed JSON in the panel or load a JSON file, then Auto-Fill Form. YAML must be explicitly converted to this [verified JSON contract](skills/fallback-no-mcp.md). Exact visible conventional fields only; unsupported custom widgets/iframes/ambiguous labels need manual entry. Resume upload is manual. Green highlights show staged fields, not truth or successful acceptance. The extension makes no network uploads and does not persist answers.
+---
 
-**Approve & Submit** requires a fresh owner click plus review of the exact answers/PDF, permission, active hours, readiness and current local caps/duplicates. A single unambiguous final button in the reviewed form may be clicked once; ambiguous flows fall back to the site manually. The extension cannot inspect local logs/readiness or verify receipts. Always journal the actual result locally. Dry run never submits; normal browsers are **not immune to anti-bot checks** and challenges stop automated assistance.
-
-### Approval modes (all existing safety rules still apply)
-
-| `approval_mode` | Behavior |
-|---|---|
-| `approve_before_submit` (default) | Prepare eligible form/PDF, show company/role/score/PDF/answers and wait for exact **APPROVE**, **EDIT <field>**, or **SKIP** |
-| `auto_high_confidence` | Local MCP may submit at score ≥8 with zero unknowns and no filled essay, only after all other gates. Score 7..<8 or an essay needs approval; score 6 remains review under minimum 7. |
-| `dry_run` | Fill/inspect/screenshots only; never final Submit |
-
-Legacy `dry_run: true` always overrides every mode, including APPROVE. Changed answers/form/resume invalidate approval. See [approval-gate.md](skills/approval-gate.md); pass its job-bound approval/essay context to the shared application policy. The extension always requires human approval, even for auto_high_confidence. Profile changes/posts are never auto-approved.
-
-### Web-chat bridge & private master prompt
-
-```bash
-npx github:redasalem/job-hunter-os bundle-prompt --global
-```
-
-After verified setup and approved local validation helpers, this creates private `logs/master-chat-prompt.md` from canonical instructions, profile and verified form answers. It refuses placeholder context, likely credentials and an existing export, validates local logs, and **does not upload anything**. Review/redact before choosing to upload to Custom GPTs, Claude Projects or Gemini Gems; their data policies apply. Web chat cannot execute local files/MCP gates or prove an application happened. See [fallback-no-mcp.md](skills/fallback-no-mcp.md).
-
-The dual-format pipeline is **CV PDF/text once → confirmed structured profile + provenance → per-job evidence map + escaped ATS HTML → fresh inspected PDF with stable job ID → exact employer upload**. Web-chat owners save/print/inspect/upload manually; MCP uses only exposed authorized capabilities. Job keywords never become invented experience. [Tailoring playbook](skills/tailor-resume.md) covers collisions, PDF inspection and source conflicts.
-
-For LinkedIn, Wellfound and Wuzzuf, [profile-optimizer.md](skills/profile-optimizer.md) compares exact current/proposed Headline, Summary, Skills and Experience against verified facts. Exact-text chat approval precedes mutations; MCP can Save only when explicitly included in approval and must read back the result. Extension stages approved Headline/About/Summary in an owner-opened modal and **never clicks Save**; skills/experience/custom editors remain manual.
-
-## 11. Contribute & open-source roadmap
-
-Help make careful job hunting work across countries and career paths. Submit PRs for regional boards, accessible ATS flows, truthful tailoring, localization and meaningful safety tests—**not** stealth plugins, fabricated answers or private employer/user records.
-
-| Contribution area | Review standard |
-|---|---|
-| Regional job platforms | Real public URL patterns, accessible extraction, auth policy, disabled synthetic targets and honest fallback |
-| ATS adapters | Exact upload checks, safe answer mapping, dry-run boundary, duplicate/reservation handling and receipt evidence |
-| IDE portability | Version/OS evidence, non-destructive setup and explicit missing-tool behavior |
-| Resume quality | Verified-fact evidence maps, readable/selectable PDFs and no hidden keywords or inflated claims |
-| Reliability & privacy | Failure-path tests, local-first records, opt-in tracking and accurate limitations |
-
-Roadmap priorities: broaden reviewed regional playbooks, test current IDE/OS combinations with authorized sessions, improve accessibility-based ATS fallbacks, and strengthen upload/receipt evidence. These are contribution directions, **not promises of scheduled delivery or unattended operation**. See [CONTRIBUTING.md](CONTRIBUTING.md) and [the maintained task roadmap](roadmap.md).
-
-<details>
-<summary><strong>Repository map and maintainer verification</strong></summary>
+## 8. Repository Map
 
 | Path | Purpose |
 |---|---|
-| `AGENTS.md` | Canonical instructions, execution order and guardrails |
-| `skills/`, `prompts/`, `commands/` | Chat-first agent playbooks and portable requests |
-| `context/*.example`, `config/` | Synthetic structures, public registry and conservative settings |
-| `bin/` | Built-in-only installer/readiness utilities |
-| `mcp/` | Canonical public MCP template and private import guidance |
-| `templates/` | ATS HTML; generated PDFs/evidence stay in private `logs/resumes/` |
-| `schemas/`, `scripts/` | Shared contracts, optional local helpers, validation and tests |
-| `demo/` | Synthetic fixtures only |
-| `src/` | Retained compatibility preview; not required for the agent product |
+| [`AGENTS.md`](AGENTS.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
+| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, core `00–06` playbooks, 4 `meta-*` skills, 16 platform playbooks, and 7 ATS playbooks |
+| [`.agent/workflows/`](.agent/workflows/daily-run.md), [`commands/`](commands/daily-run.md) | Portable slash-command prompts for Antigravity, Claude Code, Cursor, Windsurf, Cline, and Copilot |
+| [`context/`](context/DROP_YOUR_FILES_HERE.md) | Synthetic `.example` templates (`profile.md.example`, `form-answers.yaml.example`, `targets.yaml.example`, etc.); real files stay private |
+| [`config/guardrails.yaml`](config/guardrails.yaml) | Default `dry_run: true`, warm-up caps, active hours, 3–9 s pacing, and `batch_review_first` settings |
+| [`templates/`](templates/ats-resume-template.html) | Clean single-column ATS resume & cover-letter HTML templates |
+| [`mcp/`](mcp/mcp.template.json) | Canonical Playwright & optional Notion MCP JSON template |
+| [`docs/`](docs/repository-audit.md) | Chat command matrix, safety rules, platform registry, and repository audit |
 
-```bash
-npm run test:cli
-npm test
-npm run test:agent-rules
-npm run validate:logs -- --demo
-```
-
-A successful unit test or synthetic PDF does not verify employer submission, actual MCP tool exposure, first login, native IDE command discovery or Notion read-back. Real checks need owner-verified facts, authorized sessions and explicit launch consent. Contributions must state what was and was not tested. Licensed under [MIT](LICENSE).
-
-</details>
+Licensed under [MIT](LICENSE).

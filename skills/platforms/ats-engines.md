@@ -4,14 +4,13 @@ version: "1.1.0"
 description: Load when an application lands on a recognized employer ATS and routing, exact snapshot-driven filling, uploads, review and receipt checks are needed across engines.
 triggers:
   - ATS hostname recognized
-  - apply-external-ats routing
+  - fill-and-apply routing
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
 requires_skills:
-  - apply-external-ats
-  - fill-form-answers
+  - fill-and-apply
 verification:
   - hostname matched to a supported engine or routed to manual review
   - upload verified by filename
@@ -23,14 +22,14 @@ verification:
 
 Use as the cross-ATS reference; engine-specific files live in skills/ats/.
 
-- **Load when:** ATS hostname recognized; apply-external-ats routing.
+- **Load when:** ATS hostname recognized; fill-and-apply routing.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
-- **Requires skills:** `apply-external-ats`, `fill-form-answers`. **MCP:** playwright.
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
+- **Requires skills:** `fill-and-apply`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
-Live-unverified; labels are illustrative, current snapshots authoritative. Preflight/auth/context, owner authorization, permitted automation, score, duplicates, caps, active hours and pacing still apply. Preserve original discovery job_id and record canonical ATS URL in notes; check both before filling. Custom/lookalike or employer-mismatched hosts require manual review.
+Live-unverified; labels are illustrative, current snapshots authoritative. Readiness/auth/context, owner authorization, permitted automation, score, duplicates, caps, active hours and pacing still apply. Preserve original discovery job_id and record canonical ATS URL in notes; check both before filling. Custom/lookalike or employer-mismatched hosts require manual review.
 
 | Engine / recognized host | Identity and form sequence | Special cases / confirmation |
 |---|---|---|
@@ -46,9 +45,9 @@ Live-unverified; labels are illustrative, current snapshots authoritative. Prefl
 1. Before clicking Apply inspect accessible name/description and any irreversible wording. If uncertain it may submit, treat as final action, not a harmless form-open.
 2. Snapshot active form and build a checklist of label/type/required/options/current value. Resolve confirmed contact facts and exact question mappings; skill-specific years before generic years. Never populate a fact solely because resume parsing guessed it.
 3. Use roles/labels/current refs for type/select actions; no CSS selectors/DOM injection. Wait randomly 3–9s before every action, re-snapshot after conditional changes, read inline errors before continuing. Missing/ambiguous controls → review rather than repeated clicks.
-4. Upload the exact per-job PDF through accessible chooser/MCP upload; snapshot filename and successful attachment. Required unknown facts/legal/consents → open_questions + screenshot, leave tab open and ask. Grounded motivation drafting follows grounded-answer.md only.
+4. Upload the exact per-job PDF through accessible chooser/MCP upload; snapshot filename and successful attachment. Required unknown facts/legal/consents → open_questions + screenshot, leave tab open and ask. Grounded motivation drafting follows 04-fill-and-apply.md only.
 5. At final review verify identity, dates, location, exact resume, approved answers, consent and no unwanted subscriptions. Dry run stops before irreversible action; log dry_run, no reservation.
-6. Real submission: run skills/approval-gate.md; acquire/retain run lock; reload journal/caps and apply all gates; reserve needs_review/submission_uncertain:true, validate, submit once. Do not call duplicate gating on the newly created self-reservation as a new job; recheck limits excluding only your own reservation while retaining other pending entries.
+6. Real submission: run skills/04-fill-and-apply.md; reload logs/applications-log.json and caps, apply all gates, reserve needs_review/submission_uncertain:true, and submit once. Do not call duplicate gating on the newly created self-reservation as a new job; recheck limits excluding only your own reservation while retaining other pending entries.
 7. Verify explicit receipt and job identity. Update same record applied/applied_at/uncertainty false. Timeout or vague confirmation → keep uncertain, do not retry. CAPTCHA/2FA/unexpected login/warning/rate limit aborts the whole run; unknown questions alone block this job.
 8. Journal locally first, optional Notion query-before-create afterward. Never claim applied from an HTTP 200, disabled button, or form disappearance alone.
 

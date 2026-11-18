@@ -1,87 +1,89 @@
 ---
 name: daily-run
-version: "2.1.0"
-description: Load when the owner starts today's run ("/daily-run", "Run today's job run", "ابدأ التقديم"); orchestrates every phase from readiness to the final report.
+version: "3.0.0"
+description: Load when the owner starts a job hunt run (/daily-run, /apply-url, "Run today's job run", "Start applying"); orchestrates pure-Markdown skills 00 through 06 with Playwright MCP, Notion MCP, and strict safety gates.
 triggers:
   - /daily-run
+  - /apply-url <url>
   - Run today's job run
-  - ابدأ التقديم
   - Start applying
 requires_mcp:
   - playwright
 preconditions:
-  - authorized local agent with file, shell and Playwright MCP tools
-  - readiness_state.overall_ready == true and fresh launch consent for this run
-  - no other run holds logs/run.lock
+  - Playwright MCP connected with persistent ./browser-profile
+  - readiness gates audited via skills/00-interrogate-and-onboard.md and fresh launch consent given
 requires_skills:
   - interrogate-and-onboard
-  - mcp-capabilities
   - discover-and-triage
-  - discover-jobs
-  - score-job
-  - approval-gate
-  - log-application
+  - tailor-resume-and-verify
+  - fill-and-apply
+  - outreach-and-interview-prep
+  - log-and-insights
   - meta-self-verification
   - meta-context-compaction
 verification:
-  - npm run validate:logs exits 0 after the final run JSON write
-  - logs/runs/<run_id>.json has status completed or aborted, finished_at set and counts derived from journal dispositions
-  - every reported "applied" job has a recorded receipt quote in its journal notes
-  - the owned run lock was released (logs/run.lock absent or owned by another run)
+  - every enabled platform's logged-in state was verified before discovery
+  - every reported applied job has a fresh browser_snapshot receipt quote in logs/applications-log.json
+  - logs/runs/YYYY-MM-DD.json reflects actual counts and status completed or aborted
 ---
-# Daily Run
+# Daily Run Orchestrator
 
 ## When to Use & Preconditions
 
-Use for a full multi-job run. Do NOT use for a single URL (apply-url), standalone tailoring (tailor-resume) or setup (onboarding-chat).
+Use for `/daily-run` (multi-job discovery and batch triage) or `/apply-url <url>` (single owner-supplied HTTPS URL). Zero scripts or external CLI runners exist—**you (the AI model)** execute each step directly using your file tools, Playwright MCP, and optional Notion MCP.
 
-- **Load when:** /daily-run; Run today's job run; ابدأ التقديم; Start applying.
+- **Load when:** `/daily-run`; `/apply-url <url>`; `Run today's job run`; `Start applying`.
 - **Preconditions (stop if any is false):**
-  - authorized local agent with file, shell and Playwright MCP tools
-  - readiness_state.overall_ready == true and fresh launch consent for this run
-  - no other run holds logs/run.lock
-- **Requires skills:** `interrogate-and-onboard`, `mcp-capabilities`, `discover-and-triage`, `discover-jobs`, `score-job`, `approval-gate`, `log-application`, `meta-self-verification`, `meta-context-compaction`. **MCP:** playwright.
+  - Playwright MCP connected with persistent `./browser-profile`
+  - readiness gates audited via `skills/00-interrogate-and-onboard.md` and fresh launch consent given
+- **Requires skills:** `interrogate-and-onboard`, `discover-and-triage`, `tailor-resume-and-verify`, `fill-and-apply`, `outreach-and-interview-prep`, `log-and-insights`, `meta-self-verification`, `meta-context-compaction`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
-Trigger: owner explicitly starts or schedules a run in an authorized local agent environment. Read AGENTS.md, docs/execution-safety.md and pacing/snapshot/stop partials. Markdown does not launch a runner. New CV/setup requests use skills/00-onboarding-chat.md first, outside this run.
+Follow this exact sequence. Never reorder steps 0–3.
 
-0. Mandatory: skills/00-interrogate-and-onboard.md. Audit all five gates; incomplete/stale/example data HARD BLOCKS the run and starts the focused interview. When complete show current mission briefing and wait for explicit launch confirmation. No browser run before consent.
+0. **Readiness Gatekeeper (`skills/00-interrogate-and-onboard.md`):**
+   - Inspect `context/profile.md`, `context/cv.md`, `context/preferences.yaml`, `context/form-answers.yaml`, `context/targets.yaml`, `config/guardrails.yaml`, and `assets/resume.pdf` (or `context/resume.pdf`).
+   - If any file is missing, unverified, or still contains `.example` placeholders, STOP and interview the user in chat (3–4 questions at a time).
+   - Once all 5 gates pass, show a concise **Mission Briefing** (roles, regions, platforms, warm-up daily cap, minimum score, `dry_run` vs live) and wait for explicit owner launch confirmation.
 
-1. Acquire `npm run run:lock -- acquire`; keep returned owner token for journal/release, never run two agents on one browser profile. Then `npm run preflight`; must exit 0. Failure: write schema-valid aborted run, validate, release owned lock, report and STOP. No browser actions first.
-2. Auth verification: open each DISTINCT enabled platform's auth_check_url, pace/snapshot. For auth_required:true require an explicit account indicator. For public boards false logged-out is allowed. Any unexpected login, CAPTCHA, 2FA, warning or rate limit -> abort entire run and notify, never skip and continue. (A session that expires LATER, mid-run, follows the pause-and-CONTINUE protocol in fill-form-answers.md Trap 5.)
-3. Load owner profile, CV, preferences, targets, owner-verified form answers and guardrails. Use UTC YYYY-MM-DD for run ID/caps and ISO timestamps. Initialize DailyRun with all zero counts, running status, null finished_at and steps; validate. Do not overwrite an existing day's run: append steps/counts under the lock.
-4. Retry at most 25 unsynced Notion records according to log-application.md, only AFTER steps 1–3. Sync errors remain local and do not trigger blind creation.
-4b. Workflow mode (`workflow_mode` in guardrails). `batch_review_first` (default): run skills/discover-and-triage.md — Phase 1 scans `batch_size` new jobs, expands each full JD, scores into Tier A/B/C, skips/logs Tier C, pre-generates per-job CV folders for Tier A; Phase 2 shows the Mission Control table and WAITS for `APPLY ALL GREEN` / `APPLY 1,3,5`. Only selected jobs continue to steps 6–7, each still through applicationDecision and approval-gate.md. `direct_auto`: steps 5–7 one job at a time as below.
-5. Each target uses discover-jobs.md and its platform/ATS playbook. For each canonical job check journal, score honestly, route below 5 skipped, 5 to below minimum review, >=7 eligible. Log every disposition.
-6. Application loop: run applicationDecision from schemas/index.ts with max_applications_per_day lowered to agentDailyCap from schemas/agent-policy.ts using validated real runs. approval_required allows safe form preparation only, then approval-gate.md; never Submit. Missing platform cap, unknown facts, existing job or manual_apply overrides score. Re-read logs immediately before each submit. Count unresolved submission reservations against daily/platform caps. Stop when daily cap reached; skip capped platform.
-7. Eligible internal forms use apply-easy-apply.md; external ATS apply-external-ats.md. Always run approval-gate.md and pass job-bound approval/essay context to applicationDecision before Submit. Reserve needs_review/submission_uncertain entry using npm run journal -- ENTRY_JSON_PATH LOCK_TOKEN; validate. Only after final receipt update SAME record to applied with applied_at; uncertainty stays review. Dry run never submits or reserves a submission.
-8. End: counts derive from this run's actual journal dispositions; dry_run != applied. Finish JSON, validate, upsert Notion Daily Runs by run_id. Produce weekly/monthly report when due. Release owned lock in finally, including aborted paths. Report counts, review links/questions, errors and blockers. Never say applied without receipt or synced without confirmation.
+1. **Auth Verification (Playwright MCP):**
+   - Open each enabled target's `auth_check_url` with 3–9 s pacing and take a `browser_snapshot`.
+   - For `auth_required: true`, confirm an observable signed-in account indicator.
+   - If an unexpected login wall, CAPTCHA, 2FA challenge, rate-limit banner, or account warning appears, STOP the entire run immediately, log `aborted` in `logs/runs/YYYY-MM-DD.json`, and notify the user.
 
-Notion is optional: if storage_adapters.notion_mcp:false, skip sync and retry work entirely; keep local records/exports. If enabled, token/database access must be verified. Local JSON is always primary.
+2. **Load Context & Check Caps:**
+   - Read `context/profile.md`, `context/cv.md`, `context/preferences.yaml`, `context/form-answers.yaml`, `config/guardrails.yaml`, and `logs/applications-log.json`.
+   - Check active hours (`active_hours` in `config/guardrails.yaml`), today's UTC date (`YYYY-MM-DD`), distinct run-date warm-up cap (max 5/day on the first 3 distinct non-aborted run dates), and `max_per_platform`.
+   - If `storage_adapters.notion_mcp: true`, retry any unsynced entries in `logs/applications-log.json` (up to 25) via query-before-create in Notion MCP.
 
-Before each action and Submit enforce warm-up effective cap, local active hours and 60s cooldown after max_consecutive_actions. Before eligible applications run skills/tailor-resume.md when enabled.
+3. **Discover, Filter Ghosts, Score & Mission Control (`skills/02-discover-and-triage.md`):**
+   - For `/apply-url <url>`: skip broad discovery and inspect only that single URL.
+   - Otherwise, scan enabled targets (or public Greenhouse/Lever/Ashby JSON feeds) up to `batch_size`, click `"See more"` on every JD, filter out closed/expired/>30-day ghost jobs (`logs/skipped-jobs.json` with `reason: "ghost_or_expired"`), score 0–10 against `context/cv.md`, and present the **Mission Control Table** in chat.
+   - Wait for `APPLY ALL GREEN` or `APPLY 1,3,...` (in `batch_review_first` mode) before opening any application form.
 
+4. **Tailor & Fact-Check (`skills/03-tailor-resume-and-verify.md`):**
+   - Build an evidence map from `context/profile.md`, tailor `templates/ats-resume-template.html`, run the AI Fact-Check Guard (zero unverified metrics/employers/tools) and Anti-AI Slop filter, and save/print `logs/resumes/<company>-<role>-<job-id>/resume.pdf` via Playwright MCP.
 
-Run-date warm-up: inspect schema-valid real logs/runs/*.json (never demo). Count DISTINCT non-aborted authorized dates through today, including the current date once; do not count duplicate files, future dates or aborted preflight probes. On the first three such dates cap at 5 (or lower configured/calendar/platform cap). Afterwards retain existing progressive calendar warm-up and maximum; idle days alone cannot advance this gate. Set started_on once at the first authorized run with owner-approved setup, never reset it. Recompute agentDailyCap before every possible submission.
+5. **Fill Form & Approval Gate (`skills/04-fill-and-apply.md`):**
+   - Upload the tailored PDF **FIRST**, wait 4 s, take a fresh `browser_snapshot`, fill verified answers and `eeo_and_compliance_defaults`, pause on any unknown question, and stop before Submit to ask for exact `APPROVE` in chat (or stop cleanly if `dry_run: true`).
+   - Right after any Submit click, run `skills/meta-self-verification.md` before claiming `applied`.
 
-Read each complete JD for at least 10 seconds and longer as needed, in addition to 3–9-second action waits. Motivation drafts use grounded-answer.md; missing factual/legal answers remain blocking. These waits limit volume, not conceal automation or guarantee against restrictions. Never use stealth/bypass.
+6. **Outreach Drafts & Interview Dossier (`skills/05-outreach-and-interview-prep.md`):**
+   - Save `interview-dossier.md` (archived full JD + emphasized evidence + top 5 interview questions) in `logs/resumes/<company>-<role>-<job-id>/`.
+   - For `Score >= 8` jobs, save a `<= 75`-word draft-only `outreach-draft.md`. For email-only postings, save `email-draft.md` without sending.
 
-Meta-skills during the run: after every Submit click run skills/meta-self-verification.md before logging applied; after every 3–5 applications (or when the conversation grows long) run skills/meta-context-compaction.md; on stale refs, hidden elements or lazy lists use skills/meta-dom-recovery.md; when a form refuses to advance or submit use skills/meta-structured-debugging.md.
-
+7. **Log & Compact (`skills/06-log-and-insights.md` & `skills/meta-context-compaction.md`):**
+   - Write every disposition to `logs/applications-log.json`, update `logs/runs/YYYY-MM-DD.json`, sync to Notion MCP if enabled, and checkpoint `logs/runs/current-session-checkpoint.json` every 3–5 applications.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 
 ### Anti-patterns
-- ❌ Opening a job board before preflight exits 0 → ✅ always lock → preflight → auth → context, in that order.
-- ❌ Reporting "5 applied" from memory → ✅ recount from logs/applications-log.json entries with status applied and a receipt in notes.
-- ❌ Treating the batch `APPLY 1,3` reply as Submit approval → ✅ it only opens forms; approval-gate.md still decides each Submit.
-- ❌ Leaving the lock behind after an abort → ✅ release your own lock in finally, never someone else's.
+- ❌ Opening job boards before auditing `context/` and getting explicit launch consent → ✅ always run `skills/00-interrogate-and-onboard.md` first.
+- ❌ Treating `APPLY 1,3` in the Mission Control table as final Submit approval → ✅ `skills/04-fill-and-apply.md` still gates every Submit click.
+- ❌ Claiming `"Application submitted"` without a fresh post-click confirmation receipt → ✅ run `skills/meta-self-verification.md`.
 
 ### Self-verification check (before reporting this step complete)
-- [ ] npm run validate:logs exits 0 after the final run JSON write
-- [ ] logs/runs/<run_id>.json has status completed or aborted, finished_at set and counts derived from journal dispositions
-- [ ] every reported "applied" job has a recorded receipt quote in its journal notes
-- [ ] the owned run lock was released (logs/run.lock absent or owned by another run)
-
-Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.
+- [ ] every enabled platform's logged-in state was verified before discovery
+- [ ] every reported `applied` job has a fresh `browser_snapshot` receipt quote in `logs/applications-log.json`
+- [ ] `logs/runs/YYYY-MM-DD.json` reflects actual counts and status `completed` or `aborted`

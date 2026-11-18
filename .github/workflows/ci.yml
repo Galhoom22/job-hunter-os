@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -23,20 +21,36 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Validate pure-Markdown skills, registry, and JSON configs
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            const manifest = JSON.parse(fs.readFileSync("skills/skills-manifest.json", "utf8"));
+            JSON.parse(fs.readFileSync("mcp/mcp.template.json", "utf8"));
+            const registry = fs.readFileSync("skills/REGISTRY.md", "utf8");
+            const sections = [
+              "## When to Use & Preconditions",
+              "## Deterministic Step-by-Step Execution",
+              "## Anti-Patterns (What NEVER To Do) & Self-Verification Check"
+            ];
+            const required = ["name", "version", "description", "triggers", "requires_mcp", "preconditions", "requires_skills", "verification"];
+            for (const entry of manifest.skills) {
+              if (!fs.existsSync(entry.path)) throw new Error("Missing skill: " + entry.path);
+              if (!registry.includes(entry.path)) throw new Error("Missing from REGISTRY.md: " + entry.path);
+              const text = fs.readFileSync(entry.path, "utf8");
+              if (!text.startsWith("---")) throw new Error("Missing frontmatter: " + entry.path);
+              const fmEnd = text.indexOf("\n---", 3);
+              if (fmEnd < 0) throw new Error("Unterminated frontmatter: " + entry.path);
+              const fm = text.slice(0, fmEnd);
+              for (const k of required) if (!new RegExp("^" + k + ":", "m").test(fm)) throw new Error(entry.path + " missing key " + k);
+              const body = text.slice(fmEnd);
+              for (const s of sections) if (!body.includes(s)) throw new Error(entry.path + " missing section " + s);
+            }
+            console.log("Validated " + manifest.skills.length + " pure-Markdown skills, REGISTRY.md, and mcp.template.json.");
+          '
 
-      - name: Validate modular skills & registry
-        run: node bin/job-hunter.mjs skills validate
-
-      - name: Run CLI & skills tests
-        run: npm run test:cli
-
-      - name: Run Vitest unit & policy tests
-        run: npm test
-
-      - name: Run agent rules tests
-        run: npm run test:agent-rules
-
-      - name: Validate demo logs
-        run: npm run validate:logs -- --demo
+      - name: Verify Lovable minimal placeholder builds cleanly
+        run: |
+          bun install
+          bun run build

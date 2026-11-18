@@ -12,9 +12,9 @@ preconditions:
   - the action being verified has actually been attempted in this session
   - a fresh browser_snapshot (or file read / command output) can be taken now
 requires_skills:
-  - log-application
+  - log-and-insights
 verification:
-  - a quoted confirmation string or state observed AFTER the action is stored in the journal notes
+  - a quoted confirmation string or state observed AFTER the action is stored in logs/applications-log.json notes
   - the evidence names the same company/role (or profile section/post text) as the action
   - claims without evidence were reported as unverified/needs_review, not as done
 ---
@@ -22,13 +22,13 @@ verification:
 
 ## When to Use & Preconditions
 
-Use every time you are about to say, write or log that something succeeded. "I clicked Submit" is an action; "Application submitted" is a claim that needs proof. Do not use it to decide WHETHER to submit — that is skills/approval-gate.md.
+Use every time you are about to say, write or log that something succeeded. "I clicked Submit" is an action; "Application submitted" is a claim that needs proof. Do not use it to decide WHETHER to submit — that is `skills/04-fill-and-apply.md`.
 
 - **Load when:** verify-before-complete; right after a Submit / Save / Post / Send click; before writing status applied or reporting success in chat.
 - **Preconditions (stop if any is false):**
   - the action being verified has actually been attempted in this session
   - a fresh snapshot, file read or command output can be taken now
-- **Requires skills:** `log-application`. **MCP:** playwright.
+- **Requires skills:** `log-and-insights`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
@@ -42,15 +42,15 @@ Use every time you are about to say, write or log that something succeeded. "I c
 | Profile section updated | Re-opened public/profile view shows text identical to the approved text | Text inside the edit modal; a "Saved" toast alone |
 | Post published | Post visible on the feed/profile with identical text, plus its URL | The editor closed |
 | Message sent | Message bubble in the thread with identical text and the right recipient | The Send button greyed out |
-| Record logged | `npm run validate:logs` exits 0 and re-reading the entry shows the new status | The write command ran |
+| Record logged | Re-reading `logs/applications-log.json` shows valid JSON with the new status and unique `job_id` | Intending to write it later |
 | Notion synced | MCP response returned a page id AND a query by Job ID finds exactly one page | No error was printed |
 
 3. **Check identity.** The evidence must name the same company and role (or same profile section/post text). A generic "Thanks!" page on a different employer domain is not proof.
-4. **Record the proof.** Append to the SAME journal entry's `notes` (existing field; never invent new fields): `receipt: "<quoted text, max 160 chars>" | url: <final URL> | observed_at: <ISO time>`. Save a screenshot to `logs/screenshots/<safe-job-id>-receipt.png` when one can be taken without personal data in view. Then write via `npm run journal` and run `npm run validate:logs`.
+4. **Record the proof.** Append to the SAME entry's `notes` in `logs/applications-log.json`: `receipt: "<quoted text, max 160 chars>" | url: <final URL> | observed_at: <ISO time>`. Save a screenshot to `logs/screenshots/<safe-job-id>-receipt.png` when one can be taken without personal data in view.
 5. **Decide the status from the evidence only.**
-   - Evidence found → `applied`, `applied_at` set, `submission_uncertain:false`.
-   - No evidence, or ambiguous (timeout, blank page, network error) → keep `needs_review` with `submission_uncertain:true`; never click Submit again; tell the owner exactly what was and was not seen.
-   - Validation errors visible instead → nothing was submitted; go to skills/meta-structured-debugging.md.
+   - Evidence found → `applied`, `applied_at` set, `submission_uncertain: false`.
+   - No evidence, or ambiguous (timeout, blank page, network error) → keep `needs_review` with `submission_uncertain: true`; never click Submit again; tell the owner exactly what was and was not seen.
+   - Validation errors visible instead → nothing was submitted; go to `skills/meta-structured-debugging.md`.
 6. **Report in chat with the same words as the evidence:** "Submitted — the page showed 'Thank you for applying to Acme' (screenshot saved)", or "Clicked Submit, but no confirmation appeared; marked for your review".
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check

@@ -8,10 +8,9 @@ triggers:
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
 requires_skills:
-  - discover-jobs
-  - score-job
+  - discover-and-triage
 verification:
   - nationality/residency/language requirements captured verbatim
   - location matched against confirmed regions
@@ -25,8 +24,8 @@ Use for MENA boards and region-specific rules.
 
 - **Load when:** target.platform in wuzzuf/bayt; MENA region search.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
-- **Requires skills:** `discover-jobs`, `score-job`. **MCP:** playwright.
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
+- **Requires skills:** `discover-and-triage`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
@@ -47,7 +46,7 @@ Live-unverified. Follow shared daily-run gates, 3–9s waits and fresh accessibi
 Use linkedin.md with explicitly chosen countries/cities (Egypt, UAE, Saudi Arabia or other owner choices—not automatic regional assumptions). Past 24h and remote/hybrid filters must be verified in snapshot. Arabic/English title variants come from confirmed preferences. Do not infer GCC authorization from Egypt residency or “remote” wording.
 
 ### Shared review/submission
-Pause to read descriptions, score honest fit and check duplicate posting/ATS URL. Motivation may use grounded-answer.md in the form's requested language with identical factual meaning. Unknown legal/factual answers: screenshot, open_questions, needs_review, leave tab open, ask in chat. Dry run no Submit; real gate/reservation/receipt as shared skills. CAPTCHA, 2FA, warning or rate limit aborts the entire run; a mid-run login wall pauses per fill-form-answers.md Trap 5 and aborts if unresolved.
+Pause to read descriptions, score honest fit and check duplicate posting/ATS URL. Motivation may use 04-fill-and-apply.md in the form's requested language with identical factual meaning. Unknown legal/factual answers: screenshot, open_questions, needs_review, leave tab open, ask in chat. Dry run no Submit; real gate/reservation/receipt as shared skills. CAPTCHA, 2FA, warning or rate limit aborts the entire run; a mid-run login wall pauses per 04-fill-and-apply.md Trap 5 and aborts if unresolved.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

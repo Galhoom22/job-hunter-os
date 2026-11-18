@@ -1,7 +1,7 @@
 ---
-description: Safely score, tailor and process one owner-supplied job URL
+description: Score, tailor, and safely process one owner-supplied HTTPS job URL
 ---
 
-Read AGENTS.md and skills/apply-url.md. Execute successful preflight, auth verification and context loading before opening the job. One URL only; no discovery expansion. Shared locks, dry run, truthful facts, scoring, caps and receipt rules apply. Unknown facts or manual flows require review, not immediate submission.
-
-Mandatory Step 0 for application requests: read skills/00-interrogate-and-onboard.md, audit the five readiness gates, hard-block incomplete/placeholders, interview in 3–4-question batches, and obtain fresh mission-briefing launch confirmation. This precedes and preserves lock/preflight → auth → context. Setup/Check my folder uses the same interview but does not launch applications. Other commands do not grant application permission.
+1. Read `AGENTS.md` and `skills/REGISTRY.md` first.
+2. Follow `skills/00-interrogate-and-onboard.md` (5 readiness gates + fresh launch consent), then verify Playwright auth and load `context/` + `config/guardrails.yaml`.
+3. Inspect only the supplied HTTPS job URL via `skills/02-discover-and-triage.md` (ghost check + score), tailor via `skills/03-tailor-resume-and-verify.md`, fill/gate via `skills/04-fill-and-apply.md`, save `interview-dossier.md` via `skills/05-outreach-and-interview-prep.md`, and log via `skills/06-log-and-insights.md`.

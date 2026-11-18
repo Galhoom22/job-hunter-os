@@ -1,6 +1,6 @@
 # Community platform registry
 
-Playbooks exist; live UI compatibility is unverified until tested against an authorized session. New regions use skills/platforms/_template.md.
+Playbooks exist below; live UI compatibility depends on each platform's current accessibility tree and requires an authorized session. New boards use [`skills/platforms/_template.md`](../skills/platforms/_template.md).
 
 - bayt: [playbook](../skills/platforms/bayt.md)
 - builtin: [playbook](../skills/platforms/builtin.md)
@@ -15,20 +15,17 @@ Playbooks exist; live UI compatibility is unverified until tested against an aut
 - wuzzuf: [playbook](../skills/platforms/wuzzuf.md)
 - ziprecruiter: [playbook](../skills/platforms/ziprecruiter.md)
 
-## ATS
+## ATS engines
 - ashby: [playbook](../skills/ats/ashby.md)
 - breezyhr: [playbook](../skills/ats/breezyhr.md)
 - greenhouse: [playbook](../skills/ats/greenhouse.md)
 - lever: [playbook](../skills/ats/lever.md)
 - smartrecruiters: [playbook](../skills/ats/smartrecruiters.md)
-- taleo: [playbook](../skills/ats/taleo.md) — manual only
-- workday: [playbook](../skills/ats/workday.md) — manual only
-
+- taleo: [playbook](../skills/ats/taleo.md) — manual fallback only
+- workday: [playbook](../skills/ats/workday.md) — manual fallback only
 
 ## Grouped playbooks
-- [Remote boards](../skills/platforms/remote-boards.md): existing remote boards plus DailyRemote discovery/manual review (other, cap 0).
+- [Remote boards](../skills/platforms/remote-boards.md): WeWorkRemotely, RemoteOK, Welcome to the Jungle, BuiltIn, plus DailyRemote manual review.
 - [Global boards](../skills/platforms/global-boards.md): Indeed, Glassdoor, Dice, ZipRecruiter.
 - [MENA boards](../skills/platforms/mena-boards.md): Wuzzuf, Bayt, LinkedIn MENA.
-- [ATS engines](../skills/platforms/ats-engines.md): existing ATS plus Workable manual-only (other, cap 0).
-
-Documentation coverage is not an enabled automation adapter. DailyRemote/Workable remain manual until contract keys, explicit caps, target examples and safety tests are reviewed. All playbooks are live-unverified unless an actual authorized test is recorded.
+- [ATS engines](../skills/platforms/ats-engines.md): Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR, Workable (manual), Workday/Taleo (manual).

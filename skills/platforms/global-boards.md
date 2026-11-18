@@ -7,13 +7,12 @@ triggers:
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
 requires_skills:
-  - discover-jobs
-  - score-job
+  - discover-and-triage
 verification:
   - stable posting IDs captured per board
-  - quick-apply buttons treated as final submits behind approval-gate
+  - quick-apply buttons treated as final submits behind fill-and-apply
   - sponsored/duplicate listings deduplicated by canonical URL
 ---
 # Global boards
@@ -24,12 +23,12 @@ Use for these four boards; board-specific files add details.
 
 - **Load when:** target.platform in indeed/glassdoor/dice/ziprecruiter.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
-- **Requires skills:** `discover-jobs`, `score-job`. **MCP:** playwright.
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
+- **Requires skills:** `discover-and-triage`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
-Live-unverified. Shared preflight/auth/context and platform permission first; fresh snapshots/refs, random 3–9s waits and 10+ second description-reading pauses. Do not automate signup, login challenges, subscriptions or third-party OAuth.
+Live-unverified. Readiness gates, auth verification and context loading and platform permission first; fresh snapshots/refs, random 3–9s waits and 10+ second description-reading pauses. Do not automate signup, login challenges, subscriptions or third-party OAuth.
 
 | Platform | Search / identity | Form distinctions |
 |---|---|---|
@@ -43,7 +42,7 @@ Live-unverified. Shared preflight/auth/context and platform permission first; fr
 2. Open full JD, extract employer/title/location/restrictions/date/description and canonical identity. Ratings, estimated pay or promoted labels are separately attributed; unknown fields remain unknown.
 3. Score vs verified CV and exclusions. Check journal and canonical ATS destination for duplicates across platforms. Observe bounded results and caps; unsupported identity/form → review.
 4. Inspect Apply semantics before clicking; a possible one-click submission invokes final gate first. External recognized host → ATS dispatcher. No automatic account creation, messaging or shared profile modifications.
-5. Resolve fields through fill-form-answers.md/grounded-answer.md and upload exact verified per-job PDF. Unknown factual/legal fields or cached-resume mismatch → needs_review, local screenshot, open tab and chat question.
+5. Resolve fields through 04-fill-and-apply.md/04-fill-and-apply.md and upload exact verified per-job PDF. Unknown factual/legal fields or cached-resume mismatch → needs_review, local screenshot, open tab and chat question.
 6. Only a permitted final submission, after reservation and fresh checks, may occur once. Verify actual receipt/role, keep uncertain outcome reserved, journal locally and optionally sync Notion. Security/login/rate-limit banners abort the run.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
@@ -55,7 +54,7 @@ Live-unverified. Shared preflight/auth/context and platform permission first; fr
 
 ### Self-verification check (before reporting this step complete)
 - [ ] stable posting IDs captured per board
-- [ ] quick-apply buttons treated as final submits behind approval-gate
+- [ ] quick-apply buttons treated as final submits behind fill-and-apply
 - [ ] sponsored/duplicate listings deduplicated by canonical URL
 
 Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.

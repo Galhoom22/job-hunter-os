@@ -7,9 +7,9 @@ triggers:
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
 requires_skills:
-  - log-application
+  - log-and-insights
 verification:
   - apply_type manual_apply and status needs_review logged with the canonical posting ID
   - no account created, no terms accepted, no Submit clicked
@@ -22,8 +22,8 @@ Use to hand Taleo jobs to the owner.
 
 - **Load when:** Taleo hostname detected.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
-- **Requires skills:** `log-application`. **MCP:** playwright.
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
+- **Requires skills:** `log-and-insights`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 

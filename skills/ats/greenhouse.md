@@ -4,16 +4,14 @@ version: "1.1.0"
 description: Load when an application's final HTTPS hostname is boards.greenhouse.io / job-boards.greenhouse.io (Greenhouse) and the hosted form must be filled, reviewed and submitted safely.
 triggers:
   - final hostname boards.greenhouse.io / job-boards.greenhouse.io
-  - apply-external-ats routes to greenhouse
+  - fill-and-apply routes to greenhouse
 requires_mcp:
   - playwright
 preconditions:
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
   - employer and role on the ATS page match the posting
 requires_skills:
-  - apply-external-ats
-  - fill-form-answers
-  - approval-gate
+  - fill-and-apply
 verification:
   - greenhouse:<id> or ATS URL stored in notes for duplicate checks
   - resume upload verified by filename after the auto-parse wait
@@ -25,21 +23,21 @@ verification:
 
 Use only on Greenhouse-hosted forms.
 
-- **Load when:** final hostname boards.greenhouse.io / job-boards.greenhouse.io; apply-external-ats routes to greenhouse.
+- **Load when:** final hostname boards.greenhouse.io / job-boards.greenhouse.io; fill-and-apply routes to greenhouse.
 - **Preconditions (stop if any is false):**
-  - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
+  - readiness gates passed, auth verified via Playwright MCP, and context loaded
   - employer and role on the ATS page match the posting
-- **Requires skills:** `apply-external-ats`, `fill-form-answers`, `approval-gate`. **MCP:** playwright.
+- **Requires skills:** `fill-and-apply`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
 1. Confirm final HTTPS hostname is boards.greenhouse.io / job-boards.greenhouse.io, matching the employer and the posting; lookalike/mismatched domains go to review. Use owner-approved board URLs, never submit to these template homepages.
 2. Open the employer job board, snapshot department headings and job links. Use gh_jid or the job URL ID. On the job page open Apply for this job and snapshot the application form; hidden anti-bot fields are never touched.
 3. Capture employer, role, location, full requirements and stable greenhouse:id. For redirects retain original discovery job_id; store ATS URL in notes to avoid duplicate submissions across boards.
-4. Snapshot form before each interaction; use labels/roles/refs with random 3–9 second pacing. Upload through fill-form-answers.md. Verify resume filename and only owner-approved contact/legal answers.
+4. Snapshot form before each interaction; use labels/roles/refs with random 3–9 second pacing. Upload through 04-fill-and-apply.md. Verify resume filename and only owner-approved contact/legal answers.
 5. Unknown required field, account requirement, CAPTCHA, 2FA or inaccessible upload is NOT a reason to invent answers or inject DOM code. Unknown field -> review; CAPTCHA/2FA -> abort entire run.
 6. Next/Continue can be irreversible: inspect accessible text. Before any submitting action reserve journal, validate and re-read caps/deduplication. dry_run stops before submit. Verify confirmation URL/text and receipt before updating applied; uncertain -> needs_review.
-7. Use log-application.md for local-first write and Notion upsert. Never retry a timed-out submission automatically.
+7. Use 06-log-and-insights.md for local-first write and Notion upsert. Never retry a timed-out submission automatically.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 
