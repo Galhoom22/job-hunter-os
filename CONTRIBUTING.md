@@ -19,4 +19,4 @@
 
 ## Privacy & safety
 - Real browser testing needs owner-authorized sessions and platform permission. No stealth plugins, CAPTCHA/2FA solving, or unapproved LinkedIn writes.
-- Never commit real CVs, contacts, `logs/`, `browser-profile/`, tokens, screenshots, or `.env`. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+- Never commit real CVs, contacts, `logs/`, `browser-profile/`, tokens, screenshots, or `.env`. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md), and adhere to our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).

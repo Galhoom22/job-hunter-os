@@ -7,6 +7,7 @@
 [![Playwright MCP](https://img.shields.io/badge/Browser-Playwright_MCP-167d60)](mcp/README.md)
 [![Notion MCP optional](https://img.shields.io/badge/Tracking-Notion_MCP_optional-356ac3)](mcp/mcp.template.json)
 [![Multi-IDE ready](https://img.shields.io/badge/IDE-Antigravity_%7C_Cursor_%7C_Claude_%7C_Windsurf_%7C_Cline-167d60)](docs/chat-commands.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 There is **no custom CLI, no Node/Python automation script, no browser extension, and no backend server** executing your job search. **The AI model inside your IDE is the runtime engine.** It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), interviews you in chat, drives Chrome via **Playwright MCP** using accessibility snapshots, tailors HTML/PDF resumes, fills forms safely, and logs everything to local JSON (plus optional **Notion MCP**).
 
@@ -262,4 +263,12 @@ Reply APPLY ALL GREEN, APPLY 1, or tell me which CV to tweak before I open any f
 | [`mcp/`](mcp/mcp.template.json) | Canonical Playwright & optional Notion MCP JSON template |
 | [`docs/`](docs/repository-audit.md) | Chat command matrix, safety rules, platform registry, and repository audit |
 
-Licensed under [MIT](LICENSE).
+---
+
+## 9. Contributing & Open-Source Governance
+
+Contributions for new regional job-board playbooks, ATS engine workflows, resume template refinements, and multi-IDE improvements are welcome!
+
+- Read [`CONTRIBUTING.md`](CONTRIBUTING.md) and use [`skills/platforms/_template.md`](skills/platforms/_template.md) for new boards.
+- Follow our [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) and [`SECURITY.md`](SECURITY.md) guidelines (never commit personal data, PDFs, logs, or tokens).
+- Licensed under the [MIT License](LICENSE) — Copyright (c) 2026 Reda Salem (`redasalem`).

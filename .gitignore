@@ -38,8 +38,10 @@ browser-profile/
 .mcp.json
 .cursor/mcp.json
 assets/*.pdf
+context/*.pdf
 context/*
 !context/*.example
+!context/DROP_YOUR_FILES_HERE.md
 logs/
 
 # Explicit personal generated artifacts (also covered by logs/)
