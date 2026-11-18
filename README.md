@@ -103,6 +103,9 @@ To keep the AI model fast and prevent blowing up the context window with 35+ pla
    - [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) — **Upload-First Form Filling, EEO/GDPR Defaults & Approval Gate**: uploads PDF first, waits 4 s, handles hidden dropzones & autocomplete, applies `eeo_and_compliance_defaults` (`Decline to self-identify`, `gdpr_privacy_consent: true`), pauses on unknown questions, and requires exact `APPROVE` before Submit.
    - [`skills/05-outreach-and-interview-prep.md`](skills/05-outreach-and-interview-prep.md) — **Outreach, Cold Email & Interview Dossier**: saves `interview-dossier.md` (archived full JD + top 5 prep questions), `<= 75`-word draft-only `outreach-draft.md` for `Score >= 8`, and `email-draft.md` for email-apply posts.
    - [`skills/06-log-and-insights.md`](skills/06-log-and-insights.md) — **Local JSON + Optional Notion Sync & Weekly Reports**: maintains `logs/applications-log.json`, `logs/skipped-jobs.json`, `logs/runs/YYYY-MM-DD.json`, and `/weekly-report` skill-gap analysis.
+   - [`skills/07-persona-switcher.md`](skills/07-persona-switcher.md) — **Multi-Persona Career Switcher**: maintains multiple tracks under `context/personas/` (e.g., Fullstack, AI Agent Engineer, B2B Contractor) and switches target roles & rate floors on demand.
+   - [`skills/08-follow-up-radar.md`](skills/08-follow-up-radar.md) — **7-Day Follow-Up Radar**: flags `applied` jobs `>= 7 days` old and saves `<= 75`-word draft-only `followup-draft.md` messages.
+   - [`skills/09-offer-negotiator.md`](skills/09-offer-negotiator.md) — **Salary & Offer Negotiator**: benchmarks recruiter rate checks and job offers against your floor and drafts grounded `DRAFT_ONLY` counter/clarification replies.
 3. **Four Agent Reliability Meta-Skills:**
    - [`skills/meta-self-verification.md`](skills/meta-self-verification.md) — Forbids reporting `"applied"` or `"updated"` without a fresh post-click `browser_snapshot` receipt quote.
    - [`skills/meta-dom-recovery.md`](skills/meta-dom-recovery.md) — Recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded job lists.
@@ -258,22 +261,59 @@ Reply APPLY ALL GREEN, APPLY 1, or tell me which CV to tweak before I open any f
 
 ---
 
-## 8. Repository Map
+## 8. 🤖 Supported AI Models & 15+ AI Apps Matrix
+
+Every major AI IDE, terminal agent, desktop client, and LLM family works out of the box against the same canonical [`AGENTS.md`](AGENTS.md) + [`skills/REGISTRY.md`](skills/REGISTRY.md):
+
+### Native AI Apps, IDEs & CLI Clients
+
+| Client / App | Type | Native Entrypoint | MCP / Fallback |
+|---|---|---|---|
+| **Antigravity** | AI IDE | [`AGENTS.md`](AGENTS.md) + [`.agent/workflows/`](.agent/workflows/daily-run.md) | `mcp/mcp.template.json` |
+| **Google Gemini CLI** | Terminal CLI | [`GEMINI.md`](GEMINI.md) -> `AGENTS.md` | `mcp/mcp.template.json` |
+| **Claude Code** | Terminal CLI | [`CLAUDE.md`](CLAUDE.md) + [`commands/`](commands/daily-run.md) | `mcp/mcp.template.json` |
+| **Claude Desktop** | Desktop App | [`CLAUDE.md`](CLAUDE.md) | [`mcp/claude_desktop_config.example.json`](mcp/claude_desktop_config.example.json) |
+| **OpenAI Codex CLI** | Terminal CLI | [`AGENTS.md`](AGENTS.md) | `mcp/mcp.template.json` |
+| **ChatGPT / Claude / Gemini Web** | Desktop / Web Chat | [`adapters/apps/chatgpt-and-web-chats.md`](adapters/apps/chatgpt-and-web-chats.md) | [`skills/fallback-no-mcp.md`](skills/fallback-no-mcp.md) |
+| **Cursor** | AI IDE | [`.cursor/rules/job-hunter.mdc`](.cursor/rules/job-hunter.mdc) | `mcp/mcp.template.json` |
+| **Windsurf** | AI IDE | [`.windsurfrules`](.windsurfrules) | `mcp/mcp.template.json` |
+| **Trae** | AI IDE | [`.trae/rules/project_rules.md`](.trae/rules/project_rules.md) | `mcp/mcp.template.json` |
+| **Zed** | Code Editor AI | [`.rules`](.rules) | `mcp/mcp.template.json` |
+| **GitHub Copilot** | IDE Agent | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) + [`.github/prompts/daily-run.prompt.md`](.github/prompts/daily-run.prompt.md) | VS Code MCP |
+| **Cline** | VS Code Agent | [`.clinerules`](.clinerules) | `mcp/mcp.template.json` |
+| **Roo Code** | VS Code Agent | [`.roo/rules/job-hunter.md`](.roo/rules/job-hunter.md) | `mcp/mcp.template.json` |
+| **Block Goose** | Terminal Agent | [`.goosehints`](.goosehints) | `mcp/mcp.template.json` |
+| **Aider** | Terminal CLI | [`.aider.conf.yml`](.aider.conf.yml) (`read: [AGENTS.md, skills/REGISTRY.md]`) | Text / file edits |
+| **Continue.dev** | IDE Agent | [`.continue/rules/job-hunter.md`](.continue/rules/job-hunter.md) | `mcp/mcp.template.json` |
+
+### Model-Specific Execution Tuning Guides (`adapters/models/`)
+
+| Model Family | Tuning Guide | Key Optimization |
+|---|---|---|
+| **Anthropic Claude** (Sonnet / Opus) | [`adapters/models/claude.md`](adapters/models/claude.md) | Strict YAML skill routing + XML `<pre_submit_check>` scratchpad |
+| **Google Gemini** (Pro / Flash) | [`adapters/models/gemini.md`](adapters/models/gemini.md) | Multimodal screenshot cross-check + native PDF inspection |
+| **OpenAI** (GPT / o-series / Codex) | [`adapters/models/openai.md`](adapters/models/openai.md) | Deterministic JSON/YAML log contracts + sequential paced actions |
+| **DeepSeek / Qwen / Local Ollama** | [`adapters/models/deepseek-qwen-local.md`](adapters/models/deepseek-qwen-local.md) | Ultra-lean 3-file context budget + explicit `ref` ID quoting |
+
+---
+
+## 9. Repository Map
 
 | Path | Purpose |
 |---|---|
-| [`AGENTS.md`](AGENTS.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
-| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, core `00–06` playbooks, 4 `meta-*` skills, 16 platform playbooks, and 7 ATS playbooks |
-| [`.agent/workflows/`](.agent/workflows/daily-run.md), [`commands/`](commands/daily-run.md) | Portable slash-command prompts for Antigravity, Claude Code, Cursor, Windsurf, Cline, and Copilot |
-| [`context/`](context/DROP_YOUR_FILES_HERE.md) | Synthetic `.example` templates (`profile.md.example`, `form-answers.yaml.example`, `targets.yaml.example`, etc.); real files stay private |
+| [`AGENTS.md`](AGENTS.md), [`GEMINI.md`](GEMINI.md), [`CLAUDE.md`](CLAUDE.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
+| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, core `00–09` playbooks, 4 `meta-*` skills, 16 platform playbooks, 7 ATS playbooks, and `fallback-no-mcp.md` |
+| [`adapters/`](adapters/models/claude.md) | Model-specific tuning guides (`adapters/models/`) and Desktop/Web chat adapters (`adapters/apps/`) |
+| [`.agent/workflows/`](.agent/workflows/daily-run.md), [`commands/`](commands/daily-run.md), [`.github/prompts/`](.github/prompts/daily-run.prompt.md) | Portable slash-command & prompt entrypoints across 15+ AI apps |
+| [`context/`](context/DROP_YOUR_FILES_HERE.md) | Synthetic `.example` templates (`profile.md.example`, `form-answers.yaml.example`, `targets.yaml.example`, etc.); real files & `personas/` stay private |
 | [`config/guardrails.yaml`](config/guardrails.yaml) | Default `dry_run: true`, warm-up caps, active hours, 3–9 s pacing, and `batch_review_first` settings |
 | [`templates/`](templates/ats-resume-template.html) | Clean single-column ATS resume & cover-letter HTML templates |
-| [`mcp/`](mcp/mcp.template.json) | Canonical Playwright & optional Notion MCP JSON template |
+| [`mcp/`](mcp/mcp.template.json) | Canonical Playwright & optional Notion MCP JSON templates (`mcp.template.json`, `claude_desktop_config.example.json`) |
 | [`docs/`](docs/repository-audit.md) | Chat command matrix, safety rules, platform registry, and repository audit |
 
 ---
 
-## 9. Privacy, Pacing & Open-Source Governance
+## 10. Privacy, Pacing & Open-Source Governance
 
 | Safeguard | Default Rule (`config/guardrails.yaml` & `AGENTS.md`) |
 |---|---|

@@ -1,0 +1,5 @@
+# Aider configuration for job-hunter-os (Progressive Disclosure)
+read:
+  - AGENTS.md
+  - skills/REGISTRY.md
+auto-commits: false

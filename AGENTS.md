@@ -62,7 +62,11 @@ At the start of every session, read `AGENTS.md` and `skills/REGISTRY.md` first. 
   - `skills/04-fill-and-apply.md` — Upload-first rule, 5 ATS traps, EEO/GDPR compliance defaults, job-bound `APPROVE` gate
   - `skills/05-outreach-and-interview-prep.md` — `interview-dossier.md`, `<= 75`-word `outreach-draft.md`, `email-draft.md`, `/linkedin-growth`
   - `skills/06-log-and-insights.md` — Local JSON logging, optional Notion MCP sync, `/weekly-report`
+  - `skills/07-persona-switcher.md` — Multi-persona career tracks (`context/personas/`)
+  - `skills/08-follow-up-radar.md` — 7-day `applied` follow-up radar (`<= 75`-word drafts)
+  - `skills/09-offer-negotiator.md` — Offer & B2B rate negotiation analysis (`DRAFT_ONLY`)
   - `skills/fallback-no-mcp.md` — Non-MCP web chat fallback (ChatGPT / Claude Web / Gemini Web)
+- **Model tuning guides:** `adapters/models/claude.md`, `adapters/models/gemini.md`, `adapters/models/openai.md`, `adapters/models/deepseek-qwen-local.md`.
 - **Meta-skills during runs:** `skills/meta-self-verification.md` (after Submit/Save/Post/Send), `skills/meta-dom-recovery.md` (stale refs/iframes/lazy lists), `skills/meta-context-compaction.md` (checkpoint `logs/runs/current-session-checkpoint.json` every 3–5 applications), `skills/meta-structured-debugging.md` (form validation rejections).
 
 ## Strict Execution Order (Daily Run)

@@ -9,4 +9,4 @@ This is a **zero-code Markdown skills + Playwright/Notion MCP repository**. You 
 - `/weekly-report` -> `skills/06-log-and-insights.md`
 - `/linkedin-growth` -> `skills/05-outreach-and-interview-prep.md` (draft-only until explicit `approve`)
 
-Connect MCP using `mcp/mcp.template.json` (persistent `./browser-profile` for Playwright; optional `NOTION_TOKEN` for Notion). Local JSON under `logs/` is primary. Never invent facts, bypass challenges, or submit without gate checks.
+Connect MCP using `mcp/mcp.template.json` (or `mcp/claude_desktop_config.example.json` for Claude Desktop; persistent `./browser-profile` for Playwright and optional `NOTION_TOKEN` for Notion). See `adapters/models/claude.md` for Claude Sonnet/Opus XML verification tuning. Local JSON under `logs/` is primary. Never invent facts, bypass challenges, or submit without gate checks.

@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--user-data-dir=/ABS/PATH/TO/job-hunter-os/browser-profile"
+      ]
+    },
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_TOKEN": "REPLACE_WITH_YOUR_NOTION_TOKEN"
+      }
+    }
+  }
+}

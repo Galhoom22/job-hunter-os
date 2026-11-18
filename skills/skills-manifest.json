@@ -232,6 +232,89 @@
       "path": "skills/06-log-and-insights.md"
     },
     {
+      "name": "persona-switcher",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when the owner maintains multiple target tracks (e.g., Fullstack Engineer, AI Agent Engineer, B2B Contractor) in context/personas/ and asks to switch active persona, CV focus, target roles, or rate floors in chat.",
+      "triggers": [
+        "switch persona to <name>",
+        "list personas",
+        "create new persona"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "base owner-verified facts exist in context/profile.md and context/cv.md",
+        "persona definitions live under context/personas/ (private, gitignored)"
+      ],
+      "requires_skills": [
+        "interrogate-and-onboard"
+      ],
+      "verification": [
+        "active persona name, target roles, rate floor, and CV emphasis match an owner-confirmed file under context/personas/",
+        "no unverified skills, employers, or inflated years were introduced when switching personas",
+        "context/preferences.yaml (or active session briefing) reflects the selected persona before discovery begins"
+      ],
+      "path": "skills/07-persona-switcher.md"
+    },
+    {
+      "name": "follow-up-radar",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when the owner asks to check pending applications, run a 7-day follow-up radar, or draft follow-up messages for applications sent >= 7 days ago; inspects logs/applications-log.json and saves <=75-word draft-only follow-ups without ever auto-sending.",
+      "triggers": [
+        "check follow-ups",
+        "7-day follow-up radar",
+        "draft follow-ups for applied jobs"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "logs/applications-log.json exists and is readable",
+        "today's UTC date is known to compute days since applied_at"
+      ],
+      "requires_skills": [
+        "log-and-insights",
+        "outreach-and-interview-prep"
+      ],
+      "verification": [
+        "every candidate listed has status \"applied\" with applied_at >= 7 days ago and no prior follow-up logged",
+        "every drafted message is strictly <= 75 words, humanized, and saved to logs/resumes/<folder>/followup-draft.md",
+        "zero emails or LinkedIn messages were sent without explicit owner approve in chat"
+      ],
+      "path": "skills/08-follow-up-radar.md"
+    },
+    {
+      "name": "offer-negotiator",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when the owner receives a recruiter compensation question, B2B hourly/monthly rate check, or formal job offer; benchmarks terms against context/preferences.yaml and context/form-answers.yaml and drafts calm, humanized negotiation replies without auto-sending.",
+      "triggers": [
+        "recruiter asked my rate / salary expectation",
+        "received job offer",
+        "negotiate offer or compensation"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "recruiter message, rate prompt, or offer details supplied by the owner",
+        "verified compensation floor and work terms read from context/preferences.yaml or context/form-answers.yaml"
+      ],
+      "requires_skills": [
+        "tailor-resume-and-verify",
+        "outreach-and-interview-prep"
+      ],
+      "verification": [
+        "comparison table explicitly checks base pay, currency, period (hourly/monthly/annual), notice, and remote/visa terms against the owner's verified floor",
+        "drafted reply uses only verified experience/facts, contains 0 AI-slop clichés, and is marked DRAFT_ONLY",
+        "nothing was sent automatically without explicit owner approval"
+      ],
+      "path": "skills/09-offer-negotiator.md"
+    },
+    {
       "name": "fallback-no-mcp",
       "version": "2.0.0",
       "category": "core",
