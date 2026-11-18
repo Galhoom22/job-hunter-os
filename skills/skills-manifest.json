@@ -1,0 +1,1472 @@
+{
+  "manifest_version": 1,
+  "generated_by": "job-hunter skills sync (from SKILL.md frontmatter; do not edit by hand)",
+  "progressive_disclosure": "Read AGENTS.md and skills/REGISTRY.md first. Load a skill body only when one of its triggers matches the current phase of work.",
+  "skills": [
+    {
+      "name": "daily-run",
+      "version": "2.1.0",
+      "category": "core",
+      "description": "Load when the owner starts today's run (\"/daily-run\", \"Run today's job run\", \"ابدأ التقديم\"); orchestrates every phase from readiness to the final report.",
+      "triggers": [
+        "/daily-run",
+        "Run today's job run",
+        "ابدأ التقديم",
+        "Start applying"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "authorized local agent with file, shell and Playwright MCP tools",
+        "readiness_state.overall_ready == true and fresh launch consent for this run",
+        "no other run holds logs/run.lock"
+      ],
+      "requires_skills": [
+        "interrogate-and-onboard",
+        "mcp-capabilities",
+        "discover-and-triage",
+        "discover-jobs",
+        "score-job",
+        "approval-gate",
+        "log-application",
+        "meta-self-verification",
+        "meta-context-compaction"
+      ],
+      "path": "skills/00-daily-run.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "interrogate-and-onboard",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when any application command arrives (/daily-run, /apply-url, \"Start applying\", \"ابدأ التقديم\", \"Check my folder\") or /setup; it is mandatory Step 0 that blocks on incomplete facts and interviews the owner in batches of 3-4 questions.",
+      "triggers": [
+        "/daily-run (Step 0)",
+        "/apply-url (Step 0)",
+        "/setup",
+        "Check my folder",
+        "ابدأ التقديم"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "agent home resolved (local repo or ~/.job-hunter-os)",
+        "node bin/job-hunter.mjs doctor can run"
+      ],
+      "requires_skills": [
+        "resume-ingestion",
+        "onboarding-chat"
+      ],
+      "path": "skills/00-interrogate-and-onboard.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "onboarding-chat",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the owner says \"Setup my profile\", runs /setup or drops a CV in chat; builds private verified context files, connects MCP and performs owner-controlled login.",
+      "triggers": [
+        "/setup",
+        "Setup my profile from this CV",
+        "owner supplies a CV file or text"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "local file tools available in the IDE",
+        "owner present in chat to confirm facts"
+      ],
+      "requires_skills": [
+        "interrogate-and-onboard",
+        "resume-ingestion",
+        "mcp-capabilities"
+      ],
+      "path": "skills/00-onboarding-chat.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "resume-ingestion",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the owner supplies or mentions a CV in any form (chat paste, .md/.txt/.json, PDF, DOCX, scanned or garbled PDF, or no CV at all) and it must become verified profile.md, cv.md and resume-data.json.",
+      "triggers": [
+        "CV pasted in chat",
+        "assets/resume.pdf or resume.docx present",
+        "I don't have a CV",
+        "/setup gate 1"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "agent home has a context/ folder (init done)",
+        "owner available to confirm extracted facts"
+      ],
+      "requires_skills": [],
+      "path": "skills/01-resume-ingestion.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "apply-easy-apply",
+      "version": "3.1.0",
+      "category": "core",
+      "description": "Load when an eligible job's Apply button opens an in-page modal (LinkedIn Easy Apply, Wellfound or Wuzzuf quick apply) and the form must be prepared and possibly submitted.",
+      "triggers": [
+        "in-page Apply modal",
+        "apply_type == easy_apply",
+        "selected job from APPLY reply"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "job score >= min_match_score and job_id not in applications-log.json",
+        "per-job tailored file exists with an absolute path"
+      ],
+      "requires_skills": [
+        "fill-form-answers",
+        "approval-gate",
+        "log-application",
+        "meta-self-verification"
+      ],
+      "path": "skills/apply-easy-apply.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "apply-external-ats",
+      "version": "3.1.0",
+      "category": "core",
+      "description": "Load when an eligible job's Apply button redirects or opens a new tab to an employer ATS (Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR, Workday, Taleo or unknown).",
+      "triggers": [
+        "Apply on company site",
+        "new tab after Apply",
+        "apply_type == external_ats"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "eligible score and duplicate check by job_id AND canonical ATS URL",
+        "per-job tailored file exists"
+      ],
+      "requires_skills": [
+        "fill-form-answers",
+        "approval-gate",
+        "log-application",
+        "meta-self-verification"
+      ],
+      "path": "skills/apply-external-ats.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "apply-url",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the owner pastes one job URL and asks to apply (/apply-url); processes that single job through every daily safety gate without broader discovery.",
+      "triggers": [
+        "/apply-url <url>",
+        "Apply to this job: <url>"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "readiness_state.overall_ready == true and fresh launch consent for this run",
+        "URL is HTTPS with no embedded credentials"
+      ],
+      "requires_skills": [
+        "interrogate-and-onboard",
+        "score-job",
+        "tailor-resume",
+        "approval-gate",
+        "log-application"
+      ],
+      "path": "skills/apply-url.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "approval-gate",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when about to click any irreversible Apply/Submit button in any channel (MCP, extension, manual) to enforce job-bound owner approval and the configured approval_mode.",
+      "triggers": [
+        "about to click Submit / Send application",
+        "one-click or quick apply button",
+        "APPROVE / EDIT / SKIP reply"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "form fully prepared with verified answers and the exact per-job file",
+        "applicationDecision inputs (logs, caps, approval_mode) freshly re-read"
+      ],
+      "requires_skills": [
+        "log-application"
+      ],
+      "path": "skills/approval-gate.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "direct-ats-harvester",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when discovering jobs directly from public Greenhouse, Lever, or Ashby JSON feeds via `pull-ats`; fetches structured postings in seconds, filters by role/location locally, and feeds matching URLs into triage without browser scraping.",
+      "triggers": [
+        "/daily-run fast ATS pull",
+        "pull-ats",
+        "harvest Greenhouse / Lever / Ashby company boards"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "target board_tokens configured in context/targets.yaml or passed via --board <ats>:<token>",
+        "owner-confirmed role/location keywords in context/preferences.yaml or CLI flags"
+      ],
+      "requires_skills": [
+        "ghost-job-detector",
+        "score-job",
+        "discover-and-triage"
+      ],
+      "path": "skills/direct-ats-harvester.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "direct-email-drafter",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when a job posting asks candidates to apply by emailing an address (e.g., careers@company.com with a subject code) instead of an ATS form; generates email-draft.md with recipient, subject, plain-text body, and PDF path without auto-sending.",
+      "triggers": [
+        "posting asks to send CV via email",
+        "HackerNews Who's Hiring / Wuzzuf / LinkedIn post email apply",
+        "apply_type == manual_apply with email instruction"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "full job description captured with an explicit destination email address",
+        "per-job tailored resume.pdf rendered and verified under logs/resumes/<folder>/"
+      ],
+      "requires_skills": [
+        "tailor-resume",
+        "fact-check-guard",
+        "humanize-writing",
+        "log-application"
+      ],
+      "path": "skills/direct-email-drafter.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "discover-and-triage",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when a batch_review_first run reaches discovery; scans a batch of new jobs, expands full descriptions, scores Tier A/B/C, pre-generates tailored CV folders and shows the Mission Control table before any Apply.",
+      "triggers": [
+        "workflow_mode == batch_review_first",
+        "daily-run step 4b",
+        "APPLY ALL GREEN / APPLY 1,3 reply"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "batch_size and workflow_mode read from config/guardrails.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "ghost-job-detector",
+        "score-job",
+        "tailor-resume",
+        "log-application"
+      ],
+      "path": "skills/discover-and-triage.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "discover-jobs",
+      "version": "2.1.0",
+      "category": "core",
+      "description": "Load when a target from context/targets.yaml must be searched for new jobs; builds the search URL from confirmed preferences, extracts full job details and returns DiscoveredJob records without applying.",
+      "triggers": [
+        "daily-run step 5",
+        "discover-and-triage Phase 1",
+        "search target <platform>"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "platform or ATS playbook exists for the target"
+      ],
+      "requires_skills": [
+        "score-job"
+      ],
+      "path": "skills/discover-jobs.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "eeo-consent-handler",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when an ATS form displays voluntary EEO/demographics fields, referral source dropdowns, or GDPR/privacy policy consent checkboxes; maps owner-verified eeo_and_compliance_defaults safely without ticking marketing opt-ins.",
+      "triggers": [
+        "EEO or voluntary self-identification section in ATS form",
+        "referral source (\"How did you hear about us?\") field",
+        "GDPR / privacy policy consent checkbox at form bottom"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "owner-verified context/form-answers.yaml loaded with eeo_and_compliance_defaults or eeo",
+        "fresh browser_snapshot showing exact field labels and checkbox/dropdown options"
+      ],
+      "requires_skills": [
+        "fill-form-answers"
+      ],
+      "path": "skills/eeo-consent-handler.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "fact-check-guard",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when a tailored resume, cover letter, or application answer is drafted and before rendering PDFs; verifies every number, date, employer, degree, project, and skill against verified owner context and blocks rendering on fabrication.",
+      "triggers": [
+        "before render-cv on any tailored resume",
+        "verify-cv check",
+        "after drafting tailored bullets or summary"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "owner-verified context/resume-data.json or context/profile.md and context/cv.md exist",
+        "tailored payload (.json, .html, .md, or .txt) is written locally"
+      ],
+      "requires_skills": [
+        "tailor-resume"
+      ],
+      "path": "skills/fact-check-guard.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "fallback-no-mcp",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the agent runs in a web chat (ChatGPT, Claude, Gemini) or an IDE without browser MCP or local file tools, and the owner wants manual help via the clipboard and browser companion.",
+      "triggers": [
+        "no Playwright MCP tools available",
+        "web chat session",
+        "browser companion / Extract Job for AI"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "automated daily run stopped (no MCP)"
+      ],
+      "requires_skills": [],
+      "path": "skills/fallback-no-mcp.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "fill-form-answers",
+      "version": "3.1.0",
+      "category": "core",
+      "description": "Load when any application form field, file upload, repeater or autocomplete must be filled; enforces verified-only answers and the five ATS form traps (upload first, absolute paths, hidden dropzones, split fields, mid-run login walls).",
+      "triggers": [
+        "application form open",
+        "resume or cover-letter upload",
+        "unknown form question",
+        "login wall mid-run"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "owner-verified context/form-answers.yaml and context/resume-data.json"
+      ],
+      "requires_skills": [
+        "grounded-answer",
+        "meta-dom-recovery",
+        "eeo-consent-handler"
+      ],
+      "path": "skills/fill-form-answers.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "ghost-job-detector",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when a job page is opened before scoring or tailoring; detects closed, expired, >30-day-old, or reposted ghost listings and logs them as skipped without wasting tokens.",
+      "triggers": [
+        "before scoring or tailoring a discovered job",
+        "job freshness / active status check",
+        "posting looks old or reposted"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "full job page loaded in browser with a fresh snapshot",
+        "run lock owned and context/preferences.yaml loaded"
+      ],
+      "requires_skills": [
+        "log-application"
+      ],
+      "path": "skills/ghost-job-detector.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "grounded-answer",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when an application asks a free-text question; drafts 2-3 grounded sentences for motivation/fit questions and stops for any factual, legal or consent part that lacks a verified answer.",
+      "triggers": [
+        "Why this company / role?",
+        "free-text application question",
+        "mixed motivation + legal question"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "fresh snapshot with exact question wording and field limit"
+      ],
+      "requires_skills": [
+        "humanize-writing"
+      ],
+      "path": "skills/grounded-answer.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "hiring-manager-outreach",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when a job scores >= 8 (Tier A) or the owner requests hiring-manager outreach; identifies likely Engineering Manager, Tech Lead, or Technical Recruiter contacts and saves a <=75-word draft to outreach-draft.md without sending.",
+      "triggers": [
+        "high-match job (Score >= 8)",
+        "find hiring manager for job",
+        "draft outreach for application"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "job scored >= 8 (or explicit owner request) with full JD and company name",
+        "authorized browser session if inspecting LinkedIn People / Meet the hiring team"
+      ],
+      "requires_skills": [
+        "humanize-writing",
+        "fact-check-guard",
+        "linkedin-outreach"
+      ],
+      "path": "skills/hiring-manager-outreach.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "humanize-writing",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when writing or editing any tailored resume summary, cover letter, outreach note, email draft, or open-ended application answer; strips LLM clichés and em-dash overuse to enforce a crisp peer-engineer tone.",
+      "triggers": [
+        "drafting tailored summary or bullets",
+        "drafting cover letter or outreach note",
+        "drafting free-text application answer"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "factual claims already verified against context/profile.md and context/resume-data.json"
+      ],
+      "requires_skills": [
+        "fact-check-guard"
+      ],
+      "path": "skills/humanize-writing.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "interview-dossier",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when a job application is prepared (Tier A / tailor-resume) or submitted; archives the full job description, tailored resume emphasis, and top 5 interview prep questions into interview-dossier.md before the posting disappears.",
+      "triggers": [
+        "application prepared or submitted",
+        "post-application interview prep",
+        "archive job description for interview"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "full expanded job description captured from the live posting",
+        "per-job folder logs/resumes/<folder>/ exists with tailoring-notes.md"
+      ],
+      "requires_skills": [
+        "tailor-resume"
+      ],
+      "path": "skills/interview-dossier.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "linkedin-outreach",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the owner explicitly asks to draft a LinkedIn message to a named person; enforces a 75-word cap and exact-text approval before Send.",
+      "triggers": [
+        "/linkedin-growth outreach",
+        "Draft a message to <name>"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "explicit owner request naming the recipient",
+        "authorized LinkedIn session"
+      ],
+      "requires_skills": [],
+      "path": "skills/linkedin-outreach.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "linkedin-post",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the owner asks to draft or publish a LinkedIn post (/linkedin-growth post); drafts, waits for exact-text approval, then publishes and records the post URL.",
+      "triggers": [
+        "/linkedin-growth post",
+        "Draft a LinkedIn post about <topic>"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "explicit owner request",
+        "authorized LinkedIn session"
+      ],
+      "requires_skills": [],
+      "path": "skills/linkedin-post.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "linkedin-profile-update",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the owner asks to change a LinkedIn profile section (headline, About, experience, skills); drafts a diff and saves only after exact-text approval.",
+      "triggers": [
+        "/linkedin-growth profile",
+        "Update my LinkedIn headline/About"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "explicit owner request outside any daily run",
+        "authorized LinkedIn session"
+      ],
+      "requires_skills": [
+        "profile-optimizer"
+      ],
+      "path": "skills/linkedin-profile-update.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "log-application",
+      "version": "2.1.0",
+      "category": "core",
+      "description": "Load when a job disposition, submission reservation, run summary or insight must be written; local JSON first through the journal helper, then optional idempotent Notion sync.",
+      "triggers": [
+        "any write to logs/",
+        "reserve before Submit",
+        "Notion sync / retry"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "owned run lock token available",
+        "schemas/index.ts contracts"
+      ],
+      "requires_skills": [],
+      "path": "skills/log-application.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "mcp-capabilities",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when setup, tailoring or a run first needs browser or Notion tools; maps the tools the IDE actually exposes and verifies the dedicated persistent browser profile before anything depends on them.",
+      "triggers": [
+        "start of /setup",
+        "before the first browser action of a session",
+        "browser or Notion tool error"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "IDE tool metadata readable"
+      ],
+      "requires_skills": [],
+      "path": "skills/mcp-capabilities.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "profile-optimizer",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the owner asks to audit or improve a LinkedIn, Wellfound or Wuzzuf profile; produces a current-vs-proposed evidence table and stages edits only after exact-text approval.",
+      "triggers": [
+        "/linkedin-growth audit",
+        "Optimize my profile"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "explicit owner request outside any daily run",
+        "verified profile.md and cv.md"
+      ],
+      "requires_skills": [],
+      "path": "skills/profile-optimizer.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "score-job",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when a discovered job with its full description must be scored 0-10 against the verified CV and routed (Tier A/B/C, eligible, needs_review or skipped).",
+      "triggers": [
+        "job discovered",
+        "discover-and-triage scoring",
+        "/apply-url scoring"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "full JD captured (expanded) or marked partial",
+        "context/cv.md and preferences loaded"
+      ],
+      "requires_skills": [],
+      "path": "skills/score-job.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "setup-notion",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when the owner opts in to Notion tracking and shares a parent page with the integration; finds or creates the three trackers and verifies read-back before enabling sync.",
+      "triggers": [
+        "Set up Notion",
+        "storage_adapters.notion_mcp to be enabled"
+      ],
+      "requires_mcp": [
+        "notion"
+      ],
+      "preconditions": [
+        "explicit owner opt-in",
+        "Notion MCP connected through the IDE's secure flow"
+      ],
+      "requires_skills": [
+        "mcp-capabilities"
+      ],
+      "path": "skills/setup-notion.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "tailor-resume",
+      "version": "1.1.0",
+      "category": "core",
+      "description": "Load when a CV must be tailored for one job (/tailor-cv or an eligible application); builds an evidence map, renders per-job PDF/DOCX/TXT (and an approved cover letter when required) and verifies the exact upload file.",
+      "triggers": [
+        "/tailor-cv <url>",
+        "eligible job before upload",
+        "Tier A pre-generation",
+        "cover letter file required"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "owner-verified context/resume-data.json",
+        "complete job description captured"
+      ],
+      "requires_skills": [
+        "grounded-answer",
+        "fact-check-guard",
+        "humanize-writing",
+        "interview-dossier"
+      ],
+      "path": "skills/tailor-resume.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "weekly-insights",
+      "version": "2.1.0",
+      "category": "core",
+      "description": "Load when a weekly or monthly market/skill-gap report is due or requested (/weekly-report); computes counts from the validated local journal and writes JSON + Markdown reports.",
+      "triggers": [
+        "/weekly-report",
+        "Monday after a completed run",
+        "first day of month"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "validated logs/applications-log.json",
+        "owned run lock for report writes"
+      ],
+      "requires_skills": [
+        "log-application"
+      ],
+      "path": "skills/weekly-insights.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "meta-context-compaction",
+      "version": "1.0.0",
+      "category": "meta",
+      "description": "Load when a long run has processed 3-5 applications since the last checkpoint, the conversation is getting long, or a new session must resume an interrupted run; writes and re-reads logs/runs/current-session-checkpoint.json so rules and progress survive context loss.",
+      "triggers": [
+        "long-run-memory-compaction",
+        "every 3-5 applications or 15 jobs processed",
+        "resuming a run in a new chat/session"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "an active run with an owned lock (or a checkpoint to resume from)",
+        "schemas/index.ts SessionCheckpoint contract available to npm run validate:logs"
+      ],
+      "requires_skills": [
+        "log-application"
+      ],
+      "path": "skills/meta-context-compaction.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "meta-dom-recovery",
+      "version": "1.0.0",
+      "category": "meta",
+      "description": "Load when a browser step fails because the page changed — stale element ref after a modal or step transition, element missing from the snapshot, focus trapped in an iframe, cookie/overlay blocking clicks, or a lazy-loaded list that needs scrolling — to recover safely with fresh snapshots instead of guessing.",
+      "triggers": [
+        "self-healing-navigation",
+        "stale or unknown element ref error",
+        "expected button/field not in snapshot",
+        "list shows fewer jobs than expected"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "the failure is a page-structure problem, not a CAPTCHA, 2FA, warning or rate-limit banner (those abort the run)",
+        "fewer than 3 consecutive errors so far in this run"
+      ],
+      "requires_skills": [],
+      "path": "skills/meta-dom-recovery.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "meta-self-verification",
+      "version": "1.0.0",
+      "category": "meta",
+      "description": "Load when the agent is about to report any outcome as done (application submitted, file uploaded, profile updated, post published, record logged or synced); forbids claiming success without concrete evidence observed after the action and logs that proof.",
+      "triggers": [
+        "verify-before-complete",
+        "right after a Submit / Save / Post / Send click",
+        "before writing status applied or reporting success in chat"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "the action being verified has actually been attempted in this session",
+        "a fresh browser_snapshot (or file read / command output) can be taken now"
+      ],
+      "requires_skills": [
+        "log-application"
+      ],
+      "path": "skills/meta-self-verification.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "meta-structured-debugging",
+      "version": "1.0.0",
+      "category": "meta",
+      "description": "Load when an application form refuses to advance or submit (Next/Submit does nothing, inline errors appear, upload stays pending); diagnoses the root cause from the accessibility tree and fixes it only with verified facts.",
+      "triggers": [
+        "diagnose-automation-failure",
+        "form shows validation errors after Next/Submit",
+        "Submit click produced no navigation and no confirmation"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "the form is still visible (evidence that nothing was submitted)",
+        "no CAPTCHA, 2FA, warning or rate-limit banner is present (those abort the run)"
+      ],
+      "requires_skills": [
+        "fill-form-answers",
+        "approval-gate",
+        "meta-self-verification"
+      ],
+      "path": "skills/meta-structured-debugging.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "ats-engines",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an application lands on a recognized employer ATS and routing, exact snapshot-driven filling, uploads, review and receipt checks are needed across engines.",
+      "triggers": [
+        "ATS hostname recognized",
+        "apply-external-ats routing"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)"
+      ],
+      "requires_skills": [
+        "apply-external-ats",
+        "fill-form-answers"
+      ],
+      "path": "skills/platforms/ats-engines.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "bayt",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform bayt (Bayt) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == bayt",
+        "job URL on Bayt"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "Bayt target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/bayt.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "builtin",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform builtin (BuiltIn) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == builtin",
+        "job URL on BuiltIn"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "BuiltIn target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/builtin.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "dice",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform dice (Dice) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == dice",
+        "job URL on Dice"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "Dice target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/dice.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "glassdoor",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform glassdoor (Glassdoor) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == glassdoor",
+        "job URL on Glassdoor"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "Glassdoor target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/glassdoor.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "global-boards",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when a target is Indeed, Glassdoor, Dice or ZipRecruiter and jobs must be discovered and reviewed without assuming quick-apply is reversible.",
+      "triggers": [
+        "target.platform in indeed/glassdoor/dice/ziprecruiter"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/global-boards.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "indeed",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform indeed (Indeed) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == indeed",
+        "job URL on Indeed"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "Indeed target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/indeed.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "linkedin",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when a target is LinkedIn Jobs (discovery with recent filters and Easy Apply) or the owner routes an approval-only LinkedIn profile/post request.",
+      "triggers": [
+        "target.platform == linkedin",
+        "linkedin.com/jobs URL"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "named LinkedIn account indicator observed"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job",
+        "apply-easy-apply"
+      ],
+      "path": "skills/platforms/linkedin.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "mena-boards",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when a target is Wuzzuf, Bayt or LinkedIn for MENA roles and location, language, nationality or authorization rules must be read carefully.",
+      "triggers": [
+        "target.platform in wuzzuf/bayt",
+        "MENA region search"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/mena-boards.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "remote-boards",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when a target is WeWorkRemotely, RemoteOK, DailyRemote, Welcome to the Jungle/Otta or BuiltIn and remote eligibility (regions, timezones) must be verified.",
+      "triggers": [
+        "target.platform in weworkremotely/remoteok/welcometothejungle/builtin",
+        "remote-only search"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/remote-boards.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "remoteok",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform remoteok (RemoteOK) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == remoteok",
+        "job URL on RemoteOK"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "RemoteOK target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/remoteok.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "welcometothejungle",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform welcometothejungle (Welcome to the Jungle (Otta)) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == welcometothejungle",
+        "job URL on Welcome to the Jungle (Otta)"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "Welcome to the Jungle (Otta) target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/welcometothejungle.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "wellfound",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when a target is Wellfound (AngelList Talent) and startup roles must be discovered and an optional founder note drafted truthfully.",
+      "triggers": [
+        "target.platform == wellfound"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job",
+        "grounded-answer"
+      ],
+      "path": "skills/platforms/wellfound.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "weworkremotely",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform weworkremotely (WeWorkRemotely) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == weworkremotely",
+        "job URL on WeWorkRemotely"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "WeWorkRemotely target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/weworkremotely.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "wuzzuf",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform wuzzuf (Wuzzuf) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == wuzzuf",
+        "job URL on Wuzzuf"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "Wuzzuf target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/wuzzuf.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "ziprecruiter",
+      "version": "1.1.0",
+      "category": "platform",
+      "description": "Load when an enabled target has platform ziprecruiter (ZipRecruiter) and jobs must be discovered, read in full and routed to the right apply flow.",
+      "triggers": [
+        "target.platform == ziprecruiter",
+        "job URL on ZipRecruiter"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "ZipRecruiter target enabled in context/targets.yaml"
+      ],
+      "requires_skills": [
+        "discover-jobs",
+        "score-job"
+      ],
+      "path": "skills/platforms/ziprecruiter.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "ashby",
+      "version": "1.1.0",
+      "category": "ats",
+      "description": "Load when an application's final HTTPS hostname is jobs.ashbyhq.com (Ashby) and the hosted form must be filled, reviewed and submitted safely.",
+      "triggers": [
+        "final hostname jobs.ashbyhq.com",
+        "apply-external-ats routes to ashby"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "employer and role on the ATS page match the posting"
+      ],
+      "requires_skills": [
+        "apply-external-ats",
+        "fill-form-answers",
+        "approval-gate"
+      ],
+      "path": "skills/ats/ashby.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "breezyhr",
+      "version": "1.1.0",
+      "category": "ats",
+      "description": "Load when an application's final HTTPS hostname is <company>.breezy.hr (BreezyHR) and the hosted form must be filled, reviewed and submitted safely.",
+      "triggers": [
+        "final hostname <company>.breezy.hr",
+        "apply-external-ats routes to breezyhr"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "employer and role on the ATS page match the posting"
+      ],
+      "requires_skills": [
+        "apply-external-ats",
+        "fill-form-answers",
+        "approval-gate"
+      ],
+      "path": "skills/ats/breezyhr.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "greenhouse",
+      "version": "1.1.0",
+      "category": "ats",
+      "description": "Load when an application's final HTTPS hostname is boards.greenhouse.io / job-boards.greenhouse.io (Greenhouse) and the hosted form must be filled, reviewed and submitted safely.",
+      "triggers": [
+        "final hostname boards.greenhouse.io / job-boards.greenhouse.io",
+        "apply-external-ats routes to greenhouse"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "employer and role on the ATS page match the posting"
+      ],
+      "requires_skills": [
+        "apply-external-ats",
+        "fill-form-answers",
+        "approval-gate"
+      ],
+      "path": "skills/ats/greenhouse.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "lever",
+      "version": "1.1.0",
+      "category": "ats",
+      "description": "Load when an application's final HTTPS hostname is jobs.lever.co (Lever) and the hosted form must be filled, reviewed and submitted safely.",
+      "triggers": [
+        "final hostname jobs.lever.co",
+        "apply-external-ats routes to lever"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "employer and role on the ATS page match the posting"
+      ],
+      "requires_skills": [
+        "apply-external-ats",
+        "fill-form-answers",
+        "approval-gate"
+      ],
+      "path": "skills/ats/lever.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "smartrecruiters",
+      "version": "1.1.0",
+      "category": "ats",
+      "description": "Load when an application's final HTTPS hostname is jobs.smartrecruiters.com (SmartRecruiters) and the hosted form must be filled, reviewed and submitted safely.",
+      "triggers": [
+        "final hostname jobs.smartrecruiters.com",
+        "apply-external-ats routes to smartrecruiters"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)",
+        "employer and role on the ATS page match the posting"
+      ],
+      "requires_skills": [
+        "apply-external-ats",
+        "fill-form-answers",
+        "approval-gate"
+      ],
+      "path": "skills/ats/smartrecruiters.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "taleo",
+      "version": "1.1.0",
+      "category": "ats",
+      "description": "Load when an application lands on Taleo (taleo.net / oraclecloud.com); these account-gated portals are always manual_apply + needs_review.",
+      "triggers": [
+        "Taleo hostname detected"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)"
+      ],
+      "requires_skills": [
+        "log-application"
+      ],
+      "path": "skills/ats/taleo.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    },
+    {
+      "name": "workday",
+      "version": "1.1.0",
+      "category": "ats",
+      "description": "Load when an application lands on Workday (myworkdayjobs.com / myworkdaysite.com); these account-gated portals are always manual_apply + needs_review.",
+      "triggers": [
+        "Workday hostname detected"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)"
+      ],
+      "requires_skills": [
+        "log-application"
+      ],
+      "path": "skills/ats/workday.md",
+      "layout": "flat",
+      "trust": "core",
+      "enabled": true
+    }
+  ]
+}

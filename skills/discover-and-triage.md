@@ -13,6 +13,7 @@ preconditions:
   - batch_size and workflow_mode read from config/guardrails.yaml
 requires_skills:
   - discover-jobs
+  - ghost-job-detector
   - score-job
   - tailor-resume
   - log-application
@@ -31,7 +32,7 @@ Use in batch mode only; direct_auto runs score and route one job at a time.
 - **Preconditions (stop if any is false):**
   - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
   - batch_size and workflow_mode read from config/guardrails.yaml
-- **Requires skills:** `discover-jobs`, `score-job`, `tailor-resume`, `log-application`. **MCP:** playwright.
+- **Requires skills:** `discover-jobs`, `ghost-job-detector`, `score-job`, `tailor-resume`, `log-application`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
@@ -40,9 +41,9 @@ Runs inside skills/00-daily-run.md after Step 0, lock, preflight, auth and conte
 ### Phase 1 — Deep scan, expand, categorize (no Apply clicks)
 For each enabled target, discover jobs with skills/discover-jobs.md and the platform playbook until `batch_size` NEW canonical jobs are collected (already-logged `job_id`s are skipped before scoring).
 
-1. **Expand the full description first.** Before reading a JD on LinkedIn, Wellfound, Indeed, Glassdoor, Wuzzuf or any board, check the fresh snapshot for a button/link named like "See more", "Show more", "Read more", "…more", "Show full description" (or the page-language equivalent, e.g. "عرض المزيد"). Click it, wait, snapshot again, and confirm requirements/qualifications are visible. If it cannot be expanded, score from what is visible and say "partial JD" in the reason.
+1. **Expand the full description first and filter ghosts.** Before reading a JD on LinkedIn, Wellfound, Indeed, Glassdoor, Wuzzuf or any board (or from `logs/ats-harvest.json` via `skills/direct-ats-harvester.md`), check the fresh snapshot for a button/link named like "See more", "Show more", "Read more", "…more", "Show full description" (or the page-language equivalent, e.g. "عرض المزيد"). Click it, wait, snapshot again, and confirm requirements/qualifications are visible. If it cannot be expanded, score from what is visible and say "partial JD" in the reason. Run `skills/ghost-job-detector.md` before scoring or tailoring; closed/expired or >30-day ghost listings go straight to `logs/skipped-jobs.json` with `reason: "ghost_or_expired"`.
 2. **Score** with skills/score-job.md, then tier with `triageTier(score, dealbreaker)` from schemas/agent-policy.ts:
-   - 🟢 **Tier A — Strong** (8–10): core stack and seniority fit.
+   - 🟢 **Tier A — Strong** (8–10): core stack and seniority fit. Also eligible for a draft-only `` `outreach-draft.md` `` via `skills/hiring-manager-outreach.md`.
    - 🟡 **Tier B — Stretch** (5 to below 8): missing 1–2 secondary skills or needs repositioning of real projects. Never auto-apply; explain exactly which existing experience the CV should foreground.
    - 🔴 **Tier C — Mismatch** (below 5, or any dealbreaker: wrong core stack, incompatible location/visa rule, salary below the owner's floor, blacklisted employer): skip immediately.
 3. **Log Tier C** without spending more time: applications-log entry with status `skipped` (existing contract) AND append to `logs/skipped-jobs.json` (`SkippedJob` in schemas/index.ts: job_id, platform, company, title, url, match_score, tier "C", one-line `skip_reason` ≤160 chars, skipped_at, run_id). Run `npm run validate:logs`.

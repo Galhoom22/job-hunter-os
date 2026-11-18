@@ -15,6 +15,7 @@ preconditions:
 requires_skills:
   - grounded-answer
   - meta-dom-recovery
+  - eeo-consent-handler
 verification:
   - fresh snapshot after upload shows the exact expected filename in the right slot
   - every filled value maps to a verified fact; unknowns recorded in open_questions with needs_review
@@ -30,7 +31,7 @@ Use for every field interaction in any application form.
 - **Preconditions (stop if any is false):**
   - run lock owned, preflight exit 0, auth verified, context loaded (daily-run steps 1-3)
   - owner-verified context/form-answers.yaml and context/resume-data.json
-- **Requires skills:** `grounded-answer`, `meta-dom-recovery`. **MCP:** playwright.
+- **Requires skills:** `grounded-answer`, `meta-dom-recovery`, `eeo-consent-handler`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
@@ -42,7 +43,7 @@ Input: fresh snapshot field label/type/options. Only owner_verified:true facts m
 2. For other questions exact/unambiguous keyword match in questions[].match, then explicit profile fact. Conflicting matches, missing required facts or no matching option -> UNKNOWN, never guess numbers/salary/legal status.
 3. For a resume `<input type="file">`, use resume_pdf_path (default template ./assets/resume.pdf), verified by preflight as an existing PDF. Snapshot and identify the labeled Upload resume/CV control; click it to open the chooser then call Playwright MCP browser_file_upload with the absolute local path. If existing resume selection is offered, verify EXACT filename matches that file and owner confirms version. Never use arbitrary cached resume.
 4. If input is hidden, use its accessible upload button to open the chooser; do not inject scripts or use guessed CSS selectors. If inaccessible, needs_review. Snapshot afterward and verify displayed filename/upload success. Failed or ambiguous upload -> needs_review, no Submit.
-5. Each click/type/select/upload gets random 3–9s pacing; snapshot after every step. Required consents and EEO use explicit owner answers; no prechecked newsletter/company follow unless owner permits.
+5. Each click/type/select/upload gets random 3–9s pacing; snapshot after every step. Required consents and EEO use explicit owner answers (`eeo_and_compliance_defaults` in `context/form-answers.yaml` via `skills/eeo-consent-handler.md`); check required candidate privacy/GDPR policy consent only when `gdpr_privacy_consent: true`, and leave optional marketing/newsletter/company-follow checkboxes unchecked unless owner permits.
 6. UNKNOWN: record exact question, field_type/options/units in open_questions; screenshot locally without secrets, leave tab open, needs_review and PAUSE this application. Ask the exact question in chat and wait. No answer means no continuation. CAPTCHA/2FA stops the whole run, not merely this job.
 
 When tailoring is on, upload the specific verified logs/resumes PDF produced by tailor-resume.md and recorded in this job notes; do NOT replace it with the base resume or edit global form answers.

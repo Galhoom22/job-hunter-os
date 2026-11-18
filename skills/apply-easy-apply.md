@@ -47,7 +47,7 @@ In-page modal flow (LinkedIn Easy Apply, Wellfound/Wuzzuf quick apply): click th
 5. Otherwise run skills/approval-gate.md, then re-read history and apply applicationDecision, including unresolved-reservation caps and the current job-bound approval/essay flag. Approval alone never overrides other gates. Atomically reserve needs_review/submission_uncertain:true before submitting; journal and validate. Submit once only. Confirm explicit receipt/thank-you text and job identity; update same entry to applied/applied_at/submission_uncertain:false.
 6. Timeout or ambiguous outcome: preserve reservation as needs_review and never retry automatically. Stop whole run on CAPTCHA/2FA/warning/rate limit/three consecutive errors; a mid-run login wall follows fill-form-answers.md Trap 5 (pause, CONTINUE, else abort). Local-first journal then Notion sync.
 
-After the single Submit click run skills/meta-self-verification.md; if the modal shows validation errors instead, run skills/meta-structured-debugging.md (nothing was submitted, so the reservation stays needs_review until fixed and re-approved).
+After the single Submit click run skills/meta-self-verification.md; if the modal shows validation errors instead, run skills/meta-structured-debugging.md (nothing was submitted, so the reservation stays needs_review until fixed and re-approved). Ensure `logs/resumes/<folder>/interview-dossier.md` is saved via `skills/interview-dossier.md`.
 
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check

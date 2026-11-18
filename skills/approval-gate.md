@@ -1,7 +1,7 @@
 ---
 name: approval-gate
 version: "1.1.0"
-description: Load immediately before any irreversible Apply/Submit click in any channel (MCP, extension, manual) to enforce job-bound owner approval and the configured approval_mode.
+description: Load when about to click any irreversible Apply/Submit button in any channel (MCP, extension, manual) to enforce job-bound owner approval and the configured approval_mode.
 triggers:
   - about to click Submit / Send application
   - one-click or quick apply button

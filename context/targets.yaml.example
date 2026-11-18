@@ -213,7 +213,8 @@ targets:
     playbook: "skills/platforms/ats-engines.md"
     automation_mode: "discovery_only_then_verified_ats"
     employer_url_pattern: "https://job-boards.greenhouse.io/{{EMPLOYER_SLUG}}"
-    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Greenhouse may also use job-boards.greenhouse.io."
+    board_tokens: []
+    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Greenhouse may also use job-boards.greenhouse.io. Add employer slugs to board_tokens for fast `pull-ats` harvesting."
     live_verified: false
   - name: "Lever — Google discovery only"
     platform: "lever"
@@ -230,7 +231,8 @@ targets:
     playbook: "skills/platforms/ats-engines.md"
     automation_mode: "discovery_only_then_verified_ats"
     employer_url_pattern: "https://jobs.lever.co/{{EMPLOYER_SLUG}}"
-    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Greenhouse may also use job-boards.greenhouse.io."
+    board_tokens: []
+    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Add company slugs to board_tokens for fast `pull-ats` harvesting."
     live_verified: false
   - name: "Ashby — Google discovery only"
     platform: "ashby"
@@ -247,7 +249,8 @@ targets:
     playbook: "skills/platforms/ats-engines.md"
     automation_mode: "discovery_only_then_verified_ats"
     employer_url_pattern: "https://jobs.ashbyhq.com/{{EMPLOYER_SLUG}}"
-    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Greenhouse may also use job-boards.greenhouse.io."
+    board_tokens: []
+    filter_notes: "Google past-day index filter is not proof of posting age. Open only the actual verified employer result; preserve original job identity. Add organization slugs to board_tokens for fast `pull-ats` harvesting."
     live_verified: false
   - name: "SmartRecruiters — replace with verified employer board"
     platform: "smartrecruiters"

@@ -1,7 +1,7 @@
 ---
 name: log-application
 version: "2.1.0"
-description: Load whenever a job disposition, submission reservation, run summary or insight must be written; local JSON first through the journal helper, then optional idempotent Notion sync.
+description: Load when a job disposition, submission reservation, run summary or insight must be written; local JSON first through the journal helper, then optional idempotent Notion sync.
 triggers:
   - any write to logs/
   - reserve before Submit

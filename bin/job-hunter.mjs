@@ -7,18 +7,31 @@ import { spawnSync, spawn } from 'node:child_process';
 import { auditReadiness } from './readiness.mjs';
 import { extractPdfText, docxToText, assessText, contactCandidates, htmlToBlocks, blocksToText, blocksToDocx, htmlToWordDoc, htmlProblems, documentKind, fillResumeTemplate, fillCoverLetterTemplate, coverLetterProblems, slug } from './cv-tools.mjs';
 import { checkResumeData } from './resume-data.mjs';
+import { validateSkills, syncSkills, installSkills, setEnabled, exportSkills, readManifest, formatList } from './skills.mjs';
+import { verifyTailoredCv } from './verify-cv.mjs';
+import { pullAts, formatHarvestTable, ATS_PROVIDERS } from './ats-harvester.mjs';
 
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const home = os.homedir();
 const argv = process.argv.slice(2);
 const global = argv.includes('--global') || argv.includes('-g');
-const flags = new Set(['--global', '-g', '--help', '-h', '--no-pdf']);
-const positional = []; const options = {}; let argError = null;
+const flags = new Set(['--global', '-g', '--help', '-h', '--no-pdf', '--force', '--all', '--strict-humanize']);
+const valueOpts = new Map([['--out-dir', 'outDir'], ['--ide', 'ide'], ['--out', 'out'], ['--limit', 'limit'], ['--profile', 'profile'], ['--resume-data', 'resumeData']]);
+const multiOpts = new Map([['--board', 'boards'], ['--role', 'roles'], ['--location', 'locations']]);
+const positional = []; const options = { boards: [], roles: [], locations: [] }; let argError = null;
 for (let i = 0; i < argv.length; i++) {
   const a = argv[i];
-  if (a === '--out-dir') { options.outDir = argv[++i]; if (!options.outDir || options.outDir.startsWith('-')) argError = '--out-dir needs a directory.'; }
-  else if (a.startsWith('--out-dir=')) options.outDir = a.slice(10) || (argError = '--out-dir needs a directory.');
-  else if (flags.has(a)) options[a] = true;
+  const eq = a.indexOf('=');
+  const key = eq > 0 ? a.slice(0, eq) : a;
+  if (valueOpts.has(key)) {
+    const val = eq > 0 ? a.slice(eq + 1) : argv[++i];
+    if (!val || val.startsWith('-')) argError = `${key} needs a value.`;
+    else options[valueOpts.get(key)] = val;
+  } else if (multiOpts.has(key)) {
+    const val = eq > 0 ? a.slice(eq + 1) : argv[++i];
+    if (!val || val.startsWith('-')) argError = `${key} needs a value.`;
+    else options[multiOpts.get(key)].push(val);
+  } else if (flags.has(a)) options[a] = true;
   else if (a.startsWith('-')) argError = 'Unknown option. Use --help.';
   else positional.push(a);
 }
@@ -329,6 +342,12 @@ async function renderCv(input, { outDir, pdf }) {
   else throw new Error('render-cv accepts a tailored .html file or a .json payload.');
   const problems = htmlProblems(html);
   if (problems.length) throw new Error(`Render refused: ${problems.join('; ')}`);
+  const hasBaseline = ['context/resume-data.json', 'context/profile.md', 'context/cv.md'].some(rel => fs.existsSync(path.join(root, rel)));
+  if (kind === 'resume' && hasBaseline) {
+    const audit = verifyTailoredCv(root, file);
+    if (!audit.ok) throw new Error(`Fact-check blocked rendering: ${audit.errors.slice(0, 5).join('; ')}`);
+    for (const w of audit.warnings) say(`Warning: ${w}`, '33');
+  }
   const blocks = htmlToBlocks(html);
   if (!blocks.length) throw new Error('Render refused: no readable headings, paragraphs or bullets found.');
   const dir = outDir ? path.resolve(process.cwd(), outDir) : defaultDir;
@@ -364,10 +383,91 @@ async function renderCv(input, { outDir, pdf }) {
   else if (pdfStatus === 'unreadable') { say('PDF text could not be verified as readable; inspect it before any upload.', '33'); process.exitCode = 4; }
   say(`Report: ${report}`, '36');
 }
+async function skillsCommand(sub, rest) {
+  if (!sub || sub === 'help') {
+    say('job-hunter skills <list|validate|sync|install <source> [name...]|enable <name>|disable <name>|export --ide <claude|cursor|antigravity|windsurf|all>> [--force] [--global]');
+    return;
+  }
+  if (sub === 'list') {
+    const manifest = readManifest(root);
+    console.log(formatList(manifest));
+    return;
+  }
+  if (sub === 'sync') {
+    const res = syncSkills(root);
+    say(`Synced ${res.manifest.skills.length} skills (${res.changed} generated file(s) updated).`);
+    return;
+  }
+  if (sub === 'validate') {
+    const res = validateSkills(root, { checkGenerated: true });
+    for (const w of res.warnings) say(`[warn] ${w.file}: ${w.message}`, '33');
+    for (const e of res.errors) say(`[fail] ${e.file}: ${e.message}`, '31');
+    if (res.errors.length) { process.exitCode = 1; throw new Error(`Skill validation failed (${res.errors.length} error(s)).`); }
+    say(`Validated ${res.skills.length} skills with 0 errors (${res.warnings.length} warning(s)).`);
+    return;
+  }
+  if (sub === 'install') {
+    const [src, ...only] = rest;
+    const res = await installSkills(root, src, { only, force: Boolean(options['--force']), home });
+    for (const item of res.installed) say(`Installed ${item.name} -> ${item.path} (disabled until reviewed; run skills enable ${item.name})`);
+    for (const skip of res.skipped) say(`Skipped ${skip}`, '33');
+    if (!res.installed.length && res.skipped.length) throw new Error('No skills were installed.');
+    return;
+  }
+  if (sub === 'enable' || sub === 'disable') {
+    if (!rest[0]) throw new Error(`Usage: skills ${sub} <skill-name>`);
+    setEnabled(root, rest[0], sub === 'enable', { home });
+    say(`Skill "${rest[0]}" ${sub}d.`);
+    return;
+  }
+  if (sub === 'export') {
+    const results = exportSkills(root, { ide: options.ide, global: Boolean(global), home });
+    for (const r of results) {
+      say(`Exported ${r.ide} -> ${r.dir} (written: ${r.written}, unchanged: ${r.unchanged}, removed: ${r.removed})`);
+      for (const c of r.conflicts) say(`Preserved non-generated file: ${c}`, '33');
+    }
+    return;
+  }
+  throw new Error(`Unknown skills subcommand "${sub}". Use: list, validate, sync, install, enable, disable, export.`);
+}
+function verifyCvCommand(input) {
+  if (!input) throw new Error('Usage: verify-cv <tailored-file> [--profile FILE] [--resume-data FILE] [--strict-humanize]');
+  const result = verifyTailoredCv(root, input, {
+    profilePath: options.profile,
+    resumeDataPath: options.resumeData,
+    strictHumanize: Boolean(options['--strict-humanize']),
+  });
+  for (const w of result.warnings) say(`[warn] ${w}`, '33');
+  for (const e of result.errors) say(`[fail] ${e}`, '31');
+  if (!result.ok) throw new Error(`Fact-check failed (${result.errors.length} issue(s)).`);
+  say(`Fact-check passed against ${result.sources.join(', ')}.`);
+}
+async function pullAtsCommand() {
+  const boards = options.boards.map(spec => {
+    const idx = spec.indexOf(':');
+    if (idx <= 0) throw new Error(`Invalid --board "${spec}". Use <greenhouse|lever|ashby>:<token>.`);
+    const platform = spec.slice(0, idx).toLowerCase();
+    const token = spec.slice(idx + 1);
+    if (!ATS_PROVIDERS.has(platform)) throw new Error(`Unsupported ATS "${platform}". Use greenhouse, lever, or ashby.`);
+    return { platform, token };
+  });
+  const limit = options.limit ? Number(options.limit) : 50;
+  if (!Number.isInteger(limit) || limit < 1 || limit > 200) throw new Error('--limit must be an integer between 1 and 200.');
+  const result = await pullAts(root, {
+    boards,
+    roles: options.roles,
+    locations: options.locations,
+    limit,
+    includeDisabled: Boolean(options['--all']),
+    outFile: options.out || null,
+  });
+  for (const e of result.errors) say(`[warn] ${e}`, '33');
+  console.log(formatHarvestTable(result));
+}
 try {
   if (Number(process.versions.node.split('.')[0]) < 18) throw new Error('Node.js 18+ is required.');
   if (argError) throw new Error(argError);
-  if (argv.includes('--help') || argv.includes('-h') || command === 'help') say('job-hunter init [--global|-g] | doctor [--global] | login [--global] | sync-mcp [--global] | add-platform NAME [--global] | bundle-prompt [--global] | parse-cv [FILE] [--global] | render-cv FILE.html|FILE.json [--out-dir DIR] [--no-pdf] [--global]');
+  if (argv.includes('--help') || argv.includes('-h') || command === 'help') say('job-hunter init [--global|-g] | doctor [--global] | login [--global] | sync-mcp [--global] | add-platform NAME [--global] | bundle-prompt [--global] | parse-cv [FILE] [--global] | render-cv FILE.html|FILE.json [--out-dir DIR] [--no-pdf] [--global] | verify-cv FILE [--strict-humanize] | pull-ats [--board ats:token] [--role KW] [--location LOC] [--limit N] [--all] | skills <list|validate|sync|install|enable|disable|export> [--global]');
   else if (command === 'init') init();
   else if (command === 'doctor') doctor();
   else if (command === 'login') login();
@@ -376,6 +476,9 @@ try {
   else if (command === 'bundle-prompt') bundlePrompt();
   else if (command === 'parse-cv') parseCv(positional[1]);
   else if (command === 'render-cv') await renderCv(positional[1], { outDir: options.outDir, pdf: !options['--no-pdf'] });
+  else if (command === 'verify-cv') verifyCvCommand(positional[1]);
+  else if (command === 'pull-ats') await pullAtsCommand();
+  else if (command === 'skills') await skillsCommand(positional[1], positional.slice(2));
   else throw new Error('Unknown command. Use --help.');
 } catch (error) {
   // Errors are controlled messages only: never emit parsing input, env, configs or stack traces.

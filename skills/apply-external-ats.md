@@ -51,7 +51,7 @@ New tab / redirect flow ("Apply on company site" → Greenhouse, Lever, Ashby, W
 4. Snapshot form and follow ATS playbook; use verified resume_pdf_path through fill-form-answers.md. Optional cover letter empty unless owner permits; text box <=120 words grounded only in CV; a REQUIRED cover-letter file upload uses the approved cover-letter.pdf from tailor-resume.md section 4. Required unknown question -> review with screenshot/open_questions.
 5. Run skills/approval-gate.md before any irreversible click. Final safety gate, dry-run behavior, journal reservation and receipt verification are exactly apply-easy-apply.md steps 3–6. Never retry ambiguous submission. CAPTCHA, 2FA challenge, account warning or rate limit aborts the entire run immediately; a sign-in wall follows fill-form-answers.md Trap 5. Never create accounts.
 
-After the Submit click run skills/meta-self-verification.md; form rejections go to skills/meta-structured-debugging.md; stale refs after tab switches go to skills/meta-dom-recovery.md.
+After the Submit click run skills/meta-self-verification.md; form rejections go to skills/meta-structured-debugging.md; stale refs after tab switches go to skills/meta-dom-recovery.md. Ensure `logs/resumes/<folder>/interview-dossier.md` is saved via `skills/interview-dossier.md`, and if a posting requires applying by email instead of an ATS form, route to `skills/direct-email-drafter.md`.
 
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check

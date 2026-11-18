@@ -90,11 +90,37 @@ export const SkippedJob = z.object({
   url: z.string().url(),
   match_score: z.number().min(0).max(10),
   tier: z.literal("C"),
+  reason: z.string().min(1).max(64).optional(),
   skip_reason: z.string().min(3).max(160).regex(/^[^\n\r]+$/, "skip_reason must be one line"),
   skipped_at: z.string().datetime(),
   run_id: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 export const SkippedJobsLog = z.array(SkippedJob);
+
+export const SessionCheckpoint = z.object({
+  kind: z.literal("session_checkpoint"),
+  version: z.literal(1),
+  run_id: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  updated_at: z.string().datetime(),
+  phase: z.enum(["readiness", "discovery", "triage", "awaiting_owner", "applying", "logging", "reporting", "finished", "aborted"]),
+  workflow_mode: z.enum(["batch_review_first", "direct_auto"]),
+  dry_run: z.boolean(),
+  approval_mode: z.enum(["approve_before_submit", "auto_high_confidence", "dry_run"]),
+  lock_started_at: z.string().datetime(),
+  caps: z.object({
+    effective_daily_cap: z.number().int().nonnegative(),
+    applied_today: z.number().int().nonnegative(),
+    reserved_unresolved: z.number().int().nonnegative(),
+    per_platform_applied: z.record(z.number().int().nonnegative()),
+  }),
+  processed_job_ids: z.array(z.string()),
+  queue: z.array(z.string()),
+  awaiting_owner: z.array(z.object({ job_id: z.string(), question: z.string() })),
+  batch_selection: z.string().default(""),
+  consecutive_errors: z.number().int().nonnegative(),
+  next_action: z.string(),
+  notes: z.string().default(""),
+});
 
 export type Application = z.infer<typeof Application>;
 export type DailyRun = z.infer<typeof DailyRun>;
@@ -134,6 +160,14 @@ export const FormAnswers = z.object({
   questions: z.array(z.object({ match: z.array(z.string().min(1)).min(1), answer: z.string().min(1) })),
   skills_years: z.record(z.number().nonnegative()),
   eeo: z.record(z.string()),
+  eeo_and_compliance_defaults: z.object({
+    gender: z.string().default("Decline to self-identify"),
+    ethnicity: z.string().default("Decline to self-identify"),
+    veteran_status: z.string().default("Decline to self-identify"),
+    disability_status: z.string().default("Prefer not to say"),
+    referral_source: z.string().default("LinkedIn"),
+    gdpr_privacy_consent: z.boolean().default(true),
+  }).optional(),
 });
 export const Targets = z.object({ targets: z.array(z.object({
   name: z.string().min(1), platform: Platform, enabled: z.boolean(),

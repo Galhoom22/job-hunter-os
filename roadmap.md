@@ -1,11 +1,12 @@
 # Repository readiness audit
 
 ## Modular agent_skills architecture and skill package manager
-- [ ] Add strict SKILL.md frontmatter and the three mandatory sections to every skill; support skills/<name>/SKILL.md folders alongside flat files.
-- [ ] Generate skills/REGISTRY.md and skills/skills-manifest.json; add the Progressive Disclosure rule to AGENTS.md and IDE pointers.
-- [ ] Add four meta-skills (self-verification, DOM recovery, context compaction + checkpoint contract, structured debugging) and wire them into the run.
-- [ ] Add `skills list|validate|sync|install|enable|disable|export` to the CLI (Node built-ins only; community skills disabled until reviewed).
-- [ ] README section and tests for manifest, frontmatter, list/validate/install/export.
+- [x] Add strict SKILL.md frontmatter and the three mandatory sections to every skill; support skills/<name>/SKILL.md folders alongside flat files.
+- [x] Generate skills/REGISTRY.md and skills/skills-manifest.json; add the Progressive Disclosure rule to AGENTS.md and IDE pointers.
+- [x] Add four meta-skills (self-verification, DOM recovery, context compaction + checkpoint contract, structured debugging) and wire them into the run.
+- [x] Add `skills list|validate|sync|install|enable|disable|export` to the CLI (Node built-ins only; community skills disabled until reviewed).
+- [x] Add 8 Career-Ops capabilities (ghost-job detector, `verify-cv` anti-hallucination guard, AI-slop humanizer, 75-word hiring-manager outreach drafter, direct email drafter, EEO/GDPR compliance defaults, interview JD dossier, and `pull-ats` JSON feed harvester).
+- [x] README section and tests for manifest, frontmatter, list/validate/install/export, verify-cv, and pull-ats.
 
 ## Bulletproof resume intake, multi-format CVs and batch triage
 - [x] Add resume ingestion playbook and dependency-free `parse-cv` (text, PDF, DOCX, unreadable/scanned detection).

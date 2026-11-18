@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
-import { ApplicationsLog, DailyRun, Insight, SkippedJobsLog } from "../schemas/index.ts";
+import { ApplicationsLog, DailyRun, Insight, SessionCheckpoint, SkippedJobsLog } from "../schemas/index.ts";
 const root = resolve(import.meta.dirname, "..", process.argv.includes("--demo") ? "demo" : "logs");
 let failed = 0;
 function check(file: string, schema: z.ZodTypeAny) {
@@ -23,6 +23,8 @@ if (existsSync(skipped)) {
 }
 for (const [dir, schema] of [["runs", DailyRun], ["insights", Insight]] as const) {
   const d = resolve(root, dir);
-  if (existsSync(d)) for (const f of readdirSync(d).filter(f => f.endsWith(".json"))) check(resolve(d, f), schema);
+  if (existsSync(d)) for (const f of readdirSync(d).filter(f => f.endsWith(".json"))) {
+    check(resolve(d, f), dir === "runs" && f === "current-session-checkpoint.json" ? SessionCheckpoint : schema);
+  }
 }
 process.exit(failed ? 1 : 0);

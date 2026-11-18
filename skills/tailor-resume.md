@@ -14,6 +14,9 @@ preconditions:
   - complete job description captured
 requires_skills:
   - grounded-answer
+  - fact-check-guard
+  - humanize-writing
+  - interview-dossier
 verification:
   - every rewritten sentence maps to a verified fact in the evidence map
   - render-cv exited 0 and resume.render-report.json shows pdf "ok" under 200 KB
@@ -29,7 +32,7 @@ Use per job. Standalone /tailor-cv never applies.
 - **Preconditions (stop if any is false):**
   - owner-verified context/resume-data.json
   - complete job description captured
-- **Requires skills:** `grounded-answer`. **MCP:** playwright.
+- **Requires skills:** `grounded-answer`, `fact-check-guard`, `humanize-writing`, `interview-dossier`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
 
@@ -48,11 +51,13 @@ For every rewritten sentence record source fact IDs/quotes in `logs/resumes/<job
 ### 3. One folder per job, every format
 Write all artifacts for one posting into `logs/resumes/<company-slug>-<role-slug>-<job-id-slug>/` (sanitized ASCII slugs, no path separators/traversal; the job ID suffix prevents two similar roles from colliding). Keep real names in document text even when the folder name is transliterated.
 
-Preferred path (deterministic, dependency-free): write a private render payload `payload.json` in that folder = the verified `context/resume-data.json` fields, with only these per-job changes: `summary` rewritten from verified facts, `skills_order` (existing skills only), bullets reordered/rephrased per the evidence map, plus `target: {company, role, job_id}` and `tailoring_notes: {jd_asked[], changes[], gaps[]}`. Then run:
+Preferred path (deterministic, dependency-free): write a private render payload `payload.json` in that folder = the verified `context/resume-data.json` fields, with only these per-job changes: `summary` rewritten from verified facts, `skills_order` (existing skills only), bullets reordered/rephrased per the evidence map, plus `target: {company, role, job_id}` and `tailoring_notes: {jd_asked[], changes[], gaps[]}`. Filter the rewritten summary/bullets through `skills/humanize-writing.md`, run `node bin/job-hunter.mjs verify-cv logs/resumes/<folder>/payload.json` (`skills/fact-check-guard.md`), then run:
 
 ```
 node bin/job-hunter.mjs render-cv logs/resumes/<folder>/payload.json
 ```
+
+`render-cv` also runs `verify-cv` automatically when verified owner context is present and blocks PDF/DOCX rendering if any unverified metric or entity is detected. After rendering, archive the full JD and top 5 interview prep questions into `` `interview-dossier.md` `` per `skills/interview-dossier.md`.
 
 It refuses unverified data (`owner_verified` must be true), placeholders, scripts or remote resources, then writes:
 

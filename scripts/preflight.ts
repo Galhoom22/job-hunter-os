@@ -53,7 +53,7 @@ if (!existsSync(p("logs/applications-log.json"))) problems.push("initialize priv
 else try {
   const apps = ApplicationsLog.parse(JSON.parse(readFileSync(p("logs/applications-log.json"), "utf8")));
   const runsDir = p("logs/runs");
-  const runs = existsSync(runsDir) ? readdirSync(runsDir).filter(f => f.endsWith(".json")).map(f => DailyRun.parse(JSON.parse(readFileSync(resolve(runsDir, f), "utf8")))) : [];
+  const runs = existsSync(runsDir) ? readdirSync(runsDir).filter(f => f.endsWith(".json") && f !== "current-session-checkpoint.json").map(f => DailyRun.parse(JSON.parse(readFileSync(resolve(runsDir, f), "utf8")))) : [];
   const today = new Date().toISOString().slice(0, 10);
   if (g.success && !canApply(apps, "__any__", today, {...g.data,max_applications_per_day:agentDailyCap(g.data.max_applications_per_day,g.data.warmup_mode,today,runs)})) problems.push("daily cap reached");
 } catch { problems.push("application history invalid"); }

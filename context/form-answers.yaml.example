@@ -27,3 +27,10 @@ eeo:
   ethnicity: "Decline to self-identify"
   veteran: "I am not a protected veteran"
   disability: "I do not wish to answer"
+eeo_and_compliance_defaults:
+  gender: "Decline to self-identify"
+  ethnicity: "Decline to self-identify"
+  veteran_status: "Decline to self-identify"
+  disability_status: "Prefer not to say"
+  referral_source: "LinkedIn"
+  gdpr_privacy_consent: true

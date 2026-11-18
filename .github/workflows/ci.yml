@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Validate modular skills & registry
+        run: node bin/job-hunter.mjs skills validate
+
+      - name: Run CLI & skills tests
+        run: npm run test:cli
+
+      - name: Run Vitest unit & policy tests
+        run: npm test
+
+      - name: Run agent rules tests
+        run: npm run test:agent-rules
+
+      - name: Validate demo logs
+        run: npm run validate:logs -- --demo

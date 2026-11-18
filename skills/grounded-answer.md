@@ -10,7 +10,8 @@ requires_mcp:
   - none
 preconditions:
   - fresh snapshot with exact question wording and field limit
-requires_skills: []
+requires_skills:
+  - humanize-writing
 verification:
   - every sentence traces to profile.md/cv.md or observed job text
   - answer fits the field limit and requested language
@@ -25,7 +26,7 @@ Use for open-ended questions only; factual mappings use fill-form-answers.
 - **Load when:** Why this company / role?; free-text application question; mixed motivation + legal question.
 - **Preconditions (stop if any is false):**
   - fresh snapshot with exact question wording and field limit
-- **Requires skills:** none. **MCP:** none.
+- **Requires skills:** `humanize-writing`. **MCP:** none.
 
 ## Deterministic Step-by-Step Execution
 
@@ -35,7 +36,7 @@ Classify the question by meaning, not a broad keyword match. Fresh snapshot prov
 - **Motivation/fit**: “Why this company/role?” can be drafted in 2–3 sentences. Cite an actually observed mission/product/role need, connect one verified skill/project, state interest without inventing past use, personal passion, referrals, company research or achievements. If company mission unknown, use the observed role responsibilities or ask; don't make up a mission.
 - **Mixed prompt**: separate subjective motivation from required factual/legal parts; any missing factual part blocks the whole required response. “Explain your visa status and why us” is not a creative-writing bypass.
 
-Keep answer within actual field limit, in requested language, grounded in context/profile.md and CV. Show source facts in private notes. For a permitted application, include draft in final review; direct messages/posts/profile text require explicit exact-text approval. Unknown mandatory answer → leave tab open, take local logs/screenshots/<safe-job-id>.png without secrets, record open_questions + needs_review, validate and ask the owner in chat. Never silently choose “prefer not to say” or false just to proceed.
+Keep answer within actual field limit, in requested language, grounded in context/profile.md and CV, and filtered through `skills/humanize-writing.md` (no AI-slop clichés or em-dash overuse). Show source facts in private notes. For a permitted application, include draft in final review; direct messages/posts/profile text require explicit exact-text approval. Unknown mandatory answer → leave tab open, take local logs/screenshots/<safe-job-id>.png without secrets, record open_questions + needs_review, validate and ask the owner in chat. Never silently choose “prefer not to say” or false just to proceed.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

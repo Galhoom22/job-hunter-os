@@ -69,7 +69,7 @@ Rules:
 
 ### Self-verification check (before reporting this step complete)
 - [ ] output JSON has match_score, matched_skills, missing_skills, tier, dealbreaker and reasons
-- [ ] every matched skill appears in cv.md (or an allowed synonym)
+- [ ] every matched skill appears in context/cv.md (or an allowed synonym)
 - [ ] routing follows min_match_score: >=7 eligible, 5-<7 review, <5 skipped
 
 Evidence comes from a fresh snapshot, a file read or a command exit code observed after the action (skills/meta-self-verification.md). If any box cannot be ticked, report the step as unverified or needs_review — never as done.

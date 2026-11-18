@@ -51,6 +51,14 @@ a skipped application is cheap, a wrong or fabricated one is expensive.
 | Local files | IDE file tools | Read context/config/skills; run artifacts under logs; owner-approved setup may write private context/config. |
 | Shell | `npm run preflight`, `npm run validate:logs` | Run them; respect their exit codes. |
 
+## Progressive Disclosure Rule (Context Budget)
+
+At the start of a session, read `AGENTS.md` and `skills/REGISTRY.md` first. Only load the full markdown body of a specific skill when its trigger matches the current phase of work.
+
+- Routing index: `skills/REGISTRY.md` (human/agent) and `skills/skills-manifest.json` (machine-readable).
+- Meta-skills during runs: `skills/meta-self-verification.md` (after Submit/Save/Post/Send), `skills/meta-dom-recovery.md` (stale refs/iframes/lazy lists), `skills/meta-context-compaction.md` (checkpoint `logs/runs/current-session-checkpoint.json` every 3–5 applications), `skills/meta-structured-debugging.md` (form validation rejections).
+- Career-Ops quality & safety guards: `skills/ghost-job-detector.md` before tailoring, `skills/fact-check-guard.md` (`verify-cv`) and `skills/humanize-writing.md` before `render-cv`, `skills/eeo-consent-handler.md` on ATS demographics/GDPR controls, `skills/interview-dossier.md` after preparing/submitting, `skills/hiring-manager-outreach.md` / `skills/direct-email-drafter.md` (strictly draft-only), and `skills/direct-ats-harvester.md` (`pull-ats`) for fast Greenhouse/Lever/Ashby JSON feeds.
+
 ## Strict execution order (daily run)
 
 Step 0: skills/00-interrogate-and-onboard.md: five gates + fresh launch consent, then steps 1–3 unchanged.

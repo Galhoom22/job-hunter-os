@@ -25,7 +25,7 @@ Use for profile work only; never during application runs.
 - **Load when:** /linkedin-growth audit; Optimize my profile.
 - **Preconditions (stop if any is false):**
   - explicit owner request outside any daily run
-  - verified profile.md and cv.md
+  - verified context/profile.md and context/cv.md
 - **Requires skills:** none. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution

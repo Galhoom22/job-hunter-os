@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
 import { parseBatchReply, triageTier, type BatchRow } from "../../schemas/agent-policy";
-import { Guardrails, SkippedJob } from "../../schemas";
+import { Guardrails, SkippedJob, SessionCheckpoint, FormAnswers } from "../../schemas";
 
 const config = parse(readFileSync(new URL("../../config/guardrails.yaml", import.meta.url), "utf8"));
 const rows: BatchRow[] = [{ n: 1, tier: "A" }, { n: 2, tier: "B" }, { n: 3, tier: "A" }, { n: 4, tier: "C" }];
@@ -53,4 +53,49 @@ describe("skipped-jobs log", () => {
   it("accepts a one-line Tier C entry", () => expect(SkippedJob.safeParse(entry).success).toBe(true));
   it("rejects multi-line skip reasons", () => expect(SkippedJob.safeParse({ ...entry, skip_reason: "a\nb c" }).success).toBe(false));
   it("only Tier C jobs belong in the skipped log", () => expect(SkippedJob.safeParse({ ...entry, tier: "B" }).success).toBe(false));
+  it("accepts ghost_or_expired reason on Tier C skipped jobs", () => expect(SkippedJob.safeParse({ ...entry, reason: "ghost_or_expired", skip_reason: "ghost_or_expired: Closed banner observed" }).success).toBe(true));
+});
+
+describe("session checkpoint & compliance defaults", () => {
+  it("validates SessionCheckpoint contract", () => {
+    const cp = {
+      kind: "session_checkpoint",
+      version: 1,
+      run_id: "2026-11-18",
+      updated_at: "2026-11-18T10:42:00Z",
+      phase: "applying",
+      workflow_mode: "batch_review_first",
+      dry_run: true,
+      approval_mode: "approve_before_submit",
+      lock_started_at: "2026-11-18T09:58:12Z",
+      caps: { effective_daily_cap: 5, applied_today: 0, reserved_unresolved: 0, per_platform_applied: {} },
+      processed_job_ids: [],
+      queue: [],
+      awaiting_owner: [],
+      batch_selection: "",
+      consecutive_errors: 0,
+      next_action: "Resume queue",
+      notes: "",
+    };
+    expect(SessionCheckpoint.safeParse(cp).success).toBe(true);
+  });
+
+  it("validates FormAnswers with eeo_and_compliance_defaults", () => {
+    const parsed = FormAnswers.safeParse({
+      owner_verified: true,
+      resume_pdf_path: "./assets/resume.pdf",
+      questions: [],
+      skills_years: { TypeScript: 5 },
+      eeo: {},
+      eeo_and_compliance_defaults: {
+        gender: "Decline to self-identify",
+        ethnicity: "Decline to self-identify",
+        veteran_status: "Decline to self-identify",
+        disability_status: "Prefer not to say",
+        referral_source: "LinkedIn",
+        gdpr_privacy_consent: true,
+      },
+    });
+    expect(parsed.success).toBe(true);
+  });
 });

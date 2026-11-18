@@ -302,7 +302,10 @@ Prefix with `npx github:redasalem/job-hunter-os` or use `node ./bin/job-hunter.m
 | `add-platform NAME [--global]` | Copy playbook and disabled `other` target | No working adapter or permission to submit; lowercase slug only |
 | `bundle-prompt [--global]` | Create private master context Markdown for owner-reviewed web-chat upload | Verified non-example context and approved local log validation required; never uploads or overwrites |
 | `parse-cv [FILE] [--global]` | Read a CV (`.pdf`, `.docx`, `.md`, `.txt`, `.json`) locally into `context/cv-extracted.txt` + a quality report | Exit 3 = scanned/garbled/unsupported → paste text in chat. Extraction is heuristic; nothing is verified until you confirm |
-| `render-cv FILE.html\|FILE.json [--out-dir DIR] [--no-pdf]` | Write `.html`, `.pdf` (local Chromium), `.docx`, `.doc`, `.txt` (+ `tailoring-notes.md`) for a resume or cover letter | Refuses unverified data, placeholders, scripts, remote resources; PDF must be ≤200 KB and text-readable |
+| `render-cv FILE.html\|FILE.json [--out-dir DIR] [--no-pdf]` | Write `.html`, `.pdf` (local Chromium), `.docx`, `.doc`, `.txt` (+ `tailoring-notes.md`) for a resume or cover letter | Refuses unverified data, placeholders, scripts, remote resources; automatically runs `verify-cv` when verified context exists; PDF must be ≤200 KB and text-readable |
+| `verify-cv FILE [--strict-humanize]` | Audit every number, metric, date, employer, degree, project, and skill in a tailored resume against verified owner context | Blocks PDF rendering on unverified claims; `--strict-humanize` also fails on AI-slop clichés or em-dash overuse |
+| `pull-ats [--board ats:token] [--role KW] [--all]` | Fetch fresh postings directly from public Greenhouse, Lever, and Ashby JSON APIs into `logs/ats-harvest.json` | Read-only allowlisted ATS endpoints only; filters locally by role/location and feeds discovery without auto-applying |
+| `skills list\|validate\|sync\|install\|enable\|disable\|export` | Manage modular `SKILL.md` playbooks, lint frontmatter, sync registry/manifest, install community skills, and export to IDEs | Community skills install disabled under `skills/community/` until owner-reviewed and enabled |
 
 ### AI IDE chat commands
 
@@ -376,6 +379,45 @@ Reply APPLY ALL GREEN, APPLY 1,3, or tell me which CV to tweak before I open any
 ```
 
 Your reply opens forms only for the selected rows. Dry run, `approve_before_submit`, caps, warm-up and stop rules still apply to each job; a Stretch job below your minimum score is prepared but left for you to submit. Easy Apply modals and "Apply on company site" redirects (new tab → Greenhouse/Lever/Ashby/Workable) are both handled: the agent switches to the new tab, records the final URL, reaches the form, uploads the tailored file first and continues.
+
+## 🧩 Modular agent_skills Architecture & Skill Package Manager
+
+`job-hunter-os` adopts the modular [`agent_skills`](https://github.com/janestreet/agent_skills) / `SKILL.md` packaging standard across both flat `skills/*.md` playbooks and modular `skills/<name>/SKILL.md` directories.
+
+- **Progressive Disclosure (`skills/REGISTRY.md` & `skills/skills-manifest.json`):** At session start, the agent reads `AGENTS.md` and `skills/REGISTRY.md` (a compact routing table of skill names, load-when descriptions, triggers, preconditions, and paths) instead of loading all 58 playbooks into context at once. Full skill bodies load only when their trigger matches the active phase.
+- **Strict `SKILL.md` Contract:** Every core, meta, platform, and ATS skill begins with machine-readable YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections:
+  1. `## When to Use & Preconditions`
+  2. `## Deterministic Step-by-Step Execution`
+  3. `## Anti-Patterns (What NEVER To Do) & Self-Verification Check`
+- **Four Foundational Meta-Skills:**
+  - [Verify Before Complete](skills/meta-self-verification.md) (`verify-before-complete`) — forbids claiming `"applied"`, `"uploaded"`, or `"updated"` without fresh `browser_snapshot` receipt evidence and a saved proof quote.
+  - [Self-Healing Navigation](skills/meta-dom-recovery.md) (`self-healing-navigation`) — recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded lists with bounded fresh-snapshot retries.
+  - [Long-Run Memory Compaction](skills/meta-context-compaction.md) (`long-run-memory-compaction`) — checkpoints progress to `logs/runs/current-session-checkpoint.json` every 3–5 applications so long runs survive context resets.
+  - [Diagnose Automation Failure](skills/meta-structured-debugging.md) (`diagnose-automation-failure`) — extracts accessibility-tree validation errors, repairs verified format issues within a 2-retry budget, and re-runs `approval-gate.md`.
+
+### Skill Package Manager (`npx github:redasalem/job-hunter-os skills ...`)
+
+```bash
+npx github:redasalem/job-hunter-os skills list
+npx github:redasalem/job-hunter-os skills validate
+npx github:redasalem/job-hunter-os skills sync
+npx github:redasalem/job-hunter-os skills install https://github.com/janestreet/agent_skills
+npx github:redasalem/job-hunter-os skills enable <skill-name>
+npx github:redasalem/job-hunter-os skills export --ide claude --global
+```
+
+Community skills installed via `skills install` are placed under `skills/community/<name>/` and remain **disabled by default** in `skills/community/.trust.json` until you inspect them and run `skills enable <name>`. `skills export --ide <claude|cursor|antigravity|windsurf|all>` writes generated pointers into each IDE's native skill/workflow/rule folder without overwriting user-authored files.
+
+## 🔥 Advanced Career-Ops Capabilities
+
+1. **Ghost-Job & Live-Status Detector ([ghost-job-detector.md](skills/ghost-job-detector.md)):** Checks for closed/filled banners, JSON-LD `datePosted` (>30 days) / `validThrough`, and canonical ATS presence before wasting tokens tailoring. Ghost/expired roles are logged to `logs/skipped-jobs.json` with `reason: "ghost_or_expired"`.
+2. **Anti-Hallucination Resume Fact-Checker ([fact-check-guard.md](skills/fact-check-guard.md) + `verify-cv`):** Deterministically audits every percentage, currency figure, multiplier, date, employer, degree, project, and skill in tailored CVs against `context/profile.md` and `context/resume-data.json`. Automatically blocks `render-cv` PDF generation if any unverified claim is found.
+3. **Anti-AI Slop & Humanizer Filter ([humanize-writing.md](skills/humanize-writing.md)):** Strips generic LLM clichés (`"delve"`, `"testament"`, `"tapestry"`, `"spearheaded"`, `"synergy"`, `"thrilled to apply"`, `"fast-paced environment"`, `"moreover"`, `"furthermore"`) and em-dash overuse (`—`) from summaries, cover letters, outreach notes, and form answers.
+4. **Hiring Manager Radar & 75-Word Outreach Drafter ([hiring-manager-outreach.md](skills/hiring-manager-outreach.md)):** For `Score >= 8` roles, identifies likely Engineering Managers, Tech Leads, or Technical Recruiters and writes a strictly `<= 75`-word, humanized, draft-only note to `logs/resumes/<company>-<role>-<job-id>/outreach-draft.md` (never auto-sent).
+5. **Direct Email Application Drafter ([direct-email-drafter.md](skills/direct-email-drafter.md)):** When Wuzzuf, LinkedIn Posts, or Hacker News Who's Hiring postings ask to email `careers@...` with a subject code, writes `logs/resumes/<company>-<role>-<job-id>/email-draft.md` with exact `To:`, `Subject:`, plain-text `Body:`, and the tailored PDF path—never auto-sending.
+6. **EEO, Demographics & Consent Auto-Handler ([eeo-consent-handler.md](skills/eeo-consent-handler.md) + [form-answers.yaml.example](context/form-answers.yaml.example)):** Adds explicit `eeo_and_compliance_defaults` (`gender`, `ethnicity`, `veteran_status`, `disability_status`, `referral_source`, `gdpr_privacy_consent: true`) so voluntary demographics default to neutral opt-outs and required candidate-data privacy boxes are checked without opting into marketing emails.
+7. **Post-Application Interview Prep & Archived JD Dossier ([interview-dossier.md](skills/interview-dossier.md)):** Saves `logs/resumes/<company>-<role>-<job-id>/interview-dossier.md` with the verbatim archived JD, foregrounded CV evidence, and top 5 tailored technical & behavioral questions based on JD-vs-profile gaps before postings disappear.
+8. **Fast Direct ATS JSON Feed Harvester ([direct-ats-harvester.md](skills/direct-ats-harvester.md) + `pull-ats`):** Queries official public Greenhouse, Lever, and Ashby JSON endpoints directly for configured `board_tokens` in seconds, filters locally by role/location, and writes `logs/ats-harvest.json` for Mission Control triage.
 
 ## 8. Multi-IDE & multi-model compatibility
 

@@ -1,6 +1,6 @@
 # Job Hunter — GitHub Copilot
 
-Read [AGENTS.md](../AGENTS.md) from the repository root before any task; it is canonical. The product is chat + Markdown skills + MCP, not the web preview.
+Read [AGENTS.md](../AGENTS.md) and [skills/REGISTRY.md](../skills/REGISTRY.md) first; only load a full skill body when its trigger matches the current phase of work. The product is chat + Markdown skills + MCP, not the web preview.
 
 Use docs/chat-commands.md for all six workflows:
 - /setup or “Setup my profile from this CV” → skills/00-onboarding-chat.md
