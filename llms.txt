@@ -7,11 +7,11 @@
 - [AGENTS.md](AGENTS.md): Canonical rules, progressive disclosure protocol, strict daily-run execution order, and 10 non-negotiable guardrails.
 - [skills/REGISTRY.md](skills/REGISTRY.md): Consolidated 47-skill routing index (triggers, preconditions, verification contracts).
 - [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 47 consolidated skills.
-- [evals/RUBRIC.md](evals/RUBRIC.md): Deterministic 20-assertion Skill Evaluation Harness (`npx github:redasalem/job-hunter-os eval --file <output.json>`).
+- [evals/README.md](evals/README.md) & [evals/RUBRIC.md](evals/RUBRIC.md): Deterministic CI schema & fixture validator (`npx github:redasalem/job-hunter-os eval --baseline` or `--file <output.json>`).
 - [evals/PROMPT.md](evals/PROMPT.md): Zero-shot reproducible evaluation prompt for external LLMs.
 - [PLATFORMS.md](PLATFORMS.md): Global job board, B2B contract network, regional portal, and employer ATS compatibility matrix.
 - [HIRED.md](HIRED.md): Community success ledger & setup tips from landed interviews and offers.
-- [CHANGELOG.md](CHANGELOG.md): Release history (`v1.0.0`, `v1.1.0`, `v1.2.0`, `v1.2.1`).
+- [CHANGELOG.md](CHANGELOG.md): Release history (`v1.0.0`, `v1.1.0`, `v1.2.0`, `v1.2.1`, `v1.2.2`).
 - [README.md](README.md) & [README.ar.md](README.ar.md): English & RTL Arabic Quick Start, Eval Scorecard, and workflow guide.
 - [docs/SKILL_CATALOG.md](docs/SKILL_CATALOG.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md): Deep documentation.
 

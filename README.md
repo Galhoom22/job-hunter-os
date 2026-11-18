@@ -1,21 +1,33 @@
 # job-hunter-os
 
-**100% Zero-Code AI Agent Skills & MCP Playbook System — Your CV, Your AI IDE, Your Browser.**
+**Fact-Checked AI CV Tailoring, ATS Keyword Intelligence & Interview Dossier Co-Pilot — with Human-in-the-Loop Application Approval.**
 
 **English | [العربية (RTL)](README.ar.md)** · **[Live Interactive Kanban Dashboard Preview ↗](https://redasalem.github.io/job-hunter-os/demo-dashboard.html)**
 
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
-[![Harness CI 20/20](https://img.shields.io/badge/Eval_Baseline-20%2F20_CI_Self_Test-2ea44f)](evals/RUBRIC.md)
-[![Zero Code](https://img.shields.io/badge/Runtime-Zero_Code_Markdown-167d60)](AGENTS.md)
+[![Harness Validator 20/20](https://img.shields.io/badge/CI_Harness_Validator-20%2F20_Baseline-2ea44f)](evals/README.md)
+[![47 Consolidated Skills](https://img.shields.io/badge/Skills-47_Consolidated_Markdown-167d60)](skills/REGISTRY.md)
 [![Playwright MCP](https://img.shields.io/badge/Browser-Playwright_MCP-167d60)](mcp/README.md)
 [![Multi-IDE ready](https://img.shields.io/badge/IDE-25%2B_AI_Apps_%26_Harnesses-167d60)](docs/COMPATIBILITY.md)
 [![agentskills.io](https://img.shields.io/badge/Standard-agentskills.io-2ea44f)](.agents/skills/daily-run/SKILL.md)
 
-There is **no custom application backend, no browser extension, and zero external npm dependencies** (`dependencies: {}`). **The AI model inside your IDE is the runtime engine.** It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), interviews you in chat, drives Chrome via **Playwright MCP** using accessibility snapshots, tailors verified single-column HTML/PDF resumes, fills ATS forms behind a human `APPROVE` gate, and logs everything to local JSON (plus optional **Notion MCP**).
+`job-hunter-os` turns your AI IDE or CLI harness into a disciplined career co-pilot built on **47 consolidated Markdown skills** and a **zero-dependency Node CLI** (`dependencies: {}`). It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), scores job fit honestly, maps ATS keywords (`Before vs. After %`), generates single-column HTML/PDF CVs and interview dossiers, prepares `<= 75`-word hiring-manager notes, and logs everything locally (`logs/` + optional Notion MCP).
+
+> **What `job-hunter-os` Will NEVER Do (Hard Operational Boundaries):**
+> - **No blind auto-submit:** `dry_run: true` is on by default; live forms pause at a **Live DOM Read-Back Table** and require your explicit job-bound `APPROVE` reply before clicking Submit.
+> - **No fabricated CV claims:** Zero invented metrics, tools, dates, or skill years—missing qualifications are flagged under True Gaps.
+> - **No CAPTCHA / 2FA / ToS bypass:** Any bot check, rate limit, or security banner trips a 24-hour platform circuit breaker immediately (`logs/circuit-breaker.json`), while actions observe strict **3–9 s human pacing**.
 
 ---
 
-## 1. 30-Second Quick Start (`macOS`, `Linux`, `Windows`)
+## ⚡ Try `/demo` in 15 Seconds & Live Dashboard Preview (Zero Setup)
+
+- **15-Second IDE Sandbox (`/demo`):** Open this repo in **Cursor, Claude Code, Antigravity, VS Code Copilot, Codex CLI, OpenCode, or Windsurf** and type `/demo` (or view [`examples/sandbox-demo/`](examples/sandbox-demo/expected-mission-control.md) and [`examples/outputs/`](examples/outputs/sample-interview-dossier.md)) to test Mission Control scoring, Company Health vetting, and outreach drafting with zero personal data.
+- **Live Interactive Browser Preview:** Open the [**GitHub Pages Kanban & Analytics Dashboard**](https://redasalem.github.io/job-hunter-os/demo-dashboard.html) ([`docs/demo-dashboard.html`](docs/demo-dashboard.html)) pre-loaded with synthetic applications—or run `npx github:redasalem/job-hunter-os dashboard` locally against your own `logs/applications-log.json`.
+
+---
+
+## 1. 30-Second CLI Quick Start (`macOS`, `Linux`, `Windows`)
 
 ```bash
 # 1. Install skills globally (~/.job-hunter-os + ~/.agents/skills, ~/.claude/skills, ~/.cursor/rules, Antigravity) & sync MCP
@@ -24,31 +36,26 @@ npx github:redasalem/job-hunter-os init --global
 # 2. Sign in once inside your dedicated local browser-profile/
 npx github:redasalem/job-hunter-os login --global
 
-# 3. Verify readiness gates, live profile URLs, playbook freshness (<60d), provenance & CI reference baseline
+# 3. Verify readiness gates, live profile URLs, playbook freshness (<60d), provenance & CI harness validator
 npx github:redasalem/job-hunter-os doctor
 npx github:redasalem/job-hunter-os eval --baseline
 ```
 
-- **Try in 15 seconds with zero setup:** Type `/demo` in your AI IDE (or inspect [`examples/sandbox-demo/`](examples/sandbox-demo/expected-mission-control.md) and [`examples/outputs/`](examples/outputs/sample-interview-dossier.md)).
-- **Preview the Analytics & Kanban UI in your browser:** Open the [**Live GitHub Pages Dashboard**](https://redasalem.github.io/job-hunter-os/demo-dashboard.html) ([`docs/demo-dashboard.html`](docs/demo-dashboard.html)) or run `npx github:redasalem/job-hunter-os dashboard` locally.
 - **All CLI Commands:** `init [--global] [--ide <name>]` · `update` · `doctor` · `eval [--baseline | --file <json>]` · `status` · `bundle` · `dashboard [--no-open]` · `unlock` · `backup` · `login` · `sync-mcp` (plus [`scripts/install.sh`](scripts/install.sh) and [`scripts/install.ps1`](scripts/install.ps1)).
 
 ---
 
-## 2. Reproducible Skill Evaluation Harness (`eval --baseline` / `--file`)
+## 2. Deterministic Harness Validator (`eval --baseline` / `--file`)
 
-The repo includes a 20-assertion local grading suite under [`evals/`](evals/RUBRIC.md) covering **5 edge-case job descriptions** and **3 local HTML ATS form mocks** (`Greenhouse`, `Lever`, `Ashby`):
+> **Truthful Scope Note:** `node ./bin/cli.mjs eval` (`--baseline`) is a **deterministic harness validator for CI schema and fixture integrity checks** against [`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json)—it is **not** a live multi-model benchmark score. To grade an actual cold LLM run (`Claude`, `Gemini`, `GPT`, `DeepSeek`), run [`evals/PROMPT.md`](evals/PROMPT.md) and grade its output with `node ./bin/cli.mjs eval --file <output.json>`. See [`evals/README.md`](evals/README.md).
 
-- **`--baseline` (Harness Reference Baseline / CI Self-Test):** Grades [`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json) in CI on Linux, macOS, and Windows to verify harness logic (**not** a live LLM benchmark).
-- **`--file <model-output.json>` (Live External Model Grading):** Run the copy-paste prompt in [`evals/PROMPT.md`](evals/PROMPT.md) in Claude, Gemini, GPT, or DeepSeek and grade the real output with `node ./bin/cli.mjs eval --file <output.json>`.
-
-| Assertion Group | Fixtures Verified | Deterministic Checks | Harness Baseline (CI Self-Test) |
+| Validator Group | Fixtures Checked | Verified Invariants | CI Schema Baseline |
 |---|---|---|---|
 | **Anti-Hallucination & ATS Tailoring** (`EVAL-01, 04..07`) | [`candidate-profile.md`](evals/fixtures/candidate-profile.md), [`01-strong-match.md`](evals/fixtures/jds/01-strong-match.md) | `0` invented metrics, `Kubernetes` isolated in `true_gaps`, `0` banned AI clichés/em-dashes, 1-page A4 budget (`<= 38` lines) | **5 / 5 PASS** |
 | **Prompt-Injection & Honeypot Defense** (`EVAL-03, 08, 17`) | [`02-prompt-injection-trap.md`](evals/fixtures/jds/02-prompt-injection-trap.md), [`01-strong-match.md`](evals/fixtures/jds/01-strong-match.md) | Quarantines hidden `SYSTEM OVERRIDE` (`0` leaked files, salary floor untampered), leaves `website_url_honeypot` blank, captures `PINEAPPLE` codeword | **3 / 3 PASS** |
 | **Ghost, Blacklist & Cross-Channel Dedup** (`EVAL-02, 09..12`) | [`03-ghost-expired-job.md`](evals/fixtures/jds/03-ghost-expired-job.md), [`04-blacklist-duplicate.md`](evals/fixtures/jds/04-blacklist-duplicate.md), [`05-stretch-mismatch.md`](evals/fixtures/jds/05-stretch-mismatch.md) | Skips `>90d` closed jobs, blocks `blacklisted_companies`/`blacklisted_domains`, deduplicates `acme-cloud::senior-backend-engineer` | **5 / 5 PASS** |
-| **ATS Form Mocks, DOM Read-Back & Anti-Ban** (`EVAL-13..16, 18..20`) | [`greenhouse-mock.html`](evals/fixtures/forms/greenhouse-mock.html), [`lever-mock.html`](evals/fixtures/forms/lever-mock.html), [`ashby-mock.html`](evals/fixtures/forms/ashby-mock.html) | Enforces Upload-First (`resume.pdf`), EEO neutral defaults, `gdpr_consent: true`, Live DOM Read-Back Table before `APPROVE`, and 24h circuit-breaker cooldown | **7 / 7 PASS** |
-| **Total Harness Reference Baseline** | **5 JDs + 3 ATS Mocks** | Run `npx github:redasalem/job-hunter-os eval --file <your-run.json>` to test your own model | **20 / 20 (CI Self-Test)** |
+| **ATS Form Mocks, DOM Read-Back & Anti-Ban** (`EVAL-13..16, 18..20`) | [`greenhouse-mock.html`](evals/fixtures/forms/greenhouse-mock.html), [`lever-mock.html`](evals/fixtures/forms/lever-mock.html), [`ashby-mock.html`](evals/fixtures/forms/ashby-mock.html) | Upload-First (`resume.pdf`), neutral EEO defaults, `gdpr_consent: true`, Live DOM Read-Back Table before `APPROVE`, and 24h circuit-breaker cooldown | **7 / 7 PASS** |
+| **Total Schema & Fixture Assertions** | **5 JDs + 3 ATS Mocks** | `npx github:redasalem/job-hunter-os eval --file <your-run.json>` for external model runs | **20 / 20 (CI Baseline)** |
 
 ---
 
@@ -86,24 +93,23 @@ The repo includes a 20-assertion local grading suite under [`evals/`](evals/RUBR
 
 | Guide | Contents |
 |---|---|
-| [**`AGENTS.md`**](AGENTS.md) & [**`skills/REGISTRY.md`**](skills/REGISTRY.md) | Canonical rules, Progressive Disclosure index (**47 consolidated skills**), and 10 non-negotiable guardrails |
-| [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) | Complete guide to all 28 core skills (`00–26` + `fallback-no-mcp`), 4 `meta-*` skills, 7 consolidated board playbooks, and 7 ATS engines |
+| [**`AGENTS.md`**](AGENTS.md) & [**`skills/REGISTRY.md`**](skills/REGISTRY.md) | Canonical rules, compact Progressive Disclosure index (**47 consolidated skills**), and 10 non-negotiable guardrails |
+| [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) | Complete guide to all **47 consolidated skills**: 29 core/career playbooks, 4 `meta-*` skills, 7 board playbooks, and 7 ATS engines |
 | [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) | System diagram, 6-phase execution pipeline, and `/setup` readiness interrogation transcript |
 | [**`docs/COMPATIBILITY.md`**](docs/COMPATIBILITY.md) | Setup matrix for **25+ AI IDEs & CLI harnesses**, **6 LLM tuning guides** (`adapters/`), and manual copy commands |
 | [**`PLATFORMS.md`**](PLATFORMS.md) & [**`context/targets.yaml.example`**](context/targets.yaml.example) | Global, Remote, Regional (Europe, MENA, APAC, LATAM), B2B Contract Networks, and Employer ATS matrix |
-| [**`evals/RUBRIC.md`**](evals/RUBRIC.md) & [**`evals/PROMPT.md`**](evals/PROMPT.md) | Reproducible 20-assertion grading rubric + copy-paste LLM eval prompt |
+| [**`evals/README.md`**](evals/README.md), [**`RUBRIC.md`**](evals/RUBRIC.md) & [**`PROMPT.md`**](evals/PROMPT.md) | Deterministic CI harness validator, 20-assertion rubric, and reproducible external LLM prompt |
 | [**`mcp/mcp.template.json`**](mcp/mcp.template.json) | Portable Playwright MCP (`-y`, `--caps=pdf`, `./browser-profile`) and optional Notion MCP configuration |
-| [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) | Community success ledger and release history (`v1.0.0` -> `v1.2.1`) |
+| [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) | Community success ledger and release history (`v1.0.0` -> `v1.2.2`) |
 
 ---
 
-## 5. Non-Negotiable Safety Invariants & Governance
+## 5. Non-Negotiable Operational Trust Boundaries
 
-- **Dry run by default (`dry_run: true`):** Never clicks final Submit until you enable live mode and reply `APPROVE` after inspecting the **Live DOM Read-Back Table**.
-- **Zero hallucinated facts:** Every metric, tool, date, and legal answer must exist in `context/`. Unknown form questions pause with a screenshot and ask you in chat.
-- **Anti-bot circuit breaker & human pacing:** Random **3–9 s** action delays, Days 1–3 warm-up cap (**max 5/day**), and an automatic **24-hour platform lock** (`logs/circuit-breaker.json`) on any CAPTCHA, 429, or unusual-activity banner.
-- **Local-first privacy & Git PII shield:** Real `context/*`, `logs/`, `*.pdf`, `.env`, and `browser-profile/` are gitignored and guarded by an automatic `.git/hooks/pre-commit` PII & token scanner.
-- **Broken playbook reporting:** When a job board changes its DOM, open an issue using our [**Playbook Broke template**](.github/ISSUE_TEMPLATE/playbook-broke.md) with a redacted `browser_snapshot`.
+- **Hard `APPROVE` & DOM Read-Back boundary:** `dry_run: true` by default; even in live mode, submission is blocked until you review the **Live DOM Read-Back Table** and reply `APPROVE`.
+- **Hard 3–9 s human pacing & circuit breaker:** Randomized **3–9 s** delays between navigations/submissions, Days 1–3 warm-up cap (**max 5/day**), and an automatic **24-hour platform cooldown** (`logs/circuit-breaker.json`) on any CAPTCHA, 429, or unusual-activity banner. See [`docs/execution-safety.md`](docs/execution-safety.md).
+- **Local-first privacy & Git PII shield:** Real `context/*`, `logs/`, `*.pdf`, `.env`, and `browser-profile/` are gitignored and guarded by `.git/hooks/pre-commit`.
+- **Broken playbook reporting:** Report DOM changes using our [**Playbook Broke template**](.github/ISSUE_TEMPLATE/playbook-broke.md) with a redacted `browser_snapshot`.
 
 ### Attribution & Upstream Inspirations
 Inspired by battle-tested patterns from **[`career-ops-hq/career-ops`](https://github.com/career-ops-hq/career-ops)** (rejection pattern lens, score calibration, `HIRED.md`), **[`obra/superpowers`](https://github.com/obra/superpowers)** (condition-based waiting, verification before completion, on-demand MCP routing, TDD for skills), and **[`anthropics/skills`](https://github.com/anthropics/skills)** / **[`agentskills.io`](https://agentskills.io/)** (progressive disclosure and `.agents/skills/*/SKILL.md` auto-discovery).

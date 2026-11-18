@@ -5,6 +5,15 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-11-18 — Safe Wedge Positioning & Trust Boundaries
+
+### Changed
+- **Safe-Wedge Product Positioning & Documentation Consistency (`47` Consolidated Skills):**
+  - Refactored [`README.md`](README.md) and [`README.ar.md`](README.ar.md) to lead with the **Safe Wedge** (fact-checked AI CV tailoring, ATS keyword heatmap, and interview dossier co-pilot with explicit "What it will NEVER do" boundaries), placed `/demo` and the live [`GitHub Pages Kanban Dashboard`](https://redasalem.github.io/job-hunter-os/demo-dashboard.html) preview directly under the hero, and synchronized all skill counts consistently (`47` consolidated skills: `29` core + `4` meta + `7` platforms + `7` ATS).
+- **Truthful Eval Disclaimers & Hard Approval/Pacing Boundaries:**
+  - Created [`evals/README.md`](evals/README.md) and updated [`README.md`](README.md) to state plainly that `bin/cli.mjs eval` (`--baseline`) is a **deterministic CI schema & fixture validator**, not a live multi-model benchmark score.
+  - Strengthened [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) and [`docs/execution-safety.md`](docs/execution-safety.md) so the Live DOM Read-Back Table, explicit `APPROVE` gate, and `3–9 s` human pacing jitter are documented as non-negotiable operational trust boundaries.
+
 ## [1.2.1] - 2026-11-18 — Pre-Launch DX, Context & Honest Eval Hotfix
 
 ### Fixed

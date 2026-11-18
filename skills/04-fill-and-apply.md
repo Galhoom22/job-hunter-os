@@ -62,8 +62,9 @@ Read `eeo_and_compliance_defaults` (or `eeo`) from `context/form-answers.yaml`:
 - `gdpr_privacy_consent: true`: Automatically check ONLY the required candidate privacy policy / GDPR data-processing consent box at the bottom of Greenhouse/Lever/Ashby forms. Leave optional marketing, newsletter, `"Future job alerts"`, and `"Follow company"` checkboxes **unchecked**.
 - Free-text `"Why us?"` questions: Draft 2–3 grounded sentences using `context/profile.md` + observed JD text, filtered through `skills/03-tailor-resume-and-verify.md` (zero AI slop, zero em-dashes).
 
-### 4. Final DOM Read-Back Verification & Job-Bound Approval Gate
+### 4. Final DOM Read-Back Verification & Hard `APPROVE` Trust Boundary
 - Recheck `logs/applications-log.json` via `skills/26-deduplication-and-blacklist-guard.md` (canonical `company::role_title` fingerprint + today's `applied` / `submission_uncertain` counts vs daily & platform caps) and active hours.
+- **Hard Operational Trust Boundary (`APPROVE` + 3–9 s Human Pacing):** The `APPROVE` gate and human pacing jitter (`3–9 s`) are **non-negotiable operational trust boundaries**. Never auto-submit, batch-approve across multiple jobs, or skip a fresh `browser_snapshot` read-back.
 - **Mandatory Final DOM Read-Back Gate:** Before asking for `APPROVE` (or logging `dry_run`), take a **fresh `browser_snapshot`** of the completed form and inspect the *actual live values currently rendered in the browser DOM* (never rely on what you intended to type earlier, because ATS resume parsers or autocomplete widgets frequently overwrite or reset fields!).
 - Display a compact **Live DOM Read-Back Table** in chat:
   `| Form Field (DOM Label) | Live Populated Value in Browser | Verified Source Check |`
@@ -74,16 +75,16 @@ Read `eeo_and_compliance_defaults` (or `eeo`) from `context/form-answers.yaml`:
   4. **Honeypot Check (`skills/25-prompt-injection-defense.md`):** any hidden/honeypot `"Leave blank"` field is confirmed empty.
 - **If `dry_run: true` (or `approval_mode: dry_run`):** Present the Live DOM Read-Back Table, stop BEFORE clicking final Submit, take a screenshot if helpful, discard draft if needed, and log `dry_run`.
 - **If `approve_before_submit` (default), or `auto_high_confidence` with score `< 8` or any filled essay:** Show company, role, URL, score, gaps, exact `resume.pdf` path, and the **Live DOM Read-Back Table** in chat, and ask: **"Reply `APPROVE` to submit this exact application, `EDIT <field>` to revise, or `SKIP`."** Wait for exact `APPROVE`. Any edit or page change invalidates approval.
-- **Submit once:** Before clicking Submit, write a `needs_review` + `submission_uncertain: true` reservation in `logs/applications-log.json`. Click Submit **once**, wait 3–9 s, and run `skills/meta-self-verification.md` on a fresh `browser_snapshot` to verify confirmation text before updating the entry to `applied`. Never retry an uncertain/timed-out submit.
+- **Submit once:** Before clicking Submit, write a `needs_review` + `submission_uncertain: true` reservation in `logs/applications-log.json`. Respect the `3–9 s` human pacing jitter, click Submit **once**, verify the post-submit state in a fresh `browser_snapshot` (`skills/meta-self-verification.md`) before updating the entry to `applied`. Never retry an uncertain/timed-out submit.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 
 ### Anti-patterns
-- ❌ Filling contact/experience fields before uploading the resume → ✅ upload first, wait 4 s, re-snapshot, then correct.
+- ❌ Filling contact/experience fields before uploading the resume → ✅ upload first, verify attachment badge in `browser_snapshot`, then correct.
 - ❌ Ticking `"Subscribe to talent community"` alongside GDPR consent → ✅ check only required privacy policy consent when `gdpr_privacy_consent: true`.
 - ❌ Clicking Submit twice when a spinner is slow → ✅ keep `submission_uncertain: true` and `needs_review`; never double-submit.
 
 ### Self-verification check (before reporting this step complete)
-- [ ] resume was uploaded FIRST and verified by filename in a fresh snapshot after waiting 4 seconds
+- [ ] resume was uploaded FIRST and verified by filename badge in a fresh condition-based `browser_snapshot`
 - [ ] every filled answer and EEO/GDPR option matches verified `context/form-answers.yaml` or `context/resume-data.json`
-- [ ] `dry_run` stopped before Submit; live submit received exact job-bound `APPROVE` (or met `auto_high_confidence`) and was verified by `skills/meta-self-verification.md`
+- [ ] Live DOM Read-Back Table displayed and hard `APPROVE` + `3–9 s` human pacing boundary respected (`dry_run` stopped before Submit)
