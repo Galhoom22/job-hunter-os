@@ -1,12 +1,20 @@
-# Skill Evaluation Harness Rubric (`npx job-hunter-os eval`)
+# Skill Evaluation Harness Rubric (`eval --baseline` / `--file`)
 
-This directory contains the deterministic evaluation suite that proves `job-hunter-os` playbooks enforce every safety, anti-hallucination, security, and form-filling invariant end-to-end.
+This directory contains the deterministic evaluation suite that checks whether a model's output JSON obeys `job-hunter-os` safety, anti-hallucination, security, and form-filling invariants.
 
 ## Running the Eval Suite
 
-```bash
-node ./bin/cli.mjs eval
-```
+- **CI Reference Self-Test (Harness Baseline):**
+  ```bash
+  node ./bin/cli.mjs eval --baseline
+  ```
+  Grades the synthetic reference fixture [`evals/results/baseline-verified-run.json`](results/baseline-verified-run.json) to verify all 20 deterministic grading checks in CI.
+
+- **Real Cross-Model Benchmarking (`--file`):**
+  Run the copy-paste zero-shot prompt in [`evals/PROMPT.md`](PROMPT.md) in any cold LLM session, save the JSON output, and grade it:
+  ```bash
+  node ./bin/cli.mjs eval --file logs/exports/eval-output.json
+  ```
 
 ## Deterministic Assertions Graded (`20 / 20` Checks)
 

@@ -1,6 +1,12 @@
 name: Deploy Live Demo Dashboard to GitHub Pages
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "templates/analytics-dashboard.html"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:

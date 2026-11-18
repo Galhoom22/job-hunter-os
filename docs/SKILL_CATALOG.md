@@ -51,7 +51,7 @@ Every skill in `job-hunter-os` follows the **`agentskills.io` / `SKILL.md` progr
 
 ## 3. Consolidated Platform & Employer ATS Playbooks (14 Playbooks)
 
-All platform playbooks carry `last_verified: "2026-11-18"` in YAML frontmatter (audited for 60-day freshness by `npx job-hunter-os doctor`):
+All platform playbooks carry `last_verified: "2026-11-18"` in YAML frontmatter (audited for 60-day freshness by `npx github:redasalem/job-hunter-os doctor`):
 
 | Platform / Family | URL Template Pattern | Consolidated Playbook |
 |---|---|---|

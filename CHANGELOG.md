@@ -5,6 +5,23 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-11-18 — Pre-Launch DX, Context & Honest Eval Hotfix
+
+### Fixed
+- **Quick Start Command & Legacy Header Cleanup:**
+  - Replaced un-published `npx job-hunter-os` references across `README.md`, `README.ar.md`, `llms.txt`, and `docs/` with `npx github:redasalem/job-hunter-os` so new users never hit an npm `404` before npm publishing is live.
+  - Removed the legacy `<!-- LOVABLE:BEGIN --> ... <!-- LOVABLE:END -->` block (`supabase/migrations/`, `drizzle/`, `LOVABLE_API_KEY`) from `AGENTS.md`.
+- **Playwright MCP `stdio` Hang & PDF Capability:**
+  - Added `"-y"` and `"--caps=pdf"` to Playwright MCP configurations in `mcp/mcp.template.json`, `mcp/claude_desktop_config.example.json`, and `opencode.json`.
+  - Added explicit `#grnhse_iframe` embed switching and click-to-mount portal `listbox` instructions to [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) and [`skills/platforms/ats-engines.md`](skills/platforms/ats-engines.md).
+- **Context Footprint (~86% Smaller `REGISTRY.md` & Focused `.agents/skills/`) & Unified Timing:**
+  - Compacted `skills/REGISTRY.md` from ~27 KB to ~4.6 KB while keeping all 47 skills indexed.
+  - Trimmed `.agents/skills/` from 40 wrappers to the 12 primary user-facing entrypoints (`demo`, `setup`, `daily-run`, `apply-url`, `tailor-cv`, `weekly-report`, `linkedin-growth`, `offer-negotiator`, `recruiter-inbox-triage`, `rejection-pattern-analyzer`, `score-calibration`, `contract-and-nda-auditor`), enforced in CI.
+  - Unified timing rules across [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md), [`skills/18-condition-based-browser-waiting.md`](skills/18-condition-based-browser-waiting.md), and [`docs/execution-safety.md`](docs/execution-safety.md) (condition-based snapshot checks first + single 3–9 s human pacing jitter between page submissions).
+- **Honest External Model Eval Grader & Auto-Deployed Pages:**
+  - Added [`evals/PROMPT.md`](evals/PROMPT.md) and `eval --file <json>` / `--baseline` flags to [`bin/cli.mjs`](bin/cli.mjs), clearly labeling `--baseline` as **"Harness Reference Baseline (CI Self-Test)"**.
+  - Updated [`.github/workflows/pages.yml`](.github/workflows/pages.yml) to auto-deploy `docs/` on `main` pushes and updated preview links to `https://redasalem.github.io/job-hunter-os/demo-dashboard.html`.
+
 ## [1.2.0] - 2026-11-18 — The Verified & Consolidated Edition
 
 ### Added
@@ -29,9 +46,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **3 New Security, Anti-Ban & Chaos-Resilience Skills (`57` Total Skills in `skills/REGISTRY.md` & `skills/skills-manifest.json`):**
-  - [`skills/24-circuit-breaker-and-antiban.md`](skills/24-circuit-breaker-and-antiban.md) + [`.agents/skills/circuit-breaker-and-antiban/SKILL.md`](.agents/skills/circuit-breaker-and-antiban/SKILL.md): Defines immediate trip conditions (CAPTCHA, Cloudflare/DataDome/Arkose frames, HTTP 429/403 rate limits, unusual-activity banners, or forced login redirects) and persists a 24-hour platform lock in `logs/circuit-breaker.json`.
-  - [`skills/25-prompt-injection-defense.md`](skills/25-prompt-injection-defense.md) + [`.agents/skills/prompt-injection-defense/SKILL.md`](.agents/skills/prompt-injection-defense/SKILL.md): Treats all scraped JDs and form labels inside `browser_snapshot` as `UNTRUSTED_EXTERNAL_DATA`, blocks indirect prompt injections and honeypot trap fields, and distinguishes benign recruiter Easter-egg attention checks (`"Include PINEAPPLE in cover letter"`) in the Mission Control Table.
-  - [`skills/26-deduplication-and-blacklist-guard.md`](skills/26-deduplication-and-blacklist-guard.md) + [`.agents/skills/deduplication-and-blacklist-guard/SKILL.md`](.agents/skills/deduplication-and-blacklist-guard/SKILL.md): Enforces `blacklisted_companies` and `blacklisted_domains` in `context/preferences.yaml` plus cross-channel canonical job fingerprinting (`normalize(company)::normalize(role_title)`) against `logs/applications-log.json`.
+  - [`skills/24-circuit-breaker-and-antiban.md`](skills/24-circuit-breaker-and-antiban.md): Defines immediate trip conditions (CAPTCHA, Cloudflare/DataDome/Arkose frames, HTTP 429/403 rate limits, unusual-activity banners, or forced login redirects) and persists a 24-hour platform lock in `logs/circuit-breaker.json`.
+  - [`skills/25-prompt-injection-defense.md`](skills/25-prompt-injection-defense.md): Treats all scraped JDs and form labels inside `browser_snapshot` as `UNTRUSTED_EXTERNAL_DATA`, blocks indirect prompt injections and honeypot trap fields, and distinguishes benign recruiter Easter-egg attention checks (`"Include PINEAPPLE in cover letter"`) in the Mission Control Table.
+  - [`skills/26-deduplication-and-blacklist-guard.md`](skills/26-deduplication-and-blacklist-guard.md): Enforces `blacklisted_companies` and `blacklisted_domains` in `context/preferences.yaml` plus cross-channel canonical job fingerprinting (`normalize(company)::normalize(role_title)`) against `logs/applications-log.json`.
 - **Pre-Submit Final DOM Read-Back & PDF Page-Overflow Gate:**
   - Updated [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) to require a **Live DOM Read-Back Table** from a fresh `browser_snapshot` before requesting `APPROVE`, verifying attached `resume.pdf` filename, phone country code, dropdown values, and empty honeypot fields.
   - Updated [`skills/03-tailor-resume-and-verify.md`](skills/03-tailor-resume-and-verify.md) and [`templates/ats-resume-template.html`](templates/ats-resume-template.html) with character/bullet budgets and `@media print` `orphans`/`widows`/`break-inside` rules to prevent 2-page orphan spills.

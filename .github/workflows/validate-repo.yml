@@ -85,8 +85,15 @@ jobs:
                   raise SystemExit(f"{p} not indexed in skills/REGISTRY.md")
 
           agent_skills = sorted(pathlib.Path(".agents/skills").glob("*/SKILL.md"))
-          if not agent_skills:
-              raise SystemExit("Missing .agents/skills/*/SKILL.md auto-discovery files")
+          expected_wrappers = {
+              "apply-url", "contract-and-nda-auditor", "daily-run", "demo",
+              "linkedin-growth", "offer-negotiator", "recruiter-inbox-triage",
+              "rejection-pattern-analyzer", "score-calibration", "setup",
+              "tailor-cv", "weekly-report",
+          }
+          actual_wrappers = {ap.parent.name for ap in agent_skills}
+          if actual_wrappers != expected_wrappers:
+              raise SystemExit(f".agents/skills mismatch: missing={expected_wrappers - actual_wrappers}, extra={actual_wrappers - expected_wrappers}")
           for ap in agent_skills:
               atext = ap.read_text(encoding="utf-8")
               if not atext.startswith("---"):
@@ -167,10 +174,10 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Check CLI syntax & run deterministic Skill Eval Harness
+      - name: Check CLI syntax & run deterministic Skill Eval Harness (Reference Baseline)
         run: |
           node --check bin/cli.mjs
-          node ./bin/cli.mjs eval
+          node ./bin/cli.mjs eval --baseline
 
       - name: Test local init, doctor, eval, and sync-mcp in isolated directory
         shell: bash
@@ -186,7 +193,7 @@ jobs:
             cd "$ISO_PROJ"
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" init
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" doctor
-            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" eval
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" eval --baseline
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" status
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" bundle
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" dashboard --no-open

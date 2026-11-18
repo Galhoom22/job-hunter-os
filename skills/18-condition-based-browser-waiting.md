@@ -17,7 +17,7 @@ requires_skills:
 verification:
   - condition check observed explicit completion signal (e.g., filename badge visible, Next button enabled, spinner gone) in browser_snapshot before proceeding
   - element targeting used semantic accessibility attributes (Role -> Label -> Placeholder -> Text) and zero hardcoded CSS classes or XPaths
-  - minimum 3-9s human pacing gap between user-level navigations/clicks was still respected alongside bounded condition polling
+  - condition-based snapshot verification ran first, followed by a single 3-9s human pacing jitter between page submissions/navigations
 ---
 # Condition-Based Browser Waiting & Locator Priority (Adapted from `obra/superpowers`)
 
@@ -43,11 +43,12 @@ Eliminates premature clicks and stale-ref failures caused by guessing wait times
    - After triggering an async UI change, define the exact **completion condition** to verify in `browser_snapshot` (with a bounded timeout, typically 15–20 seconds):
      - **CV Upload (`skills/04-fill-and-apply.md`):** wait until `Uploading...` / progress bar clears **and** the exact filename (`resume.pdf`) or `Remove file` button appears in `browser_snapshot`.
      - **Modal / Next Step Transition:** wait until the previous step heading disappears and the new step heading / form controls mount cleanly in `browser_snapshot`.
-     - **Search Autocomplete / Typeahead (Location / School):** type query, wait until `listbox` / `option` nodes render in `browser_snapshot`, then select matching option rather than pressing `Enter` blindly.
+     - **Search Autocomplete / Typeahead (Location / School / React-Select Portals):** click the combobox first to open it, type query, wait until `listbox` / `option` portal nodes render in `browser_snapshot` (often at document root), then click matching option rather than pressing `Enter` blindly.
+     - **Embedded Iframes (`#grnhse_iframe`, etc.):** verify iframe frame context in `browser_snapshot` and switch into the embedded ATS frame (`skills/meta-dom-recovery.md`) before resolving control refs.
      - **Dynamic Spinner / Skeleton:** take a fresh `browser_snapshot` after a bounded pause (`browser_wait_for` text/gone if available, or 2–3 bounded snapshot re-checks); if still loading past timeout, escalate to `skills/meta-dom-recovery.md` rather than clicking twice.
-3. **Preserve Human Pacing Floor (Dual Contract):**
-   - Condition-based waiting solves *too-early clicks*; it must **never** collapse into zero-delay rapid-fire clicking.
-   - Even if an ATS transition resolves in <1 second, still honor the `AGENTS.md` **random 3–9 second human pacing interval** before initiating the next major form click or navigation, and log any timeout failure transparently rather than retrying blindly.
+3. **Unified Timing Rule (Condition Check + Single 3–9 s Submission Jitter):**
+   - Wait purely on `browser_snapshot` readiness conditions during uploads, modals, and portal dropdowns (do not stack arbitrary blind sleeps).
+   - Once verified ready, apply a single random **3–9 second human pacing jitter** between page navigations and form submissions (`AGENTS.md` Guardrail #2).
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

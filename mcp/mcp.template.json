@@ -2,11 +2,19 @@
   "mcpServers": {
     "playwright": {
       "command": "npx",
-      "args": ["@playwright/mcp@latest", "--user-data-dir=./browser-profile"]
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--caps=pdf",
+        "--user-data-dir=./browser-profile"
+      ]
     },
     "notion": {
       "command": "npx",
-      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "args": [
+        "-y",
+        "@notionhq/notion-mcp-server"
+      ],
       "env": {
         "NOTION_TOKEN": "${NOTION_TOKEN}"
       }

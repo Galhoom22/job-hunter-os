@@ -24,10 +24,10 @@ jobs:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Verify zero-dependency CLI, package syntax & 20/20 Skill Eval Harness
+      - name: Verify zero-dependency CLI, package syntax & Skill Eval Harness Reference Baseline
         run: |
           node --check bin/cli.mjs
-          node ./bin/cli.mjs eval
+          node ./bin/cli.mjs eval --baseline
           node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8')); if(Object.keys(p.dependencies||{}).length || Object.keys(p.devDependencies||{}).length) { process.exit(1); }"
 
       - name: Publish to npm (when NPM_TOKEN secret is configured)

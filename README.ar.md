@@ -5,13 +5,13 @@
 **[English](README.md) | العربية (RTL)**
 
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
-[![Skill Eval 20/20](https://img.shields.io/badge/Eval_Harness-20%2F20_Passing-2ea44f)](evals/RUBRIC.md)
+[![Harness CI 20/20](https://img.shields.io/badge/Eval_Baseline-20%2F20_CI_Self_Test-2ea44f)](evals/RUBRIC.md)
 [![Zero Code](https://img.shields.io/badge/Runtime-Zero_Code_Markdown-167d60)](AGENTS.md)
-[![Live Dashboard Demo](https://img.shields.io/badge/Live_Preview-Kanban_Dashboard-3b82f6)](https://htmlpreview.github.io/?https://github.com/redasalem/job-hunter-os/blob/main/docs/demo-dashboard.html)
+[![Live Dashboard Demo](https://img.shields.io/badge/Live_Preview-Kanban_Dashboard-3b82f6)](https://redasalem.github.io/job-hunter-os/demo-dashboard.html)
 
 نظام مفتوح المصدر مبني بالكامل من **مهارات Markdown قياسية (`agentskills.io`) + أداة سطر أوامر بلا أي مكتبات خارجية (`Zero-Dependency CLI`)**. يعمل نموذج الذكاء الاصطناعي داخل محررك (**Cursor، Antigravity، Claude Code، VS Code Copilot، Codex، Windsurf، OpenCode**) كمحرك تنفيذي يقود متصفحك عبر **Playwright MCP** ويسجل كل شيء محليًا (مع دعم اختياري لـ **Notion MCP**).
 
-- **معاينة لوحة التحكم التفاعلية مباشرة في المتصفح:** [افتح لوحة Kanban والتحليلات التفاعلية (`docs/demo-dashboard.html`)](https://htmlpreview.github.io/?https://github.com/redasalem/job-hunter-os/blob/main/docs/demo-dashboard.html)
+- **معاينة لوحة التحكم التفاعلية مباشرة في المتصفح:** [افتح لوحة Kanban والتحليلات التفاعلية عبر GitHub Pages](https://redasalem.github.io/job-hunter-os/demo-dashboard.html)
 
 ---
 
@@ -19,23 +19,23 @@
 
 ```bash
 # 1. تثبيت المهارات عالميًا وربط Playwright MCP
-npx job-hunter-os init --global
+npx github:redasalem/job-hunter-os init --global
 
 # 2. تسجيل الدخول مرة واحدة في ملف المتصفح المحلي المعزول (browser-profile/)
-npx job-hunter-os login --global
+npx github:redasalem/job-hunter-os login --global
 
-# 3. فحص الجاهزية، صلاحية الروابط الحية، وتشغيل حزمة اختبارات التقييم (20/20)
-npx job-hunter-os doctor
-npx job-hunter-os eval
+# 3. فحص الجاهزية، صلاحية الروابط الحية، والتثبت من الخط المرجعي لاختبارات التقييم
+npx github:redasalem/job-hunter-os doctor
+npx github:redasalem/job-hunter-os eval --baseline
 ```
 
 > **تجربة فورية خلال 15 ثانية بدون بيانات شخصية:** اكتب `/demo` داخل أي محرر مدعوم لتشغيل محاكاة كاملة من [`examples/sandbox-demo/`](examples/sandbox-demo/expected-mission-control.md).
 
 ---
 
-## 2. نتائج حزمة التقييم القياسية (`npx job-hunter-os eval` — `20/20`)
+## 2. نتائج حزمة التقييم القياسية (`eval --baseline` / `--file`)
 
-يحتوي المستودع على حزمة تقييم حتمية في [`evals/`](evals/RUBRIC.md) تختبر المهارات ضد 5 إعلانات وظائف اختبارية و3 نماذج ATS محلية (`Greenhouse`، `Lever`، `Ashby`):
+يحتوي المستودع على حزمة تقييم حتمية في [`evals/RUBRIC.md`](evals/RUBRIC.md) تقيس 5 إعلانات وظائف اختبارية و3 نماذج ATS محلية (`Greenhouse`، `Lever`، `Ashby`). يختبر الخيار `--baseline` سلامة أداة التقييم في CI على [`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json) (**خط مرجعي للـ CI وليس قياسًا لنموذج حي**)، ويمكنك اختبار أي نموذج حقيقي عبر [`evals/PROMPT.md`](evals/PROMPT.md) ثم تشغيل `node ./bin/cli.mjs eval --file <output.json>`:
 
 | الفحص | ما يتم إثباته آليًا | النتيجة |
 |---|---|---|

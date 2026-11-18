@@ -21,10 +21,10 @@ requires_skills:
   - meta-structured-debugging
   - meta-self-verification
 verification:
-  - resume was uploaded FIRST and verified by filename in a fresh snapshot after waiting 4 seconds
+  - resume was uploaded FIRST and verified by filename badge in a fresh condition-based browser_snapshot (no blind fixed sleeps)
   - every filled answer and EEO/GDPR option matches verified context/form-answers.yaml or context/resume-data.json
   - final DOM Read-Back Verification table was generated from a fresh browser_snapshot confirming phone country code, dropdown values, and attached resume.pdf were not corrupted
-  - dry_run stopped before Submit; live submit received exact job-bound APPROVE (or met auto_high_confidence) and was verified by skills/meta-self-verification.md
+  - dry_run stopped before Submit; live submit received exact job-bound APPROVE (or met auto_high_confidence) after 3-9s human pacing jitter and was verified by skills/meta-self-verification.md
 ---
 # Form Filling, Upload-First Rule, EEO/Consent Defaults & Approval Gate
 
@@ -40,17 +40,19 @@ Use for every internal Easy Apply modal and external ATS redirect (Greenhouse, L
 
 ## Deterministic Step-by-Step Execution
 
-### 1. Redirect & Portal Check (Wait 3–9 s per navigation/click)
+### 1. Redirect, Iframe & Portal Check
 - If clicking Apply opens a new tab, switch to it (`browser_tabs`), take a `browser_snapshot`, verify HTTPS hostname and that company + role match the original posting.
+- **Embedded ATS Iframes (e.g., Greenhouse `#grnhse_iframe`):** If the employer embeds the ATS inside an `<iframe>`, verify the frame tree in `browser_snapshot` and switch/target inside that frame (`skills/meta-dom-recovery.md`) before filling fields or uploading files.
 - Load the matching playbook (`skills/ats/<engine>.md` or `skills/platforms/<platform>.md`).
 - If the site requires creating a new account, solving a CAPTCHA/2FA, or is Workday/Taleo/unsupported, set `apply_type: "manual_apply"`, `status: "needs_review"`, leave the tab open, and inform the owner.
 - **Mid-run expired session:** Pause, ask the owner to log in privately in the open browser and reply `CONTINUE`, re-verify auth, then resume this same job.
 
-### 2. Five Mandatory ATS Form Traps
-1. **Trap 1 — Upload FIRST:** Upload the job's exact tailored `resume.pdf` BEFORE typing anything into text boxes (ATS parsers overwrite fields!). Wait **4 seconds**, take a NEW `browser_snapshot`, then inspect and fix every auto-parsed field against `context/resume-data.json`.
+### 2. Five Mandatory ATS Form Traps & Unified Waiting Rule
+Apply one timing rule across all steps: **condition-based `browser_snapshot` verification first** (`skills/18-condition-based-browser-waiting.md`), followed by a **single 3–9 s human pacing jitter** between page navigations and submissions:
+1. **Trap 1 — Upload FIRST:** Upload the job's exact tailored `resume.pdf` BEFORE typing anything into text boxes (ATS parsers overwrite fields!). Wait for the upload spinner to clear and the `resume.pdf` filename/`Remove` badge to render in a fresh `browser_snapshot`, then inspect and fix every auto-parsed field against `context/resume-data.json`.
 2. **Trap 2 — Absolute paths only:** Pass the exact absolute OS path (never `./logs/...` or `~`) to `browser_file_upload`.
 3. **Trap 3 — Hidden drag-and-drop zones:** Click the visible upload button (`"Upload resume"`, `"Attach"`, `"Browse"`). Never inject JS to unhide inputs. If a cross-origin dropzone blocks the chooser, print the exact absolute path in chat and wait for the owner to drag-and-drop and reply `CONTINUE`.
-4. **Trap 4 — Split fields & autocomplete:** Match `first_name`/`last_name`, select `phone_country_code` by dialling code (e.g. `+20`) before `phone_national`, and for City/Location autocomplete type `city_autocomplete`, wait 2 s, snapshot the listbox, and click the exact matching option.
+4. **Trap 4 — Split fields & portal listbox click-to-mount cycles:** Match `first_name`/`last_name`, select `phone_country_code` by dialling code (e.g. `+20`) before `phone_national`. For React-Select / Ashby / Location typeahead portals, **click** the combobox trigger first so the portal menu mounts, type `city_autocomplete` / query text, confirm rendered `listbox` -> `option` nodes in a fresh `browser_snapshot` (often mounted at `<body>` root outside `<form>`), and click the exact option `ref`.
 5. **Trap 5 — Unknown questions:** Never guess numbers, salary, visa/sponsorship, or legal answers. Leave the tab open, save a screenshot to `logs/screenshots/<job_id>.png` (redact/avoid secrets), log `needs_review` with `open_questions`, ask the exact question in chat, and **save the owner's confirmed answer back into `context/form-answers.yaml`** (`questions[]` with context comment) before resuming.
 
 ### 3. EEO, Demographics & Consent Auto-Handler (`context/form-answers.yaml`)

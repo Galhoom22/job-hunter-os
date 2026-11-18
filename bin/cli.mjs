@@ -21,9 +21,9 @@ const fail = msg => console.error(paint('31', `[✗] ${msg}`));
 
 // ---------------- CLI args ----------------
 const ATTRIBUTION_BANNER = 'Job Hunter OS — Created by Reda Salem (@redasalem) | https://github.com/redasalem/job-hunter-os';
-const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open']);
+const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline']);
 const positional = [];
-const opts = { global: false, ide: 'all', help: false, version: false, strict: false, noOpen: false };
+const opts = { global: false, ide: 'all', help: false, version: false, strict: false, noOpen: false, baseline: false, file: null };
 let argErr = null;
 
 for (let i = 0; i < ARGV.length; i++) {
@@ -34,7 +34,16 @@ for (let i = 0; i < ARGV.length; i++) {
   else if (a === '--strict') opts.strict = true;
   else if (a === '--yes' || a === '-y') opts.yes = true;
   else if (a === '--no-open') opts.noOpen = true;
-  else if (a === '--ide') {
+  else if (a === '--baseline') opts.baseline = true;
+  else if (a === '--file' || a === '-f') {
+    const val = ARGV[++i];
+    if (!val || val.startsWith('-')) argErr = '--file requires a path to a JSON model-output file.';
+    else opts.file = val;
+  } else if (a.startsWith('--file=')) {
+    const val = a.slice(7);
+    if (!val) argErr = '--file= requires a file path.';
+    else opts.file = val;
+  } else if (a === '--ide') {
     const val = ARGV[++i];
     if (!val || val.startsWith('-')) argErr = '--ide requires an IDE name (e.g., all, claude, cursor, antigravity, codex, opencode, windsurf, devin, cline).';
     else opts.ide = val.toLowerCase();
@@ -986,9 +995,15 @@ function cmdEval() {
   if (!evalRoot) throw new Error('evals/ directory not found.');
 
   const profileFile = path.join(evalRoot, 'fixtures', 'candidate-profile.md');
-  const resultsFile = path.join(evalRoot, 'results', 'baseline-verified-run.json');
-  if (!fs.existsSync(profileFile) || !fs.existsSync(resultsFile)) {
-    throw new Error('Missing evals/fixtures/candidate-profile.md or evals/results/baseline-verified-run.json.');
+  const isExternalFile = Boolean(opts.file) && !opts.baseline;
+  const resultsFile = isExternalFile
+    ? path.resolve(process.cwd(), opts.file)
+    : path.join(evalRoot, 'results', 'baseline-verified-run.json');
+  if (!fs.existsSync(profileFile)) {
+    throw new Error('Missing evals/fixtures/candidate-profile.md.');
+  }
+  if (!fs.existsSync(resultsFile)) {
+    throw new Error(`Eval input JSON not found: ${resultsFile}`);
   }
 
   const profileText = fs.readFileSync(profileFile, 'utf8');
@@ -1067,7 +1082,12 @@ function cmdEval() {
       cb.status === 'tripped' && (Date.parse(cb.cooldown_until) - Date.parse(cb.tripped_at)) === 86400000 && cb.retries_attempted === 0],
   ];
 
-  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.2.0)\n`));
+  const evalModeLabel = isExternalFile
+    ? `External Model Output Evaluation (${resultsFile})`
+    : 'Harness Reference Baseline (CI Self-Test — static fixture verification, NOT a live LLM benchmark)';
+
+  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.2.1)`));
+  info(`Mode: ${evalModeLabel}\n`);
   let passed = 0;
   for (const [id, label, cond] of checks) {
     if (cond) {
@@ -1087,7 +1107,7 @@ function cmdEval() {
 }
 
 function cmdVersion() {
-  let version = '1.2.0';
+  let version = '1.2.1';
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(SOURCE, 'package.json'), 'utf8'));
     if (pkg?.version) version = pkg.version;
@@ -1098,13 +1118,13 @@ function cmdVersion() {
 
 function cmdHelp() {
   console.log(`${ATTRIBUTION_BANNER}
-job-hunter-os v1.2.0 — Zero-Code Markdown Agent Skills & MCP Installer
+job-hunter-os v1.2.1 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
   job-hunter init [--global | -g] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
   job-hunter update [--global | -g] [--ide <name>] Refresh skills/adapters/templates (preserves context/ & logs/)
   job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & provenance checks
-  job-hunter eval                                  Run the 20-check deterministic Skill Evaluation Harness (evals/)
+  job-hunter eval [--baseline | --file <json>]     Grade Harness Reference Baseline (CI) or external LLM output
   job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
   job-hunter bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
   job-hunter dashboard [--global | -g] [--no-open] Generate & open local Kanban dashboard at logs/exports/dashboard.html
