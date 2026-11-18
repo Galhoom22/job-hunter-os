@@ -20,15 +20,17 @@ const info = msg => console.log(paint('36', `[i] ${msg}`));
 const fail = msg => console.error(paint('31', `[✗] ${msg}`));
 
 // ---------------- CLI args ----------------
-const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--strict', '--yes', '-y', '--no-open']);
+const ATTRIBUTION_BANNER = 'Job Hunter OS — Created by Reda Salem (@redasalem) | https://github.com/redasalem/job-hunter-os';
+const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open']);
 const positional = [];
-const opts = { global: false, ide: 'all', help: false, strict: false, noOpen: false };
+const opts = { global: false, ide: 'all', help: false, version: false, strict: false, noOpen: false };
 let argErr = null;
 
 for (let i = 0; i < ARGV.length; i++) {
   const a = ARGV[i];
   if (a === '--global' || a === '-g') opts.global = true;
   else if (a === '--help' || a === '-h') opts.help = true;
+  else if (a === '--version' || a === '-v') opts.version = true;
   else if (a === '--strict') opts.strict = true;
   else if (a === '--yes' || a === '-y') opts.yes = true;
   else if (a === '--no-open') opts.noOpen = true;
@@ -293,7 +295,7 @@ function syncMcp({ root = ROOT, isGlobal = opts.global || ROOT === path.join(HOM
 
 // ---------------- init ----------------
 const SCAFFOLD_DIRS = ['skills', 'adapters', 'templates', 'config', 'schemas', 'prompts', 'docs', 'mcp', 'evals'];
-const ROOT_MD_FILES = ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'WARP.md', 'CRUSH.md', 'LICENSE'];
+const ROOT_MD_FILES = ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'WARP.md', 'CRUSH.md', 'NOTICE', 'AUTHORS.md', 'PROVENANCE.json', 'LICENSE'];
 
 function scaffoldFrom(srcRoot, targetRoot, { isUpdate = false } = {}) {
   refuseSymlink(targetRoot);
@@ -383,6 +385,7 @@ function installGitPreCommitHook(root) {
 }
 
 function cmdInit() {
+  console.log(paint('36', `\n${ATTRIBUTION_BANNER}\n`));
   const isGlobal = opts.global;
   scaffoldFrom(SOURCE, ROOT, { isUpdate: false });
   writeAtomic(
@@ -533,7 +536,8 @@ async function cmdDoctor() {
   let readinessPending = 0;
   const isGlobal = opts.global || ROOT === path.join(HOME, '.job-hunter-os');
 
-  console.log(paint('36', `\nJob Hunter OS Doctor — ${ROOT}\n`));
+  console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
+  console.log(paint('36', `Job Hunter OS Doctor — ${ROOT}\n`));
 
   const nodeMajor = Number(process.versions.node.split('.')[0]);
   if (nodeMajor >= 18) ok(`OS & Runtime: ${process.platform} (${os.arch()}) · Node ${process.versions.node}`);
@@ -545,6 +549,35 @@ async function cmdDoctor() {
 
   if (fs.existsSync(path.join(ROOT, 'skills', 'REGISTRY.md'))) ok('Skill Registry: skills/REGISTRY.md present');
   else { fail('Missing skills/REGISTRY.md'); criticalFailures++; }
+
+  // Provenance & Attribution Guard
+  const missingOrTampered = [];
+  for (const rel of ['NOTICE', 'AUTHORS.md', 'PROVENANCE.json']) {
+    const f = path.join(ROOT, rel);
+    if (!fs.existsSync(f)) {
+      missingOrTampered.push(`${rel} (missing)`);
+      continue;
+    }
+    try {
+      const txt = fs.readFileSync(f, 'utf8');
+      if (!txt.toLowerCase().includes('redasalem')) {
+        missingOrTampered.push(`${rel} (missing @redasalem attribution)`);
+      }
+      if (rel === 'PROVENANCE.json') {
+        const prov = JSON.parse(txt);
+        if (prov?.github_handle !== 'redasalem') {
+          missingOrTampered.push('PROVENANCE.json (github_handle mismatch)');
+        }
+      }
+    } catch {
+      missingOrTampered.push(`${rel} (unreadable/invalid)`);
+    }
+  }
+  if (missingOrTampered.length > 0) {
+    warn(`Provenance warning (uncredited or tampered clone): ${missingOrTampered.join(', ')}`);
+  } else {
+    ok('Provenance & Attribution: NOTICE, AUTHORS.md & PROVENANCE.json verified (@redasalem)');
+  }
 
   // Platform Playbook Freshness Check (warn when last_verified > 60 days old)
   const platDir = [path.join(ROOT, 'skills', 'platforms'), path.join(SOURCE, 'skills', 'platforms')].find(d => fs.existsSync(d));
@@ -786,7 +819,8 @@ function cmdStatus() {
     topPlatform = `${name} (${st.callbacks}/${st.submitted} callbacks · ${pct}%)`;
   }
 
-  console.log(paint('36', `\nJob Hunter OS Status — ${ROOT}\n`));
+  console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
+  console.log(paint('36', `Job Hunter OS Status — ${ROOT}\n`));
   ok(`Readiness Gates:        ${gateScore}/5 ${gateScore === 5 ? '(READY)' : '(run /setup to complete)'}`);
   info(`Today vs. Daily Cap:    ${todayApplied}/${effectiveCap} applications (${warmupActive ? 'Warm-up Days 1-3 cap: 5/day' : `Standard cap: ${maxPerDay}/day`}, dry_run: ${dryRun ? 'ON' : 'OFF'})`);
   info(`Pipeline Summary:       Applied: ${totalApplied} | Interviewing: ${interviewing} | Assessment: ${assessment} | Offers: ${offers} | Rejected/Ghosted: ${rejected}`);
@@ -1052,13 +1086,24 @@ function cmdEval() {
   }
 }
 
+function cmdVersion() {
+  let version = '1.2.0';
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(SOURCE, 'package.json'), 'utf8'));
+    if (pkg?.version) version = pkg.version;
+  } catch { /* ignore */ }
+  console.log(`v${version}`);
+  console.log(ATTRIBUTION_BANNER);
+}
+
 function cmdHelp() {
-  console.log(`job-hunter-os v1.2.0 — Zero-Code Markdown Agent Skills & MCP Installer
+  console.log(`${ATTRIBUTION_BANNER}
+job-hunter-os v1.2.0 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
   job-hunter init [--global | -g] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
   job-hunter update [--global | -g] [--ide <name>] Refresh skills/adapters/templates (preserves context/ & logs/)
-  job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & playbook freshness checks
+  job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & provenance checks
   job-hunter eval                                  Run the 20-check deterministic Skill Evaluation Harness (evals/)
   job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
   job-hunter bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
@@ -1067,6 +1112,7 @@ Usage:
   job-hunter backup [--global | -g]                Verify JSON log integrity & snapshot context/ + logs/ to logs/backups/
   job-hunter login [--global | -g]                 Open Chrome/Chromium with persistent browser-profile/
   job-hunter sync-mcp [--global | -g]              Safely merge Playwright & optional Notion MCP configs
+  job-hunter --version | -v                        Print version & canonical creator attribution
   job-hunter --help                                Show this help message`);
 }
 
@@ -1074,7 +1120,8 @@ Usage:
 try {
   if (Number(process.versions.node.split('.')[0]) < 18) throw new Error('Node.js 18+ is required.');
   if (argErr) throw new Error(argErr);
-  if (command === 'help' || opts.help) cmdHelp();
+  if (opts.version || command === 'version') cmdVersion();
+  else if (command === 'help' || opts.help) cmdHelp();
   else if (command === 'init') cmdInit();
   else if (command === 'update') cmdUpdate();
   else if (command === 'doctor') await cmdDoctor();

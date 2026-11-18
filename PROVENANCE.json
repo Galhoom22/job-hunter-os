@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "project_name": "job-hunter-os",
+  "canonical_repository": "https://github.com/redasalem/job-hunter-os",
+  "original_author": "Reda Salem",
+  "github_handle": "redasalem",
+  "verified_noreply_email": "192090175+redasalem@users.noreply.github.com",
+  "license": "MIT",
+  "inception_year": 2026,
+  "signing_policy": "ssh_ed25519_required_on_main",
+  "required_attribution_files": [
+    "LICENSE",
+    "NOTICE",
+    "AUTHORS.md",
+    "PROVENANCE.json",
+    ".github/CODEOWNERS"
+  ]
+}

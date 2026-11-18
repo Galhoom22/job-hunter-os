@@ -134,6 +134,26 @@ jobs:
           print(f"Security audit passed across {len(tracked)} tracked files.")
           PY
 
+      - name: Provenance & Attribution Integrity Check
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+
+          required = ["NOTICE", "AUTHORS.md", "PROVENANCE.json", ".github/CODEOWNERS", "LICENSE"]
+          for rel in required:
+              p = pathlib.Path(rel)
+              if not p.is_file():
+                  raise SystemExit(f"Missing required provenance file: {rel}")
+              text = p.read_text(encoding="utf-8")
+              if "redasalem" not in text.lower():
+                  raise SystemExit(f"Provenance file tampered (missing redasalem attribution): {rel}")
+
+          prov = json.loads(pathlib.Path("PROVENANCE.json").read_text(encoding="utf-8"))
+          assert prov.get("github_handle") == "redasalem", "PROVENANCE.json github_handle mismatch"
+          assert prov.get("canonical_repository") == "https://github.com/redasalem/job-hunter-os", "PROVENANCE.json canonical_repository mismatch"
+          print("Provenance & attribution integrity check passed for all 5 required files.")
+          PY
+
   cli-smoke:
     strategy:
       fail-fast: false

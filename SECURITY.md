@@ -18,5 +18,9 @@ Git ignore is an accidental-add safeguard, not encryption or history removal. Re
 - CAPTCHA, 2FA, account warnings, rate limits, or 3 consecutive errors stop the run immediately. No stealth plugins or challenge bypasses.
 - Unknown required answers go to `needs_review` with a local screenshot and a chat question. Confirmed receipt alone earns `applied`.
 
+## Provenance & Cryptographic Signing
+- Canonical source of truth: **`https://github.com/redasalem/job-hunter-os`**, created and maintained by **Reda Salem (`@redasalem`)** — see [`NOTICE`](NOTICE), [`AUTHORS.md`](AUTHORS.md), [`PROVENANCE.json`](PROVENANCE.json), and [`.github/CODEOWNERS`](.github/CODEOWNERS).
+- All official commits and release tags (`v*`) on `main` are cryptographically signed with an Ed25519 SSH signing key registered to `@redasalem` and enforced via GitHub branch/tag protection.
+
 ## Vulnerability reporting
 Use GitHub private vulnerability reporting in the repository Security tab when available, or contact the maintainer privately through their GitHub profile.
