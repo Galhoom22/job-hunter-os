@@ -5,9 +5,10 @@
 ## Core Entrypoints
 
 - [AGENTS.md](AGENTS.md): Canonical rules, progressive disclosure protocol, strict daily-run execution order, and 10 non-negotiable guardrails.
-- [skills/REGISTRY.md](skills/REGISTRY.md): Complete 46-skill routing index ( triggers, preconditions, verification contracts).
-- [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 46 skills.
+- [skills/REGISTRY.md](skills/REGISTRY.md): Complete 51-skill routing index (triggers, preconditions, verification contracts).
+- [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 51 skills.
 - [PLATFORMS.md](PLATFORMS.md): Global job board, B2B contract network, regional portal, and employer ATS compatibility matrix.
+- [HIRED.md](HIRED.md): Community success ledger & setup tips from landed interviews and offers.
 - [README.md](README.md): Quick start CLI (`npx job-hunter-os init --global`), MCP setup, and workflow guide.
 
 ## Playbooks & Modular Skills
@@ -29,6 +30,11 @@
 - [Company Due Diligence](skills/13-company-due-diligence.md): Domain authenticity check, layoff/churn signals, and `GREEN`/`YELLOW`/`RED` badges.
 - [Privacy & PII Shield](skills/14-privacy-pii-shield.md): PII redaction guardrails for screenshots, demos, logs, and git safety.
 - [Multilingual Adaptation](skills/15-multilingual-adaptation.md): Arabic (RTL), German, French, and Spanish resume & outreach localization.
+- [Rejection Pattern Analyzer](skills/16-rejection-pattern-analyzer.md): Detect recurring skill gaps, ATS channel bottlenecks, and stale `>= 14d` outcomes.
+- [Score Calibration](skills/17-score-calibration.md): Calibrate `1-10` match scores against actual interview callbacks.
+- [Condition-Based Browser Waiting](skills/18-condition-based-browser-waiting.md): Replace fixed sleeps with snapshot readiness checks and semantic locators.
+- [On-Demand MCP Routing](skills/19-on-demand-mcp-routing.md): Keep local JSON/Markdown tasks zero-MCP and load Playwright/Notion strictly by phase.
+- [Skill Authoring Standard](skills/20-skill-authoring-standard.md): Contributor contract following `anthropics/skills`, `obra/superpowers`, and `agentskills.io`.
 - [B2B Contract Networks](skills/platforms/b2b-contract-networks.md): Playbook for Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, and Turing.
 
 ## Examples & Adapters

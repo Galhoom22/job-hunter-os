@@ -124,10 +124,10 @@ Paste the exact configuration from [`mcp/mcp.template.json`](mcp/mcp.template.js
 
 ## 3. Modular `agent_skills` Architecture & Progressive Disclosure
 
-To keep the AI model fast and prevent blowing up the context window with **46 skills** at once, every skill follows the **`agentskills.io` / `SKILL.md` standard** (plus `.agents/skills/*/SKILL.md` auto-discovery) with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
+To keep the AI model fast and prevent blowing up the context window with **51 skills** at once, every skill follows the **`agentskills.io` / `SKILL.md` standard** (plus `.agents/skills/*/SKILL.md` auto-discovery) with strict YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and three mandatory body sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns & Self-Verification Check`):
 
 1. **Progressive Disclosure ([`skills/REGISTRY.md`](skills/REGISTRY.md) & [`skills/skills-manifest.json`](skills/skills-manifest.json)):** At the start of a session, the AI reads `AGENTS.md` and `skills/REGISTRY.md` only. It loads a specific skill's full Markdown playbook **only** when its trigger matches the active step.
-2. **Core & Career-Ops Playbooks (46-Skill Catalog):**
+2. **Core & Career-Ops Playbooks (51-Skill Catalog):**
    - [`skills/00-daily-run.md`](skills/00-daily-run.md) — End-to-end orchestrator for `/daily-run` and `/apply-url`.
    - [`skills/00-interrogate-and-onboard.md`](skills/00-interrogate-and-onboard.md) — **Pure-Chat Readiness Gatekeeper**: inspects `context/` directly, halts on placeholders/missing data, interviews you 3–4 questions at a time, and saves answers.
    - [`skills/01-resume-ingestion.md`](skills/01-resume-ingestion.md) — **Pure-AI CV Ingestion**: reads pasted text, Markdown, or local PDFs via Playwright MCP (`file:///`), confirms facts, and warns if a PDF is scanned/unreadable.
@@ -145,6 +145,11 @@ To keep the AI model fast and prevent blowing up the context window with **46 sk
    - [`skills/13-company-due-diligence.md`](skills/13-company-due-diligence.md) — **Company Due Diligence**: checks domain authenticity, layoff/repost churn, and red flags to assign a `GREEN`/`YELLOW`/`RED` Company Health badge.
    - [`skills/14-privacy-pii-shield.md`](skills/14-privacy-pii-shield.md) — **Privacy & PII Shield**: redacts personal contact details, tokens, and cookies in demos, screenshots, logs, and commits.
    - [`skills/15-multilingual-adaptation.md`](skills/15-multilingual-adaptation.md) — **Multilingual & RTL Adaptation**: localizes resumes and `<= 75`-word outreach across English, Arabic (RTL `dir="rtl"`), German, French, and Spanish with zero factual drift.
+   - [`skills/16-rejection-pattern-analyzer.md`](skills/16-rejection-pattern-analyzer.md) — **Rejection Pattern Analyzer** (*`career-ops` inspired*): audits rejected and `>= 14`-day silent entries in `logs/applications-log.json` to surface stack gaps, ATS channel bottlenecks, and targeting refinements.
+   - [`skills/17-score-calibration.md`](skills/17-score-calibration.md) — **Score Calibration** (*`career-ops` inspired*): evaluates `1–10` match scores against real interview callbacks (`separating`/`flat`/`inverted`/`insufficient`) and tunes rubric weights with owner approval.
+   - [`skills/18-condition-based-browser-waiting.md`](skills/18-condition-based-browser-waiting.md) — **Condition-Based Browser Waiting** (*`obra/superpowers` inspired*): verifies upload badges, spinner clearance, and modal readiness in `browser_snapshot` using `Role -> Label -> Placeholder -> Text` priority.
+   - [`skills/19-on-demand-mcp-routing.md`](skills/19-on-demand-mcp-routing.md) — **On-Demand MCP Routing**: keeps local JSON/Markdown tasks zero-MCP and invokes Playwright/Notion strictly by workflow phase.
+   - [`skills/20-skill-authoring-standard.md`](skills/20-skill-authoring-standard.md) — **Skill Authoring Standard** (*`anthropics/skills` & `obra/superpowers` inspired*): contributor TDD, progressive disclosure, and CI contract guide for authoring new skills.
 3. **Four Agent Reliability Meta-Skills:**
    - [`skills/meta-self-verification.md`](skills/meta-self-verification.md) — Forbids reporting `"applied"` or `"updated"` without a fresh post-click `browser_snapshot` receipt quote.
    - [`skills/meta-dom-recovery.md`](skills/meta-dom-recovery.md) — Recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded job lists.
@@ -355,8 +360,8 @@ Every major AI IDE, CLI harness, desktop client, and LLM family works out of the
 | [`AGENTS.md`](AGENTS.md), [`GEMINI.md`](GEMINI.md), [`CLAUDE.md`](CLAUDE.md), [`WARP.md`](WARP.md), [`CRUSH.md`](CRUSH.md) | Canonical brain, Progressive Disclosure rule, strict execution order, and 10 hard guardrails |
 | [`bin/cli.mjs`](bin/cli.mjs), [`scripts/`](scripts/install.sh) | Zero-dependency cross-platform CLI installer (`init`, `update`, `doctor`, `login`, `sync-mcp`) and OS one-liners |
 | [`.agents/skills/`](.agents/skills/daily-run/SKILL.md) | Official `agentskills.io` auto-discovery mirror (`/skills` in VS Code, Cursor, Codex, OpenCode, Goose, Zed) |
-| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, 46-skill catalog (`00–15`, `fallback-no-mcp`, 4 `meta-*`, 17 platforms, 7 ATS) |
-| [`PLATFORMS.md`](PLATFORMS.md), [`llms.txt`](llms.txt) | Global regional/B2B/ATS compatibility matrix + LLM-native discovery map (`llmstxt.org`) |
+| [`skills/`](skills/REGISTRY.md) | `REGISTRY.md`, `skills-manifest.json`, 51-skill catalog (`00–20`, `fallback-no-mcp`, 4 `meta-*`, 17 platforms, 7 ATS) |
+| [`PLATFORMS.md`](PLATFORMS.md), [`llms.txt`](llms.txt), [`HIRED.md`](HIRED.md) | Global regional/B2B/ATS compatibility matrix, `llmstxt.org` map, and community success ledger |
 | [`examples/`](examples/sandbox-demo/expected-mission-control.md) | 15-second `/demo` sandbox fixture and real generated outputs ([dossier](examples/outputs/sample-interview-dossier.md), [75-word outreach](examples/outputs/sample-outreach-75-words.md), [interrogation transcript](examples/outputs/sample-interrogation-transcript.md)) |
 | [`adapters/`](adapters/models/claude.md) | Model tuning guides (`adapters/models/`) and app/harness adapters (`adapters/apps/`) |
 | [`.agent/workflows/`](.agent/workflows/daily-run.md), [`commands/`](commands/daily-run.md), [`.github/prompts/`](.github/prompts/daily-run.prompt.md) | Portable slash-command & prompt entrypoints across 25+ AI apps |
@@ -380,6 +385,17 @@ Every major AI IDE, CLI harness, desktop client, and LLM family works out of the
 
 Contributions for new regional job-board playbooks, ATS engine workflows, resume template refinements, and multi-IDE improvements are welcome!
 
-- Read [`CONTRIBUTING.md`](CONTRIBUTING.md) and use [`skills/platforms/_template.md`](skills/platforms/_template.md) for new boards.
+- Read [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`skills/20-skill-authoring-standard.md`](skills/20-skill-authoring-standard.md) when building new skills or board playbooks from [`skills/platforms/_template.md`](skills/platforms/_template.md).
+- Landed interviews or an offer using `job-hunter-os`? Share your setup tips on [`HIRED.md`](HIRED.md)!
 - Follow our [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) and [`SECURITY.md`](SECURITY.md) guidelines (never commit personal data, PDFs, logs, or tokens).
 - Licensed under the [MIT License](LICENSE) — Copyright (c) 2026 Reda Salem (`redasalem`).
+
+---
+
+## 11. Attribution & Upstream Inspirations
+
+`job-hunter-os` learns from and builds cleanly atop battle-tested open-source agent skill ecosystems while remaining 100% zero-code Markdown + zero-dependency CLI:
+
+- **[`career-ops-hq/career-ops`](https://github.com/career-ops-hq/career-ops)** — Inspired our rejection-pattern blocker lens ([`skills/16-rejection-pattern-analyzer.md`](skills/16-rejection-pattern-analyzer.md)), score-vs-callback calibration rigor ([`skills/17-score-calibration.md`](skills/17-score-calibration.md)), and community success ledger ([`HIRED.md`](HIRED.md)).
+- **[`obra/superpowers`](https://github.com/obra/superpowers)** — Inspired condition-based async waiting over blind sleeps ([`skills/18-condition-based-browser-waiting.md`](skills/18-condition-based-browser-waiting.md)), evidence-before-completion gates ([`skills/meta-self-verification.md`](skills/meta-self-verification.md)), on-demand tool routing ([`skills/19-on-demand-mcp-routing.md`](skills/19-on-demand-mcp-routing.md)), and TDD-style skill testing.
+- **[`anthropics/skills`](https://github.com/anthropics/skills)** & **[`agentskills.io`](https://agentskills.io/)** — Shaped our three-level progressive disclosure architecture, trigger-focused descriptions, and zero-bloat [`SKILL.md`](.agents/skills/daily-run/SKILL.md) auto-discovery standard ([`skills/20-skill-authoring-standard.md`](skills/20-skill-authoring-standard.md)).

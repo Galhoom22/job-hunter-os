@@ -18,5 +18,10 @@ This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**.
 - Company due diligence -> `skills/13-company-due-diligence.md`
 - Privacy & PII redaction shield -> `skills/14-privacy-pii-shield.md`
 - Multilingual CV adaptation -> `skills/15-multilingual-adaptation.md`
+- Rejection pattern analyzer -> `skills/16-rejection-pattern-analyzer.md`
+- Score calibration report -> `skills/17-score-calibration.md`
+- Condition-based browser waiting -> `skills/18-condition-based-browser-waiting.md`
+- On-demand MCP routing -> `skills/19-on-demand-mcp-routing.md`
+- Authoring new skills -> `skills/20-skill-authoring-standard.md`
 
 See `adapters/models/gemini.md` for Gemini-specific multimodal & snapshot verification guidance. Respect `dry_run: true`, verified facts only, caps, and explicit `APPROVE` gates.

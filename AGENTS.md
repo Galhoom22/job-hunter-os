@@ -71,6 +71,11 @@ At the start of every session, read `AGENTS.md` and `skills/REGISTRY.md` first. 
   - `skills/13-company-due-diligence.md` — Tier A employer health badge, churn & scam vetting
   - `skills/14-privacy-pii-shield.md` — PII & credential redaction for demos, logs & commits
   - `skills/15-multilingual-adaptation.md` — Arabic (RTL), German, French & Spanish CV localization
+  - `skills/16-rejection-pattern-analyzer.md` — Rejection & `>= 14d` silence pattern detector (`career-ops` inspired)
+  - `skills/17-score-calibration.md` — Match score vs. real callback calibration & weight tuner
+  - `skills/18-condition-based-browser-waiting.md` — Snapshot condition checks & `Role -> Label -> Placeholder -> Text` priority
+  - `skills/19-on-demand-mcp-routing.md` — Strict phase-based MCP loading to eliminate token bloat
+  - `skills/20-skill-authoring-standard.md` — Anthropic/agentskills.io/TDD contributor authoring & CI verification standard
   - `skills/platforms/b2b-contract-networks.md` — Curated B2B contract networks (Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing)
   - `skills/fallback-no-mcp.md` — Non-MCP web chat fallback (ChatGPT / Claude Web / Gemini Web)
 - **Auto-discovery mirror:** `.agents/skills/*/SKILL.md` (`agentskills.io` compatible wrappers pointing to `skills/`).

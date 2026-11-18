@@ -1237,6 +1237,150 @@
         "draft-only pitch and explicit APPROVE gate enforced before any submission or public profile edit"
       ],
       "path": "skills/platforms/b2b-contract-networks.md"
+    },
+    {
+      "name": "rejection-pattern-analyzer",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when the owner asks why applications are getting rejected or ghosted, requests a rejection pattern analysis, or wants to audit logs/applications-log.json and logs/skipped-jobs.json (>= 14 days silent or rejected) to surface skill gaps, ATS channel bottlenecks, and concrete context/preferences.yaml targeting updates.",
+      "triggers": [
+        "analyze rejection patterns",
+        "why am I getting rejected or ghosted",
+        "audit rejected and stale applications",
+        "optimize targeting from logs"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "logs/applications-log.json exists and contains at least 5 real submitted (applied/interview/rejected/offer) records",
+        "context/preferences.yaml and context/cv.md are readable for comparison against observed gaps"
+      ],
+      "requires_skills": [
+        "log-and-insights",
+        "follow-up-radar",
+        "persona-switcher"
+      ],
+      "verification": [
+        "dry_run and skipped rows were excluded from submission yield denominators",
+        "silent applications >= 14 days old are flagged with causal humility (no fabricated ATS bias claims or insufficient-sample percentages)",
+        "every proposed context/preferences.yaml targeting or skill-gap adjustment traces directly to observed logs and waits for explicit owner approval before editing config"
+      ],
+      "path": "skills/16-rejection-pattern-analyzer.md"
+    },
+    {
+      "name": "score-calibration",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when checking whether the 1-10 match score accurately predicts real recruiter callbacks, comparing scored bands against interview/offer outcomes in logs/applications-log.json and recalibrating scoring weights or min_match_score in context/preferences.yaml with explicit owner approval.",
+      "triggers": [
+        "calibrate match scoring",
+        "check if match scores predict interviews",
+        "recalibrate scoring weights",
+        "score calibration report"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "logs/applications-log.json is readable and contains recorded match scores alongside decided or >=14-day outcomes",
+        "context/preferences.yaml is readable for current min_match_score and weighting rules"
+      ],
+      "requires_skills": [
+        "discover-and-triage",
+        "rejection-pattern-analyzer",
+        "log-and-insights"
+      ],
+      "verification": [
+        "pending in-flight applications (< 14 days old with no reply) are excluded from outcome rates and reported separately as in_flight_count",
+        "score-band table shows exact counts per band and marks bands below n = 5 as (n too small)",
+        "verdict (separating, flat, inverted, or insufficient) and any proposed weight/threshold recalibration are confirmed by the owner before editing context/preferences.yaml"
+      ],
+      "path": "skills/17-score-calibration.md"
+    },
+    {
+      "name": "condition-based-browser-waiting",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load whenever waiting on Playwright MCP page transitions, file upload parsing, multi-step ATS modals, or lazy-loaded job lists; replaces blind fixed sleeps with deterministic browser_snapshot condition checks and enforces semantic locator priority (Role -> Label -> Placeholder -> Text) while preserving human pacing delays.",
+      "triggers": [
+        "waiting for page / upload / modal in Playwright MCP",
+        "flaky browser step or timing mismatch",
+        "choose resilient element locator in browser_snapshot"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "Playwright MCP browser tab is open on the target job board or ATS form",
+        "action is part of an active discovery, upload, or fill step (no CAPTCHA, 2FA, or rate-limit banner present)"
+      ],
+      "requires_skills": [
+        "meta-dom-recovery",
+        "fill-and-apply"
+      ],
+      "verification": [
+        "condition check observed explicit completion signal (e.g., filename badge visible, Next button enabled, spinner gone) in browser_snapshot before proceeding",
+        "element targeting used semantic accessibility attributes (Role -> Label -> Placeholder -> Text) and zero hardcoded CSS classes or XPaths",
+        "minimum 3-9s human pacing gap between user-level navigations/clicks was still respected alongside bounded condition polling"
+      ],
+      "path": "skills/18-condition-based-browser-waiting.md"
+    },
+    {
+      "name": "on-demand-mcp-routing",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load at phase boundaries to minimize context bloat by routing MCP tool usage strictly on demand — using zero MCP tools for local JSON/Markdown phases (/weekly-report, rejection patterns, score calibration, PII audit) and invoking Playwright MCP or Notion MCP only in the exact browser or sync phases that require them.",
+      "triggers": [
+        "route MCP tools on demand",
+        "reduce context token bloat in long session",
+        "phase boundary MCP check"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "active task or /daily-run phase is identified (local file ops, browser automation, or optional Notion sync)",
+        "config/guardrails.yaml storage_adapters.notion_mcp flag is known"
+      ],
+      "requires_skills": [
+        "meta-context-compaction",
+        "daily-run"
+      ],
+      "verification": [
+        "pure local phases (interrogation gates, CV writing, pattern/calibration analysis, weekly report) executed using IDE file tools with zero unnecessary Playwright/Notion MCP calls",
+        "Notion MCP calls were skipped cleanly whenever storage_adapters.notion_mcp is false in config/guardrails.yaml",
+        "Playwright MCP snapshot payloads were pruned/summarized immediately at phase end before checkpointing via meta-context-compaction"
+      ],
+      "path": "skills/19-on-demand-mcp-routing.md"
+    },
+    {
+      "name": "skill-authoring-standard",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load whenever creating, refactoring, auditing, or contributing a new skill or job-board playbook to job-hunter-os; combines Anthropic official Skill Creator progressive-disclosure rules, agentskills.io auto-discovery conventions, TDD pressure-testing discipline, and job-hunter-os CI schema verification.",
+      "triggers": [
+        "author a new skill or platform playbook",
+        "edit or audit an existing skill",
+        "prepare skill PR for job-hunter-os"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "preconditions": [
+        "target workflow capability or regional job board is clearly scoped and does not duplicate an existing skill in skills/REGISTRY.md",
+        "CONTRIBUTING.md and .github/workflows/validate-repo.yml requirements are readable"
+      ],
+      "requires_skills": [
+        "meta-self-verification",
+        "privacy-pii-shield"
+      ],
+      "verification": [
+        "new or updated skill passes all 8 YAML frontmatter keys, 3 mandatory H2 section headers, and stays concise (< 500 lines)",
+        "skill is indexed identically in skills/REGISTRY.md, skills/skills-manifest.json, and (for core capabilities) .agents/skills/<name>/SKILL.md",
+        "local JSON/YAML/Markdown-link/security checks pass with zero broken links and zero tracked personal data before proposing commit"
+      ],
+      "path": "skills/20-skill-authoring-standard.md"
     }
   ]
 }
