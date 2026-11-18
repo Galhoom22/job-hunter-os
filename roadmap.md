@@ -1,5 +1,12 @@
 # Repository readiness audit
 
+## Chat-first playbook shift
+- [x] Add conversational onboarding, Notion provisioning and MCP capability checks.
+- [x] Add truth-preserving agent tailoring and accessible PDF workflow.
+- [x] Expand grouped platform and ATS playbooks and five IDE workflows.
+- [x] Align warm-up/pacing rules and test the safety decisions without frontend changes.
+- [x] Rewrite flagship documentation and validate links/contracts; save in the request commit.
+
 ## Open-source companion upgrade
 - [x] Interactive setup, optional Notion, browser login and dashboard readiness.
 - [x] Verified-fact resume tailoring and deterministic PDF renderer.
@@ -15,5 +22,5 @@
 - [x] Untrack private context/history and isolate bundled demo data.
 - [x] Run tests, validation and dashboard checks; document real-run blockers.
 ## External blockers (not implemented or verified)
-- [ ] Real autonomous dry run and Notion read-back: waiting for owner-verified profile/CV/answers, real resume, enabled approved targets, headed browser sessions, Notion token and database access.
-- [ ] Unattended IDE scheduler compatibility: depends on installed IDE/version, supported MCP tooling and a running authorized local agent; dashboard is not a runner.
+- [ ] Real chat onboarding/application dry run and Notion read-back: waiting for owner-verified CV/answers, approved targets, actual IDE MCP tools, headed sessions and opt-in Notion access.
+- [ ] Native slash-command and unattended IDE compatibility: depends on installed IDE/version and an authorized running local agent; portable chat prompts are provided, no scheduler is installed.

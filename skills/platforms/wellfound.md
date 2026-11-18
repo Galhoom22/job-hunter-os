@@ -1,13 +1,19 @@
-# Wellfound (AngelList) playbook
+---
+name: wellfound
+description: Find startup roles on Wellfound and draft truthful founder notes before safe application review.
+---
+# Wellfound / AngelList playbook
 
-Preconditions: AGENTS.md, successful preflight/auth/context loading, fresh accessibility snapshots, platform terms permit automation. Never bypass bot defenses.
+Live-unverified. Follow AGENTS.md, shared safety, fresh snapshot/refs and 3–9s pacing. Confirm named owner session; never edit a startup profile or send messages as a search side effect.
 
-1. For auth_required:true, open the auth check URL and snapshot. Confirm a named account/menu, not merely absence of Sign in. Public boards with auth_required:false may be read logged-out; a new login/2FA wall stops the whole run.
-2. Pace every navigation/click/type/select/upload by a random 3–8 seconds. Snapshot results; use roles/names/refs, not CSS selectors.
-3. Open the role board; snapshot company headings and individual role links. Open each role separately, capture salary/equity and remote country restrictions. Internal Apply may ask profile questions; do not edit the profile without approval.
-4. Extract company, title, location, timestamp (unknown stays unknown), full description, canonical URL and wellfound:<stable posting id>. If no reliable identifier exists, review; do not invent one. Limit collection to target.max_results; scroll small increments only when more results are needed.
-5. Apply preferences filters and score-job.md. Read the existing journal before every application. Below 5 skipped; 5 to below 7 review; >=7 eligible subject to all safety gates.
-6. Internal forms use apply-easy-apply.md. External redirects use apply-external-ats.md; inspect destination, snapshot and never guess an ATS. Unknown/account-gated flow is manual_apply + needs_review.
-7. Upload only the owner-verified local resume via fill-form-answers.md. Missing/unknown answers, consent ambiguity or irreversible profile changes stop this application for review.
-8. Any quick-apply button that may submit is a FINAL SUBMIT: reserve the job, validate/reload caps, verify all facts, and never click in dry run. Confirm receipt before marking applied. Uncertain receipt stays needs_review/submission_uncertain.
-9. Local-first journal then idempotent Notion sync; stop immediately on CAPTCHA, 2FA, login wall, warning, rate limit or three consecutive errors.
+## Discovery
+1. Open owner-selected role search; inspect role/location/workplace filters. Apply only confirmed preferences; remote does not imply worldwide eligibility.
+2. Open role details and read startup stage, product/mission, team, compensation/equity, hiring countries and work authorization restrictions when actually stated. Salary/equity absent stays unknown. Record canonical role ID/URL and `wellfound:<stable-id>`; no stable identity → review.
+3. Separate company facts from inference. Pause to read description and score; check journal and cross-board ATS URL. Do not use seniority/title alone to claim fit.
+
+## Founder note / application
+1. Snapshot Apply and determine whether it sends immediately or opens a draft. Treat Send application/one-click actions as final submission from the start.
+2. For a requested note use grounded-answer.md: 2–3 sentences connecting an observed mission/product need to one or two verified skills/projects. No invented founder familiarity, lifelong interest, referrals, startup metrics or achievements. Unknown mandatory experience/legal answers still block.
+3. Show a standalone founder-message draft for owner approval; do not send unsolicited outreach. A note inside an already authorized application follows the application review/safety gate. Shared profile edits require a separate owner request/approval.
+4. Use exact per-job PDF, verify required fields, preferences and consent. External employer link → ATS dispatcher; account creation/manual form → needs_review.
+5. Run final gate/reservation, obey dry run and submit once only when allowed. Confirm employer/role receipt, not a changed Apply label. Uncertainty stays review. Journal first, optional Notion second; security challenges abort the entire run.

@@ -1,17 +1,22 @@
 # Contributing to job-hunter-os
 
-Small, testable changes welcome. Never include real context, applications, resumes, screenshots, cookies, tokens or generated MCP configs in a PR.
+Improve the **chat + skills + MCP playbooks**, not the compatibility web preview. Submit focused Markdown, prompts, templates, MCP guidance and safety-contract changes. Leave `src/` untouched for this product direction.
 
-## Add a job board
-1. Copy skills/platforms/_template.md to a lowercase platform key. Keep steps concise and use accessibility snapshots/roles/labels/refs only.
-2. Add the key to Platform in schemas/index.ts, a disabled target to context/targets.yaml.example and demo/targets.yaml, a conservative cap in config/guardrails.yaml and registry entry in docs/platform-registry.md.
-3. Describe canonical posting ID extraction, auth requirements, final-submit semantics, supported ATS redirects and manual fallback. Cite tested date/version and known limitations. Never assume Quick Apply is reversible.
-4. Add a small rule test next to src/test covering eligibility, duplicates or submission safety affected by your change. Run npm test and npm run validate:logs -- --demo. Do not include private browser sessions.
+## Add or improve a board
+1. Copy [skills/platforms/_template.md](skills/platforms/_template.md). Describe triggers, supported host/canonical IDs, auth indicators, snapshot-driven filters, resume chooser, consent, final-submit semantics, receipt and recovery.
+2. Prefer fresh accessibility snapshots and actual roles/labels/refs. Do not ship brittle CSS recipes or claim fixed labels always exist. Cover the board's distinctive workflow; refer to shared safety skills rather than copying them.
+3. Add a registry entry. A documentation-only/unknown platform uses `other` with cap 0 and manual review. To enable automatic submission, also add its contract key, disabled target example, explicit cap and meaningful safety test. Never enable targets by default.
+4. Record tested date, tool version, authorized environment and limitations, or explicitly mark live-unverified. Do not fabricate employer applications, receipts or screenshots as evidence.
 
-## Improve ATS forms
-Fresh snapshot before each step; unknown answers and complex portals need review. No DOM injection, stealth plugins, CAPTCHA solvers, fabricated answers or automatic account creation. Ensure dry runs cannot accidentally submit.
+## Skills and workflow entries
+Give each new skill a trigger/input description, ordered steps, observable success and blocker handling. Reference AGENTS.md for invariants. Keep five command entrypoints synchronized through docs/chat-commands.md; native slash registration is version-dependent. Never duplicate secret-bearing MCP files: mcp/mcp.template.json is canonical.
 
-## Development
-npm install; npm run setup; npm run dev. Chromium install may be needed: npx playwright install chromium. setup:check checks local prerequisites and returns nonzero if incomplete; CI should use synthetic temporary fixtures rather than committed personal data. Node 22+ recommended.
+## Resume templates and truth
+Single-column semantic HTML, escaped facts, no scripts/remote assets/hidden keywords. Rewrites must preserve evidence, dates, scope and achievements. Missing legal/factual answers are blockers, not generative-writing tasks. Test rules with concrete values, not prose or markup snapshots.
 
-Use semantic design tokens and existing UI controls. Preserve TanStack routes and server boundaries. Local CLI code can use Node/Playwright; hosted functions cannot launch a browser and never read private files in production. Include desktop/mobile evidence for dashboard controls, not private screenshots.
+## Validation
+Use Node 22+ and `npm install` for helper development. Run `npm test`, `npm run test:agent-rules`, and `npm run validate:logs -- --demo`; new non-frontend safety tests belong under scripts/tests/ with its isolated configuration. Use synthetic temporary fixtures only. Check relative Markdown links and keep referenced files in the same PR.
+
+Real browser testing needs owner-authorized sessions and platform permission. No stealth plugins, CAPTCHA/2FA solving, automatic account creation, or unapproved LinkedIn writes. Delay rules limit volume and do not guarantee immunity from restrictions.
+
+Never include real CVs, contacts, application logs, browser profiles, tokens, screenshots or generated configs in a commit/issue. Review staged files and ignore rules; forced adds bypass protection. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).

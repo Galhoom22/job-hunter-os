@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>{{FULL_NAME}} — Resume</title>
+  <style>
+    @page { size: A4; margin: 18mm; }
+    body { font: 11pt Arial, Helvetica, sans-serif; color: #111; background: #fff; line-height: 1.4; margin: 0; }
+    h1 { font-size: 22pt; margin: 0 0 5pt; }
+    h2 { font-size: 12pt; border-bottom: 1px solid #777; margin: 16pt 0 6pt; break-after: avoid; }
+    h3 { font-size: 11pt; margin: 9pt 0 3pt; break-after: avoid; }
+    p { margin: 5pt 0; overflow-wrap: anywhere; }
+    ul { padding-left: 16pt; margin: 5pt 0; }
+    li { margin: 3pt 0; break-inside: avoid; }
+    a { color: inherit; text-decoration: none; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <header><h1>{{FULL_NAME}}</h1><p>{{CONTACT_TEXT}}</p><p>{{VERIFIED_LINKS_HTML}}</p></header>
+  <main>
+    <section><h2>Professional Summary</h2><p>{{SUMMARY_TEXT}}</p></section>
+    <section><h2>Technical Skills</h2><p>{{SKILLS_TEXT}}</p></section>
+    <section><h2>Experience</h2>{{EXPERIENCE_HTML}}</section>
+    <section><h2>Projects</h2>{{PROJECTS_HTML}}</section>
+    <section><h2>Education</h2>{{EDUCATION_HTML}}</section>
+  </main>
+</body>
+</html>

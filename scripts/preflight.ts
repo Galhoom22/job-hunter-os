@@ -1,9 +1,10 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { parse } from "yaml";
-import { effectiveDailyCap, withinActiveHours } from "../schemas/runtime";
-import { ApplicationsLog, Guardrails, FormAnswers, Targets, canApply } from "../schemas/index.ts";
+import { withinActiveHours } from "../schemas/runtime";
+import { agentDailyCap } from "../schemas/agent-policy";
+import { ApplicationsLog, DailyRun, Guardrails, FormAnswers, Targets, canApply } from "../schemas/index.ts";
 const root = resolve(import.meta.dirname, "..");
 const p = (f: string) => resolve(root, f);
 const problems: string[] = [];
@@ -19,7 +20,7 @@ const g = Guardrails.safeParse(yaml("config/guardrails.yaml"));
 const answers = FormAnswers.safeParse(yaml("context/form-answers.yaml"));
 const targets = Targets.safeParse(yaml("context/targets.yaml"));
 const preferences = yaml("context/preferences.yaml");
-if (!g.success) problems.push("invalid guardrails: require score >=7, review floor 5, delays 3–8s and CAPTCHA/2FA stops");
+if (!g.success) problems.push("invalid guardrails: require score >=7, review floor 5, agent action delays 3–9s (legacy delay_seconds 3–8) and CAPTCHA/2FA stops");
 if (!answers.success) problems.push("form answers must be owner-verified and include ./assets/<resume>.pdf");
 if (!targets.success || !targets.data.targets.some(t => t.enabled)) problems.push("need valid enabled targets");
 if (answers.success) {
@@ -45,7 +46,10 @@ catch { problems.push("logs invalid: run npm run validate:logs"); }
 if (!existsSync(p("logs/applications-log.json"))) problems.push("initialize private applications log to [] before first run");
 else try {
   const apps = ApplicationsLog.parse(JSON.parse(readFileSync(p("logs/applications-log.json"), "utf8")));
-  if (g.success && !canApply(apps, "__any__", new Date().toISOString().slice(0, 10), {...g.data,max_applications_per_day:effectiveDailyCap(g.data.max_applications_per_day,g.data.warmup_mode,new Date().toISOString().slice(0,10))})) problems.push("daily cap reached");
+  const runsDir = p("logs/runs");
+  const runs = existsSync(runsDir) ? readdirSync(runsDir).filter(f => f.endsWith(".json")).map(f => DailyRun.parse(JSON.parse(readFileSync(resolve(runsDir, f), "utf8")))) : [];
+  const today = new Date().toISOString().slice(0, 10);
+  if (g.success && !canApply(apps, "__any__", today, {...g.data,max_applications_per_day:agentDailyCap(g.data.max_applications_per_day,g.data.warmup_mode,today,runs)})) problems.push("daily cap reached");
 } catch { problems.push("application history invalid"); }
 if (g.success && targets.success) for (const t of targets.data.targets.filter(t => t.enabled)) {
   if (g.data.max_per_platform[t.platform] === undefined) problems.push(`missing cap for ${t.platform}`);

@@ -23,6 +23,7 @@ max_per_platform:
   taleo: 0
   other: 0
 min_match_score: 7
+# Compatibility-only legacy field; agent actions use human_behavior [3, 9] below.
 delay_seconds: [3, 8]
 max_consecutive_errors: 3
 stop_on_captcha: true
@@ -30,6 +31,7 @@ review_min_score: 5
 stop_on_2fa: true
 tailor_resume_per_job: true
 warmup_mode:
+  # Also cap the first three distinct non-aborted run dates at 5; see agent-policy.ts.
   enabled: true
   started_on: null
   initial_cap: 5

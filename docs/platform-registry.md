@@ -23,3 +23,12 @@ Playbooks exist; live UI compatibility is unverified until tested against an aut
 - smartrecruiters: [playbook](../skills/ats/smartrecruiters.md)
 - taleo: [playbook](../skills/ats/taleo.md) — manual only
 - workday: [playbook](../skills/ats/workday.md) — manual only
+
+
+## Grouped playbooks
+- [Remote boards](../skills/platforms/remote-boards.md): existing remote boards plus DailyRemote discovery/manual review (other, cap 0).
+- [Global boards](../skills/platforms/global-boards.md): Indeed, Glassdoor, Dice, ZipRecruiter.
+- [MENA boards](../skills/platforms/mena-boards.md): Wuzzuf, Bayt, LinkedIn MENA.
+- [ATS engines](../skills/platforms/ats-engines.md): existing ATS plus Workable manual-only (other, cap 0).
+
+Documentation coverage is not an enabled automation adapter. DailyRemote/Workable remain manual until contract keys, explicit caps, target examples and safety tests are reviewed. All playbooks are live-unverified unless an actual authorized test is recorded.

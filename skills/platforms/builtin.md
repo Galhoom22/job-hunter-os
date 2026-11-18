@@ -3,7 +3,7 @@
 Preconditions: AGENTS.md, successful preflight/auth/context loading, fresh accessibility snapshots, platform terms permit automation. Never bypass bot defenses.
 
 1. For auth_required:true, open the auth check URL and snapshot. Confirm a named account/menu, not merely absence of Sign in. Public boards with auth_required:false may be read logged-out; a new login/2FA wall stops the whole run.
-2. Pace every navigation/click/type/select/upload by a random 3–8 seconds. Snapshot results; use roles/names/refs, not CSS selectors.
+2. Pace every navigation/click/type/select/upload by a random 3–9 seconds. Snapshot results; use roles/names/refs, not CSS selectors.
 3. Snapshot job list and open title. Record canonical role ID, office location and hybrid/remote eligibility. Apply routes to company ATS or account prompt; use ATS dispatcher or review rather than creating an account.
 4. Extract company, title, location, timestamp (unknown stays unknown), full description, canonical URL and builtin:<stable posting id>. If no reliable identifier exists, review; do not invent one. Limit collection to target.max_results; scroll small increments only when more results are needed.
 5. Apply preferences filters and score-job.md. Read the existing journal before every application. Below 5 skipped; 5 to below 7 review; >=7 eligible subject to all safety gates.

@@ -1,8 +1,7 @@
 ---
-description: Run the daily autonomous job discovery, scoring, and application pipeline
+description: Run authorized discovery, truthful tailoring, safe applications and reporting
 ---
 
-1. Read `AGENTS.md` fully and obey every hard guardrail.
-2. Execute `skills/00-daily-run.md` from its first step: acquire the owned run lock, then run `npm run preflight`. Stop if it fails; validate aborted JSON and release only your lock.
-3. Continue that orchestrator step by step using Playwright and Notion MCP; never repeat its setup or skip auth/context.
-4. Finish with the run report in chat and confirm `npm run validate:logs` passes.
+1. Read AGENTS.md, docs/execution-safety.md and docs/chat-commands.md.
+2. Follow skills/00-daily-run.md in order: owned lock → preflight → auth → context. Respect dry run, run-date/calendar warm-up, active hours/cooldown, exact PDF, duplicate checks, uncertain reservations and stop conditions. Local journal first; optional Notion. Release only your own lock in finally. Report actual receipts, questions and blockers.
+3. Actual MCP tools and local permissions must be available; instructions alone do not install servers or schedule tasks.

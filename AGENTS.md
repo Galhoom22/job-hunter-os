@@ -48,7 +48,7 @@ a skipped application is cheap, a wrong or fabricated one is expensive.
 |---|---|---|
 | Browser | **Playwright MCP** (`playwright`) | Persistent profile in `./browser-profile`. Use accessibility snapshots (`browser_snapshot`) and element refs/roles/labels. Never rely on CSS selectors. |
 | Memory & analytics | **Notion MCP** (`notion`) | Databases: `Applications`, `Daily Runs`, `Weekly & Monthly Insights`. |
-| Local files | IDE file tools | Read `context/`, `config/`, `skills/`; write only under `logs/`. |
+| Local files | IDE file tools | Read context/config/skills; run artifacts under logs; owner-approved setup may write private context/config. |
 | Shell | `npm run preflight`, `npm run validate:logs` | Run them; respect their exit codes. |
 
 ## Strict execution order (daily run)
@@ -68,10 +68,10 @@ The orchestrator is `skills/00-daily-run.md`. Never reorder or skip steps 1–3.
 
 ## Hard guardrails (non-negotiable)
 
-1. **Never invent answers.** If a form question has no answer in `context/form-answers.yaml`
-   or `context/profile.md`, do NOT guess. Leave the tab open, take a screenshot to
+1. **Never invent facts.** Factual/legal answers require verified `context/form-answers.yaml`
+   or `context/profile.md`; motivation drafts follow `skills/grounded-answer.md`. For unknown facts, do NOT guess. Leave the tab open, take a screenshot to
    `logs/screenshots/<job_id>.png`, set status `needs_review`, and move on.
-2. **Human-like pacing.** Wait a random **3–9 seconds** (`config/guardrails.yaml -> delay_seconds`)
+2. **Pacing.** Wait random **3–9 seconds** (`human_behavior.action_delay_seconds`)
    between every navigation and click. Never burst.
 3. **LinkedIn profile edits and posts require explicit approval in chat.** Draft, show the
    exact text, and wait for the owner to reply "approve". No approval = no Save/Post click.
@@ -104,5 +104,13 @@ All records follow `schemas/index.ts` (Zod). Status values:
 - Shared contracts and local locks enforce safety; browser runs require an authorized local process.
 
 - Onboarding and storage use shared runtime contracts; Notion is opt-in, JSON always primary. Why: local operation must not require a third-party tracker.
-- Tailoring reorders owner-verified fact sentences only; renderer has no network. Why: deterministic truth-preserving output.
+- Agent tailoring may rephrase verified facts with an evidence map; optional renderer only reorders exact sentences. Why: preserve meaning without fabrication.
 - Before every action/submission apply active hours, progressive warm-up and cooldown rules in docs/execution-safety.md; no stealth or evasion.
+
+
+## Chat-first product and commands
+- Markdown skills/prompts/templates/MCP are the product; leave src/ untouched. Why: no web application is required.
+- Use docs/chat-commands.md for /setup, /daily-run, /tailor-cv, /weekly-report and /linkedin-growth; chat prompts work when native commands do not. Why: IDE compatibility varies.
+- Setup uses skills/00-onboarding-chat.md; Notion provisioning is opt-in. Why: owners should not hand-edit YAML or expose secrets in chat.
+- Use schemas/agent-policy.ts before submissions: first three distinct authorized run dates cap at 5 alongside calendar warm-up. Why: idle days cannot bypass caution.
+- Non-frontend safety tests use scripts/tests/ and vitest.agent.config.ts. Why: protect src/ from playbook-only changes.

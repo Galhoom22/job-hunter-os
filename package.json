@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:agent-rules": "vitest run --config vitest.agent.config.ts",
     "sync:mcp": "tsx scripts/sync-mcp.ts",
     "validate:logs": "tsx scripts/validate-logs.ts",
     "preflight": "tsx scripts/preflight.ts",

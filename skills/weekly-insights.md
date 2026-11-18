@@ -10,3 +10,6 @@
 Use `npm run insights -- weekly|monthly PERIOD START_ISO END_ISO LOCK_TOKEN` for the shared schema-backed calculator and atomic local report writer. Bounds are inclusive start, exclusive end; choose UTC calendar bounds. Then perform Notion upsert through MCP.
 
 Notion is optional: if storage_adapters.notion_mcp:false, skip sync and retry work entirely; keep local records/exports. If enabled, token/database access must be verified. Local JSON is always primary.
+
+
+For /weekly-report always write a private human-readable logs/insights/weekly-<period>.md alongside the validated JSON: period/bounds, sample size, unique scored jobs, confirmed applied, review/dry-run counts, skill demand/gaps with denominators, 3–5 evidence-based recommendations and limitations. Never copy demo facts into a real report. Optional Notion failure does not erase Markdown. Acquire/release the local owned lock for report writes; no browser application needed.

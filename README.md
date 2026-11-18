@@ -1,77 +1,85 @@
 # job-hunter-os
 
-**A local-first career companion for AI-powered IDEs. Honest matching. Human review where it matters.**
+**An open-source AI Agent Skills & MCP Playbook repository for truthful, chat-driven job hunting.**
 
-![MIT license](https://img.shields.io/badge/license-MIT-green)
-![Local first](https://img.shields.io/badge/data-local--first-black)
-![Playwright MCP](https://img.shields.io/badge/browser-Playwright_MCP-45ba4b)
-![Multi IDE](https://img.shields.io/badge/IDE-Antigravity_%7C_Cursor_%7C_Claude_Code_%7C_Windsurf_%7C_Cline-blue)
+Clone it, open it in your AI IDE, bring your CV, and talk to your agent. Markdown skills guide discovery, honest scoring, local CV tailoring, safe applications and reports through Playwright MCP and optional Notion MCP. **The product is the playbooks—not a React dashboard, web service or autonomous daemon.**
 
-## Quick start in 3 steps
-```bash
-git clone https://github.com/redasalem/job-hunter-os.git
-# Open the cloned folder in a terminal, then:
-npm install && npm run setup
-# In your AI IDE: “Start today's job run” (or /daily-run if that IDE supports it).
-```
-Setup initializes missing files without overwriting them, collects profile facts and preferred IDEs, creates private MCP configs and keeps Notion optional. An initial setup can be quick; real resume preparation, legal-answer review, Chromium download and manual login may take longer than two minutes. No invented personal facts.
-
-Put the base PDF at assets/resume.pdf. `npx playwright install chromium` if needed, then `npm run browser:login` for manual login. Review all form answers before owner_verified:true. `npm run dev` opens the companion at localhost:8080. `npm run setup:check` reports incomplete prerequisites without modifying files. A real run requires successful preflight and enabled permitted targets; templates begin disabled.
-
-## Two layers, one source of truth
+## Architecture
 ```text
-YOUR MACHINE
-+-----------------------+      +--------------------------+
-| Authorized AI IDE     | ---> | AGENTS.md + playbooks     |
-| local agent process   |      | safety / CV / preferences |
-+-----------+-----------+      +------------+-------------+
-            | Playwright MCP               |
-            v                              v
-  Persistent Chromium             Private local JSON
-  manual login / apply            logs / resumes / exports
-            |                              |
-            v                              v
-  Employers / job boards          Local Companion Dashboard
-                                  overview / review / reports
-                                           |
-                                  optional Notion MCP sync
-HOSTED PREVIEW: synthetic read-only demo, not a runner
+Your IDE chat + owner-verified CV
+              |
+     AGENTS.md + Markdown skills
+              |
+      +-------+------------------+
+      |                          |
+ Playwright MCP             IDE local file tools
+ persistent Chromium        private context + JSON
+      |                          |
+ permitted job boards       local PDFs + Markdown reports
+ and employer forms              |
+                           optional Notion MCP
 ```
+The owner authorizes a running local agent; the IDE supplies its model and tools. Instructions do not execute themselves, install MCP, register universal commands or run while the machine is off. Safety overrides job-match eligibility.
 
-## Feature matrix
-| Capability | Included | Boundary |
-|---|---|---|
-| Setup + health checks | CLI + dashboard | Local files only; login/access still verified manually |
-| CV matching | >=7 eligible, 5–6 review, <5 skip | Never overrides consent or safety |
-| Resume tailoring | Verified sentence/skill/bullet ordering, local PDF | No invented keywords or new experience |
-| Safety | Dry run, caps, warm-up, active hours, cooldown | No stealth/bypass, no anti-ban guarantee |
-| Tracking | Local JSON, CSV, Markdown; optional Notion | Local JSON always primary |
-| Exports | CSV / JSON downloads and Markdown clipboard | Personal downloads stay private |
-| Agent runs | Canonical playbooks + local run lock | Requires an authorized, running IDE/model process |
+## 3-step quick start
+1. **Clone and connect Playwright MCP.** Clone `https://github.com/redasalem/job-hunter-os.git`, open that folder in your IDE, and load [mcp/mcp.template.json](mcp/mcp.template.json). Use `--user-data-dir=./browser-profile` resolved to this repository's absolute path. The [MCP guide](mcp/README.md) covers permissions and optional Notion. No web server is needed.
+2. **Say `/setup` and paste/drop your CV.** If your IDE does not expose that command, say **“Setup my profile from this CV.”** The [onboarding skill](skills/00-onboarding-chat.md) extracts facts, asks you to confirm missing answers, writes private context and opens a headed browser for you to log in yourself. It can run small local setup/validation helpers with permission; you do not need to hand-edit YAML.
+3. **Say `/daily-run`.** Or: **“Run today's job discovery, CV tailoring and applications.”** Watch the agent use the browser. **Dry run is on by default: no final Submit.** Real submission requires your explicit choice to disable dry run, verified facts/resume, permitted targets, live sessions and successful preflight. CAPS, questions and security prompts may stop a run.
+
+## Commands
+| Request | Result |
+|---|---|
+| /setup | Chat-first CV extraction, confirmed profile/preferences, manual login, optional Notion trackers |
+| /daily-run | Discover → score → tailor → safely fill/review → journal → report |
+| /tailor-cv JOB_URL | Truth-preserving tailored HTML/PDF and evidence map; no application |
+| /weekly-report | Measured skill demand/gaps in private Markdown and optional Notion |
+| /linkedin-growth | Profile recommendations or post drafts; exact text needs explicit approval before Save/Post |
+See [command portability](docs/chat-commands.md) for fallback prompts; slash-command support depends on the IDE/version.
 
 ## Supported IDEs
-Antigravity, Cursor, Claude Code, Windsurf, Cline/Roo and GitHub Copilot have canonical instruction pointers. Claude/Cursor MCP configs are generated; other IDE versions may require importing server definitions into their supported MCP settings. Instruction files do not install tools, grant permissions or universally register slash commands.
-
-## Platform playbooks
-Global: LinkedIn, Wellfound, Indeed, Glassdoor, Dice, ZipRecruiter.
-Remote: WeWorkRemotely, RemoteOK, BuiltIn, Welcome to the Jungle (Otta).
-Regional: Wuzzuf, Bayt. Community template ready for StepStone, Xing, Naukri and other boards—not yet implemented.
-ATS: Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR. Workday/Taleo: manual_apply + needs_review.
-See [registry](docs/platform-registry.md). Playbooks are conservative guides, not a guarantee against changing interfaces or platform restrictions.
-
-## Daily commands
-| Command | Outcome |
+| IDE | Instruction entry |
 |---|---|
-| npm run setup / setup:check | Interactive onboarding / read-only readiness |
-| npm run browser:login | Headed persistent manual login |
-| npm run sync:mcp -- --headless | Same profile, background browser mode |
-| npm run preflight | Fail-closed eligibility/settings check |
-| npm run resume:render -- COMPANY ROLE KEYWORD... | Verified-fact tailored PDF |
-| npm run export | Private CSV + Markdown artifacts |
-| npm run validate:logs | Validate real local history |
-| npm test | Unit/schema safety tests |
+| Antigravity | AGENTS.md + .agent/workflows/ |
+| Cursor | .cursor/rules/job-hunter.mdc |
+| Claude Code | CLAUDE.md |
+| Windsurf | .windsurfrules |
+| Cline / Roo | .clinerules |
+| GitHub Copilot | .github/copilot-instructions.md (where local MCP agent mode is available) |
+Each IDE must actually expose the browser/file tools and approvals. [Capability negotiation](skills/mcp-capabilities.md) handles missing PDF or Notion methods without pretending they exist.
 
-## Privacy, without impossible promises
-Cookies, PDFs, personal context, history and generated configs are ignored and untracked; only synthetic demo data ships in hosted builds. Applications send chosen facts/resumes to employers; optional Notion and your selected AI IDE/model have their own data policies. No claim that all data never leaves your machine. Read [SECURITY.md](SECURITY.md).
+## Platform and ATS playbooks
+| Group | Coverage |
+|---|---|
+| [LinkedIn](skills/platforms/linkedin.md) | Filters, past-24h radar, Easy Apply, external redirects, approval-only profile/posts |
+| [Wellfound](skills/platforms/wellfound.md) | Startup discovery, compensation/remote constraints, grounded founder notes |
+| [Remote boards](skills/platforms/remote-boards.md) | WeWorkRemotely, RemoteOK, DailyRemote, Welcome to the Jungle / Otta, BuiltIn |
+| [Global boards](skills/platforms/global-boards.md) | Indeed, Glassdoor, Dice, ZipRecruiter |
+| [MENA boards](skills/platforms/mena-boards.md) | Wuzzuf, Bayt, LinkedIn MENA |
+| [ATS engines](skills/platforms/ats-engines.md) | Greenhouse, Lever, Ashby, SmartRecruiters, Workable, BreezyHR |
+| Manual fallback | Workday, Taleo, unknown hosts, inaccessible/account-creation flows |
+DailyRemote and Workable use `other` (cap 0) until a schema-backed adapter is reviewed: discovery/manual review only, not enabled automated submissions. Platform documentation is not authorization to violate terms. Interfaces/tool versions change; **live compatibility is unverified until checked in your authorized environment**.
 
-MIT licensed. Contributions welcome via [CONTRIBUTING.md](CONTRIBUTING.md). Live applications, Notion read-back and unattended behavior must be verified in your actual authorized environment before enabling real submission. No scheduler is installed by opening this dashboard.
+## Safety is part of the product
+- Default score ≥7 is eligible, 5 to below your minimum needs review, <5 skipped. Eligibility is never permission to submit.
+- First three distinct authorized run dates: at most **5 applications/day**, or a lower configured cap. Existing calendar warm-up, per-platform caps, unresolved submission reservations, active hours and cooldown apply too.
+- Random **3–9-second** action waits and reading pauses reduce load; no stealth, evasion or anti-ban guarantee.
+- CAPTCHA, 2FA, unexpected login, security warning, rate limit or three consecutive errors: stop and notify.
+- Unknown factual/legal answers: screenshot, leave tab open, record needs_review and ask. Motivation drafts use verified facts/observed mission only, never fabricated claims.
+- Local run lock, duplicate checks and pre-submit reservations; `applied` requires a receipt, and uncertain submissions are never retried blindly.
+See [execution safety](docs/execution-safety.md). LinkedIn Save/Post always requires explicit approval of the exact text.
+
+## Local-first privacy—with an honest boundary
+There is no mandatory hosted backend or third-party tracker. Private context, real logs, browser profile, PDFs, exports, `.env` and generated MCP configs stay on your machine and out of Git by default. Only synthetic examples ship in the repository. **This is not a “100% data never leaves your machine” guarantee:** employers receive submitted data; optional Notion receives approved records; your IDE/model may process the CV/chat under its own policy. Use appropriately configured local models when required. [SECURITY.md](SECURITY.md) explains the limits of Git ignore and tool permissions.
+
+## Repository map
+- `AGENTS.md`: canonical instructions and guardrails.
+- `skills/`, `prompts/`, `.agent/workflows/`: the agent product.
+- `templates/`: ATS HTML templates; generated resumes go in private `logs/resumes/`.
+- `mcp/`: single public server template and secure setup guidance.
+- `context/*.example`, `config/`: structure examples and conservative settings; examples are not personal facts.
+- `schemas/`, `scripts/`: optional local validation, locks, journal, PDF and export helpers; no application backend required.
+- `demo/`: synthetic fixtures only.
+- `src/`: retained compatibility preview, untouched by this shift; not required or marketed for agent use.
+
+## Contribute and verify
+See [CONTRIBUTING.md](CONTRIBUTING.md), [community registry](docs/platform-registry.md) and [MIT license](LICENSE). Maintainers can run `npm test`, `npm run test:agent-rules` and `npm run validate:logs -- --demo`. Real employer submissions, actual IDE tool compatibility, manual login and Notion read-back require authorized local testing; this documentation is not evidence of those outcomes.
