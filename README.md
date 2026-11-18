@@ -1,40 +1,88 @@
 # job-hunter-os
 
-**An open-source AI Agent Skills & MCP Playbook repository for truthful, chat-driven job hunting.**
+**Your CV. Your AI IDE. One portable job-hunting agent home.**
 
-Clone it, open it in your AI IDE, bring your CV, and talk to your agent. Markdown skills guide discovery, honest scoring, local CV tailoring, safe applications and reports through Playwright MCP and optional Notion MCP. **The product is the playbooks—not a React dashboard, web service or autonomous daemon.**
+![MIT](https://img.shields.io/badge/license-MIT-green)
+![Zero backend](https://img.shields.io/badge/backend-not_required-black)
+![Playwright MCP](https://img.shields.io/badge/browser-Playwright_MCP-green)
+![Optional Notion](https://img.shields.io/badge/tracking-Notion_MCP_optional-blue)
+![Multi IDE](https://img.shields.io/badge/IDE-multi--IDE-teal)
 
-## Architecture
+Markdown skills, truthful resume tailoring and safe application playbooks—installed locally in a project or globally across your machine. No web app or backend required. The CLI uses **Node.js 18+ and zero production dependencies**; the IDE supplies the model/MCP tools.
+
 ```text
-Your IDE chat + owner-verified CV
-              |
-     AGENTS.md + Markdown skills
-              |
-      +-------+------------------+
-      |                          |
- Playwright MCP             IDE local file tools
- persistent Chromium        private context + JSON
-      |                          |
- permitted job boards       local PDFs + Markdown reports
- and employer forms              |
-                           optional Notion MCP
+Terminal anywhere: npx github:redasalem/job-hunter-os init --global
+                            |
+                 Node built-in CLI engine
+                            |
+       +--------------------+---------------------+
+       |                    |                     |
+ ~/.job-hunter-os/    IDE commands/rule pointers   MCP JSON merges
+ skills + context    Claude / Cursor / others     Playwright profile
+ templates + logs          |                     optional Notion
+ browser-profile     chat: /setup → /daily-run
+                            |
+           verified facts → safe browser → local journal
 ```
-The owner authorizes a running local agent; the IDE supplies its model and tools. Instructions do not execute themselves, install MCP, register universal commands or run while the machine is off. Safety overrides job-match eligibility.
 
-## 3-step quick start
-1. **Clone and connect Playwright MCP.** Clone `https://github.com/redasalem/job-hunter-os.git`, open that folder in your IDE, and load [mcp/mcp.template.json](mcp/mcp.template.json). Use `--user-data-dir=./browser-profile` resolved to this repository's absolute path. The [MCP guide](mcp/README.md) covers permissions and optional Notion. No web server is needed.
-2. **Say `/setup` and paste/drop your CV.** If your IDE does not expose that command, say **“Setup my profile from this CV.”** The [onboarding skill](skills/00-onboarding-chat.md) extracts facts, asks you to confirm missing answers, writes private context and opens a headed browser for you to log in yourself. It can run small local setup/validation helpers with permission; you do not need to hand-edit YAML.
-3. **Say `/daily-run`.** Or: **“Run today's job discovery, CV tailoring and applications.”** Watch the agent use the browser. **Dry run is on by default: no final Submit.** Real submission requires your explicit choice to disable dry run, verified facts/resume, permitted targets, live sessions and successful preflight. CAPS, questions and security prompts may stop a run.
+## Quick installation — three options
+Installation can be quick; first CV verification, browser/tool downloads and login can take longer. Git-sourced npx needs Git/npm/network access; no guaranteed 30-second setup.
 
-## Commands
-| Request | Result |
+### A. npx — local or global
+```bash
+npx github:redasalem/job-hunter-os init --global
+npx github:redasalem/job-hunter-os doctor
+# Or scaffold the current project (existing files preserved):
+npx github:redasalem/job-hunter-os init
+```
+Doctor may return nonzero until you complete setup—that is expected, not a failed install. From any unrelated folder, later commands use the installed global home; an installed local project takes precedence. `--global` makes the choice explicit.
+
+### B. One-line OS installer
+Review the script before executing remote code.
+
+macOS / Linux / Git Bash:
+```bash
+curl -fsSL https://raw.githubusercontent.com/redasalem/job-hunter-os/main/scripts/install.sh | bash
+```
+Windows PowerShell:
+```powershell
+irm https://raw.githubusercontent.com/redasalem/job-hunter-os/main/scripts/install.ps1 | iex
+```
+Installers preserve existing files/checkouts and use separate source/runtime folders; no automatic Git updates or elevation. These links require a publicly accessible repository. See [installation details](docs/cli-installation.md).
+
+### C. Classic clone — no npm install needed for scaffolding
+```bash
+git clone https://github.com/redasalem/job-hunter-os.git
+cd job-hunter-os
+node ./bin/job-hunter.mjs init
+```
+
+## Chat-first use
+1. Run `npx github:redasalem/job-hunter-os login` (or add `--global`). It opens installed Chrome/Chromium for manual LinkedIn, Wellfound, Wuzzuf and Indeed login. Close it before MCP; verify the actual sessions in setup. Missing browser? Use headed Playwright MCP during setup.
+2. Open Antigravity, Cursor, Claude Code, Windsurf or Cline, drop your CV into chat and request `/setup`. The agent extracts only your facts, asks you to verify them and prepares private context. Missing native command? Ask “Setup my profile from this CV” and point it to your agent home's AGENTS.md.
+3. Request `/daily-run` or `/apply-url JOB_URL`. **Dry run is on by default: no final Submit.** Actual submissions require verified facts/resume, permitted targets, live auth, caps and successful preflight. Optional local safety helpers require a separate approved dependency install and Node 22+; see [runtime details](docs/cli-installation.md).
+
+## CLI reference
+| Command | Result |
 |---|---|
-| /setup | Chat-first CV extraction, confirmed profile/preferences, manual login, optional Notion trackers |
-| /daily-run | Discover → score → tailor → safely fill/review → journal → report |
-| /tailor-cv JOB_URL | Truth-preserving tailored HTML/PDF and evidence map; no application |
-| /weekly-report | Measured skill demand/gaps in private Markdown and optional Notion |
-| /linkedin-growth | Profile recommendations or post drafts; exact text needs explicit approval before Save/Post |
-See [command portability](docs/chat-commands.md) for fallback prompts; slash-command support depends on the IDE/version.
+| init | Scaffold the current directory without overwriting owner files |
+| init --global / -g | Create ~/.job-hunter-os and global IDE command/rule pointers |
+| doctor [--global] | Node/npx, placeholder facts, PDF, MCP paths, browser-directory and optional-token diagnostics |
+| login [--global] | Open installed Chrome/Chromium for owner-controlled login |
+| sync-mcp [--global] | Non-destructive Playwright merges; optional Notion/Cline import files |
+| add-platform NAME [--global] | New playbook plus disabled manual-review target; no automatic submission adapter |
+
+## Chat commands
+| Request | Outcome |
+|---|---|
+| /setup | Confirm CV facts/preferences, manual login and optional Notion provisioning |
+| /daily-run | Discover → score → tailor → fill/review → journal → report |
+| /tailor-cv JOB_URL | Truthful ATS HTML/PDF with evidence map, no application |
+| /apply-url JOB_URL | One job through all normal gates; dry-run/review may prevent submission |
+| /weekly-report | Measured skill demand/gaps in local Markdown and optional Notion |
+| /linkedin-growth | Profile/post drafts or ≤75-word outreach; exact-text approval before any write/send |
+
+Native command discovery/namespaces vary by IDE/version; legacy Claude `/user:` or `/project:` aliases are not universal. The installer writes six ready-to-copy command files; [portability guide](docs/chat-commands.md) and [path matrix](docs/cli-installation.md) cover manual imports. No scheduler or stealth automation.
 
 ## Supported IDEs
 | IDE | Instruction entry |
@@ -82,4 +130,4 @@ There is no mandatory hosted backend or third-party tracker. Private context, re
 - `src/`: retained compatibility preview, untouched by this shift; not required or marketed for agent use.
 
 ## Contribute and verify
-See [CONTRIBUTING.md](CONTRIBUTING.md), [community registry](docs/platform-registry.md) and [MIT license](LICENSE). Maintainers can run `npm test`, `npm run test:agent-rules` and `npm run validate:logs -- --demo`. Real employer submissions, actual IDE tool compatibility, manual login and Notion read-back require authorized local testing; this documentation is not evidence of those outcomes.
+See [CONTRIBUTING.md](CONTRIBUTING.md), [community registry](docs/platform-registry.md) and [MIT license](LICENSE). Maintainers can run `npm run test:cli`, `npm test`, `npm run test:agent-rules` and `npm run validate:logs -- --demo`. Real employer submissions, actual IDE tool compatibility, manual login and Notion read-back require authorized local testing; this documentation is not evidence of those outcomes.

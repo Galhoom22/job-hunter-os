@@ -110,7 +110,7 @@ All records follow `schemas/index.ts` (Zod). Status values:
 
 ## Chat-first product and commands
 - Markdown skills/prompts/templates/MCP are the product; leave src/ untouched. Why: no web application is required.
-- Use docs/chat-commands.md for /setup, /daily-run, /tailor-cv, /weekly-report and /linkedin-growth; chat prompts work when native commands do not. Why: IDE compatibility varies.
+- Use docs/chat-commands.md for six commands including /apply-url; see docs/cli-installation.md for local/global cwd. Why: IDE support varies.
 - Setup uses skills/00-onboarding-chat.md; Notion provisioning is opt-in. Why: owners should not hand-edit YAML or expose secrets in chat.
 - Use schemas/agent-policy.ts before submissions: first three distinct authorized run dates cap at 5 alongside calendar warm-up. Why: idle days cannot bypass caution.
-- Non-frontend safety tests use scripts/tests/ and vitest.agent.config.ts. Why: protect src/ from playbook-only changes.
+- CLI uses Node built-ins; tests in scripts/tests/. Why: installation needs no web runtime.

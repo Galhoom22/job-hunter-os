@@ -1,5 +1,11 @@
 # Repository readiness audit
 
+## Universal CLI installation
+- [x] Implement dependency-free local/global CLI and non-destructive MCP/IDE injection.
+- [x] Add transparent POSIX/PowerShell installers and six portable commands.
+- [x] Test isolated installation, packaged npm executable, doctor, MCP merges and platform registration.
+- [x] Document installation paths, tool limitations and privacy; save without src changes.
+
 ## Chat-first playbook shift
 - [x] Add conversational onboarding, Notion provisioning and MCP capability checks.
 - [x] Add truth-preserving agent tailoring and accessible PDF workflow.

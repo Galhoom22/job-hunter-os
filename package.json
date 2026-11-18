@@ -3,6 +3,30 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "bin": {
+    "job-hunter": "./bin/job-hunter.mjs",
+    "job-hunter-os": "./bin/job-hunter.mjs"
+  },
+  "files": [
+    "bin/",
+    "commands/",
+    "skills/",
+    "prompts/",
+    "templates/",
+    "config/guardrails.yaml",
+    "context/*.example",
+    "docs/",
+    "mcp/mcp.template.json",
+    "schemas/",
+    "scripts/*.ts",
+    "scripts/install.sh",
+    "scripts/install.ps1",
+    "AGENTS.md",
+    "CLAUDE.md",
+    ".windsurfrules",
+    ".clinerules",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -13,6 +37,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:agent-rules": "vitest run --config vitest.agent.config.ts",
+    "test:cli": "node --test scripts/tests/cli.test.mjs",
     "sync:mcp": "tsx scripts/sync-mcp.ts",
     "validate:logs": "tsx scripts/validate-logs.ts",
     "preflight": "tsx scripts/preflight.ts",
@@ -28,7 +53,8 @@
   "overrides": {
     "rolldown": "1.2.1"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -81,9 +107,7 @@
     "vaul": "^1.1.2",
     "vite-tsconfig-paths": "^6.0.2",
     "yaml": "^2.9.1",
-    "zod": "^3.25.76"
-  },
-  "devDependencies": {
+    "zod": "^3.25.76",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "2.27.2",
     "@testing-library/jest-dom": "^6.6.0",
@@ -107,5 +131,10 @@
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
     "vitest": "^4.1.10"
+  },
+  "version": "0.1.0",
+  "description": "Chat-first agent skills and zero-dependency local/global installer",
+  "engines": {
+    "node": ">=18"
   }
 }

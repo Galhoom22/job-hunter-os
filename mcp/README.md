@@ -24,3 +24,6 @@ Native slash commands are IDE/version-dependent; docs/chat-commands.md supplies 
 Optional headless mode: close headed browser first, ask the agent to run `npm run sync:mcp -- --headless`, then restart MCP with the same absolute profile. Return to headed for human login. No stealth flags, anti-detection, challenge solving or consent bypass; 3–9-second waits, reading pauses, caps and cooldown limit load, not account-ban guarantees.
 
 Template package versions should be reviewed/pinned to versions tested in your environment before operational upgrades. Tools and schemas can change. Permission failures/read-only tools are blockers, not a reason to fabricate success or IDs.
+
+## Universal installer
+Use `node bin/job-hunter.mjs init [--global]` and `sync-mcp [--global]` for additive, non-destructive config merges. They preserve unrelated settings and refuse differing same-name servers. Notion remains a separate token-placeholder import; Cline requires importing its private staging file. See [local/global paths and compatibility](../docs/cli-installation.md). The older npm sync helper is repo-local and replaces its output files; do not use it to merge shared global settings.

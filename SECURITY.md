@@ -21,3 +21,6 @@ CAPTCHA, 2FA, account/security warning, rate limit or three consecutive errors s
 
 ## Vulnerability reporting
 Use GitHub private vulnerability reporting in the repository Security tab when available; otherwise contact the maintainer privately through their verified GitHub profile. Do not publish secrets or working exploit details in a public issue. Include the affected revision/tool versions, redacted reproduction, impact and mitigation. No invented support address.
+
+## Installer boundaries
+Review remote shell/PowerShell scripts before execution. CLI preserves existing files and conflicting MCP servers, rejects symlink destinations and malformed JSON, and privately backs up merged configs. Backups can contain secrets: never publish them. Global agent home shares one browser profile across folders, not across users/concurrent agents. Cline/IDE-version-specific imports require explicit owner action. Zero-dependency refers to the CLI, not downloaded MCP servers or local safety helpers.
