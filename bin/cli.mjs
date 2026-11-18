@@ -64,14 +64,18 @@ function isObj(v) {
   return Boolean(v) && typeof v === 'object' && !Array.isArray(v);
 }
 
-function refuseSymlink(target) {
+function refuseSymlink(target, boundary = null) {
   let cursor = path.resolve(target);
+  const stop = boundary ? path.resolve(boundary) : null;
   while (true) {
+    // On macOS, /var and /tmp are system symlinks; stop once we reach the user/workspace boundary.
+    if (process.platform === 'darwin' && (cursor === '/var' || cursor === '/tmp')) return;
     let stat;
     try { stat = fs.lstatSync(cursor); } catch (e) { if (e.code !== 'ENOENT') throw e; }
     if (stat?.isSymbolicLink()) {
       throw new Error(`Refusing symbolic-link destination: ${cursor}`);
     }
+    if (stop && cursor === stop) return;
     const parent = path.dirname(cursor);
     if (parent === cursor) break;
     cursor = parent;
