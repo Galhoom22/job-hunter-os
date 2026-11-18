@@ -26,7 +26,7 @@ async function fsApi() {
     const fs = await import("node:fs/promises");
     const path = await import("node:path");
     const root = process.cwd();
-    await fs.access(path.join(root, "logs"));
+    await fs.access(path.join(root, "config/guardrails.yaml"));
     return { fs, path, root };
   } catch {
     return null;
