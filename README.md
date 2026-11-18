@@ -139,10 +139,10 @@ USER CHAT: /setup | /daily-run | /apply-url URL | /tailor-cv URL | /weekly-repor
                                      +---------------+---------------+
                                                      | (opt-in)
                                                      v
-                                      +------------------------------+
-                                      | Notion MCP                   |
+                                      +-------------------------------+
+                                      | Notion MCP                    |
                                       | Applications / Runs / Insights|
-                                      +------------------------------+
+                                      +-------------------------------+
 ```
 
 ```text
@@ -220,6 +220,14 @@ Read [`context/targets.yaml.example`](context/targets.yaml.example) for the comp
 
 Engine playbooks: [greenhouse.md](skills/ats/greenhouse.md), [lever.md](skills/ats/lever.md), [ashby.md](skills/ats/ashby.md), [smartrecruiters.md](skills/ats/smartrecruiters.md), [breezyhr.md](skills/ats/breezyhr.md), [workday.md](skills/ats/workday.md), [taleo.md](skills/ats/taleo.md).
 
+### How to Add a New Job Platform (2-Minute Playbook)
+1. Copy [`skills/platforms/_template.md`](skills/platforms/_template.md) to `skills/platforms/<board>.md` and document its search URL pattern, accessible job-card/JD expansion labels, apply trigger, and receipt confirmation text.
+2. Add a disabled (`enabled: false`) target entry in [`context/targets.yaml.example`](context/targets.yaml.example) (or your private `context/targets.yaml`) with its real `auth_check_url` and `search_url_template`.
+3. Register the new skill row in [`skills/REGISTRY.md`](skills/REGISTRY.md) and [`skills/skills-manifest.json`](skills/skills-manifest.json).
+
+### Using Without MCP (Web Chat Fallback)
+Running ChatGPT, Claude, or Gemini in a browser without Playwright MCP? Use [`skills/fallback-no-mcp.md`](skills/fallback-no-mcp.md): paste the job description and your redacted profile/CV into chat to get an honest `0–10` score, fact-checked ATS HTML from `templates/ats-resume-template.html`, browser `Print -> Save as PDF` steps, and grounded answers for manual form submission.
+
 ---
 
 ## 7. Mission Control Batch Table & Slash Commands
@@ -265,7 +273,15 @@ Reply APPLY ALL GREEN, APPLY 1, or tell me which CV to tweak before I open any f
 
 ---
 
-## 9. Contributing & Open-Source Governance
+## 9. Privacy, Pacing & Open-Source Governance
+
+| Safeguard | Default Rule (`config/guardrails.yaml` & `AGENTS.md`) |
+|---|---|
+| Dry run by default | `dry_run: true` — stops before final Submit until you explicitly enable live mode and reply `APPROVE` |
+| Warm-up & volume caps | Max **5/day** on the first 3 distinct non-aborted run dates, `active_hours` window, and `max_per_platform` |
+| Human-paced actions | Randomized **3–9 s** delays between clicks/navigations, >= 10 s JD reading, 60 s cooldown after 15 actions |
+| Hard security stops | Immediate `aborted` stop on CAPTCHA, 2FA, account warning, rate limit, or 3 consecutive errors (zero stealth/bypass) |
+| Local-first privacy | Real `context/`, `logs/`, `*.pdf`, `.env`, and `browser-profile/` are strictly `.gitignore`d |
 
 Contributions for new regional job-board playbooks, ATS engine workflows, resume template refinements, and multi-IDE improvements are welcome!
 

@@ -62,6 +62,7 @@ At the start of every session, read `AGENTS.md` and `skills/REGISTRY.md` first. 
   - `skills/04-fill-and-apply.md` — Upload-first rule, 5 ATS traps, EEO/GDPR compliance defaults, job-bound `APPROVE` gate
   - `skills/05-outreach-and-interview-prep.md` — `interview-dossier.md`, `<= 75`-word `outreach-draft.md`, `email-draft.md`, `/linkedin-growth`
   - `skills/06-log-and-insights.md` — Local JSON logging, optional Notion MCP sync, `/weekly-report`
+  - `skills/fallback-no-mcp.md` — Non-MCP web chat fallback (ChatGPT / Claude Web / Gemini Web)
 - **Meta-skills during runs:** `skills/meta-self-verification.md` (after Submit/Save/Post/Send), `skills/meta-dom-recovery.md` (stale refs/iframes/lazy lists), `skills/meta-context-compaction.md` (checkpoint `logs/runs/current-session-checkpoint.json` every 3–5 applications), `skills/meta-structured-debugging.md` (form validation rejections).
 
 ## Strict Execution Order (Daily Run)
@@ -82,9 +83,9 @@ Never reorder or skip steps 0–2.
 ## Hard Guardrails (Non-Negotiable)
 
 1. **Never invent facts.** Every factual/legal answer requires verified `context/form-answers.yaml` or `context/profile.md`. Never fabricate metrics (`%`, `$`, years), tools, dates, or employers in tailored CVs. For unknown required form questions, leave the tab open, save a screenshot to `logs/screenshots/<job_id>.png`, log `needs_review`, ask the user in chat, and save their confirmed answer back to `context/form-answers.yaml`.
-2. **Pacing.** Wait random **3–9 seconds** (`human_behavior.action_delay_seconds`) between every navigation and click, and pause at least 10 seconds to read each full JD. Never burst.
+2. **Pacing & cooldown.** Wait random **3–9 seconds** (`human_behavior.action_delay_seconds`) between every navigation and click, pause at least 10 seconds to read each full JD, and pause 60 seconds after `max_consecutive_actions` (15). Never burst.
 3. **LinkedIn edits, posts, outreach, and cold emails are draft-only.** Show exact text and wait for explicit `approve` in chat before any Save/Post/Send. Outreach notes are strictly capped at `<= 75` words.
-4. **Respect caps and warm-up.** Enforce `max_applications_per_day`, `max_per_platform`, `active_hours`, and the 5/day warm-up cap for the first three distinct run dates by counting `applied` + unresolved `submission_uncertain` entries in `logs/applications-log.json` before every submit.
+4. **Respect caps, warm-up & active hours.** Enforce `max_applications_per_day`, `max_per_platform`, `active_hours` (owner timezone), and the **Days 1–3 warm-up cap (max 5/day)** across the first three distinct non-aborted run dates by counting `applied` + unresolved `submission_uncertain` entries in `logs/applications-log.json` before every submit.
 5. **Dry run.** If `dry_run: true` (default), perform everything except the final Submit click and log status `dry_run`.
 6. **Idempotency.** Before filling or applying, check `job_id` and canonical URL in `logs/applications-log.json` and `logs/skipped-jobs.json`. Never apply twice.
 7. **Stop conditions.** CAPTCHA, 2FA challenge, account warning, rate-limit banner, an unresolved login wall, or 3 consecutive errors -> stop the run immediately, log `aborted` with the reason, and report. Never attempt stealth or challenge bypasses.

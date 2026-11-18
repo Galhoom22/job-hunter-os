@@ -56,10 +56,13 @@ Scan every summary sentence, bullet, and cover-letter paragraph and rewrite if A
 - **Banned em-dash overuse (`—`):** Use **0 em-dashes** inside prose sentences (use periods, commas, or parentheses; structural `Title — Employer` headings are fine).
 - **Tone rule:** Write like a direct, practical peer engineer using concrete technical nouns and active plain verbs (`built`, `shipped`, `cut`, `migrated`, `tested`, `debugged`).
 
-### 4. Print & Inspect the PDF via Playwright MCP
+### 4. Print & Save Multi-Format Artifacts (`.pdf`, `.doc`, `.txt`) via Playwright MCP
 - Open `file:///<absolute-path-to>/logs/resumes/<folder>/resume.html` in Playwright MCP (or ask the owner to Chrome `Print -> Save as PDF` with A4, no headers/footers if the MCP server does not expose a PDF print tool).
-- Save to `logs/resumes/<folder>/resume.pdf` (and plain-text copy `resume.txt` for portals with plain-text paste boxes).
-- Verify the resulting PDF is **<= 200 KB**, has clean formatting with zero placeholder `{{...}}` tokens or cut-off bullets, and selectable text.
+- Save all needed formats inside `logs/resumes/<folder>/`:
+  - `resume.pdf` — default upload format (**<= 200 KB**, single-column, text-selectable, zero `{{...}}` placeholders or cut-off bullets).
+  - `resume.doc` — Word-compatible HTML copy (with `urn:schemas-microsoft-com:office:word` headers) for legacy portals that only accept `.doc`/`.docx`.
+  - `resume.txt` — clean plain-text copy for portals with `"Paste your plain-text resume"` boxes.
+  - `tailoring-notes.md` — JD asked -> what changed -> skill gaps.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

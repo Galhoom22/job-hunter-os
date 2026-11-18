@@ -2,7 +2,7 @@
 
 Read `AGENTS.md`, then this file, at the start of every session. **Do not load every playbook upfront.** Load the full body of a specific skill only when one of its triggers matches the current phase of work; check its preconditions first and complete its Self-Verification Check before reporting the step done. `AGENTS.md` hard guardrails override every skill.
 
-35 skills. Machine-readable index: `skills/skills-manifest.json`.
+36 skills. Machine-readable index: `skills/skills-manifest.json`.
 
 ## Core workflow skills
 
@@ -16,6 +16,7 @@ Read `AGENTS.md`, then this file, at the start of every session. **Do not load e
 | `fill-and-apply` | Load when filling any Easy Apply modal or external ATS application form; enforces the Upload-First rule, absolute paths, EEO/GDPR compliance defaults, unknown-question pause, and job-bound APPROVE gate before Submit. | selected job from APPLY reply; Easy Apply modal or external ATS form open; about to click Submit / Apply | job is not a duplicate in logs/applications-log.json and caps / active hours allow it; verified context/form-answers.yaml, context/resume-data.json, and exact tailored resume.pdf path ready | `skills/04-fill-and-apply.md` |
 | `outreach-and-interview-prep` | Load when a Tier A application is prepared or submitted, a posting asks for direct email application, or the owner invokes /linkedin-growth; creates interview-dossier.md, <=75-word draft-only outreach-draft.md, or email-draft.md without auto-sending. | Tier A application prepared or submitted; posting asks to apply via email (careers@...); /linkedin-growth | full job description and verified context/profile.md available; explicit owner approve before any live LinkedIn Save, Post, or Send | `skills/05-outreach-and-interview-prep.md` |
 | `log-and-insights` | Load whenever writing job dispositions, skipped ghost/mismatch logs, daily run summaries, Notion MCP syncs, or /weekly-report market/skill-gap insights; uses local JSON files as primary truth and Notion MCP optionally. | write to logs/applications-log.json or logs/skipped-jobs.json; end of daily run summary; /weekly-report | exact observed disposition and receipt (for applied) recorded; storage_adapters.notion_mcp checked in config/guardrails.yaml (skip Notion if false) | `skills/06-log-and-insights.md` |
+| `fallback-no-mcp` | Load when the owner is running in a web-based AI chat (ChatGPT, Claude Web, Gemini Web) without Playwright MCP or local file tools; produces fact-checked ATS HTML, grounded form answers, and manual upload/logging instructions without claiming browser automation. | web chat without MCP; no Playwright MCP available; manual browser fallback | owner pasted or attached a job description and verified profile/CV facts in chat | `skills/fallback-no-mcp.md` |
 
 ## Meta-skills (agent reliability)
 
