@@ -1,6 +1,7 @@
 ---
 name: ats-engines
-version: "1.1.0"
+version: "1.2.0"
+last_verified: "2026-11-18"
 description: Load when an application lands on a recognized employer ATS and routing, exact snapshot-driven filling, uploads, review and receipt checks are needed across engines.
 triggers:
   - ATS hostname recognized

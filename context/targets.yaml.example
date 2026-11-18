@@ -58,7 +58,7 @@ targets:
       "q": "{{ROLE_ENCODED}}"
       "l": "Remote"
       "fromage": "1"
-    playbook: "skills/platforms/indeed.md"
+    playbook: "skills/platforms/global-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Remote; past day. For a confirmed local search replace l with {{LOCATION_ENCODED}} and verify the filter."
     live_verified: false
@@ -73,7 +73,7 @@ targets:
     search_url_template: "https://www.glassdoor.com/Job/jobs.htm?sc.keyword={{ROLE_ENCODED}}"
     query_parameters:
       "sc.keyword": "{{ROLE_ENCODED}}"
-    playbook: "skills/platforms/glassdoor.md"
+    playbook: "skills/platforms/global-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Keyword entry point; apply region, recency and work-mode filters through current accessible controls."
     live_verified: false
@@ -88,7 +88,7 @@ targets:
     search_url_template: "https://weworkremotely.com/remote-jobs/search?term={{ROLE_ENCODED}}"
     query_parameters:
       "term": "{{ROLE_ENCODED}}"
-    playbook: "skills/platforms/weworkremotely.md"
+    playbook: "skills/platforms/remote-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Public discovery; employer restrictions still matter and Apply commonly redirects."
     live_verified: false
@@ -102,7 +102,7 @@ targets:
     category: "Remote"
     search_url_template: "https://remoteok.com/remote-{{ROLE_SLUG}}-jobs"
     query_parameters: {}
-    playbook: "skills/platforms/remoteok.md"
+    playbook: "skills/platforms/remote-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Slug paths may be tag taxonomies. Verify results; use accessible search rather than assuming every slug exists."
     live_verified: false
@@ -116,7 +116,7 @@ targets:
     category: "Remote"
     search_url_template: "https://app.welcometothejungle.com/jobs"
     query_parameters: {}
-    playbook: "skills/platforms/welcometothejungle.md"
+    playbook: "skills/platforms/remote-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Personalized app entry point; set the role/location in accessible controls after authorized login. No invented query parameter."
     live_verified: false
@@ -131,7 +131,7 @@ targets:
     search_url_template: "https://builtin.com/jobs/remote?search={{ROLE_ENCODED}}"
     query_parameters:
       "search": "{{ROLE_ENCODED}}"
-    playbook: "skills/platforms/builtin.md"
+    playbook: "skills/platforms/remote-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Remote entry point; verify actual search and work-mode state."
     live_verified: false
@@ -148,7 +148,7 @@ targets:
       "q": "{{ROLE_ENCODED}}"
       "filters.workplaceTypes": "Remote"
       "filters.postedDate": "ONE"
-    playbook: "skills/platforms/dice.md"
+    playbook: "skills/platforms/global-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Remote; past day requested. Confirm current filter labels because parameters can change."
     live_verified: false
@@ -164,7 +164,7 @@ targets:
     query_parameters:
       "search": "{{ROLE_ENCODED}}"
       "days": "1"
-    playbook: "skills/platforms/ziprecruiter.md"
+    playbook: "skills/platforms/global-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "Past-day intent; location/work-mode still require confirmation in the current UI."
     live_verified: false
@@ -180,7 +180,7 @@ targets:
     query_parameters:
       "q": "{{ROLE_ENCODED}}"
       "a": "hpb"
-    playbook: "skills/platforms/wuzzuf.md"
+    playbook: "skills/platforms/mena-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "MENA keyword search; a=hpb is an entry-source parameter, not a location or freshness filter."
     live_verified: false
@@ -194,7 +194,7 @@ targets:
     category: "MENA"
     search_url_template: "https://www.bayt.com/en/international/jobs/{{ROLE_SLUG}}-jobs/"
     query_parameters: {}
-    playbook: "skills/platforms/bayt.md"
+    playbook: "skills/platforms/mena-boards.md"
     automation_mode: "full_form_or_manual_fallback"
     filter_notes: "International category entry point; verify role slug and set a confirmed country using accessible controls."
     live_verified: false

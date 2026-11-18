@@ -1,6 +1,7 @@
 ---
 name: platform-key
-version: "1.1.0"
+version: "1.2.0"
+last_verified: "2026-11-18"
 description: Load when an enabled target has platform PLATFORM and jobs must be discovered, read in full and routed to the right apply flow.
 triggers:
   - target.platform == PLATFORM

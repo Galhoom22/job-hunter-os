@@ -1,6 +1,7 @@
 ---
 name: b2b-contract-networks
-version: "1.0.0"
+version: "1.2.0"
+last_verified: "2026-11-18"
 description: Load when discovering or applying to curated B2B & remote freelance engineering networks (Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing); handles vetted-talent gate detection, rate-card consistency, contract pitch drafting, and strict human approval before any profile update or application submission.
 triggers:
   - target.platform in toptal/braintrust/lemon/gunio/contra/arc/turing

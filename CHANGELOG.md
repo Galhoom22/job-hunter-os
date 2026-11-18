@@ -5,6 +5,26 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-11-18 — The Verified & Consolidated Edition
+
+### Added
+- **Deterministic Skill Evaluation Harness (`evals/` & `npx job-hunter-os eval`):**
+  - 20 automated assertions (`EVAL-01`..`EVAL-20`) grading [`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json) against ground-truth [`evals/fixtures/candidate-profile.md`](evals/fixtures/candidate-profile.md), 5 edge-case job descriptions (`01-strong-match.md`, `02-prompt-injection-trap.md`, `03-ghost-expired-job.md`, `04-blacklist-duplicate.md`, `05-stretch-mismatch.md`), and 3 self-contained local HTML ATS form mocks (`greenhouse-mock.html`, `lever-mock.html`, `ashby-mock.html`).
+  - Executed on every commit in GitHub Actions across Linux, macOS, and Windows (`20/20` assertions passing).
+- **Platform Playbook 60-Day Freshness Audit (`last_verified` & `npx job-hunter-os doctor`):**
+  - Added `last_verified: "2026-11-18"` frontmatter to all platform playbooks in `skills/platforms/` and upgraded `doctor` to warn automatically when any playbook exceeds 60 days without verification.
+  - Added [`.github/ISSUE_TEMPLATE/playbook-broke.md`](.github/ISSUE_TEMPLATE/playbook-broke.md) so contributors can report DOM changes with a redacted `browser_snapshot`.
+- **Arabic RTL Translation (`README.ar.md`), Trimmed `README.md` & Interactive Dashboard Preview (`docs/demo-dashboard.html`):**
+  - Created [`README.ar.md`](README.ar.md) (full RTL Arabic documentation).
+  - Extracted deep reference tables into [`docs/SKILL_CATALOG.md`](docs/SKILL_CATALOG.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), and [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md).
+  - Added pre-loaded interactive preview [`docs/demo-dashboard.html`](docs/demo-dashboard.html) and [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
+
+### Changed
+- **Consolidated & Deduplicated Skill Catalog (57 -> 47 High-Signal Skills, 41 -> 40 `.agents/skills/` Wrappers):**
+  - Merged 10 duplicate single-board boilerplate files (`indeed.md`, `glassdoor.md`, `dice.md`, `ziprecruiter.md`, `weworkremotely.md`, `remoteok.md`, `welcometothejungle.md`, `builtin.md`, `wuzzuf.md`, `bayt.md`) into their canonical category playbooks ([`global-boards.md`](skills/platforms/global-boards.md), [`remote-boards.md`](skills/platforms/remote-boards.md), [`mena-boards.md`](skills/platforms/mena-boards.md)) and removed duplicate `.agents/skills/portfolio-auditor` in favor of `.agents/skills/portfolio-and-github-auditor`.
+- **Upgraded GitHub Actions to Node 24 Native (`@v5`):**
+  - Upgraded `actions/checkout` and `actions/setup-node` to `@v5` across `.github/workflows/validate-repo.yml` and `.github/workflows/publish-npm.yml`.
+
 ## [1.1.0] - 2026-11-18 — Resilience, Security & Chaos Shield Edition
 
 ### Added

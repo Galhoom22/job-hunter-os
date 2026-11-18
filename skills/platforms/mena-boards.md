@@ -1,10 +1,12 @@
 ---
 name: mena-boards
-version: "1.1.0"
+version: "1.2.0"
+last_verified: "2026-11-18"
 description: Load when a target is Wuzzuf, Bayt or LinkedIn for MENA roles and location, language, nationality or authorization rules must be read carefully.
 triggers:
   - target.platform in wuzzuf/bayt
   - MENA region search
+  - job URL on Wuzzuf or Bayt
 requires_mcp:
   - playwright
 preconditions:
@@ -29,18 +31,18 @@ Use for MENA boards and region-specific rules.
 
 ## Deterministic Step-by-Step Execution
 
-Live-unverified. Follow shared daily-run gates, 3–9s waits and fresh accessibility snapshots. Preserve the original Arabic/English field/question alongside any translation; never reinterpret a legal or salary question to make a match.
+Enforce all `AGENTS.md` Hard Guardrails (`#1–#10`), `skills/15-multilingual-adaptation.md`, `skills/24-circuit-breaker-and-antiban.md`, and `skills/26-deduplication-and-blacklist-guard.md`. Preserve original Arabic/English question text alongside any translation; never reinterpret a legal, military-service, or salary question to force a match.
 
-### Wuzzuf
-1. Verify named session at configured auth URL; open search title/location and available career-level/job-type/posted-date filters. Use confirmed preferences; do not update Wuzzuf profile completeness as a side effect.
-2. Open role, capture verified posting ID/canonical link (`wuzzuf:<id>`), employer, city, onsite/hybrid/remote requirement, education, language and complete JD. Read questions/details, not only keyword tags.
-3. Apply may ask screening answers before a form. Specific skill years require explicit skills_years entry; national-service, residency, graduation dates and citizenship are never inferred. Multi-select options require exact matching confirmed facts.
-4. Use verified tailored PDF only if the form permits; if it forces a cached/shared profile CV, request owner action instead of silently replacing the profile. Check destination for external ATS. See wuzzuf.md.
+### Wuzzuf (`wuzzuf`)
+1. Verify named session at configured `auth_check_url`; open search title/location and available career-level/job-type/posted-date filters using confirmed preferences. Never modify Wuzzuf profile completeness as a side effect.
+2. Open role, capture verified posting ID and canonical link (`wuzzuf:<id>`), employer, city, onsite/hybrid/remote requirement, education, language, and complete JD.
+3. Apply may ask screening questions before or inside the form. Specific skill years require explicit `skills_years` in `context/form-answers.yaml`; military/national service, residency, graduation dates, and citizenship are never inferred.
+4. Upload the verified per-job tailored PDF if the form permits; if it forces a shared profile CV replacement, pause for owner review (`needs_review`). Route external redirects via `skills/platforms/ats-engines.md`.
 
-### Bayt
-1. Verify owner account, use Jobs/title/location and visible country/industry/seniority filters. Record `bayt:<verified posting id>` and full canonical URL/description.
-2. Separate employer vacancies from recruiter leads. Salary currency and period must remain stated; don't convert a monthly preference into an annual answer silently. Visa, nationality, current residence and relocation are separate owner facts.
-3. Apply can reuse Bayt profile or ask screening questions. Missing answers or mandatory profile changes → review, no automatic edits. A possible one-click submit requires gate BEFORE click. External ATS dispatcher where recognized. See bayt.md.
+### Bayt (`bayt`)
+1. Verify owner account, use Jobs/title/location and visible country/industry/seniority filters. Record `bayt:<verified-posting-id>` and full canonical URL/description.
+2. Separate direct employer vacancies from confidential agency leads. Keep salary currency (`EGP`, `AED`, `SAR`, `USD`) and period (`monthly` vs. `annual`) explicit—never convert silently. Visa, nationality, current residence, and relocation are separate owner facts.
+3. Apply can reuse the Bayt profile or open a screening questionnaire. Missing answers or mandatory profile changes -> `needs_review`. Any possible one-click submit requires the full Final DOM Read-Back & `APPROVE` gate (`skills/04-fill-and-apply.md`) BEFORE clicking.
 
 ### LinkedIn MENA radar
 Use linkedin.md with explicitly chosen countries/cities (Egypt, UAE, Saudi Arabia or other owner choices—not automatic regional assumptions). Past 24h and remote/hybrid filters must be verified in snapshot. Arabic/English title variants come from confirmed preferences. Do not infer GCC authorization from Egypt residency or “remote” wording.

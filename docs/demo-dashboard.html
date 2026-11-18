@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Hunter OS — Local Pipeline & Analytics Dashboard</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --panel: #131b2e;
+      --panel-alt: #19233c;
+      --border: #263457;
+      --text: #e6edf7;
+      --muted: #94a3b8;
+      --accent: #10b981;
+      --accent-blue: #3b82f6;
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --accent-red: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .brand h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+    .brand p { color: var(--muted); font-size: 0.875rem; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .btn {
+      background: var(--panel-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn:hover { background: #223052; border-color: var(--accent-blue); }
+    .btn-primary { background: #0f5132; border-color: var(--accent); color: #d1fae5; }
+    .btn-primary:hover { background: #146c43; }
+    input[type="search"] {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.825rem;
+      min-width: 220px;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .kpi-label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi-value { font-size: 2rem; font-weight: 700; margin: 6px 0 4px; }
+    .kpi-sub { color: var(--muted); font-size: 0.78rem; }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(230px, 1fr));
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 32px;
+    }
+    .column {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--panel-alt);
+      color: var(--text);
+    }
+    .card {
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.82rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card-title { font-weight: 700; color: #fff; font-size: 0.88rem; }
+    .card-company { color: #93c5fd; font-weight: 600; }
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+    .score-pill {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.72rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .card-notes {
+      color: var(--muted);
+      font-size: 0.74rem;
+      border-top: 1px dashed var(--border);
+      padding-top: 6px;
+      word-break: break-word;
+    }
+    .card a { color: #60a5fa; text-decoration: none; font-size: 0.75rem; }
+    .card a:hover { text-decoration: underline; }
+    .yield-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+    .bar-wrap {
+      width: 100%;
+      max-width: 180px;
+      background: var(--bg);
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar-fill { height: 100%; background: var(--accent); }
+    .empty-msg { color: var(--muted); font-size: 0.8rem; text-align: center; margin-top: 24px; }
+    footer { color: var(--muted); font-size: 0.78rem; text-align: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Job Hunter OS — Local Pipeline & Analytics</h1>
+      <p>100% Local Zero-Server Dashboard · Source: <code id="source-label">Live Interactive Demo Preview (5 Synthetic Records)</code></p>
+    </div>
+    <div class="controls">
+      <input type="search" id="search-input" placeholder="Filter company, role, platform..." />
+      <label class="btn">
+        Load JSON File
+        <input type="file" id="file-input" accept=".json" style="display:none" />
+      </label>
+      <button class="btn btn-primary" id="demo-btn" type="button">Load Demo Sample Data</button>
+    </div>
+  </header>
+
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Applied</div>
+      <div class="kpi-value" id="kpi-applied">0</div>
+      <div class="kpi-sub" id="kpi-applied-sub">0 dry-run / review records excluded</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Callback Rate %</div>
+      <div class="kpi-value" id="kpi-callback">0.0%</div>
+      <div class="kpi-sub" id="kpi-callback-sub">Interview + Assessment + Offer / Applied</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Match Score</div>
+      <div class="kpi-value" id="kpi-score">0.0</div>
+      <div class="kpi-sub" id="kpi-score-sub">Scale 1–10 across tracked applications</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Pipeline</div>
+      <div class="kpi-value" id="kpi-active">0</div>
+      <div class="kpi-sub" id="kpi-active-sub">In-flight (<14d), Interviewing, Assessment & Offer</div>
+    </div>
+  </section>
+
+  <div class="section-title">
+    <span>Application Lifecycle Kanban</span>
+    <span style="color: var(--muted); font-size: 0.8rem; font-weight: 400;">Applied roles ≥14 days without update auto-surface in Rejected / Ghosted</span>
+  </div>
+  <section class="kanban" id="kanban-board"></section>
+
+  <section class="yield-panel">
+    <div class="section-title">
+      <span>Platform & ATS Channel Yield Breakdown</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Platform / Channel</th>
+          <th>Submitted</th>
+          <th>Callbacks</th>
+          <th>Callback Rate</th>
+          <th>Avg Match Score</th>
+          <th>Conversion Bar</th>
+        </tr>
+      </thead>
+      <tbody id="yield-tbody"></tbody>
+    </table>
+  </section>
+
+  <footer>
+    Generated locally by <code>job-hunter-os</code> — Zero telemetry, zero external servers.
+  </footer>
+
+  <script>
+    // Injected by `npx job-hunter-os dashboard`
+    window.__JOB_HUNTER_LOGS__ = /*__APPLICATIONS_DATA__*/[];
+
+    const DEMO_DATA = [
+      {
+        job_id: "linkedin-40991823",
+        company: "CloudScale Payments",
+        role: "Senior Full-Stack AI Engineer",
+        platform: "linkedin",
+        status: "interview",
+        match_score: 9.0,
+        applied_at: new Date(Date.now() - 4 * 86400000).toISOString(),
+        url: "https://www.linkedin.com/jobs/view/40991823",
+        notes: "Recruiter screen booked; tailored TypeScript + Playwright MCP bullets."
+      },
+      {
+        job_id: "greenhouse-stripe-8812",
+        company: "FinCore Infrastructure",
+        role: "Staff Backend Engineer (Node.js)",
+        platform: "greenhouse",
+        status: "assessment",
+        match_score: 8.6,
+        applied_at: new Date(Date.now() - 6 * 86400000).toISOString(),
+        url: "https://boards.greenhouse.io/fincore/jobs/8812",
+        notes: "System design architecture review scheduled for Thursday."
+      },
+      {
+        job_id: "wellfound-ai-9921",
+        company: "Agentic Labs",
+        role: "Founding AI Systems Engineer",
+        platform: "wellfound",
+        status: "offer",
+        match_score: 9.4,
+        applied_at: new Date(Date.now() - 12 * 86400000).toISOString(),
+        url: "https://wellfound.com/jobs/9921",
+        notes: "Written offer received ($165k + equity); running skills/09-offer-negotiator.md."
+      },
+      {
+        job_id: "wuzzuf-cairo-7710",
+        company: "NilePay Tech",
+        role: "Senior Frontend Engineer",
+        platform: "wuzzuf",
+        status: "applied",
+        match_score: 8.1,
+        applied_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+        url: "https://wuzzuf.net/jobs/p/7710",
+        notes: "Confirmation snapshot verified; follow-up radar scheduled at Day 7."
+      },
+      {
+        job_id: "lever-orbit-3319",
+        company: "OrbitMesh Cloud",
+        role: "Platform Engineer",
+        platform: "lever",
+        status: "rejected",
+        match_score: 7.2,
+        applied_at: new Date(Date.now() - 18 * 86400000).toISOString(),
+        url: "https://jobs.lever.co/orbitmesh/3319",
+        notes: "Closed requisition; Kubernetes multi-region gap noted."
+      }
+    ];
+
+    const COLUMNS = [
+      { key: "applied", title: "Applied" },
+      { key: "interview", title: "Interviewing" },
+      { key: "assessment", title: "Technical Assessment" },
+      { key: "offer", title: "Offer" },
+      { key: "rejected", title: "Rejected / Ghosted" }
+    ];
+
+    let activeRecords = (Array.isArray(window.__JOB_HUNTER_LOGS__) && window.__JOB_HUNTER_LOGS__.length) ? window.__JOB_HUNTER_LOGS__ : DEMO_DATA;
+
+    function classifyBucket(rec) {
+      const s = String(rec.status || "").toLowerCase();
+      if (s === "dry_run" || s === "skipped" || s === "needs_review" || s === "aborted") return "excluded";
+      if (s.includes("offer") || s === "hired") return "offer";
+      if (s.includes("assess") || s.includes("take_home") || s.includes("challenge")) return "assessment";
+      if (s.includes("interview") || s.includes("screen") || s.includes("responded")) return "interview";
+      if (s.includes("reject") || s.includes("ghost") || s.includes("withdraw")) return "rejected";
+      if (s === "applied" || s === "submitted") {
+        const ts = Date.parse(rec.applied_at || rec.date || "");
+        if (!Number.isNaN(ts) && (Date.now() - ts) >= 14 * 86400000) return "rejected";
+        return "applied";
+      }
+      return "applied";
+    }
+
+    function normalizePlatform(raw) {
+      const p = String(raw || "other").toLowerCase();
+      if (p.includes("linkedin")) return "LinkedIn";
+      if (p.includes("wellfound") || p.includes("angellist")) return "Wellfound";
+      if (p.includes("wuzzuf") || p.includes("bayt")) return "Wuzzuf / MENA";
+      if (["greenhouse", "lever", "ashby", "workday", "smartrecruiters", "breezyhr", "taleo"].some(k => p.includes(k))) {
+        return "Direct ATS (" + p + ")";
+      }
+      return raw || "Other";
+    }
+
+    function esc(str) {
+      const d = document.createElement("div");
+      d.textContent = str == null ? "" : String(str);
+      return d.innerHTML;
+    }
+
+    function render(records, filterText = "") {
+      const q = filterText.trim().toLowerCase();
+      const filtered = records.filter(r => {
+        if (!q) return true;
+        return [r.company, r.role, r.title, r.platform, r.status, r.notes]
+          .some(v => String(v || "").toLowerCase().includes(q));
+      });
+
+      const buckets = { applied: [], interview: [], assessment: [], offer: [], rejected: [], excluded: [] };
+      for (const r of filtered) {
+        buckets[classifyBucket(r)].push(r);
+      }
+
+      const submitted = [
+        ...buckets.applied,
+        ...buckets.interview,
+        ...buckets.assessment,
+        ...buckets.offer,
+        ...buckets.rejected
+      ];
+      const callbacks = buckets.interview.length + buckets.assessment.length + buckets.offer.length;
+      const activeCount = buckets.applied.length + callbacks;
+      const rate = submitted.length ? ((callbacks / submitted.length) * 100).toFixed(1) : "0.0";
+
+      const scores = filtered
+        .map(r => Number(r.match_score ?? r.score))
+        .filter(n => !Number.isNaN(n) && n > 0);
+      const avgScore = scores.length ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : "0.0";
+
+      document.getElementById("kpi-applied").textContent = String(submitted.length);
+      document.getElementById("kpi-applied-sub").textContent = `${buckets.excluded.length} dry-run / review records excluded`;
+      document.getElementById("kpi-callback").textContent = `${rate}%`;
+      document.getElementById("kpi-callback-sub").textContent = `${callbacks} callback(s) across ${submitted.length} submitted`;
+      document.getElementById("kpi-score").textContent = avgScore;
+      document.getElementById("kpi-active").textContent = String(activeCount);
+
+      const board = document.getElementById("kanban-board");
+      board.innerHTML = COLUMNS.map(col => {
+        const items = buckets[col.key] || [];
+        const cardsHtml = items.length
+          ? items.map(item => {
+              const role = item.role || item.title || "Untitled Role";
+              const score = item.match_score ?? item.score ?? "—";
+              const dateStr = (item.applied_at || item.date || "").slice(0, 10) || "n/a";
+              const link = item.url ? `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Open posting ↗</a>` : "";
+              return `<div class="card">
+                <div class="card-company">${esc(item.company || "Unknown Company")}</div>
+                <div class="card-title">${esc(role)}</div>
+                <div class="card-meta">
+                  <span>${esc(item.platform || "direct")} · ${esc(dateStr)}</span>
+                  <span class="score-pill">${esc(score)}/10</span>
+                </div>
+                ${link}
+                ${item.notes ? `<div class="card-notes">${esc(item.notes)}</div>` : ""}
+              </div>`;
+            }).join("")
+          : `<div class="empty-msg">No records in ${esc(col.title)}</div>`;
+        return `<div class="column">
+          <div class="col-header">
+            <span>${esc(col.title)}</span>
+            <span class="badge">${items.length}</span>
+          </div>
+          ${cardsHtml}
+        </div>`;
+      }).join("");
+
+      // Platform yield breakdown
+      const byPlat = new Map();
+      for (const r of submitted) {
+        const key = normalizePlatform(r.platform);
+        if (!byPlat.has(key)) byPlat.set(key, { submitted: 0, callbacks: 0, scores: [] });
+        const entry = byPlat.get(key);
+        entry.submitted++;
+        const b = classifyBucket(r);
+        if (b === "interview" || b === "assessment" || b === "offer") entry.callbacks++;
+        const sc = Number(r.match_score ?? r.score);
+        if (!Number.isNaN(sc) && sc > 0) entry.scores.push(sc);
+      }
+
+      const tbody = document.getElementById("yield-tbody");
+      if (!byPlat.size) {
+        tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;">No submitted applications yet. Click "Load Demo Sample Data" above to preview.</td></tr>`;
+      } else {
+        tbody.innerHTML = [...byPlat.entries()]
+          .sort((a, b) => b[1].submitted - a[1].submitted)
+          .map(([plat, stat]) => {
+            const pct = stat.submitted ? ((stat.callbacks / stat.submitted) * 100).toFixed(1) : "0.0";
+            const avg = stat.scores.length ? (stat.scores.reduce((x, y) => x + y, 0) / stat.scores.length).toFixed(1) : "—";
+            return `<tr>
+              <td><strong>${esc(plat)}</strong></td>
+              <td>${stat.submitted}</td>
+              <td>${stat.callbacks}</td>
+              <td>${pct}%</td>
+              <td>${avg}</td>
+              <td><div class="bar-wrap"><div class="bar-fill" style="width:${Math.min(100, Number(pct))}%"></div></div></td>
+            </tr>`;
+          }).join("");
+      }
+    }
+
+    document.getElementById("search-input").addEventListener("input", e => {
+      render(activeRecords, e.target.value);
+    });
+
+    document.getElementById("demo-btn").addEventListener("click", () => {
+      activeRecords = DEMO_DATA;
+      document.getElementById("source-label").textContent = "Demo Sample Data (5 synthetic records)";
+      render(activeRecords, document.getElementById("search-input").value);
+    });
+
+    document.getElementById("file-input").addEventListener("change", e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(String(reader.result || "[]"));
+          activeRecords = Array.isArray(parsed) ? parsed : (parsed.applications || []);
+          document.getElementById("source-label").textContent = file.name;
+          render(activeRecords, document.getElementById("search-input").value);
+        } catch (err) {
+          alert("Invalid JSON file: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    render(activeRecords);
+  </script>
+</body>
+</html>

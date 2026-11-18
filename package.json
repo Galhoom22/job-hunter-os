@@ -1,6 +1,6 @@
 {
   "name": "job-hunter-os",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "description": "Zero-code AI agent skills and MCP playbooks for autonomous job discovery, ATS resume tailoring, and multi-platform applications",
   "license": "MIT",
@@ -54,13 +54,15 @@
     ".openhands/",
     ".augment/",
     "opencode.json",
+    "evals/",
     "examples/",
     "llms.txt",
     "PLATFORMS.md",
     "HIRED.md",
     "CHANGELOG.md",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "README.ar.md"
   ],
   "dependencies": {},
   "devDependencies": {}

@@ -1,10 +1,12 @@
 ---
 name: remote-boards
-version: "1.1.0"
+version: "1.2.0"
+last_verified: "2026-11-18"
 description: Load when a target is WeWorkRemotely, RemoteOK, DailyRemote, Welcome to the Jungle/Otta or BuiltIn and remote eligibility (regions, timezones) must be verified.
 triggers:
   - target.platform in weworkremotely/remoteok/welcometothejungle/builtin
   - remote-only search
+  - job URL on WeWorkRemotely, RemoteOK, Welcome to the Jungle, or BuiltIn
 requires_mcp:
   - playwright
 preconditions:
@@ -29,15 +31,15 @@ Use for remote-focused boards.
 
 ## Deterministic Step-by-Step Execution
 
-Live-unverified. Use fresh accessibility snapshots/refs with 3–9s waits, read full JDs and enforce readiness gates, auth verification, context loading and safety. Public browsing is allowed only when target.auth_required:false; an unexpected login wall pauses per 04-fill-and-apply.md Trap 5 and aborts if unresolved. No subscriptions, account creation or newsletter consent as side effects.
+Enforce all `AGENTS.md` Hard Guardrails (`#1–#10`), `skills/24-circuit-breaker-and-antiban.md`, `skills/25-prompt-injection-defense.md`, and `skills/26-deduplication-and-blacklist-guard.md`. Public browsing is allowed when `target.auth_required: false`; any unexpected login/challenge wall pauses or trips the circuit breaker.
 
 | Board | Discovery and canonical identity | Apply routing / distinctive checks |
 |---|---|---|
-| WeWorkRemotely | Read configured category, open title/company link and retain canonical `/remote-jobs/<slug>`; `weworkremotely:<slug>` | Read region/timezone tags in description; Apply often exits board or opens email. Employer ATS uses dispatcher; email application requires owner review, never automatic send. See weworkremotely.md. |
-| RemoteOK | Snapshot role rows, open details, verify numeric posting ID from canonical role link; `remoteok:<id>` | Salary badges may be estimates: preserve attribution. Read country restrictions; distinguish Apply from subscription. ATS redirect inspected before action. See remoteok.md. |
-| DailyRemote | Open configured category/search and title; retain verified canonical posting URL/ID in notes; use `other:<host>:<id>` only when ID reliable | Documentation/manual-only (other cap 0). Do not bypass paywalls or unlock prompts. Search filters and remote-country terms from snapshot, review external destination, no automated submit. |
-| Welcome to the Jungle / Otta | Use actual active brand hostname and owner-approved search; record stable role UUID/link, `welcometothejungle:<id>` | Otta may redirect/rebrand: verify destination rather than asserting old URLs work. Matching/profile onboarding never authorizes profile changes. ATS dispatcher for external role; gated/unsupported flow review. |
-| BuiltIn | Snapshot title links/location filters; record canonical `/job/.../<id>` and `builtin:<id>` when verified | Network sites can mix remote/hybrid or city constraints. Read employer posting; distinguish external Apply and saved-job/account actions. See builtin.md. |
+| **WeWorkRemotely** (`weworkremotely`) | Read configured category, open title/company link and retain canonical `/remote-jobs/<slug>` as `weworkremotely:<slug>`. | Read region/timezone tags (`Anywhere in the World` vs. `US Only`); Apply usually exits to an employer ATS (`skills/platforms/ats-engines.md`) or email (`skills/05-outreach-and-interview-prep.md`, never auto-send). |
+| **RemoteOK** (`remoteok`) | Snapshot role rows, open details, verify numeric posting ID from canonical role link as `remoteok:<id>`. | Salary badges may be algorithmic estimates — preserve attribution. Read country restrictions; distinguish Apply from newsletter/signup modals; inspect external ATS redirect before acting. |
+| **DailyRemote** (`dailyremote`) | Open configured category/search and title; retain verified canonical posting URL/ID (`other:<host>:<id>`). | Manual-review discovery only (`max_per_platform: 0` for unverified hosts). Never bypass paywalls or unlock prompts. |
+| **Welcome to the Jungle / Otta** (`welcometothejungle`) | Use active brand hostname and owner-approved search; record stable role UUID/link as `welcometothejungle:<id>`. | Otta/WTTJ may redirect across domains; verify final destination via `browser_snapshot`. Route external links via `skills/platforms/ats-engines.md`. |
+| **BuiltIn** (`builtin`) | Snapshot title links/location filters; record canonical `/job/.../<id>` as `builtin:<id>`. | Network sites mix Remote, Hybrid, and city-restricted listings — verify work-mode badge in full JD and route external Apply via `skills/platforms/ats-engines.md`. |
 
 ### Common loop
 1. Snapshot filter labels and current result list. Set confirmed job category, seniority, location and remote options only if available; missing option stays an explicit search limitation.

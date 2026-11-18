@@ -13,7 +13,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Validate all JSON files
         run: |
@@ -141,16 +141,18 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "22"
 
-      - name: Check CLI syntax
-        run: node --check bin/cli.mjs
+      - name: Check CLI syntax & run deterministic Skill Eval Harness
+        run: |
+          node --check bin/cli.mjs
+          node ./bin/cli.mjs eval
 
-      - name: Test local init, doctor, and sync-mcp in isolated directory
+      - name: Test local init, doctor, eval, and sync-mcp in isolated directory
         shell: bash
         run: |
           TMP_BASE="$(mktemp -d)"
@@ -164,6 +166,7 @@ jobs:
             cd "$ISO_PROJ"
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" init
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" doctor
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" eval
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" status
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" bundle
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" dashboard --no-open

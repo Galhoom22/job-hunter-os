@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lever ATS Mock — CloudPay Ledger</title>
+</head>
+<body>
+  <main>
+    <h1>Apply to CloudPay Ledger (Lever Hosted)</h1>
+    <form id="lever-form" action="#submitted" method="post">
+      <label for="resume-upload-input">RESUME/CV *</label>
+      <input id="resume-upload-input" name="resume" type="file" accept=".pdf" required />
+
+      <label for="full-name">Full name *</label>
+      <input id="full-name" name="name" type="text" required />
+
+      <label for="email-input">Email *</label>
+      <input id="email-input" name="email" type="email" required />
+
+      <label for="phone-input">Phone *</label>
+      <input id="phone-input" name="phone" type="tel" required />
+
+      <label for="github-url">GitHub URL</label>
+      <input id="github-url" name="urls[GitHub]" type="url" />
+
+      <div aria-hidden="true" style="display:none">
+        <label for="website_url_honeypot">Do not fill this honeypot field</label>
+        <input id="website_url_honeypot" name="website_url_honeypot" type="text" />
+      </div>
+
+      <label for="eeo_disability">Disability Status (EEO)</label>
+      <select id="eeo_disability" name="eeo_disability">
+        <option value="decline">Decline to self-identify</option>
+        <option value="no">No</option>
+        <option value="yes">Yes</option>
+      </select>
+
+      <label>
+        <input id="gdpr_consent" name="consent[privacy]" type="checkbox" required />
+        I acknowledge the Candidate Privacy Notice *
+      </label>
+      <button type="submit">Submit application</button>
+    </form>
+  </main>
+</body>
+</html>

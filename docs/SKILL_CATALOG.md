@@ -1,0 +1,64 @@
+# Consolidated 47-Skill Catalog & URL Construction Guide
+
+Every skill in `job-hunter-os` follows the **`agentskills.io` / `SKILL.md` progressive disclosure standard** (`skills/REGISTRY.md` & `skills/skills-manifest.json`), loading only when its trigger matches the active phase of work.
+
+---
+
+## 1. Core & Career-Ops Playbooks (28 Skills)
+
+| # | Skill File | Responsibility |
+|---|---|---|
+| `00` | [`skills/00-daily-run.md`](../skills/00-daily-run.md) | End-to-end orchestrator for `/daily-run` and `/apply-url` |
+| `00` | [`skills/00-interrogate-and-onboard.md`](../skills/00-interrogate-and-onboard.md) | 5-gate readiness audit, live profile URL reachability check, and 3–4-question batched interview |
+| `01` | [`skills/01-resume-ingestion.md`](../skills/01-resume-ingestion.md) | Pure-AI CV extraction from chat, Markdown, or PDF into `context/profile.md` & `context/cv.md` |
+| `02` | [`skills/02-discover-and-triage.md`](../skills/02-discover-and-triage.md) | Search URL construction, ghost-job filter (`>30d` / closed), `0–10` scoring, and Mission Control Table |
+| `03` | [`skills/03-tailor-resume-and-verify.md`](../skills/03-tailor-resume-and-verify.md) | Anti-hallucination evidence mapping, anti-AI-slop humanizer, 1-page A4 overflow budget, and PDF export |
+| `04` | [`skills/04-fill-and-apply.md`](../skills/04-fill-and-apply.md) | Upload-first form filling, EEO/GDPR compliance defaults, Live DOM Read-Back Table, and `APPROVE` gate |
+| `05` | [`skills/05-outreach-and-interview-prep.md`](../skills/05-outreach-and-interview-prep.md) | `interview-dossier.md`, `<= 75`-word `outreach-draft.md`, `email-draft.md`, and `/linkedin-growth` |
+| `06` | [`skills/06-log-and-insights.md`](../skills/06-log-and-insights.md) | Local JSON ledger (`logs/`), optional Notion MCP sync, and `/weekly-report` analytics |
+| `07` | [`skills/07-persona-switcher.md`](../skills/07-persona-switcher.md) | Multi-persona career tracks under `context/personas/` |
+| `08` | [`skills/08-follow-up-radar.md`](../skills/08-follow-up-radar.md) | 7-day `applied` follow-up radar (`<= 75`-word draft-only check-ins) |
+| `09` | [`skills/09-offer-negotiator.md`](../skills/09-offer-negotiator.md) | Salary & B2B hourly/monthly rate negotiation drafter (`DRAFT_ONLY`) |
+| `10` | [`skills/10-autonomous-scheduler-loop.md`](../skills/10-autonomous-scheduler-loop.md) | Scheduled `/loop` runner inside `active_hours` and Days 1–3 warm-up caps |
+| `11` | [`skills/11-portfolio-and-github-auditor.md`](../skills/11-portfolio-and-github-auditor.md) | Consolidated GitHub profile, pinned repository README, and live portfolio link auditor |
+| `12` | [`skills/12-recruiter-inbox-triage.md`](../skills/12-recruiter-inbox-triage.md) | Recruiter message classification, `logs/applications-log.json` status update, and slot drafting |
+| `13` | [`skills/13-company-due-diligence.md`](../skills/13-company-due-diligence.md) | Employer domain verification, layoff/repost churn signals, and `GREEN`/`YELLOW`/`RED` Health Badges |
+| `14` | [`skills/14-privacy-pii-shield.md`](../skills/14-privacy-pii-shield.md) | PII, token, cookie, and pre-commit redaction shield |
+| `15` | [`skills/15-multilingual-adaptation.md`](../skills/15-multilingual-adaptation.md) | Arabic (`dir="rtl"`), German, French, and Spanish resume & outreach localization |
+| `16` | [`skills/16-rejection-pattern-analyzer.md`](../skills/16-rejection-pattern-analyzer.md) | Rejection & `>= 14d` silence pattern detector (`n >= 5` floor, causal humility) |
+| `17` | [`skills/17-score-calibration.md`](../skills/17-score-calibration.md) | Score-band callback yield verifier (`separating`/`flat`/`inverted`/`insufficient`) |
+| `18` | [`skills/18-condition-based-browser-waiting.md`](../skills/18-condition-based-browser-waiting.md) | Snapshot readiness checks & `Role -> Label -> Placeholder -> Text` locator priority |
+| `19` | [`skills/19-on-demand-mcp-routing.md`](../skills/19-on-demand-mcp-routing.md) | Phase-gated Playwright & Notion MCP invocation to eliminate token bloat |
+| `20` | [`skills/20-skill-authoring-standard.md`](../skills/20-skill-authoring-standard.md) | Contributor TDD, progressive disclosure (`< 500` lines), and CI contract guide |
+| `21` | [`skills/21-ats-keyword-heatmap.md`](../skills/21-ats-keyword-heatmap.md) | Deterministic Before vs. After ATS Keyword Match % across 4 buckets |
+| `22` | [`skills/22-technical-assessment-architect.md`](../skills/22-technical-assessment-architect.md) | Take-home challenge & system design blueprint, edge-case matrix, and live defense Q&A |
+| `23` | [`skills/23-contract-and-nda-auditor.md`](../skills/23-contract-and-nda-auditor.md) | Employment contract, B2B MSA, and NDA red-flag clause auditor & counter-clause drafter |
+| `24` | [`skills/24-circuit-breaker-and-antiban.md`](../skills/24-circuit-breaker-and-antiban.md) | Anti-bot circuit breaker & 24-hour platform cooldown (`logs/circuit-breaker.json`) |
+| `25` | [`skills/25-prompt-injection-defense.md`](../skills/25-prompt-injection-defense.md) | Untrusted-DOM prompt-injection defense, honeypot guard, and recruiter attention-check detector |
+| `26` | [`skills/26-deduplication-and-blacklist-guard.md`](../skills/26-deduplication-and-blacklist-guard.md) | Employer/domain blacklist & cross-channel canonical job fingerprinting (`company::role_title`) |
+| `—` | [`skills/fallback-no-mcp.md`](../skills/fallback-no-mcp.md) | Non-MCP web chat fallback (ChatGPT Web, Claude Web, Gemini Web) |
+
+---
+
+## 2. Four Agent Reliability Meta-Skills
+
+- [`skills/meta-self-verification.md`](../skills/meta-self-verification.md) — Forbids reporting `"applied"` or `"updated"` without a fresh post-click `browser_snapshot` receipt quote.
+- [`skills/meta-dom-recovery.md`](../skills/meta-dom-recovery.md) — Recovers from stale refs after modal transitions, iframes, overlays, and lazy-loaded job lists.
+- [`skills/meta-context-compaction.md`](../skills/meta-context-compaction.md) — Checkpoints long runs to `logs/runs/current-session-checkpoint.json` every 3–5 applications.
+- [`skills/meta-structured-debugging.md`](../skills/meta-structured-debugging.md) — Diagnoses inline form validation errors from the accessibility tree and repairs only with verified facts.
+
+---
+
+## 3. Consolidated Platform & Employer ATS Playbooks (14 Playbooks)
+
+All platform playbooks carry `last_verified: "2026-11-18"` in YAML frontmatter (audited for 60-day freshness by `npx job-hunter-os doctor`):
+
+| Platform / Family | URL Template Pattern | Consolidated Playbook |
+|---|---|---|
+| **LinkedIn Jobs** | `https://www.linkedin.com/jobs/search/?keywords={{ROLE_ENCODED}}&f_WT=2&f_TPR=r86400` | [`skills/platforms/linkedin.md`](../skills/platforms/linkedin.md) |
+| **Wellfound (AngelList)** | `https://wellfound.com/role/r/{{ROLE_SLUG}}` | [`skills/platforms/wellfound.md`](../skills/platforms/wellfound.md) |
+| **Indeed / Glassdoor / Dice / ZipRecruiter** | Global search templates in [`context/targets.yaml.example`](../context/targets.yaml.example) | [`skills/platforms/global-boards.md`](../skills/platforms/global-boards.md) |
+| **WeWorkRemotely / RemoteOK / Welcome to the Jungle / BuiltIn** | Remote search templates in [`context/targets.yaml.example`](../context/targets.yaml.example) | [`skills/platforms/remote-boards.md`](../skills/platforms/remote-boards.md) |
+| **Wuzzuf / Bayt (MENA)** | `https://wuzzuf.net/search/jobs/?q={{ROLE_ENCODED}}&a=hpb` | [`skills/platforms/mena-boards.md`](../skills/platforms/mena-boards.md) |
+| **Toptal / Braintrust / Lemon.io / Gun.io / Contra / Arc.dev / Turing** | Curated B2B contract portals + rate-card floor checks | [`skills/platforms/b2b-contract-networks.md`](../skills/platforms/b2b-contract-networks.md) |
+| **Unified ATS Router + 7 Dedicated Engine Playbooks** | [`greenhouse.md`](../skills/ats/greenhouse.md), [`lever.md`](../skills/ats/lever.md), [`ashby.md`](../skills/ats/ashby.md), [`smartrecruiters.md`](../skills/ats/smartrecruiters.md), [`breezyhr.md`](../skills/ats/breezyhr.md), [`workday.md`](../skills/ats/workday.md), [`taleo.md`](../skills/ats/taleo.md) | [`skills/platforms/ats-engines.md`](../skills/platforms/ats-engines.md) |

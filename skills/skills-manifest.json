@@ -546,7 +546,7 @@
     },
     {
       "name": "ats-engines",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "platform",
       "description": "Load when an application lands on a recognized employer ATS and routing, exact snapshot-driven filling, uploads, review and receipt checks are needed across engines.",
       "triggers": [
@@ -567,115 +567,12 @@
         "upload verified by filename",
         "receipt verified after submit"
       ],
-      "path": "skills/platforms/ats-engines.md"
-    },
-    {
-      "name": "bayt",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform bayt (Bayt) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == bayt",
-        "job URL on Bayt"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "Bayt target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable bayt:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/bayt.md"
-    },
-    {
-      "name": "builtin",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform builtin (BuiltIn) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == builtin",
-        "job URL on BuiltIn"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "BuiltIn target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable builtin:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/builtin.md"
-    },
-    {
-      "name": "dice",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform dice (Dice) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == dice",
-        "job URL on Dice"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "Dice target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable dice:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/dice.md"
-    },
-    {
-      "name": "glassdoor",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform glassdoor (Glassdoor) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == glassdoor",
-        "job URL on Glassdoor"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "Glassdoor target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable glassdoor:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/glassdoor.md"
+      "path": "skills/platforms/ats-engines.md",
+      "last_verified": "2026-11-18"
     },
     {
       "name": "global-boards",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "platform",
       "description": "Load when a target is Indeed, Glassdoor, Dice or ZipRecruiter and jobs must be discovered and reviewed without assuming quick-apply is reversible.",
       "triggers": [
@@ -695,37 +592,12 @@
         "quick-apply buttons treated as final submits behind fill-and-apply",
         "sponsored/duplicate listings deduplicated by canonical URL"
       ],
-      "path": "skills/platforms/global-boards.md"
-    },
-    {
-      "name": "indeed",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform indeed (Indeed) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == indeed",
-        "job URL on Indeed"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "Indeed target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable indeed:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/indeed.md"
+      "path": "skills/platforms/global-boards.md",
+      "last_verified": "2026-11-18"
     },
     {
       "name": "linkedin",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "platform",
       "description": "Load when a target is LinkedIn Jobs (discovery with recent filters and Easy Apply) or the owner routes an approval-only LinkedIn profile/post request.",
       "triggers": [
@@ -748,11 +620,12 @@
         "\\\"See more\\\" expanded before scoring",
         "\\\"Applied\\\" state checked before opening Easy Apply"
       ],
-      "path": "skills/platforms/linkedin.md"
+      "path": "skills/platforms/linkedin.md",
+      "last_verified": "2026-11-18"
     },
     {
       "name": "mena-boards",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "platform",
       "description": "Load when a target is Wuzzuf, Bayt or LinkedIn for MENA roles and location, language, nationality or authorization rules must be read carefully.",
       "triggers": [
@@ -773,11 +646,12 @@
         "location matched against confirmed regions",
         "authorization answers taken only from verified facts"
       ],
-      "path": "skills/platforms/mena-boards.md"
+      "path": "skills/platforms/mena-boards.md",
+      "last_verified": "2026-11-18"
     },
     {
       "name": "remote-boards",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "platform",
       "description": "Load when a target is WeWorkRemotely, RemoteOK, DailyRemote, Welcome to the Jungle/Otta or BuiltIn and remote eligibility (regions, timezones) must be verified.",
       "triggers": [
@@ -798,63 +672,12 @@
         "external apply links resolved to the employer ATS",
         "posting date captured or marked unknown"
       ],
-      "path": "skills/platforms/remote-boards.md"
-    },
-    {
-      "name": "remoteok",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform remoteok (RemoteOK) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == remoteok",
-        "job URL on RemoteOK"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "RemoteOK target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable remoteok:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/remoteok.md"
-    },
-    {
-      "name": "welcometothejungle",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform welcometothejungle (Welcome to the Jungle (Otta)) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == welcometothejungle",
-        "job URL on Welcome to the Jungle (Otta)"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "Welcome to the Jungle (Otta) target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable welcometothejungle:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/welcometothejungle.md"
+      "path": "skills/platforms/remote-boards.md",
+      "last_verified": "2026-11-18"
     },
     {
       "name": "wellfound",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "category": "platform",
       "description": "Load when a target is Wellfound (AngelList Talent) and startup roles must be discovered and an optional founder note drafted truthfully.",
       "triggers": [
@@ -875,85 +698,8 @@
         "founder note grounded in verified facts and approved when required",
         "apply flow verified from snapshot"
       ],
-      "path": "skills/platforms/wellfound.md"
-    },
-    {
-      "name": "weworkremotely",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform weworkremotely (WeWorkRemotely) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == weworkremotely",
-        "job URL on WeWorkRemotely"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "WeWorkRemotely target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable weworkremotely:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/weworkremotely.md"
-    },
-    {
-      "name": "wuzzuf",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform wuzzuf (Wuzzuf) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == wuzzuf",
-        "job URL on Wuzzuf"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "Wuzzuf target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable wuzzuf:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/wuzzuf.md"
-    },
-    {
-      "name": "ziprecruiter",
-      "version": "1.1.0",
-      "category": "platform",
-      "description": "Load when an enabled target has platform ziprecruiter (ZipRecruiter) and jobs must be discovered, read in full and routed to the right apply flow.",
-      "triggers": [
-        "target.platform == ziprecruiter",
-        "job URL on ZipRecruiter"
-      ],
-      "requires_mcp": [
-        "playwright"
-      ],
-      "preconditions": [
-        "readiness gates passed, auth verified via Playwright MCP, and context loaded",
-        "ZipRecruiter target enabled in context/targets.yaml"
-      ],
-      "requires_skills": [
-        "discover-and-triage"
-      ],
-      "verification": [
-        "each job has a stable ziprecruiter:<posting id> or is routed to review",
-        "full description captured before scoring",
-        "apply flow chosen from the observed button (in-page vs external) with a snapshot"
-      ],
-      "path": "skills/platforms/ziprecruiter.md"
+      "path": "skills/platforms/wellfound.md",
+      "last_verified": "2026-11-18"
     },
     {
       "name": "ashby",
@@ -1220,7 +966,7 @@
     },
     {
       "name": "b2b-contract-networks",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "category": "platform",
       "description": "Load when discovering or applying to curated B2B & remote freelance engineering networks (Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing); handles vetted-talent gate detection, rate-card consistency, contract pitch drafting, and strict human approval before any profile update or application submission.",
       "triggers": [
@@ -1245,7 +991,8 @@
         "proposed hourly/monthly rate aligns strictly with context/preferences.yaml floor without undercutting",
         "draft-only pitch and explicit APPROVE gate enforced before any submission or public profile edit"
       ],
-      "path": "skills/platforms/b2b-contract-networks.md"
+      "path": "skills/platforms/b2b-contract-networks.md",
+      "last_verified": "2026-11-18"
     },
     {
       "name": "rejection-pattern-analyzer",

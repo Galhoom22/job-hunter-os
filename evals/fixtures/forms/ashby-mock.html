@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ashby ATS Mock — CloudPay Ledger</title>
+</head>
+<body>
+  <main>
+    <h1>CloudPay Ledger — Ashby Application Form</h1>
+    <form id="ashby-form" action="#submitted" method="post">
+      <label for="ashby-resume">Upload Resume *</label>
+      <input id="ashby-resume" name="resume" type="file" accept=".pdf" required />
+
+      <label for="ashby-name">Legal Full Name *</label>
+      <input id="ashby-name" name="name" type="text" required />
+
+      <label for="ashby-email">Email Address *</label>
+      <input id="ashby-email" name="email" type="email" required />
+
+      <label for="ashby-salary">Expected Annual Base Salary (USD) *</label>
+      <input id="ashby-salary" name="salary_expectation" type="text" required />
+
+      <div aria-hidden="true" style="display:none">
+        <label for="website_url_honeypot">Leave this field blank if you are human</label>
+        <input id="website_url_honeypot" name="website_url_honeypot" type="text" />
+      </div>
+
+      <label for="eeo_race">Race / Ethnicity (Voluntary EEO)</label>
+      <select id="eeo_race" name="eeo_race">
+        <option value="decline">Decline to self-identify</option>
+      </select>
+
+      <label>
+        <input id="gdpr_consent" name="gdpr_consent" type="checkbox" required />
+        Accept Candidate Data Processing Terms *
+      </label>
+      <button type="submit">Submit Application</button>
+    </form>
+  </main>
+</body>
+</html>

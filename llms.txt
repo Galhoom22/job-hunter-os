@@ -5,12 +5,14 @@
 ## Core Entrypoints
 
 - [AGENTS.md](AGENTS.md): Canonical rules, progressive disclosure protocol, strict daily-run execution order, and 10 non-negotiable guardrails.
-- [skills/REGISTRY.md](skills/REGISTRY.md): Complete 57-skill routing index (triggers, preconditions, verification contracts).
-- [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 57 skills.
+- [skills/REGISTRY.md](skills/REGISTRY.md): Consolidated 47-skill routing index (triggers, preconditions, verification contracts).
+- [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 47 consolidated skills.
+- [evals/RUBRIC.md](evals/RUBRIC.md): Deterministic 20-assertion Skill Evaluation Harness (`npx job-hunter-os eval`).
 - [PLATFORMS.md](PLATFORMS.md): Global job board, B2B contract network, regional portal, and employer ATS compatibility matrix.
 - [HIRED.md](HIRED.md): Community success ledger & setup tips from landed interviews and offers.
-- [CHANGELOG.md](CHANGELOG.md): Release history (`v1.0.0`, `v1.1.0`).
-- [README.md](README.md): Quick start CLI (`npx job-hunter-os init --global`), MCP setup, and workflow guide.
+- [CHANGELOG.md](CHANGELOG.md): Release history (`v1.0.0`, `v1.1.0`, `v1.2.0`).
+- [README.md](README.md) & [README.ar.md](README.ar.md): English & RTL Arabic Quick Start, Eval Scorecard, and workflow guide.
+- [docs/SKILL_CATALOG.md](docs/SKILL_CATALOG.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md): Deep documentation.
 
 ## Playbooks & Modular Skills
 

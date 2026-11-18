@@ -21,11 +21,11 @@
 | Platform | Category | Auth Required | Status | Playbook |
 |---|---|---|---|---|
 | **LinkedIn Jobs** | Global Professional Network & Easy Apply | Yes (`linkedin_cookie`) | Live Playbook | [`skills/platforms/linkedin.md`](skills/platforms/linkedin.md) |
-| **Indeed** | Global Aggregator | Yes (varies by region) | Live Playbook | [`skills/platforms/indeed.md`](skills/platforms/indeed.md) |
-| **Glassdoor** | Jobs + Company Health Signals | Yes | Live Playbook | [`skills/platforms/glassdoor.md`](skills/platforms/glassdoor.md) |
-| **Dice** | US Tech & Contract Roles | Yes | Live Playbook | [`skills/platforms/dice.md`](skills/platforms/dice.md) |
-| **ZipRecruiter** | North America High-Volume Jobs | Yes | Live Playbook | [`skills/platforms/ziprecruiter.md`](skills/platforms/ziprecruiter.md) |
-| **BuiltIn** | US & Remote Tech Hubs | Optional | Live Playbook | [`skills/platforms/builtin.md`](skills/platforms/builtin.md) |
+| **Indeed** | Global Aggregator | Yes (varies by region) | Core / Router | [`skills/platforms/global-boards.md`](skills/platforms/global-boards.md) |
+| **Glassdoor** | Jobs + Company Health Signals | Yes | Core / Router | [`skills/platforms/global-boards.md`](skills/platforms/global-boards.md) |
+| **Dice** | US Tech & Contract Roles | Yes | Core / Router | [`skills/platforms/global-boards.md`](skills/platforms/global-boards.md) |
+| **ZipRecruiter** | North America High-Volume Jobs | Yes | Core / Router | [`skills/platforms/global-boards.md`](skills/platforms/global-boards.md) |
+| **BuiltIn** | US & Remote Tech Hubs | Optional | Core / Router | [`skills/platforms/remote-boards.md`](skills/platforms/remote-boards.md) |
 | **Wellfound (AngelList Talent)** | Startups & Equity Roles | Yes | Live Playbook | [`skills/platforms/wellfound.md`](skills/platforms/wellfound.md) |
 | **Y Combinator (Work at a Startup)** | YC Startup Roles | Optional / YC Login | Help Wanted | [`skills/platforms/wellfound.md`](skills/platforms/wellfound.md) |
 | **Seek** | Australia & New Zealand | Yes | Help Wanted | [`skills/platforms/global-boards.md`](skills/platforms/global-boards.md) |
@@ -36,9 +36,9 @@
 
 | Platform | Category | Auth Required | Status | Playbook |
 |---|---|---|---|---|
-| **WeWorkRemotely** | Global Remote Engineering & Product | Usually redirects to ATS | Live Playbook | [`skills/platforms/weworkremotely.md`](skills/platforms/weworkremotely.md) |
-| **RemoteOK** | Async / Global Remote Tech | Usually redirects to ATS | Live Playbook | [`skills/platforms/remoteok.md`](skills/platforms/remoteok.md) |
-| **Welcome to the Jungle (Otta)** | Curated Tech & Europe/US Remote | Yes | Live Playbook | [`skills/platforms/welcometothejungle.md`](skills/platforms/welcometothejungle.md) |
+| **WeWorkRemotely** | Global Remote Engineering & Product | Usually redirects to ATS | Core / Router | [`skills/platforms/remote-boards.md`](skills/platforms/remote-boards.md) |
+| **RemoteOK** | Async / Global Remote Tech | Usually redirects to ATS | Core / Router | [`skills/platforms/remote-boards.md`](skills/platforms/remote-boards.md) |
+| **Welcome to the Jungle (Otta)** | Curated Tech & Europe/US Remote | Yes | Core / Router | [`skills/platforms/remote-boards.md`](skills/platforms/remote-boards.md) |
 | **Himalayas / Remotive** | Remote Tech Aggregators | Redirects to ATS | Help Wanted | [`skills/platforms/remote-boards.md`](skills/platforms/remote-boards.md) |
 
 ---
@@ -61,10 +61,10 @@
 
 | Region | Platform | Languages | Status | Playbook / Route |
 |---|---|---|---|---|
-| **MENA** | **Wuzzuf** | English / Arabic | Live Playbook | [`skills/platforms/wuzzuf.md`](skills/platforms/wuzzuf.md) |
-| **MENA** | **Bayt** | English / Arabic | Live Playbook | [`skills/platforms/bayt.md`](skills/platforms/bayt.md) |
+| **MENA** | **Wuzzuf** | English / Arabic | Core / Router | [`skills/platforms/mena-boards.md`](skills/platforms/mena-boards.md) |
+| **MENA** | **Bayt** | English / Arabic | Core / Router | [`skills/platforms/mena-boards.md`](skills/platforms/mena-boards.md) |
 | **MENA / Gulf** | **GulfTalent / Naukrigulf** | English / Arabic | Help Wanted | [`skills/platforms/mena-boards.md`](skills/platforms/mena-boards.md) |
-| **Europe (DACH / FR / UK)** | **Welcome to the Jungle** | EN / FR | Live Playbook | [`skills/platforms/welcometothejungle.md`](skills/platforms/welcometothejungle.md) |
+| **Europe (DACH / FR / UK)** | **Welcome to the Jungle** | EN / FR | Core / Router | [`skills/platforms/remote-boards.md`](skills/platforms/remote-boards.md) |
 | **Europe (DACH)** | **StepStone / Xing / SwissDevJobs** | DE / EN | Help Wanted | [`skills/platforms/global-boards.md`](skills/platforms/global-boards.md) |
 | **Europe (Nordics / NL / UK)** | **Otta / Cord / Honeypot** | EN | Help Wanted | [`skills/platforms/remote-boards.md`](skills/platforms/remote-boards.md) |
 | **APAC (IN / SG / JP)** | **Instahyre / NodeFlair / TokyoDev / JapanDev** | EN / JP | Help Wanted | [`skills/platforms/global-boards.md`](skills/platforms/global-boards.md) |

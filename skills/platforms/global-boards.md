@@ -1,9 +1,11 @@
 ---
 name: global-boards
-version: "1.1.0"
+version: "1.2.0"
+last_verified: "2026-11-18"
 description: Load when a target is Indeed, Glassdoor, Dice or ZipRecruiter and jobs must be discovered and reviewed without assuming quick-apply is reversible.
 triggers:
   - target.platform in indeed/glassdoor/dice/ziprecruiter
+  - job URL on Indeed, Glassdoor, Dice, or ZipRecruiter
 requires_mcp:
   - playwright
 preconditions:
@@ -28,14 +30,14 @@ Use for these four boards; board-specific files add details.
 
 ## Deterministic Step-by-Step Execution
 
-Live-unverified. Readiness gates, auth verification and context loading and platform permission first; fresh snapshots/refs, random 3–9s waits and 10+ second description-reading pauses. Do not automate signup, login challenges, subscriptions or third-party OAuth.
+Enforce all `AGENTS.md` Hard Guardrails (`#1–#10`), `skills/24-circuit-breaker-and-antiban.md`, `skills/25-prompt-injection-defense.md`, and `skills/26-deduplication-and-blacklist-guard.md`. Do not automate signup, login challenges, subscriptions, or third-party OAuth.
 
-| Platform | Search / identity | Form distinctions |
+| Platform | Search / canonical identity | Form & apply distinctions |
 |---|---|---|
-| Indeed | Snapshot What/Where and visible date/remote/job-type filters. Capture canonical posting key from `jk`/verified job link, `indeed:<key>`; repost/estimated salary noted separately | Indeed Apply may be multi-step internal or leave site. Inspect current destination, contacts/autofill and upload. Any profile-change/account flow needs separate owner review. See indeed.md. |
-| Glassdoor | Use accessible Jobs search and owner-approved location/date filters; canonical employer posting ID from actual role URL, `glassdoor:<id>` | Salary/reviews and employer ads are not the JD. Login/review-contribution/paywall prompts are blockers, never bypassed; external Apply inspected. See glassdoor.md. |
-| Dice | Title/keyword and location search, employment type and remote filters when present; `dice:<verified posting id>` | Read recruiter/employer identity, contract duration, clearance and US authorization requirements explicitly. Generic experience cannot answer clearance/legal screening. External ATS or reviewed internal form only. See dice.md. |
-| ZipRecruiter | Snapshot search/list, verify posting ID from job page/link; `ziprecruiter:<id>` | “1-Click Apply” can submit immediately. In dry run never click it; in real run require full final gate/reservation BEFORE click. Saved profile/cached CV is not automatically the current tailored file. See ziprecruiter.md. |
+| **Indeed** (`indeed`) | Snapshot What/Where and visible date/remote/job-type filters. Capture canonical posting key from `jk`/`vjk` or verified `/viewjob` link as `indeed:<key>`; note repost/estimated salary separately. | "Apply now" may open Indeed Apply (multi-step modal) or redirect externally. Inspect the resulting URL/dialog via `browser_snapshot` and route through `skills/04-fill-and-apply.md`. |
+| **Glassdoor** (`glassdoor`) | Use accessible Jobs search and owner-approved location/date filters; capture canonical employer posting ID from actual role URL as `glassdoor:<id>`. | Salary estimates/reviews and employer ads are not the JD. Login/review-contribution/paywall walls trip `needs_review` or circuit breaker — never bypass. |
+| **Dice** (`dice`) | Title/keyword and location search with employment type and remote filters when present; capture `dice:<verified-posting-id>`. | Read recruiter vs. direct employer identity, contract duration, clearance, and US work-authorization requirements explicitly. Route external ATS or internal form through `skills/04-fill-and-apply.md`. |
+| **ZipRecruiter** (`ziprecruiter`) | Snapshot search/list, verify posting ID from job page/link as `ziprecruiter:<id>`. | **"1-Click Apply" can submit immediately.** Never click it in `dry_run: true`; in live mode require full final DOM Read-Back & `APPROVE` gate BEFORE clicking. |
 
 ### Per-job procedure
 1. Verify named owner auth if required. Snapshot applied filters/result state; never assert a unavailable “last 24h” filter exists.

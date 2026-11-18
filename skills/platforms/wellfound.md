@@ -1,6 +1,7 @@
 ---
 name: wellfound
-version: "1.1.0"
+version: "1.2.0"
+last_verified: "2026-11-18"
 description: Load when a target is Wellfound (AngelList Talent) and startup roles must be discovered and an optional founder note drafted truthfully.
 triggers:
   - target.platform == wellfound

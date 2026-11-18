@@ -1,6 +1,7 @@
 ---
 name: linkedin
-version: "1.1.0"
+version: "1.2.0"
+last_verified: "2026-11-18"
 description: Load when a target is LinkedIn Jobs (discovery with recent filters and Easy Apply) or the owner routes an approval-only LinkedIn profile/post request.
 triggers:
   - target.platform == linkedin
