@@ -1,0 +1,119 @@
+name: Validate Pure Markdown Repository
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate all JSON files
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+
+          checked = 0
+          for p in sorted(pathlib.Path(".").rglob("*")):
+              if ".git" in p.parts or not p.is_file():
+                  continue
+              if p.suffix == ".json" or p.name.endswith(".json.example"):
+                  json.loads(p.read_text(encoding="utf-8"))
+                  checked += 1
+          print(f"Validated {checked} JSON file(s).")
+          PY
+
+      - name: Validate all YAML files
+        run: |
+          ruby -ryaml -e '
+            checked = 0
+            Dir.glob("**/*", File::FNM_DOTMATCH).sort.each do |f|
+              next if f.start_with?(".git/") || !File.file?(f)
+              next unless f.end_with?(".yaml", ".yml", ".yaml.example")
+              YAML.safe_load(File.read(f), aliases: true)
+              checked += 1
+            end
+            puts "Validated #{checked} YAML file(s)."
+          '
+
+      - name: Validate skills frontmatter, registry, and Markdown links
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, re
+
+          manifest = json.loads(pathlib.Path("skills/skills-manifest.json").read_text(encoding="utf-8"))
+          registry = pathlib.Path("skills/REGISTRY.md").read_text(encoding="utf-8")
+          required_keys = ["name", "version", "description", "triggers", "requires_mcp", "preconditions", "requires_skills", "verification"]
+          required_sections = [
+              "## When to Use & Preconditions",
+              "## Deterministic Step-by-Step Execution",
+              "## Anti-Patterns (What NEVER To Do) & Self-Verification Check",
+          ]
+
+          skill_files = sorted(
+              p for p in pathlib.Path("skills").rglob("*.md")
+              if p.name not in ("REGISTRY.md", "README.md") and not p.name.startswith("_")
+          )
+          manifest_paths = {pathlib.Path(s["path"]).as_posix() for s in manifest["skills"]}
+          actual_paths = {p.as_posix() for p in skill_files}
+          if manifest_paths != actual_paths:
+              raise SystemExit(f"Manifest mismatch: missing={actual_paths - manifest_paths}, extra={manifest_paths - actual_paths}")
+
+          for p in skill_files:
+              text = p.read_text(encoding="utf-8")
+              if not text.startswith("---"):
+                  raise SystemExit(f"Missing YAML frontmatter: {p}")
+              end = text.find("\n---", 3)
+              if end < 0:
+                  raise SystemExit(f"Unterminated YAML frontmatter: {p}")
+              fm = text[3:end]
+              for k in required_keys:
+                  if not re.search(rf"^{re.escape(k)}:", fm, re.M):
+                      raise SystemExit(f"{p} missing frontmatter key: {k}")
+              body = text[end + 4:]
+              for sec in required_sections:
+                  if sec not in body:
+                      raise SystemExit(f"{p} missing section: {sec}")
+              if p.as_posix() not in registry:
+                  raise SystemExit(f"{p} not indexed in skills/REGISTRY.md")
+
+          broken = []
+          for md in pathlib.Path(".").rglob("*.md"):
+              if ".git" in md.parts:
+                  continue
+              text = md.read_text(encoding="utf-8")
+              for m in re.finditer(r"\[[^\]]*\]\(([^)]+)\)", text):
+                  target = m.group(1).split("#", 1)[0].strip()
+                  if not target or re.match(r"^(https?:|mailto:|#)", target, re.I):
+                      continue
+                  if not (md.parent / target).resolve().exists():
+                      broken.append(f"{md} -> {m.group(1)}")
+              for m in re.finditer(r"\b(skills/[A-Za-z0-9_./-]+\.md)\b", text):
+                  if not pathlib.Path(m.group(1)).exists():
+                      broken.append(f"{md} -> {m.group(1)}")
+          if broken:
+              raise SystemExit("Broken links:\n" + "\n".join(broken))
+          print(f"Validated {len(skill_files)} skills, REGISTRY.md, and 0 broken Markdown links.")
+          PY
+
+      - name: Security audit — ensure no sensitive files are tracked in Git
+        run: |
+          python3 - <<'PY'
+          import re, subprocess
+
+          tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
+          bad = [
+              f for f in tracked
+              if re.search(r"(\.pdf$|^\.env$|browser-profile|^logs/|^context/(?!.*\.example$|DROP_YOUR_FILES_HERE\.md$))", f)
+          ]
+          if bad:
+              raise SystemExit("Sensitive files tracked in Git:\n" + "\n".join(bad))
+          print(f"Security audit passed across {len(tracked)} tracked files.")
+          PY

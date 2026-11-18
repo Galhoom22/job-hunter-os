@@ -52,7 +52,7 @@ Live UI/tool compatibility: unverified. Labels below are recognition hints, not 
 Inspect/switch new tabs using actual MCP tab tools. Confirm HTTPS destination/employer, preserve ID and use ats-engines.md / 04-fill-and-apply.md. Unknown host/account creation/manual portal → review. Login/challenge/warning aborts the run, not merely this job.
 
 ### Profile optimization and posts
-These are separate owner-requested actions, never daily-run side effects. Use linkedin-profile-update.md or linkedin-post.md: grounded exact draft/diff in chat → owner replies approve → fresh snapshot verifies exact content → Save/Post. Any draft change invalidates earlier approval. No automatic engagement, messages, connection invites, posts or profile edits. Report the saved change/post URL only after confirmation; keep private audit steps and validate logs.
+These are separate owner-requested actions, never daily-run side effects. Use `skills/05-outreach-and-interview-prep.md`: grounded exact draft/diff in chat → owner replies approve → fresh snapshot verifies exact content → Save/Post. Any draft change invalidates earlier approval. No automatic engagement, messages, connection invites, posts or profile edits. Report the saved change/post URL only after confirmation; keep private audit steps in `logs/`.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

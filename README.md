@@ -13,7 +13,7 @@ There is **no custom CLI, no Node/Python automation script, no browser extension
 
 ---
 
-## 1. How to Install (Zero Coding or `npm install` Needed!)
+## 1. How to Install (Zero Coding, Zero Dependencies!)
 
 ### Option A — Project Mode (Recommended)
 Clone the repo and open the folder directly in **Antigravity, Cursor, Claude Code, Windsurf, or Cline**:
