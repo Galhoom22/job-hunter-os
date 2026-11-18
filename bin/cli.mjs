@@ -23,7 +23,7 @@ const fail = msg => console.error(paint('31', `[✗] ${msg}`));
 const ATTRIBUTION_BANNER = 'Job Hunter OS — Created by Reda Salem (@redasalem) | https://github.com/redasalem/job-hunter-os';
 const PINNED_SIGNING_PRINCIPAL = '192090175+redasalem@users.noreply.github.com';
 const PINNED_SIGNING_PUBKEY = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7t6GfNExgWOy+djcVZlb62BD9DKRrz81Xk++LTZTSo';
-const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline']);
+const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline', '--force']);
 const positional = [];
 const opts = {
   global: false,
@@ -33,6 +33,7 @@ const opts = {
   strict: false,
   noOpen: false,
   baseline: false,
+  force: false,
   file: null,
   draft: null,
   text: null,
@@ -49,6 +50,7 @@ for (let i = 0; i < ARGV.length; i++) {
   else if (a === '--yes' || a === '-y') opts.yes = true;
   else if (a === '--no-open') opts.noOpen = true;
   else if (a === '--baseline') opts.baseline = true;
+  else if (a === '--force') opts.force = true;
   else if (a === '--file' || a === '-f') {
     const val = ARGV[++i];
     if (!val || val.startsWith('-')) argErr = '--file requires a path to a JSON model-output file.';
@@ -96,6 +98,19 @@ for (let i = 0; i < ARGV.length; i++) {
 
 const command = positional[0] || (opts.help ? 'help' : 'help');
 
+function normalizePathForCompare(p) {
+  const resolved = path.resolve(p);
+  return process.platform === 'win32' ? resolved.toLowerCase() : resolved;
+}
+
+function isSamePath(a, b) {
+  return path.relative(normalizePathForCompare(a), normalizePathForCompare(b)) === '';
+}
+
+function isGlobalRoot(root = ROOT) {
+  return isSamePath(root, path.join(HOME, '.job-hunter-os'));
+}
+
 function resolveRoot() {
   const globalRoot = path.join(HOME, '.job-hunter-os');
   if (opts.global) return globalRoot;
@@ -117,7 +132,7 @@ function sleepSync(ms) {
 }
 
 function isWithinDir(targetPath, dirPath) {
-  const rel = path.relative(dirPath, targetPath);
+  const rel = path.relative(normalizePathForCompare(dirPath), normalizePathForCompare(targetPath));
   return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
 }
 
@@ -188,7 +203,7 @@ function writeAtomic(file, content, { preserve = false, mode = 0o644 } = {}) {
   return true;
 }
 
-function copyTree(from, to, { preserve = false, filter = () => true } = {}) {
+function copyTree(from, to, { preserve = false, filter = () => true, skipped = null } = {}) {
   if (!fs.existsSync(from)) return 0;
   let count = 0;
   for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
@@ -196,9 +211,10 @@ function copyTree(from, to, { preserve = false, filter = () => true } = {}) {
     const src = path.join(from, entry.name);
     const dst = path.join(to, entry.name);
     if (entry.isDirectory()) {
-      count += copyTree(src, dst, { preserve, filter });
+      count += copyTree(src, dst, { preserve, filter, skipped });
     } else if (entry.isFile()) {
       if (writeAtomic(dst, fs.readFileSync(src), { preserve })) count++;
+      else if (preserve && Array.isArray(skipped)) skipped.push(dst);
     }
   }
   return count;
@@ -243,21 +259,30 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
   }
   const want = name => ide === 'all' || ide === name;
   let written = 0;
+  const skipped = [];
+
+  const writeManaged = (dst, content, usePreserve = preserve) => {
+    if (writeAtomic(dst, content, { preserve: usePreserve })) {
+      written++;
+    } else if (usePreserve) {
+      skipped.push(dst);
+    }
+  };
 
   if (isGlobal) {
     // Universal agentskills.io auto-discovery (~/.agents/skills/) for Codex, OpenCode, Goose, Amp, Zed
     if (want('codex') || want('opencode')) {
-      written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(HOME, '.agents', 'skills'), { preserve });
+      written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(HOME, '.agents', 'skills'), { preserve, skipped });
     }
     // Claude Code global skills & commands (~/.claude/skills/, ~/.claude/commands/)
     if (want('claude')) {
-      written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(HOME, '.claude', 'skills'), { preserve });
-      written += copyTree(path.join(srcRoot, 'commands'), path.join(HOME, '.claude', 'commands'), { preserve });
+      written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(HOME, '.claude', 'skills'), { preserve, skipped });
+      written += copyTree(path.join(srcRoot, 'commands'), path.join(HOME, '.claude', 'commands'), { preserve, skipped });
     }
     // Antigravity global workflows & skills (~/.gemini/antigravity/global_workflows/, ~/.antigravity/skills/)
     if (want('antigravity')) {
-      written += copyTree(path.join(srcRoot, '.agent', 'workflows'), path.join(HOME, '.gemini', 'antigravity', 'global_workflows'), { preserve });
-      written += copyTree(path.join(srcRoot, 'skills'), path.join(HOME, '.antigravity', 'skills'), { preserve });
+      written += copyTree(path.join(srcRoot, '.agent', 'workflows'), path.join(HOME, '.gemini', 'antigravity', 'global_workflows'), { preserve, skipped });
+      written += copyTree(path.join(srcRoot, 'skills'), path.join(HOME, '.antigravity', 'skills'), { preserve, skipped });
     }
     // Cursor global rule (~/.cursor/rules/job-hunter.mdc)
     if (want('cursor')) {
@@ -272,18 +297,21 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
         'Respect dry run, verified facts only, Days 1-3 warm-up caps, and explicit owner APPROVE before Submit/Save/Send.',
         '',
       ].join('\n');
-      if (writeAtomic(path.join(HOME, '.cursor', 'rules', 'job-hunter.mdc'), ruleText, { preserve })) written++;
+      writeManaged(path.join(HOME, '.cursor', 'rules', 'job-hunter.mdc'), ruleText);
     }
     // Devin Desktop / Windsurf global rules & workflows (~/.windsurf/)
     if (want('windsurf') || want('devin')) {
       const ruleText = `For job-hunting workflows, read ${path.join(targetRoot, 'AGENTS.md')} and ${path.join(targetRoot, 'skills', 'REGISTRY.md')} first. Agent home: ${targetRoot}.\n`;
-      if (writeAtomic(path.join(HOME, '.windsurf', 'rules', 'job-hunter.md'), ruleText, { preserve })) written++;
-      written += copyTree(path.join(srcRoot, '.agent', 'workflows'), path.join(HOME, '.windsurf', 'workflows'), { preserve });
+      writeManaged(path.join(HOME, '.windsurf', 'rules', 'job-hunter.md'), ruleText);
+      written += copyTree(path.join(srcRoot, '.agent', 'workflows'), path.join(HOME, '.windsurf', 'workflows'), { preserve, skipped });
     }
     // Cline global rule (~/.clinerules/job-hunter.md)
     if (want('cline')) {
       const ruleText = `For job-hunting workflows, read ${path.join(targetRoot, 'AGENTS.md')} and ${path.join(targetRoot, 'skills', 'REGISTRY.md')} first. Agent home: ${targetRoot}.\n`;
-      if (writeAtomic(path.join(HOME, '.clinerules', 'job-hunter.md'), ruleText, { preserve })) written++;
+      writeManaged(path.join(HOME, '.clinerules', 'job-hunter.md'), ruleText);
+    }
+    if (preserve && skipped.length > 0) {
+      warn(`Preserved ${skipped.length} existing global IDE skill/rule collision(s) (pass --force to overwrite).`);
     }
   } else {
     // Local project mode: ensure .agents/skills, .agent/workflows, .cursor/rules, .windsurfrules, .clinerules exist
@@ -349,7 +377,7 @@ function toPlatformMcpServer(cfg) {
   return { ...cfg, env };
 }
 
-function syncMcp({ root = ROOT, isGlobal = opts.global || ROOT === path.join(HOME, '.job-hunter-os'), src = SOURCE } = {}) {
+function syncMcp({ root = ROOT, isGlobal = opts.global || isGlobalRoot(root), src = SOURCE } = {}) {
   const templatePath = [path.join(root, 'mcp', 'mcp.template.json'), path.join(src, 'mcp', 'mcp.template.json')].find(f => fs.existsSync(f));
   if (!templatePath) throw new Error('mcp/mcp.template.json not found. Run init first.');
   const template = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
@@ -507,7 +535,7 @@ function cmdInit() {
     JSON.stringify({ version: 1, scope: isGlobal ? 'global' : 'local', installed_at: new Date().toISOString() }, null, 2) + '\n',
     { preserve: true },
   );
-  const ideFiles = installIdeSkills(SOURCE, ROOT, { isGlobal, ide: opts.ide, preserve: false });
+  const ideFiles = installIdeSkills(SOURCE, ROOT, { isGlobal, ide: opts.ide, preserve: isGlobal ? !opts.force : false });
   syncMcp({ root: ROOT, isGlobal, src: SOURCE });
   ok(`Initialized job-hunter-os (${isGlobal ? 'global' : 'local'}) at ${ROOT} (${ideFiles} IDE skill/rule file(s) synced).`);
   info('Next: run `login`, close the browser, open your IDE and type `/setup` to verify your CV and preferences.');
@@ -515,7 +543,7 @@ function cmdInit() {
 
 // ---------------- update ----------------
 function cmdUpdate() {
-  const isGlobal = opts.global || ROOT === path.join(HOME, '.job-hunter-os');
+  const isGlobal = opts.global || isGlobalRoot(ROOT);
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'job-hunter-update-'));
   try {
     let srcRoot = SOURCE;
@@ -561,7 +589,7 @@ function cmdUpdate() {
 
     scaffoldFrom(srcRoot, ROOT, { isUpdate: true });
     // Also refresh bin/ & scripts/ if target is ~/.job-hunter-os
-    if (path.resolve(ROOT) !== path.resolve(srcRoot)) {
+    if (!isSamePath(ROOT, srcRoot)) {
       copyTree(path.join(srcRoot, 'bin'), path.join(ROOT, 'bin'), { preserve: false });
       copyTree(path.join(srcRoot, 'scripts'), path.join(ROOT, 'scripts'), { preserve: false });
     }
@@ -569,7 +597,9 @@ function cmdUpdate() {
     ok(`Updated skills, adapters, templates, and AGENTS.md at ${ROOT} (${ideFiles} IDE file(s) refreshed).`);
     info('Preserved your private context/, logs/, config/guardrails.yaml, assets/, and browser-profile/.');
   } finally {
-    fs.rmSync(temp, { recursive: true, force: true });
+    try {
+      fs.rmSync(temp, { recursive: true, force: true });
+    } catch { /* ignore cleanup error on locked temp files so primary error is preserved */ }
   }
 }
 
@@ -601,6 +631,35 @@ function extractProfileUrls(root) {
   return [...urls];
 }
 
+function isBlockedSsrfUrl(parsedUrl) {
+  if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+    return 'non-HTTP(S) protocol';
+  }
+  const host = parsedUrl.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  if (!host || host === 'localhost' || host.endsWith('.localhost') || host === '::1' || host === '::' || host === '0:0:0:0:0:0:0:1') {
+    return 'loopback/localhost host';
+  }
+  // Check IPv4-mapped IPv6 (e.g., ::ffff:127.0.0.1 or ::ffff:7f00:1)
+  if (host.startsWith('::ffff:') || host.startsWith('fe80:') || host.startsWith('fc') || host.startsWith('fd')) {
+    return 'private/link-local IPv6 address';
+  }
+  const ipv4Match = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (ipv4Match) {
+    const [a, b] = [Number(ipv4Match[1]), Number(ipv4Match[2])];
+    if (
+      a === 0 ||
+      a === 10 ||
+      a === 127 ||
+      (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 192 && b === 168)
+    ) {
+      return 'private/loopback/link-local IPv4 range';
+    }
+  }
+  return null;
+}
+
 async function verifyProfileLinks(root, isProfileReady) {
   const urls = extractProfileUrls(root);
   if (!urls.length) {
@@ -618,6 +677,11 @@ async function verifyProfileLinks(root, isProfileReady) {
       validSyntax++;
     } catch {
       deadUrls.push(`${u} (malformed URL)`);
+      continue;
+    }
+    const ssrfReason = isBlockedSsrfUrl(parsed);
+    if (ssrfReason) {
+      deadUrls.push(`${u} (blocked by SSRF guard: ${ssrfReason})`);
       continue;
     }
     if (PLACEHOLDER_RE.test(u) || /example\.|your-handle|your-site/i.test(parsed.hostname)) {
@@ -663,19 +727,19 @@ function evaluateGates(root) {
   const g2 = isPopulated(root, 'context/preferences.yaml').ready;
   const ansFile = path.join(root, 'context', 'form-answers.yaml');
   const ans = isPopulated(root, 'context/form-answers.yaml');
-  const ownerVerified = fs.existsSync(ansFile) && /^owner_verified:\s*true\s*(?:#.*)?$/m.test(fs.readFileSync(ansFile, 'utf8'));
+  const ownerVerified = fs.existsSync(ansFile) && /^\s*owner_verified:\s*true\b(?:\s*#.*)?$/im.test(fs.readFileSync(ansFile, 'utf8'));
   const g3 = ans.ready && ownerVerified;
-  const g4 = g3;
   const targetsFile = path.join(root, 'context', 'targets.yaml');
-  const g5 = fs.existsSync(targetsFile) && /^\s+enabled:\s*true\s*(?:#.*)?$/m.test(fs.readFileSync(targetsFile, 'utf8'));
-  const passed = [g1, g2, g3, g4, g5].filter(Boolean).length;
-  return { g1, g2, g3, g4, g5, passed, profReady: prof.ready };
+  const g5 = fs.existsSync(targetsFile) && /^\s*enabled:\s*true\b(?:\s*#.*)?$/im.test(fs.readFileSync(targetsFile, 'utf8'));
+  const gates = [g1, g2, g3, g5];
+  const passed = gates.filter(Boolean).length;
+  return { g1, g2, g3, g5, passed, total: gates.length, profReady: prof.ready };
 }
 
 async function cmdDoctor() {
   let criticalFailures = 0;
   let readinessPending = 0;
-  const isGlobal = opts.global || ROOT === path.join(HOME, '.job-hunter-os');
+  const isGlobal = opts.global || isGlobalRoot(ROOT);
 
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
   console.log(paint('36', `Job Hunter OS Doctor — ${ROOT}\n`));
@@ -908,7 +972,7 @@ function cmdStatus() {
       stateReady = Boolean(st?.overall_ready);
     } catch { /* ignore */ }
   }
-  const gateScore = stateReady ? 5 : gates.passed;
+  const gateScore = stateReady ? gates.total : gates.passed;
 
   // Read config/guardrails.yaml
   const guardFile = [path.join(ROOT, 'config', 'guardrails.yaml'), path.join(SOURCE, 'config', 'guardrails.yaml')].find(f => fs.existsSync(f));
@@ -977,7 +1041,7 @@ function cmdStatus() {
 
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
   console.log(paint('36', `Job Hunter OS Status — ${ROOT}\n`));
-  ok(`Readiness Gates:        ${gateScore}/5 ${gateScore === 5 ? '(READY)' : '(run /setup to complete)'}`);
+  ok(`Readiness Gates:        ${gateScore}/${gates.total} ${gateScore === gates.total ? '(READY)' : '(run /setup to complete)'}`);
   info(`Today vs. Daily Cap:    ${todayApplied}/${effectiveCap} applications (${warmupActive ? 'Warm-up Days 1-3 cap: 5/day' : `Standard cap: ${maxPerDay}/day`}, dry_run: ${dryRun ? 'ON' : 'OFF'})`);
   info(`Pipeline Summary:       Applied: ${totalApplied} | Interviewing: ${interviewing} | Assessment: ${assessment} | Offers: ${offers} | Rejected/Ghosted: ${rejected}`);
   info(`Top Performing Channel: ${topPlatform}`);
@@ -1206,10 +1270,17 @@ function cmdEval() {
 
   const profileFile = path.join(evalRoot, 'fixtures', 'candidate-profile.md');
   const groundTruthFile = path.join(evalRoot, 'fixtures', 'ground-truth.json');
+  const baselineFile = path.join(evalRoot, 'results', 'baseline-verified-run.json');
+  const sourceBaselineFile = path.join(SOURCE, 'evals', 'results', 'baseline-verified-run.json');
   const isExternalFile = Boolean(opts.file) && !opts.baseline;
   const resultsFile = isExternalFile
     ? path.resolve(process.cwd(), opts.file)
-    : path.join(evalRoot, 'results', 'baseline-verified-run.json');
+    : baselineFile;
+  if (isExternalFile && (isSamePath(resultsFile, baselineFile) || isSamePath(resultsFile, sourceBaselineFile))) {
+    throw new Error(
+      `Refusing --file pointing to the built-in reference baseline (${resultsFile}). Use \`eval --baseline\` for CI self-testing, or pass an external model output JSON file.`,
+    );
+  }
   if (!fs.existsSync(profileFile)) {
     throw new Error('Missing evals/fixtures/candidate-profile.md.');
   }
@@ -1432,7 +1503,7 @@ function cmdHelp() {
 job-hunter-os v1.2.3 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
-  job-hunter init [--global | -g] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
+  job-hunter init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
   job-hunter update [--global | -g] [--ide <name>] Verify SSH signature & refresh playbooks (preserves context/ & logs/)
   job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
   job-hunter eval [--baseline | --file <json>]     Grade Harness Reference Baseline (CI) or external LLM output
