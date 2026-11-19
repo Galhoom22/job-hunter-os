@@ -56,3 +56,9 @@ Eliminates premature clicks and stale-ref failures caused by guessing wait times
 - **NEVER** poll in tight sub-second loops or exceed 3 consecutive wait/recovery failures without aborting per `AGENTS.md`.
 - **NEVER** target elements by styled-component hashes or guessed CSS selectors when accessibility role/label exists.
 - **Self-Verification Check:** Before interacting with the next control, confirm a fresh `browser_snapshot` shows the expected completion condition (spinner gone, modal ready, file badge rendered) and you resolved a fresh accessibility `ref` via `Role -> Label -> Placeholder -> Text`.
+
+### Fast Browser Execution Playbook (3x–5x Speedup Without Risk)
+1. **Direct Deep Links First:** Jump straight to pre-filtered search URLs (e.g., LinkedIn `?f_TPR=r86400&f_WT=2&f_AL=true`) and direct profile edit routes (`/details/experience/`, `/details/projects/`, `/details/skills/`) instead of clicking UI filters/menus step by step.
+2. **Batch In-Form Inputs:** Fill all fields within the same open modal or form in one smooth pass (`0.3–1 s` between inputs); reserve the `3–9 s` anti-ban jitter strictly for cross-page navigations and final submissions.
+3. **Compact DOM Extraction:** Use targeted `browser_evaluate` queries or scoped section reads instead of pulling full 20k+ token LinkedIn page trees on every action.
+4. **Single-Turn Batched Delegation:** Send one complete instruction (open deep link → fill verified fields → save/submit → verify receipt) rather than splitting a single form across multiple back-and-forth turns.

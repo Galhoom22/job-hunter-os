@@ -55,3 +55,8 @@ Prevents accessibility-tree snapshots and optional integration schemas from exha
 - **NEVER** attempt Notion MCP calls when `storage_adapters.notion_mcp: false`.
 - **NEVER** keep 10 full raw `browser_snapshot` trees verbatim in active conversation reasoning when summarizing past jobs.
 - **Self-Verification Check:** Confirm pure local phases used zero MCP calls, Notion MCP was skipped when disabled, and any MCP error triggers clean routing (`fallback-no-mcp` or `meta-dom-recovery`) within the 3-error limit.
+
+### High-Speed Model & Parallel Tooling Rules
+1. **Parallel Local I/O:** Execute independent file reads, edits, and writes in parallel within the same turn instead of sequentially.
+2. **Zero Redundant Context Reloads:** Never re-read unchanged `context/` files or skill bodies already verified in the active session; load only the 1–3 skills required for the current step.
+3. **Smart Model Tiering:** When delegating routine browser scraping, list extraction, or repetitive form filling to a subagent, prefer fast low-latency models (e.g., Flash / Haiku / Mini) and reserve heavier reasoning models for CV tailoring, gap analysis, and complex debugging.
