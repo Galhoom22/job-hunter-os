@@ -102,4 +102,4 @@ Never submit without explicit `APPROVE`.
 When the user explicitly instructs the AI to apply (e.g., "apply", "قدم", or `APPROVE`), do NOT pause at intermediate pages (e.g., Page 2/4 or Page 3/4) to ask for confirmation on each step:
 1. Advance through **all** Easy Apply or external ATS form steps automatically.
 2. Fill every field using verified `context/cv.md` and `context/form-answers.yaml`, framing truthful answers to present the strongest eligible fit.
-3. Only pause if a genuinely unknown/legal required question appears. If the user already instructed the AI to apply/submit directly, click `Submit` immediately after filling all verified fields and verify the confirmation receipt.
+3. Only pause if a genuinely unknown/legal required question or CAPTCHA appears. Selecting a job to apply to (e.g. `"1"`, `"قدم"`, `"apply"`) counts as full authorization to fill AND click `Submit` / `Apply` directly without asking for a second `APPROVE`.
