@@ -13,9 +13,9 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - name: Validate all JSON files
+      - name: Validate all JSON files & zero-dependency invariant
         run: |
           python3 - <<'PY'
           import json, pathlib
@@ -27,7 +27,10 @@ jobs:
               if p.suffix == ".json" or p.name.endswith(".json.example"):
                   json.loads(p.read_text(encoding="utf-8"))
                   checked += 1
-          print(f"Validated {checked} JSON file(s).")
+          pkg = json.loads(pathlib.Path("package.json").read_text(encoding="utf-8"))
+          assert len(pkg.get("dependencies", {})) == 0, "package.json runtime dependencies must stay empty"
+          assert len(pkg.get("devDependencies", {})) == 0, "package.json devDependencies must stay empty"
+          print(f"Validated {checked} JSON file(s) and 0/0 npm dependencies.")
           PY
 
       - name: Validate all YAML files
@@ -197,16 +200,18 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
 
-      - name: Check CLI syntax & run deterministic Skill Eval Harness (Reference Baseline)
+      - name: Check CLI syntax & run deterministic Skill Eval Harness + Journey Tests
         run: |
           node --check bin/cli.mjs
           node ./bin/cli.mjs eval --baseline
+          node ./bin/cli.mjs eval --file evals/results/live-agent-eval-run.json
+          node ./bin/cli.mjs eval --journeys
 
       - name: Test local init, doctor, eval, and sync-mcp in isolated directory
         shell: bash
@@ -223,8 +228,12 @@ jobs:
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" init
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" doctor
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" eval --baseline
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" eval --journeys
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" proof
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" audit "$REPO_DIR/evals/fixtures/candidate-profile.md" --share
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" route "Improve my LinkedIn headline and About section" --json >/dev/null
+            printf '<!doctype html><html><body><h1>Nadia Mansour</h1><p>Senior Full-Stack Engineer building TypeScript and Node.js systems.</p></body></html>\n' > "$ISO_PROJ/verify-sample.html"
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" verify "$ISO_PROJ/verify-sample.html" --facts "$REPO_DIR/evals/fixtures/candidate-profile.md"
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" pre-submit --text "Short grounded hiring manager note under 75 words."
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" status
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" bundle

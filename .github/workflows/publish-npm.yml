@@ -20,10 +20,10 @@ jobs:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
@@ -33,6 +33,7 @@ jobs:
           node --check bin/cli.mjs
           node ./bin/cli.mjs eval --baseline
           node ./bin/cli.mjs eval --file evals/results/live-agent-eval-run.json
+          node ./bin/cli.mjs eval --journeys
           node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8')); if(Object.keys(p.dependencies||{}).length || Object.keys(p.devDependencies||{}).length) { process.exit(1); }"
 
       - name: Publish to npm with OIDC Sigstore Provenance (when NPM_TOKEN secret is configured)
