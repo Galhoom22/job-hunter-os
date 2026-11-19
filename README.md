@@ -1,37 +1,37 @@
 # Job Hunter OS
 
-### Truthful CV Tailoring for the AI Agent You Already Use.
+### Truthful CV Tailoring & Career Workflows for the AI Agent You Already Use.
 
-Give your existing AI coding agent (**Cursor, Claude Code, Antigravity, Windsurf, Cline, Gemini CLI, Codex, OpenCode**) one CV and one job description. Get a fact-checked tailored HTML/TXT resume, a transparent evidence map, an ATS keyword comparison, and an explicit list of missing skills.
+Give your existing AI coding agent (**OpenAI Codex CLI, Claude Code, Cursor, Antigravity, Gemini CLI, GitHub Copilot, Windsurf, Cline, OpenCode**) one CV and one job description—or just ask in plain English or Arabic. Get a fact-checked tailored resume (`HTML` / `TXT` / Word-compatible `.doc`), a transparent **Evidence Map**, an **ATS Keyword Comparison**, and an explicit **True Gaps** list.
 
-No fabricated experience. No blind applications. No external API keys. You remain in control.
+No fabricated experience. No blind submissions. No `npm install` bloat. No external API keys.
 
-**48 Markdown Skills** · **0 Core npm Dependencies** · **Local-First** · **Human-Controlled**
+**48 Markdown Skills** · **0 Core/Dev npm Dependencies** · **Local-First (`logs/`, `context/`)** · **Human `APPROVE` Gate**
 
-**[Explore the CV Tailoring Demo ↗](https://redasalem.github.io/job-hunter-os/)** · **[Quick Installation](#installation)** · **[العربية (RTL)](README.ar.md)**
+**[Interactive Demo ↗](https://redasalem.github.io/job-hunter-os/)** · **[Quick Start](#fastest-ways-to-get-started)** · **[AI Tool Setup](#installation--ai-tool-setup)** · **[CLI Reference](#cli-reference-binclimjs)** · **[العربية (RTL)](README.ar.md)**
 
 [![Zero Core Dependencies](https://img.shields.io/badge/Core_CLI-0_NPM_Dependencies-2ea44f)](package.json)
 [![48 Markdown Skills](https://img.shields.io/badge/Skills-48_Markdown_Skills-167d60)](skills/REGISTRY.md)
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
 
 ```bash
-# Try an instant offline hygiene audit on your own resume right now (zero setup, local-only)
-npx github:redasalem/job-hunter-os audit ./resume.md --share
+# Try an instant offline hygiene audit on any .md, .txt, .docx, .html, or .doc resume (zero setup)
+npx github:redasalem/job-hunter-os audit ./resume.docx --share
 ```
 
 ---
 
-## Actual CV Tailoring Output (Synthetic Example)
+## What You Give vs. What You Get
 
-All names, employers, and metrics below come from synthetic repository fixtures ([`evals/fixtures/`](evals/fixtures/candidate-profile.md)) to illustrate the exact output structure produced by `/demo` and `/quick-tailor`:
+All names, employers, and metrics below come from synthetic repository fixtures ([`evals/fixtures/`](evals/fixtures/candidate-profile.md)) to illustrate the exact output produced by `/demo`, `/quick-tailor`, and natural-language CV tailoring:
 
 ![Job Hunter OS — Truthful CV Tailoring Output Preview (Synthetic Demonstration Data)](assets/demo-preview.png)
 
-| Input You Provide | Output You Receive |
+| Input You Provide | Verified Output You Receive |
 |---|---|
-| Existing CV (`.md` / `.txt` / pasted text) + confirmed facts | Fact-checked single-column tailored resume (**HTML + TXT**, optional PDF) |
-| One target job description (or batch during `/daily-run`) | Line-by-line **Evidence Map**, **ATS Keyword Comparison**, and explicit **True Gaps** |
-| Optional local browser session (only for full Career OS) | **Interview Dossier**, `<= 75`-word draft outreach, Live DOM Read-Back Table before `APPROVE` |
+| Existing CV (`.md`, `.txt`, `.docx`, `.html`, `.doc`, text PDF, or pasted text) — or create/edit one from scratch | Single-column tailored CV (**`HTML` + `TXT` + Word-compatible `.doc`**, optional PDF via Playwright or browser Print-to-PDF) without altering your original CV file |
+| One target JD, URL, screenshot, or batch discovery targets | Line-by-line **Evidence Map**, 4-bucket **ATS Keyword Heatmap**, explicit **True Gaps**, and optional bilingual localization (English / Arabic RTL / German / French / Spanish) |
+| LinkedIn profile text, PDF export, screenshots, or optional browser session | **`DRAFT_ONLY` LinkedIn SEO Audit** (`0–100`), CV consistency check, `<= 75`-word outreach drafts, **`interview-dossier.md`**, and **Live DOM Read-Back Table** before `APPROVE` |
 
 ---
 
@@ -46,176 +46,169 @@ All names, employers, and metrics below come from synthetic repository fixtures 
 [Status: dry_run: true · Awaiting explicit job-specific human APPROVE]
 ```
 
-- **Zero invented claims:** Employers, titles, dates, tools, and metrics must trace back to your verified facts. Missing skills are never quietly added—they are listed under **True Gaps**.
-- **Anti-AI slop filter:** Strips generic clichés (`delve`, `spearheaded`, `synergy`, `testament`) and prose em-dashes in favor of plain engineering language.
-- **No blind submissions:** Every live ATS form submission requires an explicit, exact, job-specific human `APPROVE` after inspecting the **Live DOM Read-Back Table**. No score-based auto-submit, no batch approvals across jobs.
-
----
-
-## What Makes the Workflow Trustworthy
-
-Job Hunter OS is transparent about **which layer enforces each control** (details in [`docs/execution-safety.md`](docs/execution-safety.md)):
-
-| Control Layer | What It Enforces | Concrete Examples |
-|---|---|---|
-| **Deterministic CLI Enforcement (`bin/cli.mjs`)** | Verified locally by zero-dependency Node.js code with exit codes | `pre-submit` (`<= 75`-word outreach cap & daily/Days 1–3 warm-up caps), `.git/hooks/pre-commit` PII & token blocker, JSON integrity in `backup`, live-PID check in `unlock`, SSRF guard in `doctor`/`audit`, XSS-escaped JSON in `dashboard`, SSH commit signature verification in `update`, and static fixture grading in `eval`/`proof` |
-| **Agent Workflow Requirements (`AGENTS.md`, `skills/*.md`)** | Structured instructions executed by your AI model inside your IDE *(not an independent OS sandbox)* | Fact-checking CV claims against verified profile, isolating missing skills in **True Gaps**, treating scraped JDs as `UNTRUSTED_EXTERNAL_DATA`, upload-first ATS filling, Live DOM Read-Back verification, and unconditional per-job `APPROVE` pause |
-
-> **Privacy & Automation Honesty:** CVs, logs, generated resumes, and optional `browser-profile/` stay local on your machine (zero telemetry, zero SaaS backend). Your chosen AI IDE/model processes chat prompts under its own provider policy—use a local model if strict offline privacy is required. Browser automation never bypasses CAPTCHAs, 2FA, or rate limits; any challenge trips a 24-hour platform cooldown and stops immediately.
+- **Zero invented claims:** Employers, titles, dates, tools, and metrics must trace back to your verified facts. Missing skills are never quietly added—they stay isolated under **True Gaps**.
+- **Anti-AI slop & format honesty:** Strips generic clichés (`delve`, `spearheaded`, `synergy`) and prose em-dashes; never renames HTML to fake `.docx`; rejects scanned/image PDFs and asks cleanly for pasted text or `.docx`/`.md`.
+- **No blind submissions:** Every live ATS form submission or LinkedIn edit requires an explicit, exact, job-specific human `APPROVE` after inspecting the **Live DOM Read-Back Table** or Before/After diff.
 
 ---
 
 ## Fastest Ways to Get Started
 
-You do **not** need browser login or full platform setup to see value:
+You do **not** need browser login, Playwright MCP, or full `/setup` onboarding for standalone tasks:
 
-| Step | Slash Command | Purpose | Personal CV / Browser Login? |
+### 1. Just Ask in Plain Language (Inside Any Supported AI IDE or CLI)
+Ask naturally—the **Universal Task Intent Router** ([`skills/REGISTRY.md`](skills/REGISTRY.md) & `job-hunter route`) loads only the minimal relevant skills without forcing `/setup`:
+- *"Audit my CV at `./my-cv.docx` and show ATS gaps."*
+- *"Tailor my CV for this job description (never invent skills)."*
+- *"Change only the Professional Summary using my verified PostgreSQL latency metric."*
+- *"Review my LinkedIn profile (`DRAFT_ONLY`) and align it with my CV."*
+- *"Compare these 3 remote React roles and rank them with evidence."*
+- *"Prepare me for this backend interview and review this offer/NDA."*
+
+### 2. Or Use Fast-Start Slash Workflows
+
+| Mode | Command | What It Does | Requirements |
 |---|---|---|---|
-| **1. Instant Sandbox** | `/demo` | Run a 15-second synthetic simulation across 3 sample JDs ([`examples/sandbox-demo/`](examples/sandbox-demo/sample-jds.md)) with an immediate tailored preview for Job #1 | **None required** |
-| **2. First Real Tailored CV** | `/quick-tailor` | Paste your real CV + 1 JD, confirm extracted facts, and get a tailored HTML/TXT CV, Evidence Map, ATS comparison, and True Gaps | **CV + 1 JD only** (no browser login) |
-| **3. Full Career OS (Optional)** | `login` → `/setup` → `/daily-run` | Multi-platform job discovery, ghost-job filtering, interview dossiers, and human-approved ATS form preparation | **Browser login + 5 readiness gates** |
+| **1. Instant Sandbox** | `/demo` | Runs a 15-second simulation across 3 sample JDs ([`examples/sandbox-demo/`](examples/sandbox-demo/sample-jds.md)) with a full tailored preview for Job #1 | **None** (no CV, no browser) |
+| **2. First Real Tailored CV** | `/quick-tailor` | Ingests 1 real CV + 1 JD, confirms facts, runs `verify`, and outputs `HTML`/`TXT`/Word `.doc` + True Gaps + interview prep | **CV + 1 JD only** (no login) |
+| **3. LinkedIn Profile & SEO** | `/linkedin-growth` | Scores profile consistency against your CV (`0–100`) and writes `DRAFT_ONLY` improvements (live edit gated by `APPROVE`) | **Profile text / PDF / screenshot** |
+| **4. Full Career OS (Optional)** | `login` → `/setup` → `/daily-run` | Multi-board discovery, ghost filtering, form prep, `<= 75`-word outreach drafts, and tracking | **Browser login + 5 readiness gates** |
 
 ---
 
-## Installation
+## Installation & AI Tool Setup
 
-Works on **macOS, Linux, and Windows** with Node.js `>= 18`:
+**Prerequisites:** Node.js `>= 18` on **macOS, Linux, or Windows**, plus any AI coding IDE or terminal agent you already use. Zero `npm install` dependencies required.
+
+### Option A — Quick Global Setup (Recommended)
+Run once to install `~/.job-hunter-os`, link skills into your AI tools, and safely merge Playwright MCP **without overwriting your personal rules or custom TOML/JSON settings**:
 
 ```bash
-# 1. Instant offline CV hygiene audit (optional --share writes privacy-safe SVG/MD card to logs/exports/)
-npx github:redasalem/job-hunter-os audit ./resume.md --share
-
-# 2. Initialize globally (~/.job-hunter-os + IDE skill/command auto-discovery)
+# Install and configure all detected AI IDEs & CLI harnesses globally
 npx github:redasalem/job-hunter-os init --global
 
-# 3. Open your AI IDE:
-#    - Run `/demo`         (instant synthetic workflow, zero setup)
-#    - Run `/quick-tailor` (your real CV + 1 JD, no browser login)
-
-# 4. Optional (Full Career OS only): sign in to local browser-profile/ and run /setup
-npx github:redasalem/job-hunter-os login --global
-npx github:redasalem/job-hunter-os doctor --global
+# Or target a specific AI tool only:
+npx github:redasalem/job-hunter-os init --global --ide codex       # ~/.codex/AGENTS.md + config.toml + ~/.agents/skills
+npx github:redasalem/job-hunter-os init --global --ide gemini      # ~/.gemini/GEMINI.md + settings.json + ~/.gemini/skills
+npx github:redasalem/job-hunter-os init --global --ide claude      # ~/.claude/commands + ~/.claude/skills + ~/.claude.json
+npx github:redasalem/job-hunter-os init --global --ide cursor      # ~/.cursor/rules/job-hunter.mdc + ~/.cursor/mcp.json
+npx github:redasalem/job-hunter-os init --global --ide copilot     # ~/.copilot/copilot-instructions.md + mcp-config.json
+npx github:redasalem/job-hunter-os init --global --ide antigravity # ~/.gemini/antigravity/global_workflows + mcp_config.json
 ```
 
-> **Zero-Dependency Core Architecture:** `package.json` maintains strictly **`"dependencies": {}`** and **`"devDependencies": {}`**. The core CLI uses Node.js built-ins only. Optional browser automation and PDF export use pinned Playwright MCP (`@playwright/mcp@0.0.86`) invoked via `npx` only when you use browser-assisted workflows; Notion sync is opt-in and off by default. Alternative OS install scripts: [`scripts/install.sh`](scripts/install.sh) and [`scripts/install.ps1`](scripts/install.ps1).
+### Option B — Clone Locally Inside a Workspace
+```bash
+git clone https://github.com/redasalem/job-hunter-os.git
+cd job-hunter-os
+node ./bin/cli.mjs doctor
+```
+
+*Supported `--ide` targets:* `all`, `codex`, `gemini`, `copilot`, `claude`, `cursor`, `antigravity`, `opencode`, `windsurf`, `devin`, `cline`, `roo`, `kiro`, `junie`, `zed`, `goose`, `aider` (see [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md), [`adapters/apps/openai-codex-cli.md`](adapters/apps/openai-codex-cli.md), [`adapters/apps/gemini-and-copilot.md`](adapters/apps/gemini-and-copilot.md), and [`scripts/install.sh`](scripts/install.sh) / [`scripts/install.ps1`](scripts/install.ps1)).
+
+> **Optional Browser & Notion Setup (Only When Needed):**
+> ```bash
+> npx github:redasalem/job-hunter-os login --global    # Sign in once to private browser-profile/
+> npx github:redasalem/job-hunter-os sync-mcp --global # Sync Playwright (and Notion if NOTION_TOKEN is set)
+> npx github:redasalem/job-hunter-os doctor --global   # Verify gates, playbooks & IDE configs
+> ```
+> Local `.mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`, `.gemini/settings.json`, and `.vscode/mcp.json` are automatically gitignored and protected by `.git/hooks/pre-commit`.
 
 ---
 
-## Product Architecture
+## Capability & Fallback Matrix (No Dead-Ends)
+
+Every task classifies missing tools honestly (`A–E`) and automatically switches to safe working alternatives:
+
+| Scenario / Tool Availability | What Still Works Immediately | Honest Boundary / Fallback |
+|---|---|---|
+| **Offline / No Playwright MCP / No Login** | Natural-language tasks, `audit`, `route`, `verify`, `/demo`, `/quick-tailor`, `/tailor-cv`, LinkedIn `DRAFT_ONLY` audits from pasted text/PDF/screenshots, JD comparison, interview prep, offer/NDA audits, local JSON tracking, `dashboard` | Live browser submission and live LinkedIn clicks are disabled; delivers ready-to-paste answers & printable deliverables (`HTML` / `.doc` / `.txt`) |
+| **Playwright MCP Connected (Browser Ready)** | All offline features **plus** live board discovery, automated Playwright PDF export, pre-filled ATS forms + Live DOM Read-Back, and post-save LinkedIn verification | Stops immediately on any CAPTCHA, 2FA, or rate limit (`24h` cooldown); never auto-submits without fresh `APPROVE` |
+| **Scanned PDF / Fake `.docx` Input** | Built-in CLI reads real `.docx` (ZIP XML), `.html`, `.doc`, `.md`, `.txt`; detects disguised HTML `.docx` & zero-text PDFs cleanly | Never guesses unreadable image text—asks for a text `.docx`/`.md` export or pasted text |
+| **No Notion MCP / `NOTION_TOKEN`** | Primary JSON ledger under `logs/` + HTML Kanban (`dashboard`) + Markdown/CSV/JSON exports | Skips Notion sync cleanly without errors |
+
+---
+
+## Repository Layout (Developer Map)
 
 ```text
-                     JOB HUNTER OS
-                           |
-          +----------------+----------------+
-          |                |                |
-       Skills             CLI          Integrations
-          |                |                |
-     48 Markdown     Node.js (0 deps)  AI IDEs / Optional MCP
-     (Progressive    audit / proof /   Cursor, Claude Code,
-      Disclosure)    eval / pre-submit Antigravity, Codex, etc.
-          |
-     CV + Job Description
-          |
-     Human Fact Confirmation & Verification
-          |
-     ATS Keyword Comparison + Evidence Map + True Gaps
-          |
-     Human Review (HTML / TXT / Optional PDF)
-          |
-     [Optional Browser Prep] Live DOM Read-Back Table
-          |
-     Explicit Job-Specific Human APPROVE (dry_run: true default)
+job-hunter-os/
+├── AGENTS.md                 # Canonical rules, NL contract, Capability Matrix (A–E), 10 Guardrails
+├── bin/cli.mjs               # Zero-dependency Node CLI (init, audit, route, verify, eval, doctor, sync-mcp...)
+├── skills/                   # 48 progressive-disclosure playbooks + REGISTRY.md + skills-manifest.json
+│   ├── 00–26*.md             # Core career, CV, ATS, LinkedIn, negotiation, contract, safety & eval skills
+│   ├── platforms/            # LinkedIn, Wellfound, Indeed/Glassdoor, remote, MENA & B2B boards
+│   └── ats/                  # Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR, Workday, Taleo
+├── .agents/skills/           # 13 agentskills.io SKILL.md discovery wrappers
+├── .agent/workflows/         # IDE slash workflow entrypoints (/demo, /quick-tailor, /setup, /daily-run...)
+├── commands/                 # Claude Code slash command wrappers
+├── adapters/                 # 25+ AI IDE/CLI guides + 6 LLM family tuning guides
+├── templates/                # ATS single-column resume HTML, cover letter HTML & local Kanban dashboard
+├── config/                   # guardrails.yaml (dry_run: true default) & invariants.txt
+├── context/                  # User profile, CV & answers (*.example committed; personal data gitignored)
+├── logs/                     # Local JSON ledgers, tailored CVs & SVG exports (gitignored)
+└── evals/                    # 20 deterministic safety assertions + 7-suite synthetic journey tests (eval --journeys)
 ```
-
-- **Markdown-first runtime:** Your existing AI IDE/model reads `AGENTS.md` and `skills/REGISTRY.md`, loading only the exact skill needed for the active step ([`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)).
-- **Zero-dependency CLI:** Handles cross-OS scaffolding, IDE skill syncing, deterministic pre-submit checks, offline CV hygiene audits, local dashboard generation, backups, and fixture evaluation (`bin/cli.mjs`).
 
 ---
 
-## Technical Proof & Evaluation Scope
+## Safety Architecture, Technical Proof & Evaluations
 
-Regenerate the proof card locally straight from `package.json`, `skills/skills-manifest.json`, and the deterministic fixture validator:
+Job Hunter OS clearly separates **code-enforced checks** from **LLM workflow instructions** (full details in [`docs/execution-safety.md`](docs/execution-safety.md)):
+
+| Control Layer | What It Enforces | Concrete Examples |
+|---|---|---|
+| **Deterministic CLI Enforcement (`bin/cli.mjs`)** | Executed locally by zero-dependency Node.js with strict exit codes | `audit` (SSRF, secret-token & fake-`.docx` checks), `verify` (placeholders, prose em-dashes, unverified metrics/banned skills), `pre-submit` (`<= 75`-word cap & Days 1–3 warm-up cap), `route`, `.git/hooks/pre-commit` PII blocker, `backup`, `unlock`, SSH signature check in `update`, and `eval` |
+| **Agent Workflow Requirements (`AGENTS.md`, `skills/*.md`)** | Structured rules followed by your AI model *(not an OS sandbox)* | Evidence mapping against confirmed profile facts, isolating missing skills in **True Gaps**, treating JDs as `UNTRUSTED_EXTERNAL_DATA`, upload-first ATS filling, Live DOM Read-Back, `DRAFT_ONLY` LinkedIn edits, and per-job `APPROVE` |
+
+Reproduce both test suites and regenerate the proof card locally:
 
 ```bash
-npx github:redasalem/job-hunter-os proof
+node ./bin/cli.mjs eval --baseline   # 20/20 deterministic safety, ATS & prompt-injection assertions
+node ./bin/cli.mjs eval --journeys   # 7/7 node:test suites (26 NL prompts, 5 fallback scenarios, Codex/Gemini/Copilot sync)
+node ./bin/cli.mjs proof             # Regenerates logs/exports/proof-card.svg from live manifest & evals
 ```
 
 ![Job Hunter OS Reproducible Proof Card](assets/proof-card.svg)
 
-[![CI Fixture Validator 20/20](https://img.shields.io/badge/CI_Fixture_Validator-20%2F20_Baseline-2ea44f)](evals/README.md)
-[![Optional Playwright MCP](https://img.shields.io/badge/Optional_Browser-Playwright_MCP-167d60)](mcp/README.md)
-[![agentskills.io Standard](https://img.shields.io/badge/Standard-agentskills.io-2ea44f)](.agents/skills/daily-run/SKILL.md)
-
-> **Honest Eval Scope:** `eval --baseline` and `proof` perform **deterministic fixture & schema validation** against immutable [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json)—they are **not** an independent live-model accuracy benchmark. External model runs are stored separately (e.g., [`evals/results/live-agent-eval-run.json`](evals/results/live-agent-eval-run.json)) and graded with `eval --file <json>`. Reproduce on any model with [`evals/PROMPT.md`](evals/PROMPT.md).
+> **Honest Eval Scope:** `eval --baseline`, `eval --journeys`, and `proof` perform **deterministic fixture, CLI, and integration verification** against [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json) and [`evals/journeys/journey-matrix.json`](evals/journeys/journey-matrix.json)—they are **not** a benchmark of external live-model accuracy. External model outputs are graded via `eval --file evals/results/live-agent-eval-run.json` (`20/20 PASS`). Live browser automation depends on target portal layouts and user authentication.
 
 <details>
-<summary><strong>Inspect all 20 deterministic safety & workflow assertions (EVAL-01..EVAL-20)</strong></summary>
+<summary><strong>Inspect 20 Fixture Assertions + 7 Synthetic Journey Test Suites + ATS Support Tiers</strong></summary>
 
-| Validator Group | Fixtures Checked | Verified Invariants | Status |
-|---|---|---|---|
-| **Anti-Hallucination & ATS Tailoring** (`EVAL-01, 04..07`) | [`candidate-profile.md`](evals/fixtures/candidate-profile.md), [`ground-truth.json`](evals/fixtures/ground-truth.json), [`01-strong-match.md`](evals/fixtures/jds/01-strong-match.md) | `0` invented metrics, `Kubernetes` isolated in `true_gaps`, `0` banned AI clichés/em-dashes, 1-page A4 budget (`<= 38` lines) | **5 / 5 PASS** |
-| **Prompt-Injection & Honeypot Defense** (`EVAL-03, 08, 17`) | [`02-prompt-injection-trap.md`](evals/fixtures/jds/02-prompt-injection-trap.md), [`01-strong-match.md`](evals/fixtures/jds/01-strong-match.md) | Quarantines hidden `SYSTEM OVERRIDE` (`0` leaked files, salary floor untampered), leaves `website_url_honeypot` blank, captures `PINEAPPLE` codeword | **3 / 3 PASS** |
-| **Ghost, Blacklist & Cross-Channel Dedup** (`EVAL-02, 09..12`) | [`03-ghost-expired-job.md`](evals/fixtures/jds/03-ghost-expired-job.md), [`04-blacklist-duplicate.md`](evals/fixtures/jds/04-blacklist-duplicate.md), [`05-stretch-mismatch.md`](evals/fixtures/jds/05-stretch-mismatch.md) | Skips `>90d` closed jobs, blocks `blacklisted_companies`/`blacklisted_domains`, deduplicates `acme-cloud::senior-backend-engineer` | **5 / 5 PASS** |
-| **ATS Form Mocks, DOM Read-Back & Anti-Ban** (`EVAL-13..16, 18..20`) | [`greenhouse-mock.html`](evals/fixtures/forms/greenhouse-mock.html), [`lever-mock.html`](evals/fixtures/forms/lever-mock.html), [`ashby-mock.html`](evals/fixtures/forms/ashby-mock.html) | Upload-First (`resume.pdf`), neutral EEO defaults, `gdpr_consent: true`, Live DOM Read-Back Table before `APPROVE`, and 24h circuit-breaker cooldown | **7 / 7 PASS** |
+| Suite | Scope Verified | Status |
+|---|---|---|
+| **Fixture Baseline (`EVAL-01..20`)** | Anti-hallucination, Kubernetes isolated in `true_gaps`, `0` AI slop/em-dashes, 1-page A4 fit, prompt-injection & `PINEAPPLE` attention checks, >90d ghost/blacklist/dedup, Greenhouse/Lever/Ashby Upload-First + honeypot + DOM Read-Back + 24h cooldown | **20 / 20 PASS** |
+| **Synthetic Task Journeys (`eval --journeys`)** | Test 1: 26 NL prompts routed without `/setup` · Test 2: Offline skill `requires_mcp: []` parity · Test 3: `.md/.txt/.html/.doc/.docx` import & scanned-PDF/fake-`.docx` rejection · Test 4: Original-preserving CV edit + iterative revision + `verify` · Test 5: LinkedIn `DRAFT_ONLY` + multi-source JD + `prepared` vs `applied` · Test 6: 5 fallback scenarios · Test 7: Codex TOML/`AGENTS.md`, Gemini CLI, Copilot/VS Code & custom rule preservation | **7 / 7 PASS** |
+| **ATS Tiers (`PLATFORMS.md`)** | **Fixture-Verified:** Greenhouse, Lever, Ashby · **Playbook-Ready:** Workday (manual fallback), SmartRecruiters, BreezyHR, LinkedIn, Wellfound · **Help Wanted:** Regional boards | Continuous CI (`Ubuntu`, `macOS`, `Windows`) |
 
 </details>
 
-### ATS & Platform Verification Matrix
+---
 
-| Support Tier | Platforms / ATS Engines | Verification Evidence |
-|---|---|---|
-| **Fixture-Verified** | **Greenhouse**, **Lever**, **Ashby** | Self-contained HTML form fixtures ([`evals/fixtures/forms/`](evals/fixtures/forms/greenhouse-mock.html)) covering file upload, honeypots, EEO/GDPR & DOM read-back |
-| **Playbook-Ready / Field-Testing** | **Workday** *(manual fallback)*, **SmartRecruiters**, **BreezyHR**, **LinkedIn Jobs**, **Wellfound** | Markdown playbooks with `<60d` `last_verified` checks in `doctor` and read-only LinkedIn extraction |
-| **Help Wanted** | **Regional Job Boards** (GulfTalent, Naukri, StepStone, TokyoDev, LATAM boards) | Open community playbooks — see [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`PLATFORMS.md`](PLATFORMS.md) |
+## CLI Reference (`bin/cli.mjs`)
+
+| Command | Purpose |
+|---|---|
+| `audit <cv.md\|txt\|docx\|html\|doc> [--share]` | Offline CV hygiene, word/page fit, metric/SSRF/token scan + shareable PII-safe SVG/MD card |
+| `route "<request>" [--json]` | Deterministic natural-language Task Intent Router showing matched skills, readiness & fallback |
+| `verify <dir\|file> [--facts <json\|md>]` | Post-write deliverable verifier (placeholders, fake `.docx`, prose em-dashes, unverified facts) |
+| `init [--global] [--force] [--ide <name>]` | Scaffold workspace or `~/.job-hunter-os`, install IDE skills/rules & sync MCP configs |
+| `sync-mcp [--global]` | Safely merge Playwright (and optional Notion) into `.mcp.json`, Cursor, Claude, Codex `config.toml`, Gemini `settings.json`, Copilot & `.vscode/mcp.json` |
+| `doctor [--global] [--strict]` | Verify Node version, 5 gates, 48-skill manifest, `<60d` playbooks, links, PII hook & MCP files |
+| `eval [--baseline \| --file <json> \| --journeys]` | Run the 20 fixture assertions, external run grading, or 7 `node:test` integration suites |
+| `pre-submit [--draft <file> \| --text <str>]` | Enforce `<= 75`-word outreach limit and daily / Days 1–3 warm-up caps against `logs/` |
+| `proof` / `status` / `dashboard [--no-open]` | Generate proof card SVG/MD, inspect funnel & warm-up caps, or open local Kanban viewer |
+| `bundle` / `login` / `unlock` / `backup` / `update` | Export single-file web-chat prompt, open persistent Chromium, clean stale locks, verify & snapshot JSON logs, or update with SSH commit signature check |
 
 ---
 
-## Integrations, Compatibility & Secondary Tools
+## Documentation Index & Contributing
 
-- **AI IDEs & CLI Harnesses (25+ documented):** Antigravity, Claude Code, Claude Desktop, Cursor, Windsurf / Devin Desktop, Codex CLI, Gemini CLI, OpenCode, Kilo Code, Cline, Roo Code, GitHub Copilot, JetBrains Junie / AI Assistant, AWS Kiro, Amazon Q, Trae, Zed, Goose, Amp, Aider, Continue, OpenHands, Warp, Augment, Crush, and Web Chat fallback. Full setup matrix and 6 model tuning guides in [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md).
-- **Secondary Capability — Local Application Tracking Dashboard:** Inspect your local `logs/applications-log.json` in a zero-server Kanban & channel-yield viewer (`job-hunter dashboard`). Preview the secondary UI with clearly labeled synthetic records at **[Application Tracking Dashboard Demo ↗](https://redasalem.github.io/job-hunter-os/demo-dashboard.html)**.
-- **Optional External MCP Plugins:** [`mcp/mcp.template.json`](mcp/mcp.template.json) and [`docs/OPTIONAL_MCP_PLUGINS.md`](docs/OPTIONAL_MCP_PLUGINS.md).
-
----
-
-## Full Skill Catalog & CLI Reference
-
-### Core Slash Commands
-
-| Command | Workflow | Purpose |
-|---|---|---|
-| `/demo` | [`.agent/workflows/demo.md`](.agent/workflows/demo.md) | Instant sandbox with 3 synthetic JDs + automatic Job #1 tailored preview |
-| `/quick-tailor` | [`.agent/workflows/quick-tailor.md`](.agent/workflows/quick-tailor.md) | Fact-checked HTML/TXT CV tailoring from 1 CV + 1 JD (no browser login) |
-| `/setup` | [`.agent/workflows/setup.md`](.agent/workflows/setup.md) | Optional full Career OS onboarding (5 readiness gates + live URL checks) |
-| `/daily-run` | [`.agent/workflows/daily-run.md`](.agent/workflows/daily-run.md) | Multi-platform discovery, triage, tailoring & `APPROVE`-gated ATS prep |
-| `/apply-url URL` | [`.agent/workflows/apply-url.md`](.agent/workflows/apply-url.md) | Score, tailor, and safely gate a single HTTPS job URL |
-| `/tailor-cv URL` | [`.agent/workflows/tailor-cv.md`](.agent/workflows/tailor-cv.md) | Tailored CV + ATS heatmap + `interview-dossier.md` (never submits) |
-| `/linkedin-growth` | [`.agent/workflows/linkedin-growth.md`](.agent/workflows/linkedin-growth.md) | Read-only `0–100` Recruiter-SEO audit & copy drafts (`DRAFT_ONLY`, zero browser mutations) |
-| `/weekly-report` | [`.agent/workflows/weekly-report.md`](.agent/workflows/weekly-report.md) | Local funnel, rejection pattern, and score calibration insights |
-
-### CLI Commands (`bin/cli.mjs`)
-
-`audit <cv.md|txt> [--share]` · `init [--global] [--force] [--ide <name>]` · `proof` · `eval [--baseline | --file <json>]` · `pre-submit [--draft <f> | --text <t>]` · `doctor [--strict]` · `status` · `dashboard [--no-open]` · `bundle` · `login` · `unlock` · `backup` · `sync-mcp` · `update`
-
-### Documentation Index
-
-- [**`AGENTS.md`**](AGENTS.md) & [**`skills/REGISTRY.md`**](skills/REGISTRY.md) — Canonical rules, progressive disclosure index (**48 registered skills**), and 10 guardrails
-- [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) & [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) — Complete catalog (`30` core, `4` meta, `7` platform, `7` ATS) and 6-phase pipeline
-- [**`docs/execution-safety.md`**](docs/execution-safety.md) & [**`SECURITY.md`**](SECURITY.md) — Deterministic CLI vs. agent workflow controls, privacy boundaries, and signing policy
-- [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) — Authentic community outcomes ledger (separated from maintainer origin) & release history
-
----
-
-## Contributing
-
-Contributions are welcome across Markdown playbooks, synthetic ATS fixtures, IDE integrations, and zero-dependency CLI improvements. Three high-impact ways to start (full details, required evidence, and acceptance criteria in [`CONTRIBUTING.md`](CONTRIBUTING.md)):
-
-1. **Add or improve an ATS synthetic fixture** (`evals/fixtures/forms/` + `evals/RUBRIC.md`).
-2. **Verify or improve a regional job-board playbook** (`skills/platforms/` + `PLATFORMS.md`).
-3. **Validate an AI IDE integration** (`docs/COMPATIBILITY.md` + IDE entrypoint files).
-
-- Report broken ATS/board layouts via [**Playbook Broke**](.github/ISSUE_TEMPLATE/playbook-broke.md).
-- Share an authentic job search outcome (`interview` / `contract` / `offer`, anonymous welcome) via [**Share a Job Search Outcome**](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml).
+- [**`AGENTS.md`**](AGENTS.md) & [**`skills/REGISTRY.md`**](skills/REGISTRY.md) — Canonical agent rules, NL Task Router (**48 skills**), and 10 guardrails
+- [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) & [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) — 6-phase pipeline and complete `48`-skill index (`30` core, `4` meta, `7` platform, `7` ATS)
+- [**`docs/COMPATIBILITY.md`**](docs/COMPATIBILITY.md) & [**`docs/chat-commands.md`**](docs/chat-commands.md) — 25+ AI IDE setups, 6 LLM tuning guides, and command cheat sheet
+- [**`docs/execution-safety.md`**](docs/execution-safety.md), [**`SECURITY.md`**](SECURITY.md) & [**`CHANGELOG.md`**](CHANGELOG.md) — Safety boundaries, vulnerability disclosure, and release notes
+- [**`CONTRIBUTING.md`**](CONTRIBUTING.md) & [**`HIRED.md`**](HIRED.md) — Add ATS fixtures, regional board playbooks, IDE adapters, or share outcomes via [Share Outcome Issue](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml)
 
 ---
 
@@ -223,4 +216,4 @@ Contributions are welcome across Markdown playbooks, synthetic ATS fixtures, IDE
 
 Inspired by open-source patterns from **[`career-ops-hq/career-ops`](https://github.com/career-ops-hq/career-ops)**, **[`obra/superpowers`](https://github.com/obra/superpowers)**, and **[`anthropics/skills`](https://github.com/anthropics/skills)** / **[`agentskills.io`](https://agentskills.io/)**.
 
-Licensed under the [MIT License](LICENSE) — Copyright (c) 2026 Reda Salem (`@redasalem`). See [`NOTICE`](NOTICE) and [`AUTHORS.md`](AUTHORS.md).
+Licensed under the [MIT License](LICENSE) — Copyright (c) 2026 Reda Salem (`@redasalem`). See [`NOTICE`](NOTICE), [`AUTHORS.md`](AUTHORS.md), and [`PROVENANCE.json`](PROVENANCE.json).
