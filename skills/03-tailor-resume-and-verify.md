@@ -32,6 +32,7 @@ verification:
 Use for job-specific tailoring (`/quick-tailor`, `/tailor-cv`, Tier A pre-generation) and standalone CV improvements or format conversions (never submits applications). Works directly from `context/` or verified session facts without browser login.
 
 - **Load when:** `/tailor-cv <url>`; `/quick-tailor`; Tier A pre-generation; eligible job before form upload; revise tailored CV or convert CV to PDF/Word.
+- **Tailoring Mode Choice:** Offer the user a choice between **(A) Local AI Tailoring** (this playbook: `HTML`/`TXT`/Word-compatible `.doc` + Print-to-PDF) or **(B) External Web Tailoring** via `https://www.resume-tailor-ai.tech/` (when `tailoring_tool_url` is set in `context/preferences.yaml` or requested by the user).
 - **Preconditions (stop if any is false):**
   - verified candidate facts loaded from `context/` OR confirmed directly in the active session (`skills/01-resume-ingestion.md`)
   - full expanded job description captured (or standalone CV edit/conversion requested)
