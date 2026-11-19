@@ -79,3 +79,9 @@ Even when all 5 gates are `✅`, NEVER jump straight into applying:
 - [ ] `context/profile.md`, `context/cv.md`, `context/preferences.yaml`, `context/form-answers.yaml`, and `context/targets.yaml` exist with zero placeholder strings
 - [ ] `context/form-answers.yaml` has `owner_verified: true` and all core skill years confirmed
 - [ ] owner gave fresh explicit launch confirmation after seeing the Mission Briefing
+
+### Chrome Remote Debugging Recovery
+If browser automation fails with `DevToolsActivePort` not found:
+1. Ask the user to ensure Google Chrome is open and signed in to LinkedIn.
+2. Guide them to open `chrome://inspect/#remote-debugging` in Chrome and enable **Remote Debugging**.
+3. Immediately offer the no-browser fallback: pasting job URLs or JD text directly in chat for full scoring and CV tailoring.
