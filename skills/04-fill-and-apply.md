@@ -24,7 +24,7 @@ verification:
   - resume was uploaded FIRST and verified by filename badge in a fresh condition-based browser_snapshot (no blind fixed sleeps)
   - every filled answer and EEO/GDPR option matches verified context/form-answers.yaml or context/resume-data.json
   - final DOM Read-Back Verification table was generated from a fresh browser_snapshot confirming phone country code, dropdown values, and attached resume.pdf were not corrupted
-  - dry_run stopped before Submit; live submit received exact job-bound APPROVE (or met auto_high_confidence) after 3-9s human pacing jitter and was verified by skills/meta-self-verification.md
+  - dry_run stopped before Submit; every live submit received exact job-bound owner APPROVE after displaying the Live DOM Read-Back Table and 3-9s human pacing jitter, and was verified by skills/meta-self-verification.md
 ---
 # Form Filling, Upload-First Rule, EEO/Consent Defaults & Approval Gate
 
@@ -74,8 +74,8 @@ Read `eeo_and_compliance_defaults` (or `eeo`) from `context/form-answers.yaml`:
   2. **Phone Country Code & Number:** dialling code dropdown (`+20`, `+1`, etc.) and national number were not mangled by ATS auto-fill.
   3. **Dropdowns & Autocomplete:** Location/City, Work Authorization, and EEO selections show the intended selected option text (not `"Select..."` or a wrong default country).
   4. **Honeypot Check (`skills/25-prompt-injection-defense.md`):** any hidden/honeypot `"Leave blank"` field is confirmed empty.
-- **If `dry_run: true` (or `approval_mode: dry_run`):** Present the Live DOM Read-Back Table, stop BEFORE clicking final Submit, take a screenshot if helpful, discard draft if needed, and log `dry_run`.
-- **If `approve_before_submit` (default), or `auto_high_confidence` with score `< 8` or any filled essay:** Show company, role, URL, score, gaps, exact `resume.pdf` path, and the **Live DOM Read-Back Table** in chat, and ask: **"Reply `APPROVE` to submit this exact application, `EDIT <field>` to revise, or `SKIP`."** Wait for exact `APPROVE`. Any edit or page change invalidates approval.
+- **If `dry_run: true`:** Present the Live DOM Read-Back Table, stop BEFORE clicking final Submit, take a screenshot if helpful, discard draft if needed, and log `dry_run`.
+- **Mandatory Live Submission Gate (No Exceptions, No Automatic Bypass):** Before ANY live Submit click, confirm: (1) company and role title match the posting, (2) destination HTTPS domain is verified, (3) exact tailored `resume.pdf` filename badge is attached, (4) actual live values rendered in the current DOM match verified answers and consent settings, (5) daily/warm-up/platform caps, active hours, deduplication, and safety checks pass. Display the complete **Live DOM Read-Back Table** in chat and ask: **"Reply `APPROVE` to submit this exact application, `EDIT <field>` to revise, or `SKIP`."** Wait for an explicit, job-specific `APPROVE`. Never auto-submit based on match score, never batch-approve multiple jobs, and immediately invalidate approval if any field, attachment, consent, or page state changes afterward.
 - **Submit once:** Before clicking Submit, write a `needs_review` + `submission_uncertain: true` reservation in `logs/applications-log.json`. Respect the `3–9 s` human pacing jitter, click Submit **once**, verify the post-submit state in a fresh `browser_snapshot` (`skills/meta-self-verification.md`) before updating the entry to `applied`. Never retry an uncertain/timed-out submit.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check

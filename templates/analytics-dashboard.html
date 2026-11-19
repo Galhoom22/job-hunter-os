@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Job Hunter OS — Local Pipeline & Analytics Dashboard</title>
+  <title>Job Hunter OS — Local Application Tracking Dashboard</title>
   <style>
     :root {
-      --bg: #0b0f17;
-      --panel: #131b2e;
-      --panel-alt: #19233c;
-      --border: #263457;
-      --text: #e6edf7;
+      --bg: #070b14;
+      --panel: #0f172a;
+      --panel-alt: #162036;
+      --border: #24324d;
+      --text: #f1f5f9;
       --muted: #94a3b8;
       --accent: #10b981;
-      --accent-blue: #3b82f6;
+      --accent-soft: rgba(16, 185, 129, 0.14);
+      --accent-blue: #38bdf8;
       --accent-amber: #f59e0b;
-      --accent-purple: #8b5cf6;
-      --accent-red: #ef4444;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --accent-red: #f87171;
+      --red-soft: rgba(248, 113, 113, 0.14);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -24,20 +26,60 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
-      padding: 24px;
+      padding: 24px 20px 40px;
     }
-    header {
+    .banner {
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.84rem;
+      margin-bottom: 18px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
+    }
+    .banner-sample {
+      background: var(--amber-soft);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fde68a;
+    }
+    .banner-local {
+      background: var(--accent-soft);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #a7f3d0;
+    }
+    .banner-error {
+      background: var(--red-soft);
+      border: 1px solid rgba(248, 113, 113, 0.45);
+      color: #fecaca;
+      display: none;
+    }
+    .banner-error.visible { display: flex; }
+    .mode-pill {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .mode-sample { background: rgba(245, 158, 11, 0.25); color: #fef3c7; border: 1px solid rgba(245, 158, 11, 0.5); }
+    .mode-local { background: rgba(16, 185, 129, 0.22); color: #d1fae5; border: 1px solid rgba(16, 185, 129, 0.45); }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
       gap: 16px;
       padding-bottom: 20px;
       border-bottom: 1px solid var(--border);
       margin-bottom: 24px;
     }
-    .brand h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
-    .brand p { color: var(--muted); font-size: 0.875rem; }
+    .brand h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .brand p { color: var(--muted); font-size: 0.86rem; }
     .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     .btn {
       background: var(--panel-alt);
@@ -50,9 +92,9 @@
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
     }
-    .btn:hover { background: #223052; border-color: var(--accent-blue); }
-    .btn-primary { background: #0f5132; border-color: var(--accent); color: #d1fae5; }
-    .btn-primary:hover { background: #146c43; }
+    .btn:hover { background: #1e2d4b; border-color: var(--accent-blue); }
+    .btn-primary { background: #065f46; border-color: var(--accent); color: #ecfdf5; }
+    .btn-primary:hover { background: #047857; }
     input[type="search"] {
       background: var(--panel);
       color: var(--text);
@@ -74,7 +116,7 @@
       border-radius: 12px;
       padding: 18px 20px;
     }
-    .kpi-label { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi-label { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
     .kpi-value { font-size: 2rem; font-weight: 700; margin: 6px 0 4px; }
     .kpi-sub { color: var(--muted); font-size: 0.78rem; }
     .section-title {
@@ -82,8 +124,10 @@
       font-weight: 700;
       margin-bottom: 14px;
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
     }
     .kanban {
       display: grid;
@@ -98,7 +142,7 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 14px;
-      min-height: 320px;
+      min-height: 280px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -130,8 +174,19 @@
       flex-direction: column;
       gap: 6px;
     }
+    .card-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+    .sample-tag {
+      font-size: 0.66rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--amber-soft);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
     .card-title { font-weight: 700; color: #fff; font-size: 0.88rem; }
-    .card-company { color: #93c5fd; font-weight: 600; }
+    .card-company { color: #7dd3fc; font-weight: 600; }
     .card-meta {
       display: flex;
       justify-content: space-between;
@@ -144,8 +199,8 @@
       border-radius: 6px;
       font-weight: 700;
       font-size: 0.72rem;
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
+      background: var(--accent-soft);
+      color: #6ee7b7;
       border: 1px solid rgba(16, 185, 129, 0.35);
     }
     .card-notes {
@@ -155,7 +210,7 @@
       padding-top: 6px;
       word-break: break-word;
     }
-    .card a { color: #60a5fa; text-decoration: none; font-size: 0.75rem; }
+    .card a { color: var(--accent-blue); text-decoration: none; font-size: 0.75rem; }
     .card a:hover { text-decoration: underline; }
     .yield-panel {
       background: var(--panel);
@@ -164,7 +219,8 @@
       padding: 20px;
       margin-bottom: 24px;
     }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 560px; }
     th, td {
       text-align: left;
       padding: 10px 12px;
@@ -182,21 +238,41 @@
     .bar-fill { height: 100%; background: var(--accent); }
     .empty-msg { color: var(--muted); font-size: 0.8rem; text-align: center; margin-top: 24px; }
     footer { color: var(--muted); font-size: 0.78rem; text-align: center; margin-top: 20px; }
+    @media (max-width: 768px) {
+      body { padding: 16px 12px 32px; }
+      input[type="search"] { min-width: 0; width: 100%; }
+      .controls { width: 100%; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .brand p, .banner { overflow-wrap: anywhere; }
+    }
   </style>
 </head>
 <body>
+  <div id="data-banner" class="banner banner-local" role="status">
+    <div id="data-banner-text">
+      <strong>LOCAL USER RECORDS MODE:</strong> Displaying records from your local <code>logs/applications-log.json</code> (zero uploads, zero telemetry).
+    </div>
+    <span id="mode-pill" class="mode-pill mode-local">Local User Data</span>
+  </div>
+
+  <div id="error-banner" class="banner banner-error" role="alert">
+    <span id="error-banner-text"></span>
+    <button type="button" class="btn" id="dismiss-error-btn">Dismiss</button>
+  </div>
+
   <header>
     <div class="brand">
-      <h1>Job Hunter OS — Local Pipeline & Analytics</h1>
+      <h1>Job Hunter OS — Local Pipeline &amp; Analytics</h1>
       <p>100% Local Zero-Server Dashboard · Source: <code id="source-label">logs/applications-log.json</code></p>
     </div>
     <div class="controls">
-      <input type="search" id="search-input" placeholder="Filter company, role, platform..." />
+      <input type="search" id="search-input" aria-label="Filter applications" placeholder="Filter company, role, platform..." />
       <label class="btn">
-        Load JSON File
+        Load Local JSON File
         <input type="file" id="file-input" accept=".json" style="display:none" />
       </label>
-      <button class="btn btn-primary" id="demo-btn" type="button">Load Demo Sample Data</button>
+      <button class="btn btn-primary" id="demo-btn" type="button">Load Synthetic Sample</button>
+      <button class="btn" id="reset-btn" type="button">Reset to Local Logs</button>
     </div>
   </header>
 
@@ -214,12 +290,12 @@
     <div class="kpi-card">
       <div class="kpi-label">Avg Match Score</div>
       <div class="kpi-value" id="kpi-score">0.0</div>
-      <div class="kpi-sub" id="kpi-score-sub">Scale 1–10 across tracked applications</div>
+      <div class="kpi-sub" id="kpi-score-sub">Scale 1–10 across displayed records</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Active Pipeline</div>
       <div class="kpi-value" id="kpi-active">0</div>
-      <div class="kpi-sub" id="kpi-active-sub">In-flight (<14d), Interviewing, Assessment & Offer</div>
+      <div class="kpi-sub" id="kpi-active-sub">In-flight (&lt;14d), Interviewing, Assessment &amp; Offer</div>
     </div>
   </section>
 
@@ -231,21 +307,23 @@
 
   <section class="yield-panel">
     <div class="section-title">
-      <span>Platform & ATS Channel Yield Breakdown</span>
+      <span>Platform &amp; ATS Channel Yield Breakdown</span>
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Platform / Channel</th>
-          <th>Submitted</th>
-          <th>Callbacks</th>
-          <th>Callback Rate</th>
-          <th>Avg Match Score</th>
-          <th>Conversion Bar</th>
-        </tr>
-      </thead>
-      <tbody id="yield-tbody"></tbody>
-    </table>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Platform / Channel</th>
+            <th>Submitted</th>
+            <th>Callbacks</th>
+            <th>Callback Rate</th>
+            <th>Avg Match Score</th>
+            <th>Conversion Bar</th>
+          </tr>
+        </thead>
+        <tbody id="yield-tbody"></tbody>
+      </table>
+    </div>
   </section>
 
   <footer>
@@ -253,64 +331,64 @@
   </footer>
 
   <script>
-    // Injected by `npx job-hunter-os dashboard`
+    // Injected by `npx github:redasalem/job-hunter-os dashboard`
     window.__JOB_HUNTER_LOGS__ = /*__APPLICATIONS_DATA__*/[];
 
-    const DEMO_DATA = [
+    const SYNTHETIC_DEMO_DATA = [
       {
-        job_id: "linkedin-40991823",
-        company: "CloudScale Payments",
+        job_id: "sample-linkedin-40991823",
+        company: "CloudScale Payments (Synthetic)",
         role: "Senior Full-Stack AI Engineer",
         platform: "linkedin",
         status: "interview",
         match_score: 9.0,
         applied_at: new Date(Date.now() - 4 * 86400000).toISOString(),
-        url: "https://www.linkedin.com/jobs/view/40991823",
-        notes: "Recruiter screen booked; tailored TypeScript + Playwright MCP bullets."
+        url: "https://example.invalid/jobs/40991823",
+        notes: "[Synthetic sample] Recruiter screen booked; tailored TypeScript + Playwright bullets."
       },
       {
-        job_id: "greenhouse-stripe-8812",
-        company: "FinCore Infrastructure",
+        job_id: "sample-greenhouse-8812",
+        company: "FinCore Infrastructure (Synthetic)",
         role: "Staff Backend Engineer (Node.js)",
         platform: "greenhouse",
         status: "assessment",
         match_score: 8.6,
         applied_at: new Date(Date.now() - 6 * 86400000).toISOString(),
-        url: "https://boards.greenhouse.io/fincore/jobs/8812",
-        notes: "System design architecture review scheduled for Thursday."
+        url: "https://example.invalid/jobs/8812",
+        notes: "[Synthetic sample] System design review scheduled."
       },
       {
-        job_id: "wellfound-ai-9921",
-        company: "Agentic Labs",
+        job_id: "sample-wellfound-9921",
+        company: "Agentic Labs (Synthetic)",
         role: "Founding AI Systems Engineer",
         platform: "wellfound",
         status: "offer",
         match_score: 9.4,
         applied_at: new Date(Date.now() - 12 * 86400000).toISOString(),
-        url: "https://wellfound.com/jobs/9921",
-        notes: "Written offer received ($165k + equity); running skills/09-offer-negotiator.md."
+        url: "https://example.invalid/jobs/9921",
+        notes: "[Synthetic sample] Fictional offer record for UI demonstration only (not a real outcome)."
       },
       {
-        job_id: "wuzzuf-cairo-7710",
-        company: "NilePay Tech",
+        job_id: "sample-wuzzuf-7710",
+        company: "NilePay Tech (Synthetic)",
         role: "Senior Frontend Engineer",
         platform: "wuzzuf",
         status: "applied",
         match_score: 8.1,
         applied_at: new Date(Date.now() - 3 * 86400000).toISOString(),
-        url: "https://wuzzuf.net/jobs/p/7710",
-        notes: "Confirmation snapshot verified; follow-up radar scheduled at Day 7."
+        url: "https://example.invalid/jobs/7710",
+        notes: "[Synthetic sample] Confirmation snapshot recorded; Day 7 follow-up reminder."
       },
       {
-        job_id: "lever-orbit-3319",
-        company: "OrbitMesh Cloud",
+        job_id: "sample-lever-3319",
+        company: "OrbitMesh Cloud (Synthetic)",
         role: "Platform Engineer",
         platform: "lever",
         status: "rejected",
         match_score: 7.2,
         applied_at: new Date(Date.now() - 18 * 86400000).toISOString(),
-        url: "https://jobs.lever.co/orbitmesh/3319",
-        notes: "Closed requisition; Kubernetes multi-region gap noted."
+        url: "https://example.invalid/jobs/3319",
+        notes: "[Synthetic sample] Closed requisition; Kubernetes multi-region gap noted."
       }
     ];
 
@@ -322,7 +400,39 @@
       { key: "rejected", title: "Rejected / Ghosted" }
     ];
 
-    let activeRecords = Array.isArray(window.__JOB_HUNTER_LOGS__) ? window.__JOB_HUNTER_LOGS__ : [];
+    const initialLocal = Array.isArray(window.__JOB_HUNTER_LOGS__) ? window.__JOB_HUNTER_LOGS__ : [];
+    let activeRecords = initialLocal;
+    let dataMode = "local";
+    let sourceLabel = `logs/applications-log.json (${initialLocal.length} record(s))`;
+
+    function showError(msg) {
+      const box = document.getElementById("error-banner");
+      document.getElementById("error-banner-text").textContent = msg;
+      box.classList.add("visible");
+    }
+
+    function clearError() {
+      document.getElementById("error-banner").classList.remove("visible");
+    }
+
+    function updateSourceBanner() {
+      const banner = document.getElementById("data-banner");
+      const text = document.getElementById("data-banner-text");
+      const pill = document.getElementById("mode-pill");
+      document.getElementById("source-label").textContent = sourceLabel;
+
+      if (dataMode === "sample") {
+        banner.className = "banner banner-sample";
+        text.innerHTML = '<strong>SYNTHETIC SAMPLE DATA ACTIVE:</strong> All companies, interviews, offers, and metrics below are fictional sample records for UI preview only — <strong>not</strong> real user or project outcomes. Click "Reset to Local Logs" or load your own JSON file.';
+        pill.className = "mode-pill mode-sample";
+        pill.textContent = "Synthetic Sample";
+      } else {
+        banner.className = "banner banner-local";
+        text.innerHTML = '<strong>LOCAL USER RECORDS MODE:</strong> Displaying records loaded strictly on your machine from local JSON (zero uploads, zero telemetry).';
+        pill.className = "mode-pill mode-local";
+        pill.textContent = "Local User Data";
+      }
+    }
 
     function classifyBucket(rec) {
       const s = String(rec.status || "").toLowerCase();
@@ -356,7 +466,16 @@
       return d.innerHTML;
     }
 
+    function safeHref(url) {
+      try {
+        const parsed = new URL(String(url));
+        if (parsed.protocol === "https:" || parsed.protocol === "http:") return parsed.href;
+      } catch { /* ignore */ }
+      return null;
+    }
+
     function render(records, filterText = "") {
+      updateSourceBanner();
       const q = filterText.trim().toLowerCase();
       const filtered = records.filter(r => {
         if (!q) return true;
@@ -400,9 +519,16 @@
               const role = item.role || item.title || "Untitled Role";
               const score = item.match_score ?? item.score ?? "—";
               const dateStr = (item.applied_at || item.date || "").slice(0, 10) || "n/a";
-              const link = item.url ? `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Open posting ↗</a>` : "";
+              const href = item.url ? safeHref(item.url) : null;
+              const link = href && dataMode === "local"
+                ? `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">Open posting ↗</a>`
+                : "";
+              const samplePill = dataMode === "sample" ? `<span class="sample-tag">Sample</span>` : "";
               return `<div class="card">
-                <div class="card-company">${esc(item.company || "Unknown Company")}</div>
+                <div class="card-top">
+                  <div class="card-company">${esc(item.company || "Unknown Company")}</div>
+                  ${samplePill}
+                </div>
                 <div class="card-title">${esc(role)}</div>
                 <div class="card-meta">
                   <span>${esc(item.platform || "direct")} · ${esc(dateStr)}</span>
@@ -422,7 +548,6 @@
         </div>`;
       }).join("");
 
-      // Platform yield breakdown
       const byPlat = new Map();
       for (const r of submitted) {
         const key = normalizePlatform(r.platform);
@@ -437,7 +562,7 @@
 
       const tbody = document.getElementById("yield-tbody");
       if (!byPlat.size) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;">No submitted applications yet. Click "Load Demo Sample Data" above to preview.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;">No submitted applications yet in local logs. Click "Load Synthetic Sample" above to preview the layout, or load a JSON file.</td></tr>`;
       } else {
         tbody.innerHTML = [...byPlat.entries()]
           .sort((a, b) => b[1].submitted - a[1].submitted)
@@ -456,13 +581,25 @@
       }
     }
 
+    document.getElementById("dismiss-error-btn").addEventListener("click", clearError);
+
     document.getElementById("search-input").addEventListener("input", e => {
       render(activeRecords, e.target.value);
     });
 
     document.getElementById("demo-btn").addEventListener("click", () => {
-      activeRecords = DEMO_DATA;
-      document.getElementById("source-label").textContent = "Demo Sample Data (5 synthetic records)";
+      clearError();
+      activeRecords = SYNTHETIC_DEMO_DATA;
+      dataMode = "sample";
+      sourceLabel = `Synthetic Sample Data (${SYNTHETIC_DEMO_DATA.length} fictional records)`;
+      render(activeRecords, document.getElementById("search-input").value);
+    });
+
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      clearError();
+      activeRecords = initialLocal;
+      dataMode = "local";
+      sourceLabel = `logs/applications-log.json (${initialLocal.length} record(s))`;
       render(activeRecords, document.getElementById("search-input").value);
     });
 
@@ -472,15 +609,22 @@
       const reader = new FileReader();
       reader.onload = () => {
         try {
-          const parsed = JSON.parse(String(reader.result || "[]"));
-          activeRecords = Array.isArray(parsed) ? parsed : (parsed.applications || []);
-          document.getElementById("source-label").textContent = file.name;
+          const parsed = JSON.parse(String(reader.result || ""));
+          const records = Array.isArray(parsed) ? parsed : (Array.isArray(parsed?.applications) ? parsed.applications : null);
+          if (!records) {
+            throw new Error("Expected a JSON array or an object with an 'applications' array.");
+          }
+          clearError();
+          activeRecords = records;
+          dataMode = "local";
+          sourceLabel = `${file.name} (${records.length} local record(s))`;
           render(activeRecords, document.getElementById("search-input").value);
         } catch (err) {
-          alert("Invalid JSON file: " + err.message);
+          showError(`Could not parse "${file.name}": ${err.message}`);
         }
       };
       reader.readAsText(file);
+      e.target.value = "";
     });
 
     render(activeRecords);

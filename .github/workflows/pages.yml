@@ -1,4 +1,4 @@
-name: Deploy Live Demo Dashboard to GitHub Pages
+name: Deploy Static Demo Pages to GitHub Pages
 
 on:
   push:
@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   deploy-pages:
-    name: Publish Demo Analytics Dashboard
+    name: Publish CV Tailoring & Tracker Demos
     runs-on: ubuntu-latest
     environment:
       name: github-pages

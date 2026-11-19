@@ -43,5 +43,5 @@ else
   [ -e "${HOME_DIR}/logs/skipped-jobs.json" ] || printf '[]\n' > "${HOME_DIR}/logs/skipped-jobs.json"
 
   echo "[job-hunter-os] Global skills installed to ~/.agents/skills, ~/.claude/skills, and ~/.gemini/antigravity/global_workflows."
-  echo "[job-hunter-os] Paste mcp/mcp.template.json into your IDE MCP settings, then open your IDE and type /setup."
+  echo "[job-hunter-os] Start in your AI IDE with /demo (zero personal data) or /quick-tailor (1 CV + 1 JD, no browser login). For full multi-platform automation later, connect mcp/mcp.template.json and run /setup."
 fi

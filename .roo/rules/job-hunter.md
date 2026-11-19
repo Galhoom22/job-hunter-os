@@ -2,7 +2,7 @@
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first; only load a full skill body when its trigger matches the current phase of work.
 
-This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**:
+This is a **Markdown-first career operations repository with a zero-dependency Node.js CLI (`bin/cli.mjs`)** and optional Playwright/Notion MCP:
 - Setup & CV ingestion -> `skills/00-interrogate-and-onboard.md`, `skills/01-resume-ingestion.md`
 - Daily run / apply URL -> `skills/00-daily-run.md`
 - Tailoring & fact-check -> `skills/03-tailor-resume-and-verify.md`

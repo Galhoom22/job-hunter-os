@@ -181,7 +181,7 @@
         "resume was uploaded FIRST and verified by filename in a fresh snapshot after waiting 4 seconds",
         "every filled answer and EEO/GDPR option matches verified context/form-answers.yaml or context/resume-data.json",
         "final DOM Read-Back Verification table was generated from a fresh browser_snapshot confirming phone country code, dropdown values, and attached resume.pdf were not corrupted",
-        "dry_run stopped before Submit; live submit received exact job-bound APPROVE (or met auto_high_confidence) and was verified by skills/meta-self-verification.md"
+        "dry_run stopped before Submit; every live submit received exact job-bound owner APPROVE after the Live DOM Read-Back Table and was verified by skills/meta-self-verification.md"
       ],
       "path": "skills/04-fill-and-apply.md"
     },

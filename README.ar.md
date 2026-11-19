@@ -1,103 +1,150 @@
 <div dir="rtl" align="right">
 
-# job-hunter-os
+# Job Hunter OS
 
-**نظام تشغيل مهني بالذكاء الاصطناعي. فصّل كل سيرة ذاتية. تحقّق من كل حقيقة. ابقَ أنت صاحب القرار.**
+### تفصيل سيرة ذاتية موثّق بالحقائق لوكيل الذكاء الاصطناعي الذي تستخدمه بالفعل.
 
-**يعمل مباشرة داخل محرّرك الذكي الحالي (`Claude Code`، `Cursor`، `Windsurf`، `Cline`، `Gemini CLI`، `Codex`) باستخدام اشتراكك الفعّال — بدون أي مفاتيح API خارجية.**
+أعطِ وكيل البرمجة الذكي الذي تستخدمه حاليًا (`Cursor`، `Claude Code`، `Antigravity`، `Windsurf`، `Cline`، `Gemini CLI`، `Codex`، `OpenCode`) سيرة ذاتية واحدة ووصف وظيفة واحدًا. احصل على سيرة ذاتية مُفصّلة وموثّقة بالحقائق بصيغتي `HTML/TXT`، وخريطة أدلة شفافة، ومقارنة كلمات `ATS`، وقائمة صريحة بالمهارات الناقصة (`True Gaps`).
 
-إطار عمل مفتوح المصدر ومحلي بالكامل (`Local-First`) مبني على مبدأ واحد: **يمكن للذكاء الاصطناعي تجهيز طلبات توظيفك، لكنه لا يختلق خبرتك أبدًا ولا يسلبك القرار.** يعتمد على 3 محركات أساسية (**تفصيل CV موثّق بالـ diff**، **تدقيق Recruiter-SEO**، **وبوابة `APPROVE` البشرية**) مع مكتبة معيارية من 48 مهارة Markdown تُحمَّل عند الحاجة فقط، وأداة Node.js CLI بدون أي تبعيات (`dependencies: {}`).
+بدون خبرات مختلقة. بدون إرسال أعمى. بدون مفاتيح `API` خارجية. أنت دائمًا صاحب القرار.
 
-**[English](README.md) | العربية (RTL)** · **[معاينة لوحة Kanban التفاعلية ↗](https://redasalem.github.io/job-hunter-os/demo-dashboard.html)** · **[شارك قصة نجاحك](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml)**
+**48 مهارة Markdown** · **0 تبعيات npm أساسية** · **محلي بالكامل (`Local-First`)** · **بتحكم بشري كامل**
+
+**[استكشف معاينة تفصيل السيرة الذاتية ↗](https://redasalem.github.io/job-hunter-os/)** · **[التثبيت السريع](#التثبيت-المحلي)** · **[English](README.md)**
 
 [![Zero Core Dependencies](https://img.shields.io/badge/Core_CLI-0_NPM_Dependencies-2ea44f)](package.json)
-[![48 Agent Skills](https://img.shields.io/badge/Skills-48_Pure_Markdown-167d60)](skills/REGISTRY.md)
+[![48 Markdown Skills](https://img.shields.io/badge/Skills-48_Markdown_Skills-167d60)](skills/REGISTRY.md)
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
-
-### مثال حقيقي للنتيجة (قبل وبَعد بوابة `APPROVE`)
 
 <div dir="ltr" align="left">
 
-```diff
-- Built backend APIs for an e-commerce app using Node.js.
-+ Engineered idempotent Node.js/TypeScript webhook processors handling $4.2M daily volume (-38% p95 latency) [verified: context/profile.md].
-! Blocked claim: "Managed multi-cluster Kubernetes" (0 years in verified profile — moved to True Gaps)
-[Status: Awaiting human APPROVE]
+```bash
+# فحص فوري محلي لجودة السيرة الذاتية بدون أي إعداد مسبق (مع بطاقة قابلة للمشاركة خالية من النص الخام للـ CV)
+npx github:redasalem/job-hunter-os audit ./resume.md --share
 ```
 
 </div>
 
-- **صفر خبرات أو أرقام مختلقة:** كل جملة مُفصّلة مرتبطة بحقيقة مؤكدة؛ والمهارات الناقصة تُعزل بشفافية في **الفجوات الحقيقية (True Gaps)**.
-- **صفر إرسال أعمى:** وضع `dry_run: true` مفعّل افتراضيًا؛ والنماذج الحية تتوقف عند **جدول قراءة الـ DOM** بانتظار موافقتك الصريحة `APPROVE`.
-- **خصوصية محلية 100%:** سيرتك الذاتية وسجلاتك وملف المتصفح تبقى على جهازك فقط.
+---
 
-![معاينة دورة عمل job-hunter-os في 3 خطوات: /quick-tailor -> جدول Mission Control -> لوحة dashboard.html](assets/demo-preview.png)
+## مخرجات تفصيل السيرة الذاتية (مثال اصطناعي)
+
+جميع الأسماء والشركات والأرقام أدناه هي **بيانات عرض اصطناعية** من [`evals/fixtures/`](evals/fixtures/candidate-profile.md) لتوضيح شكل المخرجات الفعلية لأمري `/demo` و `/quick-tailor`:
+
+![معاينة مخرجات تفصيل السيرة الذاتية الموثّق في Job Hunter OS (بيانات عرض اصطناعية)](assets/demo-preview.png)
+
+| المُدخلات منك | المخرجات التي تستلمها |
+|---|---|
+| سيرتك الذاتية (`.md` / `.txt` أو نص ملصق) + تأكيد الحقائق | سيرة ذاتية أحادية العمود مفصّلة وموثّقة (**HTML + TXT** و `PDF` اختياريًا) |
+| وصف وظيفة واحد (أو دفعة وظائف في `/daily-run`) | **خريطة أدلة (Evidence Map)**، **مقارنة كلمات ATS**، وقائمة **الفجوات الحقيقية (`True Gaps`)** |
+| جلسة متصفح محلية اختيارية (للنظام الكامل فقط) | **ملف تحضير للمقابلة**، مسودة تواصل `<= 75` كلمة، وجدول قراءة `DOM` قبل `APPROVE` |
 
 ---
 
-## ماذا تقدّم للنظام ← ماذا تحصل عليه؟
+## مثال التحويل: قبل مقابل بعد
 
-| المُدخلات (منك) | job-hunter-os (حدود الثقة) | المخرجات (تستلمها فورًا) |
-|---|---|---|
-| سيرتك الذاتية + تأكيد الحقائق | **تحقق من الحقائق** دون أي هلوسة | سيرة مفصّلة بصيغة **HTML + TXT** (وPDF اختياريًا) |
-| وصف وظيفة أو عدة وظائف | **تقييم وحماية** (كشف الوظائف الوهمية وحقن الأوامر) | **خريطة كلمات ATS** (`قبل % ← بعد %`) + قائمة **الفجوات الحقيقية** |
-| جلسة متصفح اختيارية | **قراءة DOM + بوابة `APPROVE`** | **ملف تحضير للمقابلة** + مسودة تواصل `<= 75` كلمة + لوحة Kanban محلية |
+<div dir="ltr" align="left">
 
----
-
-## اختر مسار البداية المناسب لك
-
-| المسار | الأنسب لـ | المتطلبات | أول نتيجة |
-|---|---|---|---|
-| **1. تجربة فورية (`/demo`)** | رؤية النتيجة خلال 15 ثانية | بدون بيانات شخصية وبدون متصفح | جدول `Mission Control` + **مثال سيرة مفصّلة كامل تلقائيًا** |
-| **2. تفصيل سريع (`/quick-tailor`)** | الحصول على أول سيرة مفصّلة حقيقية في دقيقتين | الصق سيرتك + وصف وظيفة واحدة (**بدون تسجيل دخول أو إعداد كامل**) | تأكيد الحقائق + سيرة HTML/TXT + مقارنة ATS والفجوات |
-| **3. النظام المهني الكامل (`/setup` ← `/daily-run`)** | بحث وظيفي مستمر عبر عدة منصات | `init` + `login` + 5 بوابات جاهزية | اكتشاف وتقييم وتفصيل وتجهيز نماذج التقديم بموافقة بشرية |
-
----
-
-## التثبيت المحلي في 30 ثانية (`macOS / Linux / Windows`)
-
-```bash
-# 1. فحص فوري ومجاني لسيرتك الذاتية محليًا بدون إعداد (كليشيهات، أرقام، طول الصفحة) + بطاقة قابلة للمشاركة
-npx github:redasalem/job-hunter-os audit ./resume.md --share
-
-# 2. التثبيت العالمي وربط المهارات + توليد بطاقة الإثبات القابلة لإعادة الإنتاج
-npx github:redasalem/job-hunter-os init --global
-npx github:redasalem/job-hunter-os proof
-
-# 3. اختياري (للنظام الكامل فقط): تسجيل الدخول مرة واحدة في browser-profile/ وفحص الجاهزية
-npx github:redasalem/job-hunter-os login --global
-npx github:redasalem/job-hunter-os doctor
+```diff
+- Built backend APIs for an e-commerce and payments app using Node.js.
++ Built idempotent Node.js and TypeScript webhook processors backed by PostgreSQL and AWS SQS,
++ reducing payment webhook p95 latency by 38% across $4.2M daily settlement volume [verified: candidate-profile.md].
+! Blocked claim: "Managed multi-cluster Kubernetes" (0 verified years — isolated under True Gaps)
+[ATS Keyword Coverage: 71.4% -> 92.8% (heuristic comparison, not an ATS guarantee)]
+[Status: dry_run: true · Awaiting explicit job-specific human APPROVE]
 ```
 
-> **شفافية التبعيات:** أداة CLI الأساسية (`bin/cli.mjs`) لا تحتوي على أي مكتبات npm نهائيًا (`dependencies: {}`). أما أتمتة المتصفح وتصدير PDF عبر Playwright MCP فهي **اختيارية** وتعمل عبر `npx` عند استخدامها فقط.
+</div>
+
+- **صفر خبرات أو أرقام مختلقة:** كل شركة ومسمّى وتاريخ وأداة ورقم يجب أن يرتبط بحقيقة مؤكدة من ملفك، والمهارات غير الموجودة تُعزل بشفافية تحت **الفجوات الحقيقية (`True Gaps`)**.
+- **تنقية من أسلوب الذكاء الاصطناعي المبتذل:** إزالة الكليشيهات (`delve`، `spearheaded`، `synergy`) لصالح لغة هندسية واضحة ومباشرة.
+- **صفر إرسال أعمى:** وضع `dry_run: true` مفعّل افتراضيًا؛ وكل تقديم حي يتطلب موافقة بشرية صريحة ومحددة لتلك الوظيفة (`APPROVE`) بعد مراجعة **جدول قراءة الـ DOM الحي** — بدون أي تجاوز تلقائي أو موافقة مجمّعة لعدة وظائف.
 
 ---
 
-## بطاقة الإثبات القابلة لإعادة الإنتاج (`job-hunter proof`)
+## لماذا يمكنك الوثوق بسير العمل؟
+
+يوضّح المشروع بشفافية طبقة التنفيذ المسؤولة عن كل ضابط أمان (التفاصيل في [`docs/execution-safety.md`](docs/execution-safety.md)):
+
+| طبقة التحكم | كيف تُطبّق؟ | أمثلة فعلية |
+|---|---|---|
+| **التحقق الحتمي عبر CLI (`bin/cli.mjs`)** | شيفرة Node.js محلية خالية من التبعيات برموز خروج واضحة | `pre-submit` (حد `<= 75` كلمة والحد اليومي وفترة الإحماء)، خطاف `.git/hooks/pre-commit` لمنع تسريب PII والمفاتيح، فحص سلامة JSON في `backup`، حماية SSRF في `doctor`/`audit`، ترميز آمن ضد XSS في `dashboard`، التحقق من توقيع SSH في `update`، ومُختبِر النماذج الثابتة `eval`/`proof` |
+| **متطلبات سير عمل الوكيل (`AGENTS.md`, `skills/*.md`)** | تعليمات منظمة ينفذها نموذج الذكاء الاصطناعي داخل محرّرك *(وليست صندوق عزل نظام تشغيل مستقل)* | التحقق من حقائق السيرة الذاتية، عزل المهارات الناقصة في `True Gaps`، معاملة نصوص الوظائف كـ `UNTRUSTED_EXTERNAL_DATA`، رفع السيرة أولًا، جدول قراءة الـ DOM، والتوقف الإلزامي عند `APPROVE` لكل وظيفة |
+
+> **شفافية الخصوصية والأتمتة:** تبقى سيرتك الذاتية وسجلاتك وملف المتصفح محليًا على جهازك (بدون تتبّع وبدون خادم خارجي). يعالج محرّكك/نموذجك الذكي المحادثات وفق سياسة مزوّده (استخدم نموذجًا محليًا للخصوصية الكاملة). لا يتجاوز النظام تحديات CAPTCHA أو 2FA أو حدود الاستخدام؛ بل يوقف التشغيل فورًا ويفعّل تهدئة 24 ساعة.
+
+---
+
+## أسرع طرق البداية (بدون تعقيد إعداد مسبق)
+
+لا تحتاج إلى تسجيل دخول متصفح أو إعداد كامل لرؤية قيمة المشروع:
+
+| الخطوة | الأمر | الغرض | هل يتطلب سيرة شخصية أو تسجيل دخول؟ |
+|---|---|---|---|
+| **1. تجربة فورية** | `/demo` | محاكاة اصطناعية خلال 15 ثانية عبر 3 وظائف تجريبية ([`examples/sandbox-demo/`](examples/sandbox-demo/sample-jds.md)) مع عرض فوري لسيرة مفصّلة للوظيفة الأولى | **لا يتطلب أي بيانات أو متصفح** |
+| **2. أول سيرة حقيقية** | `/quick-tailor` | الصق سيرتك الحقيقية + وصف وظيفة واحدة، أكّد الحقائق المستخرجة، واستلم سيرة `HTML/TXT` + خريطة الأدلة + مقارنة `ATS` و `True Gaps` | **سيرتك + وظيفة واحدة فقط** (بدون متصفح) |
+| **3. النظام المهني الكامل (اختياري)** | `login` ← `/setup` ← `/daily-run` | اكتشاف وظائف عبر عدة منصات، فلترة الوظائف الوهمية، ملفات تحضير المقابلات، وتجهيز نماذج التقديم بموافقة `APPROVE` | **تسجيل دخول متصفح + 5 بوابات جاهزية** |
+
+---
+
+## التثبيت المحلي
+
+يعمل على **`macOS` و `Linux` و `Windows`** مع `Node.js >= 18`:
+
+<div dir="ltr" align="left">
+
+```bash
+# 1. فحص محلي فوري لسيرتك الذاتية (خيار --share يحفظ بطاقة SVG/MD خالية من النص الخام للـ CV)
+npx github:redasalem/job-hunter-os audit ./resume.md --share
+
+# 2. التثبيت العالمي وربط مهارات وأوامر محرّرات الذكاء الاصطناعي
+npx github:redasalem/job-hunter-os init --global
+
+# 3. افتح محرّكك الذكي:
+#    - شغّل `/demo`          (تجربة اصطناعية كاملة بدون إعداد)
+#    - شغّل `/quick-tailor`  (سيرتك الحقيقية + وصف وظيفة واحدة بدون تسجيل دخول)
+
+# 4. اختياري (للنظام المهني الكامل فقط): تسجيل الدخول في browser-profile/ وفحص الجاهزية
+npx github:redasalem/job-hunter-os login --global
+npx github:redasalem/job-hunter-os doctor --global
+```
+
+</div>
+
+> **معمارية صفر تبعيات في النواة:** يحافظ `package.json` على `"dependencies": {}` و `"devDependencies": {}` بشكل صارم. أتمتة المتصفح وتصدير `PDF` عبر Playwright MCP (`@playwright/mcp@0.0.86`) اختيارية وتُستدعى عبر `npx` عند الحاجة فقط، ومزامنة Notion اختيارية ومغلقة افتراضيًا.
+
+---
+
+## الإثبات التقني القابل لإعادة الإنتاج (`job-hunter proof`)
+
+<div dir="ltr" align="left">
+
+```bash
+npx github:redasalem/job-hunter-os proof
+```
+
+</div>
 
 ![بطاقة الإثبات القابلة لإعادة الإنتاج لمشروع Job Hunter OS](assets/proof-card.svg)
 
-> **توضيح النطاق:** الأمر `eval --baseline` و `proof` يتحققان حتميًا من **النماذج المرجعية والمخططات في CI** مقابل [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json) وليسا مقياسًا عامًا لدقة نماذج الذكاء الاصطناعي. نتائج التشغيل الحي محفوظة منفصلة في [`evals/results/live-agent-eval-run.json`](evals/results/live-agent-eval-run.json) (`20/20 PASS`).
+> **توضيح النطاق:** الأمران `eval --baseline` و `proof` ينفذان **تحققًا حتميًا من النماذج المرجعية والمخططات** مقابل [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json) وليسا مقياسًا عامًا لدقة النماذج الحية. نتائج تشغيل الوكيل الحي محفوظة منفصلة في [`evals/results/live-agent-eval-run.json`](evals/results/live-agent-eval-run.json) (`20/20 PASS`).
 
-### مصفوفة دعم منصات التوظيف وأنظمة ATS
+### مصفوفة التحقق من أنظمة ATS والمنصات
 
-| مستوى الجاهزية | المنصات / أنظمة ATS | الحالة والأدلة |
+| مستوى التحقق | المنصات / أنظمة ATS | الأدلة |
 |---|---|---|
-| **Fixture-Verified (مُختبرة بنماذج HTML محلية)** | **Greenhouse**، **Lever**، **Ashby** | نماذج محلية في [`evals/fixtures/forms/`](evals/fixtures/forms/greenhouse-mock.html) لرفع السيرة أولًا وحماية `honeypot` وقراءة الـ DOM |
-| **Playbook-Ready / Field-Testing** | **Workday**، **SmartRecruiters**، **LinkedIn Easy Apply**، **Wellfound** | كتيبات Markdown كاملة مع فحص حداثة `<60 يومًا` واستخراج JSON خفيف لـ LinkedIn |
-| **Help Wanted (مساهمات مفتوحة)** | **بوابات التوظيف الإقليمية** (`GulfTalent` و `Bayt`، `Naukri`، `StepStone`) | قضايا `good first issue` مفتوحة للمساهمين |
+| **مُختبرة بنماذج HTML محلية (`Fixture-Verified`)** | **Greenhouse**، **Lever**، **Ashby** | نماذج محلية في [`evals/fixtures/forms/`](evals/fixtures/forms/greenhouse-mock.html) لرفع السيرة أولًا وحماية `honeypot` وقراءة الـ DOM |
+| **كتيبات جاهزة / اختبار ميداني** | **Workday** *(يدوي)*، **SmartRecruiters**، **BreezyHR**، **LinkedIn Jobs**، **Wellfound** | كتيبات Markdown مع فحص حداثة `<60 يومًا` في `doctor` واستخراج قراءة فقط لـ LinkedIn |
+| **مساهمات مفتوحة (`Help Wanted`)** | **البوابات الإقليمية** (`GulfTalent`، `Naukri`، `StepStone`، `TokyoDev`) | راجع [`CONTRIBUTING.md`](CONTRIBUTING.md) و [`PLATFORMS.md`](PLATFORMS.md) |
 
 ---
 
-## الأوامر والوثائق المرجعية
+## التوافق والقدرات الثانوية والوثائق
 
-- [`AGENTS.md`](AGENTS.md) و [`skills/REGISTRY.md`](skills/REGISTRY.md) — الضمانات العشر وفهرس **48 مهارة موحدة**.
-- [`.agent/workflows/quick-tailor.md`](.agent/workflows/quick-tailor.md) و [`.agent/workflows/demo.md`](.agent/workflows/demo.md) — مسارا البداية السريعة.
-- [`docs/SKILL_CATALOG.md`](docs/SKILL_CATALOG.md) و [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — الدليل الكامل والمعمارية.
-- [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) و [`docs/OPTIONAL_MCP_PLUGINS.md`](docs/OPTIONAL_MCP_PLUGINS.md) — التوافق مع 25+ محررًا وإضافات MCP الاختيارية.
-- [`HIRED.md`](HIRED.md) و [`CHANGELOG.md`](CHANGELOG.md) — سجل نتائج المجتمع المستقلة وتاريخ الإصدارات (`v1.4.1`).
+- **25+ محرّرًا ووكيل برمجة مدعومًا:** التفاصيل الكاملة في [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md).
+- **قدرة ثانوية — لوحة تتبع الطلبات المحلية (`job-hunter dashboard`):** معاينة ثانوية ببيانات اصطناعية مُعلّمة بوضوح عبر **[لوحة تتبع الطلبات التجريبية ↗](https://redasalem.github.io/job-hunter-os/demo-dashboard.html)**.
+- **الوثائق المرجعية:** [`AGENTS.md`](AGENTS.md) · [`skills/REGISTRY.md`](skills/REGISTRY.md) (`48` مهارة) · [`docs/SKILL_CATALOG.md`](docs/SKILL_CATALOG.md) · [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/execution-safety.md`](docs/execution-safety.md) · [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`HIRED.md`](HIRED.md) · [`CHANGELOG.md`](CHANGELOG.md).
 
-مرخص تحت رخصة [MIT](LICENSE) — Reda Salem (`redasalem`).
+مرخص تحت رخصة [MIT](LICENSE) — Copyright (c) 2026 Reda Salem (`@redasalem`).
 
 </div>

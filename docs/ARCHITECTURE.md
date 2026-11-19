@@ -1,13 +1,15 @@
-# System Architecture & Deterministic Execution Lifecycle
+# System Architecture & Execution Lifecycle
 
-`job-hunter-os` is a **100% Zero-Code Pure Markdown Skills + Zero-Dependency Node CLI** system. The AI model inside your IDE or CLI harness is the runtime engine.
+`job-hunter-os` combines **48 Markdown-first skills** (loaded progressively by your existing AI IDE or CLI harness) with a **zero-dependency Node.js CLI (`bin/cli.mjs`, `dependencies: {}`, `devDependencies: {}`)**.
+
+> **Enforcement Transparency:** Deterministic validations (`pre-submit` cap/word checks, `eval`, `proof`, `audit`, `doctor`, `backup`, `unlock`, Git pre-commit PII hook) run locally in `bin/cli.mjs`. Semantic workflow steps (CV fact-checking, prompt-injection quarantine, DOM inspection, and human `APPROVE` gating) are agent workflow requirements in `AGENTS.md` and `skills/*.md`—see [`docs/execution-safety.md`](execution-safety.md).
 
 ---
 
 ## 1. End-to-End Architecture
 
 ```text
-USER CHAT: /demo | /setup | /daily-run | /apply-url URL | /tailor-cv URL | /weekly-report | /linkedin-growth
+USER CHAT: /demo | /quick-tailor | /setup | /daily-run | /apply-url URL | /tailor-cv URL | /weekly-report | /linkedin-growth
                                |
                                v
 +--------------------------------------------------------------------+
@@ -15,25 +17,28 @@ USER CHAT: /demo | /setup | /daily-run | /apply-url URL | /tailor-cv URL | /week
 | Reads AGENTS.md + skills/REGISTRY.md (Progressive Disclosure)      |
 +-------------------------------+------------------------------------+
                                 |
-          +---------------------v---------------------+
-          | 00-interrogate-and-onboard (5 Gates)      |
-          | Audits context/ + live URLs -> Mission Go |
           +---------------------+---------------------+
-                                |
-             +------------------+------------------+
-             v                                     v
-+-----------------------------+      +-------------------------------+
-| Playwright MCP              |      | Local Files (Primary Truth)   |
-| ./browser-profile (private) |----->| context/ + templates/         |
-| snapshots / refs / uploads  |      | logs/applications-log.json    |
-+-----------------------------+      | logs/circuit-breaker.json     |
-                                     +---------------+---------------+
-                                                     | (opt-in)
-                                                     v
-                                      +-------------------------------+
-                                      | Notion MCP                    |
-                                      | Applications / Runs / Insights|
-                                      +-------------------------------+
+          | Fast-Start (No Browser)                   | Full Career OS
+          v                                           v
++-------------------------------+       +------------------------------------+
+| /demo or /quick-tailor        |       | 00-interrogate-and-onboard (5 Gates)|
+| CV + JD -> Fact-Checked HTML  |       | Audits context/ + live URLs -> Go  |
+| + Evidence Map + True Gaps    |       +-----------------+------------------+
++-------------------------------+                         |
+                                     +--------------------+--------------------+
+                                     v                                         v
+                       +-----------------------------+           +-------------------------------+
+                       | Optional Playwright MCP     |           | Local Files (Primary Truth)   |
+                       | ./browser-profile (private) |---------->| context/ + templates/         |
+                       | snapshots / refs / uploads  |           | logs/applications-log.json    |
+                       +-----------------------------+           | logs/circuit-breaker.json     |
+                                                                 +---------------+---------------+
+                                                                                 | (opt-in)
+                                                                                 v
+                                                                 +-------------------------------+
+                                                                 | Optional Notion MCP           |
+                                                                 | Applications / Runs / Insights|
+                                                                 +-------------------------------+
 ```
 
 ---

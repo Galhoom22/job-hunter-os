@@ -30,7 +30,7 @@ verification:
 
 ## When to Use & Preconditions
 
-Use for `/daily-run` (multi-job discovery and batch triage) or `/apply-url <url>` (single owner-supplied HTTPS URL). Zero scripts or external CLI runners exist—**you (the AI model)** execute each step directly using your file tools, Playwright MCP, and optional Notion MCP.
+Use for `/daily-run` (multi-job discovery and batch triage) or `/apply-url <url>` (single owner-supplied HTTPS URL). **You (the AI model)** execute the workflow directly using IDE file tools, Playwright MCP, and optional Notion MCP, while deterministic pre-submit checks run via `node ./bin/cli.mjs pre-submit`.
 
 - **Load when:** `/daily-run`; `/apply-url <url>`; `Run today's job run`; `Start applying`.
 - **Preconditions (stop if any is false):**

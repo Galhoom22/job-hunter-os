@@ -528,6 +528,28 @@ function installGitPreCommitHook(root) {
   return true;
 }
 
+function readPackageMeta() {
+  const pkgPath = [path.join(ROOT, 'package.json'), path.join(SOURCE, 'package.json')].find(f => fs.existsSync(f));
+  let pkg = {};
+  if (pkgPath) {
+    try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch { /* ignore */ }
+  }
+  return {
+    version: pkg.version || '1.4.1',
+    runtimeDeps: Object.keys(pkg.dependencies || {}).length,
+    devDeps: Object.keys(pkg.devDependencies || {}).length,
+  };
+}
+
+function escapeXml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 function cmdInit() {
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}\n`));
   const isGlobal = opts.global;
@@ -539,8 +561,22 @@ function cmdInit() {
   );
   const ideFiles = installIdeSkills(SOURCE, ROOT, { isGlobal, ide: opts.ide, preserve: isGlobal ? !opts.force : false });
   syncMcp({ root: ROOT, isGlobal, src: SOURCE });
-  ok(`Initialized job-hunter-os (${isGlobal ? 'global' : 'local'}) at ${ROOT} (${ideFiles} IDE skill/rule file(s) synced).`);
-  info('Next: run `login`, close the browser, open your IDE and type `/setup` to verify your CV and preferences.');
+  ok(`Job Hunter OS initialized successfully (${isGlobal ? 'global' : 'local'} at ${ROOT} · ${ideFiles} IDE skill/rule file(s) synced).`);
+  console.log('');
+  console.log('Your first experience:');
+  console.log('');
+  console.log('1. Open your AI IDE and run `/demo`.');
+  console.log('   Explore the complete synthetic CV tailoring workflow.');
+  console.log('   No personal CV and no browser login required.');
+  console.log('');
+  console.log('2. Ready to use your real CV?');
+  console.log('   Run `/quick-tailor` with one CV and one job description.');
+  console.log('   No browser login required.');
+  console.log('');
+  console.log('3. Want the full Career OS?');
+  console.log(`   Run \`${isGlobal ? 'login --global' : 'login'}\`, then \`/setup\`.`);
+  console.log('');
+  info('Nothing is submitted automatically. You remain in control.');
 }
 
 // ---------------- update ----------------
@@ -1394,7 +1430,8 @@ function cmdEval() {
     ? `External Model Output Evaluation (${resultsFile})`
     : 'Harness Reference Baseline (CI Self-Test — static fixture verification, NOT a live LLM benchmark)';
 
-  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.4.1)`));
+  const { version } = readPackageMeta();
+  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v${version})`));
   info(`Mode: ${evalModeLabel}\n`);
   for (const [id, label, cond] of checks) {
     if (cond) ok(`${id} · ${label}`);
@@ -1410,10 +1447,7 @@ function cmdEval() {
 }
 
 function cmdProof() {
-  const pkgPath = [path.join(ROOT, 'package.json'), path.join(SOURCE, 'package.json')].find(f => fs.existsSync(f));
-  const pkg = pkgPath ? JSON.parse(fs.readFileSync(pkgPath, 'utf8')) : {};
-  const version = pkg.version || '1.4.0';
-  const runtimeDeps = Object.keys(pkg.dependencies || {}).length;
+  const { version, runtimeDeps, devDeps } = readPackageMeta();
 
   let skillCount = 0;
   const manifestPath = [path.join(ROOT, 'skills', 'skills-manifest.json'), path.join(SOURCE, 'skills', 'skills-manifest.json')].find(f => fs.existsSync(f));
@@ -1437,6 +1471,11 @@ function cmdProof() {
     ? fs.readdirSync(formsDir).filter(f => f.endsWith('.html')).sort()
     : [];
   const atsCount = atsFixtures.length;
+  const atsNames = atsFixtures.map(f => {
+    const base = f.replace(/-mock\.html$/i, '').replace(/\.html$/i, '');
+    return base.charAt(0).toUpperCase() + base.slice(1);
+  });
+  const atsLabel = atsNames.length > 0 ? atsNames.join(' · ') : 'None found';
   const liveEvalFile = path.join(evalRoot, 'results', 'live-agent-eval-run.json');
   const liveEvalSummary = fs.existsSync(liveEvalFile)
     ? (() => {
@@ -1461,7 +1500,7 @@ function cmdProof() {
     '  <rect width="840" height="360" rx="18" fill="url(#bg)"/>',
     '  <rect x="1" y="1" width="838" height="358" rx="17" fill="none" stroke="#334155" stroke-width="1.5"/>',
     '  <rect x="32" y="28" width="178" height="28" rx="14" fill="#064e3b" fill-opacity="0.55" stroke="#34d399" stroke-opacity="0.5"/>',
-    `  <text x="121" y="47" text-anchor="middle" fill="#6ee7b7" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="12" font-weight="700">JOB HUNTER OS · v${version}</text>`,
+    `  <text x="121" y="47" text-anchor="middle" fill="#6ee7b7" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="12" font-weight="700">JOB HUNTER OS · v${escapeXml(version)}</text>`,
     '  <text x="808" y="47" text-anchor="end" fill="#94a3b8" font-family="Consolas,ui-monospace,monospace" font-size="12">redasalem/job-hunter-os · MIT</text>',
     '  <text x="32" y="92" fill="#f8fafc" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="26" font-weight="800">Reproducible Safety &amp; Architecture Proof Card</text>',
     '  <rect x="32" y="106" width="160" height="3" rx="1.5" fill="url(#accent)"/>',
@@ -1471,8 +1510,8 @@ function cmdProof() {
     '    <text x="50" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Fixture Assertions</text>',
     '    <text x="50" y="222" fill="#94a3b8" font-size="11">Deterministic CI harness</text>',
     '    <rect x="230" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
-    `    <text x="248" y="176" fill="#38bdf8" font-size="34" font-weight="800">${runtimeDeps}</text>`,
-    '    <text x="248" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Core NPM Deps</text>',
+    `    <text x="248" y="176" fill="#38bdf8" font-size="34" font-weight="800">${runtimeDeps} / ${devDeps}</text>`,
+    '    <text x="248" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Core / Dev NPM Deps</text>',
     '    <text x="248" y="222" fill="#94a3b8" font-size="11">Playwright MCP optional</text>',
     '    <rect x="428" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
     `    <text x="446" y="176" fill="#f8fafc" font-size="34" font-weight="800">${skillCount}</text>`,
@@ -1481,11 +1520,11 @@ function cmdProof() {
     '    <rect x="626" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
     `    <text x="644" y="176" fill="#fbbf24" font-size="34" font-weight="800">${atsCount}</text>`,
     '    <text x="644" y="202" fill="#e2e8f0" font-size="13" font-weight="700">ATS HTML Fixtures</text>',
-    '    <text x="644" y="222" fill="#94a3b8" font-size="11">Greenhouse · Lever · Ashby</text>',
+    `    <text x="644" y="222" fill="#94a3b8" font-size="11">${escapeXml(atsLabel)}</text>`,
     '  </g>',
     '  <rect x="32" y="264" width="776" height="44" rx="10" fill="#064e3b" fill-opacity="0.35" stroke="#34d399" stroke-opacity="0.35"/>',
-    '  <text x="48" y="291" fill="#a7f3d0" font-family="Consolas,ui-monospace,monospace" font-size="12.5">1 Human APPROVE Authority · 0 Allowed Fabricated Claims · Local-First (No Telemetry)</text>',
-    '  <text x="32" y="336" fill="#94a3b8" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="11.5">Scope: Deterministic fixture validation (not an independent AI accuracy benchmark). Reproduce: npx github:redasalem/job-hunter-os proof</text>',
+    '  <text x="48" y="291" fill="#a7f3d0" font-family="Consolas,ui-monospace,monospace" font-size="12.5">Explicit Job-Specific APPROVE Required · No Score-Based Auto-Submit · Local-First</text>',
+    '  <text x="32" y="336" fill="#94a3b8" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="11.5">Scope: Deterministic fixture validation (not an independent live-model accuracy benchmark). Reproduce: npx github:redasalem/job-hunter-os proof</text>',
     '</svg>',
     '',
   ].join('\n');
@@ -1493,16 +1532,16 @@ function cmdProof() {
   const md = [
     `# Job Hunter OS — Reproducible Proof Card (\`v${version}\`)`,
     '',
-    '> **Honest Scope:** Deterministic fixture validation generated locally from repository metadata and `eval --baseline` — **not** an independent AI accuracy benchmark. Zero telemetry, zero external servers, zero personal CV data.',
+    '> **Honest Scope:** Deterministic fixture validation generated locally from repository artifacts and `eval --baseline` — **not** an independent live-model accuracy benchmark. Zero telemetry, zero external servers, zero personal CV data.',
     '',
     '| Metric | Verified Value | Source |',
     '|---|---|---|',
     `| **Deterministic Fixture Assertions** | **${passed}/${total} PASS** | \`eval --baseline\` against immutable \`evals/fixtures/ground-truth.json\` |`,
     `| **Live Agent Session Reference** | **${liveEvalSummary}** | \`eval --file evals/results/live-agent-eval-run.json\` |`,
-    `| **Core CLI Runtime Dependencies** | **${runtimeDeps}** | \`package.json\` (\`dependencies: {}\`; optional Playwright MCP via \`npx\`) |`,
-    `| **Consolidated Markdown Skills** | **${skillCount}** | \`skills/skills-manifest.json\` & \`skills/REGISTRY.md\` |`,
-    `| **Fixture-Verified ATS Mocks** | **${atsCount}** (${atsFixtures.map(f => f.replace(/-mock\.html$/, '')).join(', ')}) | \`evals/fixtures/forms/*.html\` |`,
-    '| **Human Approval Authority** | **1 (Explicit `APPROVE` Gate)** | `config/invariants.txt` & `bin/cli.mjs pre-submit` |',
+    `| **Core / Dev NPM Dependencies** | **${runtimeDeps} / ${devDeps}** | \`package.json\` (\`dependencies: {}\`, \`devDependencies: {}\`; optional Playwright MCP via \`npx\`) |`,
+    `| **Registered Markdown Skills** | **${skillCount}** | \`skills/skills-manifest.json\` & \`skills/REGISTRY.md\` |`,
+    `| **Fixture-Verified ATS Mocks** | **${atsCount}** (${atsNames.join(', ')}) | \`evals/fixtures/forms/*.html\` |`,
+    '| **Human Approval Policy** | **Explicit Job-Specific `APPROVE` (No Bypass)** | `skills/04-fill-and-apply.md`, `config/invariants.txt`, `bin/cli.mjs pre-submit` |',
     '',
     '### Reproduce Locally',
     '```bash',
@@ -1516,7 +1555,7 @@ function cmdProof() {
   writeAtomic(svgOut, svg);
   writeAtomic(mdOut, md);
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
-  ok(`Generated reproducible proof card (v${version} · ${passed}/${total} fixture assertions · ${skillCount} skills · ${runtimeDeps} core deps · ${atsCount} ATS fixtures):`);
+  ok(`Generated reproducible proof card (v${version} · ${passed}/${total} fixture assertions · ${skillCount} skills · ${runtimeDeps}/${devDeps} core/dev deps · ${atsCount} ATS fixtures):`);
   info(`  SVG -> ${svgOut}`);
   info(`  MD  -> ${mdOut}`);
   if (passed !== total) process.exitCode = 1;
@@ -1649,12 +1688,14 @@ function cmdAudit() {
   const tonePenalty = Math.min(25, clichésFound.length * 6 + Math.min(10, emDashCount * 2));
   const toneScore = 25 - tonePenalty;
 
-  // 2. Quantified Impact Density (30 pts)
+  // 2. Detected Numeric Metrics Density (30 pts)
   const lines = trimmed.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   const bullets = lines.filter(l => /^[-*•]\s+/.test(l));
-  const metricRe = /(?<![A-Za-z0-9_])(?:\$?\d[\d,]*(?:\.\d+)?(?:\s*(?:%|k|m|b|x|ms|sec|seconds|min|minutes|hrs|hours|days|weeks|months|years)\b|%|[KMBX]\b|\+))/gi;
-  const totalMetrics = (trimmed.match(metricRe) || []).length;
-  const quantifiedBullets = bullets.filter(b => metricRe.test(b)).length;
+  const metricPattern = '(?<![A-Za-z0-9_])(?:\\$?\\d[\\d,]*(?:\\.\\d+)?(?:\\s*(?:%|k|m|b|x|ms|sec|seconds|min|minutes|hrs|hours|days|weeks|months|years)\\b|%|[KMBX]\\b|\\+))';
+  const metricGlobalRe = new RegExp(metricPattern, 'gi');
+  const metricSingleRe = new RegExp(metricPattern, 'i');
+  const totalMetrics = (trimmed.match(metricGlobalRe) || []).length;
+  const quantifiedBullets = bullets.filter(b => metricSingleRe.test(b)).length;
   let impactScore = 0;
   if (bullets.length > 0) {
     const ratio = quantifiedBullets / bullets.length;
@@ -1668,15 +1709,19 @@ function cmdAudit() {
   const wordCount = words.length;
   const lineCount = lines.length;
   let lengthStatus = '1-Page A4 Fit';
+  let lengthCategory = '1-Page A4 Fit';
   let lengthScore = 25;
   if (wordCount < 120) {
     lengthStatus = 'Too Short (<120 words)';
+    lengthCategory = 'Too Short';
     lengthScore = 12;
   } else if (wordCount > 750 || lineCount > 55) {
     lengthStatus = `Overflow Risk (${wordCount} words / ${lineCount} lines)`;
+    lengthCategory = 'Overflow Risk';
     lengthScore = 15;
   } else if (wordCount > 620 || lineCount > 45) {
     lengthStatus = `Tight 1-Page (${wordCount} words / ${lineCount} lines)`;
+    lengthCategory = 'Tight 1-Page';
     lengthScore = 21;
   }
 
@@ -1702,16 +1747,18 @@ function cmdAudit() {
   hygieneScore = Math.max(0, hygieneScore);
 
   const totalScore = toneScore + impactScore + lengthScore + hygieneScore;
+  const { version } = readPackageMeta();
 
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
   console.log(paint('36', 'Job Hunter OS — Instant Local CV Hygiene Audit (Zero-Dependency, Offline)\n'));
   console.log('+--------------------------------------------------------------+');
-  console.log(`| CV Hygiene Score:      ${String(`${totalScore}/100`).padEnd(38)}|`);
+  console.log(`| CV Hygiene Score:      ${String(`${totalScore}/100 (heuristic)`).padEnd(38)}|`);
   console.log(`| Human Tone (0 slop):   ${String(`${toneScore}/25 (${clichésFound.length} clichés, ${emDashCount} em-dashes)`).padEnd(38)}|`);
-  console.log(`| Quantified Impact:     ${String(`${impactScore}/30 (${totalMetrics} metrics, ${quantifiedBullets}/${bullets.length} bullets)`).padEnd(38)}|`);
+  console.log(`| Detected Metrics:      ${String(`${impactScore}/30 (${totalMetrics} detected, ${quantifiedBullets}/${bullets.length} bullets)`).padEnd(38)}|`);
   console.log(`| 1-Page A4 Fit:         ${String(`${lengthScore}/25 (${lengthStatus})`).padEnd(38)}|`);
   console.log(`| Data & Link Hygiene:   ${String(`${hygieneScore}/20 (${badUrls} bad URLs, ${hasPlaceholder ? 'placeholders' : 'clean'})`).padEnd(38)}|`);
   console.log('+--------------------------------------------------------------+');
+  info('Scope: Local heuristic CV hygiene check — not an ATS acceptance probability or verification of factual claims.');
 
   if (clichésFound.length > 0) warn(`AI-slop clichés detected: ${clichésFound.join(', ')}`);
   if (emDashCount > 0) warn(`Prose em-dashes (—) detected: ${emDashCount}`);
@@ -1720,16 +1767,95 @@ function cmdAudit() {
   if (badUrls > 0) warn(`${badUrls} malformed or private/localhost URL(s) detected.`);
 
   if (opts.share) {
-    console.log('\n--- Shareable PII-Stripped Scorecard (--share) ---');
+    const scoreColor = totalScore >= 80 ? '#34d399' : totalScore >= 60 ? '#fbbf24' : '#f87171';
+    const hygieneLabel = hasSecretLeak
+      ? 'Token pattern flagged'
+      : (hasPlaceholder || badUrls > 0 ? 'Warnings found' : 'Clean');
+
+    const cardSvg = [
+      '<svg xmlns="http://www.w3.org/2000/svg" width="840" height="360" viewBox="0 0 840 360" role="img" aria-label="Job Hunter OS Local CV Hygiene Scorecard">',
+      '  <defs>',
+      '    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">',
+      '      <stop offset="0%" stop-color="#070b14"/>',
+      '      <stop offset="60%" stop-color="#0d1628"/>',
+      '      <stop offset="100%" stop-color="#091120"/>',
+      '    </linearGradient>',
+      '    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">',
+      '      <stop offset="0%" stop-color="#10b981"/>',
+      '      <stop offset="100%" stop-color="#38bdf8"/>',
+      '    </linearGradient>',
+      '  </defs>',
+      '  <rect width="840" height="360" rx="18" fill="url(#bg)"/>',
+      '  <rect x="1" y="1" width="838" height="358" rx="17" fill="none" stroke="#334155" stroke-width="1.5"/>',
+      '  <rect x="32" y="28" width="214" height="28" rx="14" fill="#064e3b" fill-opacity="0.55" stroke="#34d399" stroke-opacity="0.5"/>',
+      `  <text x="139" y="47" text-anchor="middle" fill="#6ee7b7" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="12" font-weight="700">CV HYGIENE AUDIT · v${escapeXml(version)}</text>`,
+      '  <text x="808" y="47" text-anchor="end" fill="#94a3b8" font-family="Consolas,ui-monospace,monospace" font-size="12">github.com/redasalem/job-hunter-os</text>',
+      `  <text x="32" y="92" fill="#f8fafc" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="26" font-weight="800">Local CV Hygiene Scorecard · <tspan fill="${scoreColor}">${totalScore}/100</tspan></text>`,
+      '  <rect x="32" y="106" width="160" height="3" rx="1.5" fill="url(#accent)"/>',
+      '  <g font-family="Segoe UI,Inter,Arial,sans-serif">',
+      '    <rect x="32" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
+      `    <text x="50" y="176" fill="#34d399" font-size="30" font-weight="800">${toneScore}/25</text>`,
+      '    <text x="50" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Human Tone</text>',
+      `    <text x="50" y="222" fill="#94a3b8" font-size="11">${clichésFound.length} clichés · ${emDashCount} em-dashes</text>`,
+      '    <rect x="230" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
+      `    <text x="248" y="176" fill="#38bdf8" font-size="30" font-weight="800">${totalMetrics}</text>`,
+      '    <text x="248" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Detected Metrics</text>',
+      `    <text x="248" y="222" fill="#94a3b8" font-size="11">${quantifiedBullets}/${bullets.length} bullets w/ numbers</text>`,
+      '    <rect x="428" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
+      `    <text x="446" y="176" fill="#f8fafc" font-size="22" font-weight="800">${escapeXml(lengthCategory)}</text>`,
+      '    <text x="446" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Page-Fit Category</text>',
+      `    <text x="446" y="222" fill="#94a3b8" font-size="11">${lengthScore}/25 pts (${wordCount} words)</text>`,
+      '    <rect x="626" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
+      `    <text x="644" y="176" fill="#fbbf24" font-size="30" font-weight="800">${hygieneScore}/20</text>`,
+      '    <text x="644" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Data &amp; Link Hygiene</text>',
+      `    <text x="644" y="222" fill="#94a3b8" font-size="11">${escapeXml(hygieneLabel)}</text>`,
+      '  </g>',
+      '  <rect x="32" y="264" width="776" height="44" rx="10" fill="#064e3b" fill-opacity="0.35" stroke="#34d399" stroke-opacity="0.35"/>',
+      '  <text x="48" y="291" fill="#a7f3d0" font-family="Consolas,ui-monospace,monospace" font-size="12">Raw CV text, names, emails, phones &amp; URLs excluded · Saved locally only (never uploaded)</text>',
+      '  <text x="32" y="336" fill="#94a3b8" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="11">Heuristic CV hygiene measure (not an ATS outcome prediction or claim verification). Run: npx github:redasalem/job-hunter-os audit ./resume.md --share</text>',
+      '</svg>',
+      '',
+    ].join('\n');
+
+    const cardMd = [
+      `# Job Hunter OS — Local CV Hygiene Scorecard (\`v${version}\`)`,
+      '',
+      '> **Privacy & Scope Notice:** Raw CV text, filenames, personal names, emails, phone numbers, and URLs are **excluded** from this artifact. Saved locally only (zero uploads). This is a **heuristic CV hygiene measure**, not an ATS acceptance prediction or verification that every claim is factually true.',
+      '',
+      '| Category | Result |',
+      '|---|---|',
+      `| **CV Hygiene Score (Heuristic)** | **${totalScore}/100** |`,
+      `| **Human Tone Indicators** | ${toneScore}/25 (${clichésFound.length} AI-slop clichés, ${emDashCount} prose em-dashes) |`,
+      `| **Detected Numeric Metrics** | ${totalMetrics} detected (${quantifiedBullets}/${bullets.length} quantified bullets) |`,
+      `| **Page-Fit Category** | ${lengthCategory} (${lengthScore}/25 · ${wordCount} words / ${lineCount} lines) |`,
+      `| **Data & Link Hygiene** | ${hygieneScore}/20 (${hygieneLabel}) |`,
+      `| **Tool Version** | \`job-hunter-os v${version}\` (https://github.com/redasalem/job-hunter-os) |`,
+      '',
+      '### Reproduce Locally',
+      '```bash',
+      'npx github:redasalem/job-hunter-os audit ./resume.md --share',
+      '```',
+      '',
+    ].join('\n');
+
+    const svgOut = path.join(ROOT, 'logs', 'exports', 'cv-hygiene-card.svg');
+    const mdOut = path.join(ROOT, 'logs', 'exports', 'cv-hygiene-card.md');
+    writeAtomic(svgOut, cardSvg);
+    writeAtomic(mdOut, cardMd);
+
+    console.log('\n--- Shareable Scorecard (--share · Raw CV Text Excluded) ---');
     console.log('```text');
-    console.log('job-hunter-os · Local CV Hygiene Audit (Zero-Dependency)');
-    console.log(`Score:             ${totalScore}/100`);
-    console.log(`AI-Slop Clichés:   ${clichésFound.length} found (${emDashCount} em-dashes)`);
-    console.log(`Quantified Impact: ${totalMetrics} verified numeric metrics (${quantifiedBullets}/${bullets.length} bullets)`);
-    console.log(`Page Fit:          ${lengthStatus}`);
-    console.log(`Data Hygiene:      ${hygieneScore}/20 (0 PII included)`);
-    console.log('Reproduce locally: npx github:redasalem/job-hunter-os audit ./resume.md --share');
+    console.log(`job-hunter-os v${version} · Local CV Hygiene Audit (Zero-Dependency)`);
+    console.log(`Hygiene Score:            ${totalScore}/100 (heuristic — not an ATS acceptance prediction)`);
+    console.log(`Human Tone:               ${toneScore}/25 (${clichésFound.length} clichés, ${emDashCount} em-dashes)`);
+    console.log(`Detected Numeric Metrics: ${totalMetrics} detected (${quantifiedBullets}/${bullets.length} bullets)`);
+    console.log(`Page-Fit Category:        ${lengthStatus}`);
+    console.log(`Data & Link Hygiene:      ${hygieneScore}/20 (${hygieneLabel}; raw CV text excluded)`);
+    console.log('Reproduce locally:        npx github:redasalem/job-hunter-os audit ./resume.md --share');
     console.log('```');
+    ok('Saved privacy-safe local scorecard artifacts (raw CV text & personal details excluded):');
+    info(`  SVG -> ${svgOut}`);
+    info(`  MD  -> ${mdOut}`);
   }
 
   console.log('');
@@ -1737,22 +1863,19 @@ function cmdAudit() {
 }
 
 function cmdVersion() {
-  let version = '1.4.1';
-  try {
-    const pkg = JSON.parse(fs.readFileSync(path.join(SOURCE, 'package.json'), 'utf8'));
-    if (pkg?.version) version = pkg.version;
-  } catch { /* ignore */ }
+  const { version } = readPackageMeta();
   console.log(`v${version}`);
   console.log(ATTRIBUTION_BANNER);
 }
 
 function cmdHelp() {
+  const { version } = readPackageMeta();
   console.log(`${ATTRIBUTION_BANNER}
-job-hunter-os v1.4.1 — Zero-Code Markdown Agent Skills & MCP Installer
+job-hunter-os v${version} — Truthful CV Tailoring & Local-First AI Career Framework (Zero-Dependency CLI)
 
 Usage:
   job-hunter init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
-  job-hunter audit <cv.md|txt> [--share]           Instant offline CV hygiene & cliché audit + shareable scorecard
+  job-hunter audit <cv.md|txt> [--share]           Instant offline CV hygiene audit + privacy-safe SVG/MD scorecard
   job-hunter proof [--global | -g]                 Generate reproducible proof-card.svg & proof-card.md in logs/exports/
   job-hunter eval [--baseline | --file <json>]     Grade Harness Reference Baseline (CI) or external LLM output
   job-hunter pre-submit [--draft <f> | --text <t>] Deterministically enforce <=75-word cap & daily warm-up limit

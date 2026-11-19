@@ -24,7 +24,7 @@ verification:
 
 ## When to Use & Preconditions
 
-Run at the start of `/setup`, `/daily-run`, `/apply-url`, or `"Check my folder"`. You perform all checks directly using your file-reading and editing tools—there are no external CLI scripts to run.
+Run at the start of `/setup`, `/daily-run`, `/apply-url`, or `"Check my folder"`. You perform readiness audits directly using your file-reading and editing tools (optionally complemented by `node ./bin/cli.mjs doctor`).
 
 - **Load when:** `/setup`; `/daily-run` (Step 0); `/apply-url` (Step 0); `Check my folder`.
 - **Preconditions (stop if any is false):**
@@ -44,7 +44,7 @@ Read these files yourself and check for missing files or placeholder tokens (`ex
 | 4 · Skills Matrix | `context/form-answers.yaml` (`skills_years`) | Exact confirmed hands-on years for every core skill (`0` is allowed; guessing is forbidden) |
 | 5 · Platform Access | `context/targets.yaml` + Playwright MCP | At least one target with `enabled: true` and real URL; headed browser session verified within 24 h |
 
-- **Live Link Verification Pass:** Extract all URLs from `context/profile.md` and `context/resume-data.json`. Verify each link is well-formed `https://` and contains zero placeholder domains. During `/setup` (or via `npx job-hunter-os doctor`), verify reachability so a broken `404` portfolio or GitHub project URL is never sent to a recruiter (`skills/11-portfolio-and-github-auditor.md`).
+- **Live Link Verification Pass:** Extract all URLs from `context/profile.md` and `context/resume-data.json`. Verify each link is well-formed `https://` and contains zero placeholder domains. During `/setup` (or via `npx github:redasalem/job-hunter-os doctor`), verify reachability so a broken `404` portfolio or GitHub project URL is never sent to a recruiter (`skills/11-portfolio-and-github-auditor.md`).
 
 If `.example` templates exist and private `context/` files are absent, copy the structure from `context/*.example` only after replacing placeholders with real owner-confirmed values.
 

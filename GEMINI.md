@@ -2,9 +2,10 @@
 
 Read [AGENTS.md](./AGENTS.md) and [skills/REGISTRY.md](./skills/REGISTRY.md) first; only load a full skill body when its trigger matches the current phase of work.
 
-This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**. Execute workflows directly using your file tools, Playwright MCP, and optional Notion MCP:
+This is a **Markdown-first career operations repository with a zero-dependency Node.js CLI (`bin/cli.mjs`)** and optional Playwright/Notion MCP. Execute workflows directly using your file tools and optional MCP tools:
+- `/demo` -> `.agent/workflows/demo.md` + `examples/sandbox-demo/expected-mission-control.md` (instant synthetic preview; no personal data or browser login)
+- `/quick-tailor` -> `.agent/workflows/quick-tailor.md` (1 real CV + 1 JD fact-checked HTML/TXT tailoring; no browser login)
 - `/setup` or "Check my folder" -> `skills/00-interrogate-and-onboard.md` + `skills/01-resume-ingestion.md`
-- `/demo` -> `.agent/workflows/demo.md` + `examples/sandbox-demo/expected-mission-control.md`
 - `/daily-run` or `/apply-url <url>` -> `skills/00-daily-run.md`
 - `/tailor-cv <url>` -> `skills/03-tailor-resume-and-verify.md`
 - `/weekly-report` -> `skills/06-log-and-insights.md`

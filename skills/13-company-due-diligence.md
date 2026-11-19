@@ -56,5 +56,5 @@ Protects the owner from ghost startups, scam recruiters, disguised agencies, and
 
 - **NEVER** invent Glassdoor scores, funding rounds, revenue numbers, or employee headcounts when a page is gated or unavailable.
 - **NEVER** attempt to bypass Cloudflare, login walls, or CAPTCHAs to scrape review sites.
-- **NEVER** auto-submit an application rated `RED` without explicit owner override in chat.
+- **NEVER** submit any application without explicit job-specific `APPROVE`, and surface `RED` employer risks prominently so the owner can skip or explicitly confirm proceeding.
 - **Self-Verification Check:** Before completing, verify every claim in the Due Diligence Block traces to an observed page snapshot or owner-supplied link, unverified sources are explicitly labeled `unverified`, and the `GREEN`/`YELLOW`/`RED` badge matches the evidence.

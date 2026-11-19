@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
 $RepoUrl = "https://github.com/redasalem/job-hunter-os.git"
 $HomeDir = Join-Path $HOME ".job-hunter-os"
@@ -50,5 +50,5 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
   $skipLog = Join-Path $HomeDir "logs\skipped-jobs.json"
   if (-not (Test-Path $skipLog)) { Set-Content -Path $skipLog -Value "[]" -Encoding UTF8 }
 
-  Write-Host "[job-hunter-os] Global skills installed. Connect mcp\mcp.template.json in your IDE and type /setup."
+  Write-Host "[job-hunter-os] Global skills installed. Start in your AI IDE with /demo (zero personal data) or /quick-tailor (1 CV + 1 JD, no browser login). For full browser-assisted automation later, connect mcp\mcp.template.json and run /setup."
 }

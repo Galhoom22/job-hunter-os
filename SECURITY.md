@@ -1,7 +1,7 @@
 # Security and local-first privacy
 
 ## Scope and data boundaries
-`job-hunter-os` is a **100% zero-code Markdown skills, templates, and MCP playbook repository**. The AI model in your IDE executes workflows directly using Playwright MCP, IDE file tools, and optional Notion MCP—no custom backend, CLI daemon, or cloud account is required. Private `context/` files, `logs/`, CVs/PDFs, screenshots, `browser-profile/`, `.env`, and local MCP settings are ignored by Git. Examples in `demo/` and `*.example` are synthetic only.
+`job-hunter-os` uses a **Markdown-first skills architecture paired with a zero-dependency Node.js CLI (`bin/cli.mjs`, `dependencies: {}`, `devDependencies: {}`)**. The AI model in your IDE executes workflows directly using IDE file tools, optional Playwright MCP, and optional Notion MCP—no backend server, database, background daemon, or cloud account is required. See [`docs/execution-safety.md`](docs/execution-safety.md) for the explicit distinction between **deterministic CLI enforcement** and **agent workflow requirements**. Private `context/` files, `logs/`, CVs/PDFs, screenshots, `browser-profile/`, `.env`, and local MCP settings are ignored by Git (and blocked by the `.git/hooks/pre-commit` PII shield installed by `init`/`doctor`). Examples in `demo/` and `*.example` are synthetic only.
 
 **Local-first is not absolute local-only privacy.** Your IDE/model may process chat/CV/files under its own provider policy. Job boards and employers receive what is submitted; optional Notion receives approved tracking records. Use a local model if your privacy requirements demand it.
 

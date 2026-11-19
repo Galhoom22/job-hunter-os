@@ -1,10 +1,9 @@
 ## Summary
-Describe the skill, platform playbook, template, or documentation improvement in this PR.
+Describe the Markdown skill, ATS fixture, platform playbook, IDE integration, documentation, or zero-dependency CLI improvement in this PR.
 
 ## Checklist
-- [ ] **Zero-Code Standard:** No custom CLI scripts, browser extensions, or backend automation code added.
-- [ ] **Skill Contract:** New/updated skills include valid YAML frontmatter (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and the 3 mandatory sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns (What NEVER To Do) & Self-Verification Check`).
-- [ ] **Progressive Disclosure:** `skills/REGISTRY.md` and `skills/skills-manifest.json` updated if skills were added or changed.
-- [ ] **Accessibility-First:** Platform/ATS playbooks use `browser_snapshot` roles, labels, and refs (no brittle CSS selectors).
+- [ ] **Zero-Dependency Core Standard:** `package.json` preserves `"dependencies": {}` and `"devDependencies": {}`; no backend servers, databases, SaaS wrappers, or npm packages added.
+- [ ] **Skill Contract (if adding/editing skills):** Includes all 8 YAML frontmatter keys (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and the 3 mandatory H2 sections (`When to Use & Preconditions`, `Deterministic Step-by-Step Execution`, `Anti-Patterns (What NEVER To Do) & Self-Verification Check`), with `skills/REGISTRY.md` and `skills/skills-manifest.json` updated.
+- [ ] **Accessibility & Safe Wedge:** Platform/ATS playbooks use `browser_snapshot` roles/labels/refs (no brittle CSS selectors), preserve unconditional job-specific `APPROVE`, and include zero CAPTCHA/ToS bypasses.
 - [ ] **Safety & Privacy:** No real CVs, personal `context/` files, `logs/`, `*.pdf`, `.env`, cookies, or `browser-profile/` included; new `targets.yaml.example` entries ship with `enabled: false`.
-- [ ] **CI Verified:** Skill/JSON validation and build checks pass.
+- [ ] **Verified Locally:** `node --check bin/cli.mjs`, `node ./bin/cli.mjs eval --baseline`, `git diff --check`, and relevant link/JSON/YAML checks pass.

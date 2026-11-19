@@ -21,4 +21,4 @@
 
 ## 4. OpenClaw (Recurring / Scheduled Loops)
 - OpenClaw runs `skills/10-autonomous-scheduler-loop.md` on a schedule to execute discovery, ghost-job filtering, and Tier A CV preparation inside `active_hours`.
-- **Hard Guardrail:** Autonomous loops must **STOP at `approve_before_submit`** (unless all gates pass and the owner explicitly configured `auto_high_confidence` with `dry_run: false`). Never bypass `APPROVE` gates in background loops.
+- **Hard Guardrail:** Autonomous loops must **always STOP at `approve_before_submit`** (and keep `dry_run: true` by default). Never bypass per-job `APPROVE` gates or auto-submit in background loops.

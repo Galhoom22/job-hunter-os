@@ -2,7 +2,7 @@
   "name": "job-hunter-os",
   "version": "1.4.1",
   "type": "module",
-  "description": "Zero-code AI agent skills and MCP playbooks for autonomous job discovery, ATS resume tailoring, and multi-platform applications",
+  "description": "Truthful CV tailoring for the AI agent you already use — local-first Markdown skills and zero-dependency CLI with fact-checked resume diffs, ATS keyword comparison, and human APPROVE gates.",
   "license": "MIT",
   "repository": {
     "type": "git",
