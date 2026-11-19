@@ -95,3 +95,6 @@ Ask: **"I evaluated N jobs: X are 🟢 Ready, Y are 🟡 Stretch, Z were 🔴 Sk
 - [ ] every scanned job had its full description expanded (`"See more"`) before scoring, with verified CV matches separated from unknown requirements
 - [ ] closed, expired, or >30-day ghost listings were skipped and logged to `logs/skipped-jobs.json` with `reason: "ghost_or_expired"`
 - [ ] Mission Control table was shown and no Apply button was clicked before the owner's `APPLY` reply
+
+### Always Show Match % in Discovery Table
+Whenever presenting discovered jobs in the Mission Control table, always include a **Match % (Score)** column (e.g., `8/10 (80%)` or `Est. ~75%` if full JD is not yet expanded) comparing each role against the current `context/cv.md`.
