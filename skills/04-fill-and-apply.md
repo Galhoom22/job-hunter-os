@@ -92,3 +92,8 @@ Read `eeo_and_compliance_defaults` (or `eeo`) from `context/form-answers.yaml`:
 - [ ] resume was uploaded FIRST and verified by filename badge in a fresh condition-based `browser_snapshot`
 - [ ] every filled answer and EEO/GDPR option matches verified `context/form-answers.yaml` or `context/resume-data.json`
 - [ ] Live DOM Read-Back Table displayed and hard `APPROVE` + `3–9 s` human pacing boundary respected (`dry_run` stopped before Submit)
+
+### Proactive Apply Offer
+After tailoring a CV or reviewing a job posting, proactively ask the user:
+> *"Would you like me to fill out the application and submit it on your behalf? I am ready — just give me your permission (`APPROVE`) after reviewing the filled fields."*
+Never submit without explicit `APPROVE`.
