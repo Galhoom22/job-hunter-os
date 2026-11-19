@@ -103,3 +103,8 @@ When generating local HTML/PDF resumes, enforce these ATS + visual polish rules:
 - **Typography & Spacing:** Use clean sans-serif fonts (`Inter`, `Segoe UI`, `Arial`, `Helvetica`), `10–10.5pt` body text, `1.4–1.45` line-height, `18–22pt` candidate name, and `@page { size: A4; margin: 12mm 14mm; }` for crisp print-to-PDF output.
 - **ATS Headings:** Stick to standard section titles (`Summary`, `Technical Skills`, `Professional Experience`, `Projects`, `Education`, `Certifications`, `Languages`).
 - **Bullet Quality:** Lead every bullet with a strong action verb, mirror exact verified JD keywords naturally, and keep each bullet concise (1–2 lines) with zero AI-slop clichés.
+
+### Smart JD-to-CV Comparison & Top-Third Priority
+Before generating the final tailored CV:
+1. **Comparison Summary:** Present a concise 3-part breakdown: **Matched Keywords**, **Verified Gaps** (never fabricated), and **Highlighted Strengths**.
+2. **Top-Third Priority Re-ordering:** Re-order skills and selected projects so the most relevant stack and projects for the target JD appear in the top third of Page 1 (optimizing for the 6-second recruiter scan).
