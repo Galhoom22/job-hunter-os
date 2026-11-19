@@ -217,3 +217,12 @@ node ./bin/cli.mjs proof             # Regenerates logs/exports/proof-card.svg f
 Inspired by open-source patterns from **[`career-ops-hq/career-ops`](https://github.com/career-ops-hq/career-ops)**, **[`obra/superpowers`](https://github.com/obra/superpowers)**, and **[`anthropics/skills`](https://github.com/anthropics/skills)** / **[`agentskills.io`](https://agentskills.io/)**.
 
 Licensed under the [MIT License](LICENSE) — Copyright (c) 2026 Reda Salem (`@redasalem`). See [`NOTICE`](NOTICE), [`AUTHORS.md`](AUTHORS.md), and [`PROVENANCE.json`](PROVENANCE.json).
+
+## Supported & Universal Job Platforms
+
+Works out-of-the-box with major global, regional, and ATS platforms — **plus any custom HTTPS job URL** via `/apply-url`:
+- **Global & Remote Boards:** LinkedIn (Easy Apply & External), Indeed, Glassdoor, Wellfound (AngelList), RemoteOK, We Work Remotely, Otta, Himalayas, Built In
+- **MENA & Regional:** Wuzzuf, Bayt, Naukrigulf
+- **Direct ATS Platforms:** Greenhouse, Lever, Ashby, Workable, SmartRecruiters, Workday, BambooHR, Breezy HR
+- **B2B & Contract Networks:** Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing (`skills/platforms/b2b-contract-networks.md`)
+- **Any Custom URL:** Paste any job link from any company career page or board; the AI reads the live DOM semantically (`Role -> Label -> Placeholder -> Text`) without needing a pre-built site template.
