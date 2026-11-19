@@ -96,3 +96,10 @@ Scan every summary sentence, bullet, and cover-letter paragraph and rewrite if A
 - [ ] fact-check audit confirmed 0 unverified percentages, currency amounts, multipliers, years, dates, employers, degrees, or tools
 - [ ] humanized prose contains 0 banned AI-slop clichés and no em-dash overuse
 - [ ] generated files (`resume.html`, Word-compatible `resume.doc`, `resume.txt`, `tailoring-notes.md`, plus `resume.pdf` if available) were re-read to verify existence, 0 placeholders, and factual consistency
+
+### Modern ATS Design & Typography Standard
+When generating local HTML/PDF resumes, enforce these ATS + visual polish rules:
+- **Layout:** Clean single-column structure, zero tables, zero multi-column sidebars, zero skill progress bars or icons.
+- **Typography & Spacing:** Use clean sans-serif fonts (`Inter`, `Segoe UI`, `Arial`, `Helvetica`), `10–10.5pt` body text, `1.4–1.45` line-height, `18–22pt` candidate name, and `@page { size: A4; margin: 12mm 14mm; }` for crisp print-to-PDF output.
+- **ATS Headings:** Stick to standard section titles (`Summary`, `Technical Skills`, `Professional Experience`, `Projects`, `Education`, `Certifications`, `Languages`).
+- **Bullet Quality:** Lead every bullet with a strong action verb, mirror exact verified JD keywords naturally, and keep each bullet concise (1–2 lines) with zero AI-slop clichés.
