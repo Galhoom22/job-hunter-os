@@ -5,6 +5,19 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-11-19 — Instant Local CV Audit CLI, Runtime Clarity & Above-the-Fold Diff
+
+### Added
+- **Zero-Setup Offline CV Audit CLI (`node ./bin/cli.mjs audit <file> [--share]`):**
+  - Accepts any local `.md` or `.txt` CV path resolved from `process.cwd()` (no `ROOT` restriction) and deterministically scores AI-slop clichés & prose em-dashes, quantified metric density, 1-page A4 fit, and data/URL hygiene (with SSRF & token-leak checks).
+  - Supports `--share` to print a clean, PII-stripped terminal scorecard ready for sharing on HN, X, Reddit, or LinkedIn.
+  - Added cross-OS CI smoke coverage in [`.github/workflows/validate-repo.yml`](.github/workflows/validate-repo.yml).
+
+### Changed
+- **Runtime Clarity & Real `APPROVE`-Gate Diff Above the Fold (`README.md` & `README.ar.md`):**
+  - Added an explicit top-of-page runtime callout stating that `job-hunter-os` runs inside the user's existing AI IDE (Claude Code, Cursor, Windsurf, Cline, Gemini CLI, Codex) using their active subscription with zero external API keys required.
+  - Added a 4-line unified `diff` right below the hero showing verified fact grounding and blocked unverified claims before `APPROVE`, and refreshed [`assets/proof-card.svg`](assets/proof-card.svg) to `v1.4.1`.
+
 ## [1.4.0] - 2026-11-19 — First-Time User Conversion & Reproducible Proof Edition
 
 ### Added

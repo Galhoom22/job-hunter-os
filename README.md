@@ -2,15 +2,24 @@
 
 **Your AI Career Operating System. Tailor Every CV. Verify Every Claim. Stay in Control.**
 
-An open-source, local-first AI career operations framework built around one principle: **AI can prepare your job applications, but it must never invent your experience or take control away from you.**
+**Runs inside your existing AI IDE (Claude Code, Cursor, Windsurf, Cline, Gemini CLI, Codex) using your active subscription — zero external API keys required.**
 
-Turn your verified CV and real job descriptions into fact-checked tailored resumes, ATS keyword intelligence, recruiter-optimized LinkedIn copy, and interview preparation—powered by 48 pure-Markdown agent skills and a zero-dependency Node.js CLI.
+An open-source, local-first AI career operations framework built around one principle: **AI can prepare your job applications, but it must never invent your experience or take control away from you.** Built on 3 core engines (**Fact-Checked CV Diffs**, **Recruiter-SEO Audits**, and **Human `APPROVE` Gates**) backed by a modular library of 48 pure-Markdown skills loaded only on demand, plus a zero-dependency Node.js CLI (`dependencies: {}`).
 
 **English | [العربية (RTL)](README.ar.md)** · **[Try the Interactive Dashboard Demo ↗](https://redasalem.github.io/job-hunter-os/demo-dashboard.html)** · **[Share an Outcome](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml)**
 
 [![Zero Core Dependencies](https://img.shields.io/badge/Core_CLI-0_NPM_Dependencies-2ea44f)](package.json)
 [![48 Agent Skills](https://img.shields.io/badge/Skills-48_Pure_Markdown-167d60)](skills/REGISTRY.md)
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
+
+### What It Actually Does (Before vs. After `APPROVE` Gate)
+
+```diff
+- Built backend APIs for an e-commerce app using Node.js.
++ Engineered idempotent Node.js/TypeScript webhook processors handling $4.2M daily volume (-38% p95 latency) [verified: context/profile.md].
+! Blocked claim: "Managed multi-cluster Kubernetes" (0 years in verified profile — moved to True Gaps)
+[Status: Awaiting human APPROVE]
+```
 
 - **Zero fabricated experience:** Every tailored bullet maps back to verified facts; missing skills are isolated under **True Gaps**.
 - **Zero blind submissions:** `dry_run: true` by default; live forms pause at a **Live DOM Read-Back Table** requiring explicit job-bound `APPROVE`.
@@ -50,10 +59,11 @@ Open this repo in **Cursor, Claude Code, Antigravity, VS Code Copilot, Codex CLI
 ## 30-Second Local Installation (`macOS`, `Linux`, `Windows`)
 
 ```bash
-# 1. Install globally (~/.job-hunter-os + IDE auto-discovery skills & MCP config)
-npx github:redasalem/job-hunter-os init --global
+# 1. Instant offline hygiene & cliché audit on your own resume (zero setup, PII-stripped --share option)
+npx github:redasalem/job-hunter-os audit ./resume.md --share
 
-# 2. Generate a local reproducible proof card (zero telemetry, zero personal data)
+# 2. Install globally (~/.job-hunter-os + IDE auto-discovery skills & MCP config) & generate Proof Card
+npx github:redasalem/job-hunter-os init --global
 npx github:redasalem/job-hunter-os proof
 
 # 3. Optional (Full Career OS only): sign in once to your local browser-profile/ & run doctor
@@ -63,7 +73,7 @@ npx github:redasalem/job-hunter-os doctor
 
 > **Dependency Transparency:** The core CLI (`bin/cli.mjs`) has **strictly zero npm runtime or dev dependencies** (`dependencies: {}`, `devDependencies: {}`). Browser automation and PDF export are **optional** and run locally via pinned Playwright MCP (`@playwright/mcp@0.0.86`) invoked through `npx` only when you use browser workflows.
 
-- **All CLI Commands:** `init [--global] [--force] [--ide <name>]` · `proof` · `eval [--baseline | --file <json>]` · `pre-submit [--draft <f> | --text <t>]` · `doctor [--strict]` · `status` · `dashboard [--no-open]` · `bundle` · `login` · `unlock` · `backup` · `sync-mcp` · `update` (plus [`scripts/install.sh`](scripts/install.sh) and [`scripts/install.ps1`](scripts/install.ps1)).
+- **All CLI Commands:** `audit <cv.md|txt> [--share]` · `init [--global] [--force] [--ide <name>]` · `proof` · `eval [--baseline | --file <json>]` · `pre-submit [--draft <f> | --text <t>]` · `doctor [--strict]` · `status` · `dashboard [--no-open]` · `bundle` · `login` · `unlock` · `backup` · `sync-mcp` · `update` (plus [`scripts/install.sh`](scripts/install.sh) and [`scripts/install.ps1`](scripts/install.ps1)).
 
 ---
 
@@ -128,7 +138,7 @@ Run `npx github:redasalem/job-hunter-os proof` locally to regenerate `logs/expor
 | [**`docs/COMPATIBILITY.md`**](docs/COMPATIBILITY.md) & [**`PLATFORMS.md`**](PLATFORMS.md) | Setup matrix for **25+ AI IDEs & CLI harnesses**, 6 LLM tuning guides, and board coverage |
 | [**`mcp/mcp.template.json`**](mcp/mcp.template.json) & [**`docs/OPTIONAL_MCP_PLUGINS.md`**](docs/OPTIONAL_MCP_PLUGINS.md) | Pinned Playwright/Notion MCP setup and opt-in community plugin ToS/rate-limit warnings |
 | [**`docs/execution-safety.md`**](docs/execution-safety.md) & [**`config/invariants.txt`**](config/invariants.txt) | Hard `APPROVE` boundary, `3–9 s` human pacing, 24h circuit breaker & `pre-submit` CLI gate |
-| [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) | Independent community outcomes (separated from project origin) & release history (`v1.0.0` → `v1.4.0`) |
+| [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) | Independent community outcomes (separated from project origin) & release history (`v1.0.0` → `v1.4.1`) |
 
 ---
 

@@ -23,7 +23,7 @@ const fail = msg => console.error(paint('31', `[✗] ${msg}`));
 const ATTRIBUTION_BANNER = 'Job Hunter OS — Created by Reda Salem (@redasalem) | https://github.com/redasalem/job-hunter-os';
 const PINNED_SIGNING_PRINCIPAL = '192090175+redasalem@users.noreply.github.com';
 const PINNED_SIGNING_PUBKEY = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7t6GfNExgWOy+djcVZlb62BD9DKRrz81Xk++LTZTSo';
-const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline', '--force']);
+const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline', '--force', '--share']);
 const positional = [];
 const opts = {
   global: false,
@@ -34,6 +34,7 @@ const opts = {
   noOpen: false,
   baseline: false,
   force: false,
+  share: false,
   file: null,
   draft: null,
   text: null,
@@ -51,6 +52,7 @@ for (let i = 0; i < ARGV.length; i++) {
   else if (a === '--no-open') opts.noOpen = true;
   else if (a === '--baseline') opts.baseline = true;
   else if (a === '--force') opts.force = true;
+  else if (a === '--share') opts.share = true;
   else if (a === '--file' || a === '-f') {
     const val = ARGV[++i];
     if (!val || val.startsWith('-')) argErr = '--file requires a path to a JSON model-output file.';
@@ -1392,7 +1394,7 @@ function cmdEval() {
     ? `External Model Output Evaluation (${resultsFile})`
     : 'Harness Reference Baseline (CI Self-Test — static fixture verification, NOT a live LLM benchmark)';
 
-  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.4.0)`));
+  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.4.1)`));
   info(`Mode: ${evalModeLabel}\n`);
   for (const [id, label, cond] of checks) {
     if (cond) ok(`${id} · ${label}`);
@@ -1613,8 +1615,129 @@ function cmdPreSubmit() {
   }
 }
 
+function cmdAudit() {
+  const targetArg = positional[1];
+  if (!targetArg) {
+    throw new Error('Usage: job-hunter audit <path/to/resume.md|txt> [--share]');
+  }
+  const resolved = path.resolve(process.cwd(), targetArg);
+  if (!fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) {
+    throw new Error(`Resume file not found: ${resolved}`);
+  }
+  const ext = path.extname(resolved).toLowerCase();
+  if (ext && ext !== '.md' && ext !== '.txt' && ext !== '.markdown') {
+    throw new Error(`Unsupported file extension "${ext}". Pass a plain-text .md or .txt CV file.`);
+  }
+  const rawBuf = fs.readFileSync(resolved);
+  if (rawBuf.subarray(0, 5).toString('utf8') === '%PDF-' || rawBuf.includes(0)) {
+    throw new Error('Binary/PDF file detected. Export or paste your CV as .md or .txt for instant terminal audit, or use /quick-tailor in your AI IDE.');
+  }
+  const text = rawBuf.toString('utf8');
+  const trimmed = text.trim();
+  if (!trimmed) {
+    throw new Error(`CV file is empty: ${resolved}`);
+  }
+
+  // 1. AI-Slop Clichés & Prose Em-Dashes (25 pts)
+  const clicheList = [
+    'delve', 'testament', 'tapestry', 'spearheaded', 'synergy', 'thrilled to apply',
+    'moreover', 'furthermore', 'orchestrated', 'hit the ground running',
+    'results-driven', 'passionate about', 'seasoned professional', 'dynamic team player',
+  ];
+  const clichésFound = clicheList.filter(cl => buildSkillRegex(cl).test(trimmed));
+  const emDashCount = (trimmed.match(/—/g) || []).length;
+  const tonePenalty = Math.min(25, clichésFound.length * 6 + Math.min(10, emDashCount * 2));
+  const toneScore = 25 - tonePenalty;
+
+  // 2. Quantified Impact Density (30 pts)
+  const lines = trimmed.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const bullets = lines.filter(l => /^[-*•]\s+/.test(l));
+  const metricRe = /(?<![A-Za-z0-9_])(?:\$?\d[\d,]*(?:\.\d+)?(?:\s*(?:%|k|m|b|x|ms|sec|seconds|min|minutes|hrs|hours|days|weeks|months|years)\b|%|[KMBX]\b|\+))/gi;
+  const totalMetrics = (trimmed.match(metricRe) || []).length;
+  const quantifiedBullets = bullets.filter(b => metricRe.test(b)).length;
+  let impactScore = 0;
+  if (bullets.length > 0) {
+    const ratio = quantifiedBullets / bullets.length;
+    impactScore = Math.min(30, Math.round(ratio * 24) + Math.min(6, totalMetrics));
+  } else {
+    impactScore = Math.min(30, totalMetrics * 5);
+  }
+
+  // 3. 1-Page A4 Length & Scannability (25 pts)
+  const words = trimmed.split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
+  const lineCount = lines.length;
+  let lengthStatus = '1-Page A4 Fit';
+  let lengthScore = 25;
+  if (wordCount < 120) {
+    lengthStatus = 'Too Short (<120 words)';
+    lengthScore = 12;
+  } else if (wordCount > 750 || lineCount > 55) {
+    lengthStatus = `Overflow Risk (${wordCount} words / ${lineCount} lines)`;
+    lengthScore = 15;
+  } else if (wordCount > 620 || lineCount > 45) {
+    lengthStatus = `Tight 1-Page (${wordCount} words / ${lineCount} lines)`;
+    lengthScore = 21;
+  }
+
+  // 4. Data Hygiene & Link Safety (20 pts)
+  const hasPlaceholder = PLACEHOLDER_RE.test(trimmed);
+  const secretLeakRe = /(ntn_[A-Za-z0-9]{12,}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})/;
+  const hasSecretLeak = secretLeakRe.test(trimmed);
+  const rawUrls = trimmed.match(/https?:\/\/[^\s)"'>\],]+/gi) || [];
+  let badUrls = 0;
+  for (const raw of rawUrls) {
+    const cleaned = raw.replace(/[.;:]+$/, '');
+    try {
+      const parsed = new URL(cleaned);
+      if (isBlockedSsrfUrl(parsed)) badUrls++;
+    } catch {
+      badUrls++;
+    }
+  }
+  let hygieneScore = 20;
+  if (hasPlaceholder) hygieneScore -= 8;
+  if (hasSecretLeak) hygieneScore -= 12;
+  if (badUrls > 0) hygieneScore -= Math.min(8, badUrls * 4);
+  hygieneScore = Math.max(0, hygieneScore);
+
+  const totalScore = toneScore + impactScore + lengthScore + hygieneScore;
+
+  console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
+  console.log(paint('36', 'Job Hunter OS — Instant Local CV Hygiene Audit (Zero-Dependency, Offline)\n'));
+  console.log('+--------------------------------------------------------------+');
+  console.log(`| CV Hygiene Score:      ${String(`${totalScore}/100`).padEnd(38)}|`);
+  console.log(`| Human Tone (0 slop):   ${String(`${toneScore}/25 (${clichésFound.length} clichés, ${emDashCount} em-dashes)`).padEnd(38)}|`);
+  console.log(`| Quantified Impact:     ${String(`${impactScore}/30 (${totalMetrics} metrics, ${quantifiedBullets}/${bullets.length} bullets)`).padEnd(38)}|`);
+  console.log(`| 1-Page A4 Fit:         ${String(`${lengthScore}/25 (${lengthStatus})`).padEnd(38)}|`);
+  console.log(`| Data & Link Hygiene:   ${String(`${hygieneScore}/20 (${badUrls} bad URLs, ${hasPlaceholder ? 'placeholders' : 'clean'})`).padEnd(38)}|`);
+  console.log('+--------------------------------------------------------------+');
+
+  if (clichésFound.length > 0) warn(`AI-slop clichés detected: ${clichésFound.join(', ')}`);
+  if (emDashCount > 0) warn(`Prose em-dashes (—) detected: ${emDashCount}`);
+  if (hasPlaceholder) warn('Placeholder strings detected (e.g., Jane Doe / example.com). Replace before applying.');
+  if (hasSecretLeak) fail('API token pattern detected in CV file! Remove immediately.');
+  if (badUrls > 0) warn(`${badUrls} malformed or private/localhost URL(s) detected.`);
+
+  if (opts.share) {
+    console.log('\n--- Shareable PII-Stripped Scorecard (--share) ---');
+    console.log('```text');
+    console.log('job-hunter-os · Local CV Hygiene Audit (Zero-Dependency)');
+    console.log(`Score:             ${totalScore}/100`);
+    console.log(`AI-Slop Clichés:   ${clichésFound.length} found (${emDashCount} em-dashes)`);
+    console.log(`Quantified Impact: ${totalMetrics} verified numeric metrics (${quantifiedBullets}/${bullets.length} bullets)`);
+    console.log(`Page Fit:          ${lengthStatus}`);
+    console.log(`Data Hygiene:      ${hygieneScore}/20 (0 PII included)`);
+    console.log('Reproduce locally: npx github:redasalem/job-hunter-os audit ./resume.md --share');
+    console.log('```');
+  }
+
+  console.log('');
+  info('Next: Open your AI IDE and run `/quick-tailor` with this CV + 1 job description (zero browser login required).');
+}
+
 function cmdVersion() {
-  let version = '1.4.0';
+  let version = '1.4.1';
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(SOURCE, 'package.json'), 'utf8'));
     if (pkg?.version) version = pkg.version;
@@ -1625,15 +1748,15 @@ function cmdVersion() {
 
 function cmdHelp() {
   console.log(`${ATTRIBUTION_BANNER}
-job-hunter-os v1.4.0 — Zero-Code Markdown Agent Skills & MCP Installer
+job-hunter-os v1.4.1 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
   job-hunter init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
-  job-hunter update [--global | -g] [--ide <name>] Verify SSH signature & refresh playbooks (preserves context/ & logs/)
-  job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
-  job-hunter eval [--baseline | --file <json>]     Grade Harness Reference Baseline (CI) or external LLM output
+  job-hunter audit <cv.md|txt> [--share]           Instant offline CV hygiene & cliché audit + shareable scorecard
   job-hunter proof [--global | -g]                 Generate reproducible proof-card.svg & proof-card.md in logs/exports/
+  job-hunter eval [--baseline | --file <json>]     Grade Harness Reference Baseline (CI) or external LLM output
   job-hunter pre-submit [--draft <f> | --text <t>] Deterministically enforce <=75-word cap & daily warm-up limit
+  job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
   job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
   job-hunter bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
   job-hunter dashboard [--global | -g] [--no-open] Generate & open local Kanban dashboard at logs/exports/dashboard.html
@@ -1641,6 +1764,7 @@ Usage:
   job-hunter backup [--global | -g]                Verify JSON log integrity & snapshot context/ + logs/ to logs/backups/
   job-hunter login [--global | -g]                 Open Chrome/Chromium with persistent browser-profile/
   job-hunter sync-mcp [--global | -g]              Safely merge Playwright & optional Notion MCP configs
+  job-hunter update [--global | -g] [--ide <name>] Verify SSH signature & refresh playbooks (preserves context/ & logs/)
   job-hunter --version | -v                        Print version & canonical creator attribution
   job-hunter --help                                Show this help message`);
 }
@@ -1652,6 +1776,7 @@ try {
   if (opts.version || command === 'version') cmdVersion();
   else if (command === 'help' || opts.help) cmdHelp();
   else if (command === 'init') cmdInit();
+  else if (command === 'audit') cmdAudit();
   else if (command === 'update') cmdUpdate();
   else if (command === 'doctor') await cmdDoctor();
   else if (command === 'eval') cmdEval();

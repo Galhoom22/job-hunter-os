@@ -224,6 +224,7 @@ jobs:
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" doctor
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" eval --baseline
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" proof
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" audit "$REPO_DIR/evals/fixtures/candidate-profile.md" --share
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" pre-submit --text "Short grounded hiring manager note under 75 words."
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" status
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" bundle
