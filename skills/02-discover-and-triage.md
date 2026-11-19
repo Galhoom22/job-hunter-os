@@ -108,3 +108,8 @@ Whenever presenting discovered jobs in the Mission Control table, always include
 To maximize speed and minimize friction:
 1. Prioritize **LinkedIn Easy Apply** first, then **direct ATS forms** (Greenhouse, Lever, Ashby, Workable).
 2. Immediately skip stale aggregator/repost sites that require creating new accounts, show old posting dates, or have non-working Apply buttons.
+
+### Anti-Bot / Cloudflare Fallback (Pre-Filtered Search Links)
+If a job board (such as Indeed) blocks automated browsing with Cloudflare or a timeout:
+1. Do NOT attempt to bypass the challenge.
+2. Give the user the exact pre-filtered search URL (e.g., for Indeed 24h Remote: `https://eg.indeed.com/jobs?q=Full+Stack+OR+React+OR+Next.js+OR+Node.js&fromage=1&sc=0kf%3Aattr%28DSQF7%29%3B` or `https://ae.indeed.com/jobs?q=Full+Stack+OR+React+OR+Next.js+OR+Node.js&fromage=1&sc=0kf%3Aattr%28DSQF7%29%3B`) so they can open it in 1 click and paste any direct job link or JD text here for instant scoring and tailoring.
