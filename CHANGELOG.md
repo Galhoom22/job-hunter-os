@@ -5,6 +5,24 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Primary Output-Focused CV Tailoring Demo (`docs/index.html`):** Added a standalone, zero-external-request GitHub Pages demo illustrating 3 synthetic scenarios (`Strong Match`, `Stretch Match`, and `Prompt-Injection Trap`) with Before/After diffs, Evidence Maps, ATS keyword coverage comparisons, isolated **True Gaps**, and explicit `APPROVE` status.
+- **Privacy-Safe CV Hygiene Share Cards (`bin/cli.mjs audit --share`):** Generates local `logs/exports/cv-hygiene-card.svg` and `logs/exports/cv-hygiene-card.md` artifacts with raw CV text, personal names, emails, phones, URLs, and filenames excluded.
+- **Universal `/quick-tailor` Discovery (`commands/quick-tailor.md`, `.agents/skills/quick-tailor/SKILL.md`):** Added Claude Code command and `agentskills.io` wrapper entrypoints (enforced in `.github/workflows/validate-repo.yml`) so `/quick-tailor` is discoverable after local and global `init`.
+
+### Changed
+- **Unified Product Positioning & Output-First Landing Pages (`README.md`, `README.ar.md`, `package.json`, `assets/demo-preview.png`, `assets/social-preview.png`):** Positioned `job-hunter-os` consistently around *"Truthful CV Tailoring for the AI Agent You Already Use"*, rebuilt the README hero, architecture diagram, and output-focused preview image using synthetic fixture data.
+- **Fast-Start `init` Onboarding Sequence (`bin/cli.mjs`, `scripts/install.{sh,ps1}`):** Updated post-init guidance to recommend `/demo` (no CV, no browser login) -> `/quick-tailor` (1 real CV + 1 JD, no browser login) -> optional `login` + `/setup`.
+- **Unconditional Job-Specific Human `APPROVE` Gate (`skills/04-fill-and-apply.md`, `skills/skills-manifest.json`, `skills/meta-structured-debugging.md`, `skills/13-company-due-diligence.md`, `adapters/apps/hermes-pi-factory-openclaw.md`, `config/guardrails.yaml`):** Removed conflicting `auto_high_confidence` bypass phrasing so every live submission requires explicit job-specific `APPROVE` after a fresh Live DOM Read-Back Table, and any later modification invalidates approval.
+- **Honest Enforcement & Audit Terminology (`docs/execution-safety.md`, `bin/cli.mjs`, `CONTRIBUTING.md`, `docs/repository-audit.md`, `roadmap.md`, IDE rules):** Explicitly distinguished **Deterministic CLI Enforcement** (`bin/cli.mjs`) from **Agent Workflow Requirements** (`AGENTS.md`, `skills/*.md`), replaced misleading `"verified numeric metrics"` audit wording with `"Detected Numeric Metrics"` + heuristic disclaimer, and updated `CONTRIBUTING.md` with three concrete contribution paths.
+- **Secondary Application Tracker Clarity (`docs/demo-dashboard.html`, `templates/analytics-dashboard.html`):** Positioned the Kanban dashboard as a secondary capability with explicit synthetic-sample vs. local-user-data banners, `Sample` card tags, `example.invalid` sample URLs, inline JSON error alerts, `Clear` / `Reset` controls, URL scheme sanitization against `javascript:` links, and responsive mobile/tablet grids.
+
+### Fixed
+- **CV Audit Bullet-Count Regex Bug (`bin/cli.mjs`):** Eliminated stateful `/g` regex matching across bullets (`metricSingleRe` vs. `metricGlobalRe`) so bullets containing numeric metrics are counted accurately.
+- **Dynamic Proof & CLI Metadata (`bin/cli.mjs`):** Removed hardcoded `v1.4.1` and ATS fixture labels from `eval`/`proof`/`--help`, added `devDependencies` count (`0 / 0`) to `proof`, and flagged detected secret tokens accurately in the `audit` hygiene table.
+
 ## [1.4.1] - 2026-11-19 — Instant Local CV Audit CLI, Runtime Clarity & Above-the-Fold Diff
 
 ### Added

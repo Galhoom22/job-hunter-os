@@ -296,7 +296,8 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
         '',
         `For job-hunting workflows, read \`${path.join(targetRoot, 'AGENTS.md')}\` and \`${path.join(targetRoot, 'skills', 'REGISTRY.md')}\` first.`,
         `Resolve context, logs, and templates inside \`${targetRoot}\`.`,
-        'Respect dry run, verified facts only, Days 1-3 warm-up caps, and explicit owner APPROVE before Submit/Save/Send.',
+        'Fast-start paths (no browser login): `/demo` (`.agent/workflows/demo.md`) and `/quick-tailor` (`.agent/workflows/quick-tailor.md`). Full Career OS: `/setup` -> `/daily-run`.',
+        'Respect `dry_run: true`, verified facts only, Days 1-3 warm-up caps, and explicit job-specific human `APPROVE` before every Submit/Save/Send.',
         '',
       ].join('\n');
       writeManaged(path.join(HOME, '.cursor', 'rules', 'job-hunter.mdc'), ruleText);
@@ -1749,6 +1750,10 @@ function cmdAudit() {
   const totalScore = toneScore + impactScore + lengthScore + hygieneScore;
   const { version } = readPackageMeta();
 
+  const hygieneLabel = hasSecretLeak
+    ? 'token flagged'
+    : (hasPlaceholder ? 'placeholders' : 'clean');
+
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
   console.log(paint('36', 'Job Hunter OS — Instant Local CV Hygiene Audit (Zero-Dependency, Offline)\n'));
   console.log('+--------------------------------------------------------------+');
@@ -1756,7 +1761,7 @@ function cmdAudit() {
   console.log(`| Human Tone (0 slop):   ${String(`${toneScore}/25 (${clichésFound.length} clichés, ${emDashCount} em-dashes)`).padEnd(38)}|`);
   console.log(`| Detected Metrics:      ${String(`${impactScore}/30 (${totalMetrics} detected, ${quantifiedBullets}/${bullets.length} bullets)`).padEnd(38)}|`);
   console.log(`| 1-Page A4 Fit:         ${String(`${lengthScore}/25 (${lengthStatus})`).padEnd(38)}|`);
-  console.log(`| Data & Link Hygiene:   ${String(`${hygieneScore}/20 (${badUrls} bad URLs, ${hasPlaceholder ? 'placeholders' : 'clean'})`).padEnd(38)}|`);
+  console.log(`| Data & Link Hygiene:   ${String(`${hygieneScore}/20 (${badUrls} bad URLs, ${hygieneLabel})`).padEnd(38)}|`);
   console.log('+--------------------------------------------------------------+');
   info('Scope: Local heuristic CV hygiene check — not an ATS acceptance probability or verification of factual claims.');
 

@@ -5,8 +5,8 @@
 ## Setup in Devin Desktop
 1. Open the cloned `job-hunter-os/` folder in Devin Desktop.
 2. Devin Desktop automatically loads `.windsurfrules`, `AGENTS.md`, and `.agents/skills/*/SKILL.md`.
-3. Add the Playwright MCP and optional Notion MCP definitions from `mcp/mcp.template.json` into your Devin Desktop / ACP MCP configuration (keeping `--user-data-dir=./browser-profile` pointed to your local repository path).
-4. Start in chat with `/setup` (or `"Read AGENTS.md and set up my profile"`).
+3. Optionally add the Playwright MCP and Notion MCP definitions from `mcp/mcp.template.json` into your Devin Desktop / ACP MCP configuration (keeping `--user-data-dir=./browser-profile` pointed to your local repository path) when ready for browser-assisted workflows.
+4. Start in chat with `/demo` (no personal data or browser login) or `/quick-tailor` (1 real CV + 1 JD, no browser login). Run `/setup` only when ready for the full multi-platform Career OS.
 
 ## Safety Rules
 - Keep `dry_run: true` until your first full run is verified.
