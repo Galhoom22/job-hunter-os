@@ -5,6 +5,25 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-11-19 — First-Time User Conversion & Reproducible Proof Edition
+
+### Added
+- **Fast-Start `/quick-tailor` Workflow (`.agent/workflows/quick-tailor.md`):**
+  - Lets first-time users generate a fact-checked, tailored single-column HTML + TXT resume with an Evidence Map, ATS Keyword Comparison, and excluded True Gaps from one CV and one job description in under 2 minutes — without requiring browser login, Playwright MCP, or full 5-gate platform onboarding.
+- **Reproducible Proof Card CLI (`node ./bin/cli.mjs proof`):**
+  - Added zero-dependency `proof` command reading live `package.json`, `skills/skills-manifest.json`, `eval --baseline`, and `evals/fixtures/forms/*.html` to generate reproducible `logs/exports/proof-card.svg` and `logs/exports/proof-card.md` (with explicit scope disclosure distinguishing deterministic fixture validation from an AI accuracy benchmark). Committed rendered preview at [`assets/proof-card.svg`](assets/proof-card.svg) and added cross-OS CI smoke verification.
+- **Effortless Community Outcome Submission (`.github/ISSUE_TEMPLATE/share-success.yml`):**
+  - Added a 30-second GitHub Issue Form (`interview` / `contract` / `offer`, anonymous welcome, strict PII prohibition) so users can share outcomes without forking or opening a PR.
+
+### Changed
+- **Outcome-First `README.md` & `README.ar.md` + Dynamically Synced Visual Assets (`v1.4.0`, `48` Skills):**
+  - Rebuilt both landing pages around a 15-second value proposition (*"Your AI Career Operating System. Tailor Every CV. Verify Every Claim. Stay in Control."*), trimmed top badges to 3, added an explicit `Input → Job Hunter OS → Output` overview, clarified zero-dependency core CLI vs. optional Playwright MCP, and moved deep evaluation tables below the product demo.
+  - Regenerated [`assets/demo-preview.png`](assets/demo-preview.png) (`1280x720`) and [`assets/social-preview.png`](assets/social-preview.png) (`1280x640`) dynamically from `package.json` (`v1.4.0`) and `skills/skills-manifest.json` (`48` skills).
+- **Automatic First-Wow `/demo` (`.agent/workflows/demo.md` & `.agents/skills/demo/SKILL.md`):**
+  - Updated `/demo` to immediately render one complete synthetic tailored preview for Job #1 (original summary, JD requirements, tailored CV, verified facts used, excluded True Gaps, ATS keyword lift, and `<= 75`-word outreach) directly after the Mission Control table without waiting for a follow-up command.
+- **Honest Separation in `HIRED.md`:**
+  - Separated Maintainer Project Origin from Independent Community Outcomes (starting cleanly at Community Outcome #1).
+
 ## [1.3.0] - 2026-11-19 — Token-Slim LinkedIn Extraction & Grounded Recruiter-SEO Optimizer
 
 ### Added

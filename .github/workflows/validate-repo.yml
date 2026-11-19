@@ -223,6 +223,7 @@ jobs:
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" init
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" doctor
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" eval --baseline
+            HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" proof
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" pre-submit --text "Short grounded hiring manager note under 75 words."
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" status
             HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" bundle
@@ -236,6 +237,8 @@ jobs:
           test -f "$ISO_PROJ/config/invariants.txt"
           test -f "$ISO_PROJ/skills/REGISTRY.md"
           test -f "$ISO_PROJ/.agents/skills/daily-run/SKILL.md"
+          test -f "$ISO_PROJ/logs/exports/proof-card.svg"
+          test -f "$ISO_PROJ/logs/exports/proof-card.md"
           test -f "$ISO_PROJ/logs/exports/web-chat-master-prompt.md"
           test -f "$ISO_PROJ/logs/exports/dashboard.html"
           test -f "$ISO_PROJ/.mcp.json"

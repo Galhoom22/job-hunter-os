@@ -1,0 +1,76 @@
+name: Share a Job Search Outcome
+description: Share an interview, freelance contract, or job offer outcome for HIRED.md (anonymous submissions welcome — no fork or PR required)
+title: "[Outcome] "
+labels: ["community-outcome"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for sharing your experience! Real names and GitHub handles are optional.
+        **Privacy rule:** Do NOT upload CVs, recruiter emails, phone numbers, offer letters, or private correspondence.
+
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Outcome Type
+      description: Select the milestone you reached.
+      options:
+        - interview
+        - contract
+        - offer
+    validations:
+      required: true
+
+  - type: input
+    id: role_category
+    attributes:
+      label: Role Category
+      description: e.g., Senior Backend Engineer, Full-Stack Engineer, DevOps, Data Scientist
+      placeholder: "Senior Full-Stack Engineer"
+    validations:
+      required: true
+
+  - type: input
+    id: region
+    attributes:
+      label: Region / Work Mode
+      description: e.g., US Remote, EU Hybrid, MENA Remote, Global B2B
+      placeholder: "EU Remote"
+    validations:
+      required: true
+
+  - type: input
+    id: timeline
+    attributes:
+      label: Approximate Time to Outcome
+      description: e.g., 3 weeks, 6 weeks
+      placeholder: "4 weeks"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: attribution
+    attributes:
+      label: Attribution Preference
+      options:
+        - Anonymous (role & region only)
+        - Public GitHub handle
+    validations:
+      required: true
+
+  - type: textarea
+    id: lessons
+    attributes:
+      label: What Worked & Optional Lessons Learned
+      description: Which workflow helped most (e.g., /quick-tailor, ATS keyword heatmap, /linkedin-growth, interview dossier)? Never imply causation unless you genuinely experienced it.
+      placeholder: "Used /quick-tailor to surface verified PostgreSQL and Playwright work and kept missing Kubernetes skills honest in interviews..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: privacy_confirm
+    attributes:
+      label: Privacy & PII Confirmation
+      options:
+        - label: I confirm this submission contains NO CVs, personal emails, phone numbers, recruiter correspondence, or confidential employer data.
+          required: true

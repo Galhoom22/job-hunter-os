@@ -1273,23 +1273,9 @@ function buildSkillRegex(skill) {
   return new RegExp(`${left}${escaped}${right}`, 'i');
 }
 
-function cmdEval() {
-  const evalRoot = [path.join(ROOT, 'evals'), path.join(SOURCE, 'evals')].find(d => fs.existsSync(d));
-  if (!evalRoot) throw new Error('evals/ directory not found.');
-
+function evaluateEvalSuite(evalRoot, resultsFile) {
   const profileFile = path.join(evalRoot, 'fixtures', 'candidate-profile.md');
   const groundTruthFile = path.join(evalRoot, 'fixtures', 'ground-truth.json');
-  const baselineFile = path.join(evalRoot, 'results', 'baseline-verified-run.json');
-  const sourceBaselineFile = path.join(SOURCE, 'evals', 'results', 'baseline-verified-run.json');
-  const isExternalFile = Boolean(opts.file) && !opts.baseline;
-  const resultsFile = isExternalFile
-    ? path.resolve(process.cwd(), opts.file)
-    : baselineFile;
-  if (isExternalFile && (isSamePath(resultsFile, baselineFile) || isSamePath(resultsFile, sourceBaselineFile))) {
-    throw new Error(
-      `Refusing --file pointing to the built-in reference baseline (${resultsFile}). Use \`eval --baseline\` for CI self-testing, or pass an external model output JSON file.`,
-    );
-  }
   if (!fs.existsSync(profileFile)) {
     throw new Error('Missing evals/fixtures/candidate-profile.md.');
   }
@@ -1380,28 +1366,158 @@ function cmdEval() {
       cb.status === 'tripped' && (Date.parse(cb.cooldown_until) - Date.parse(cb.tripped_at)) === 86400000 && cb.retries_attempted === 0],
   ];
 
+  const passed = checks.filter(([, , cond]) => cond).length;
+  return { checks, passed, total: checks.length };
+}
+
+function cmdEval() {
+  const evalRoot = [path.join(ROOT, 'evals'), path.join(SOURCE, 'evals')].find(d => fs.existsSync(d));
+  if (!evalRoot) throw new Error('evals/ directory not found.');
+
+  const baselineFile = path.join(evalRoot, 'results', 'baseline-verified-run.json');
+  const sourceBaselineFile = path.join(SOURCE, 'evals', 'results', 'baseline-verified-run.json');
+  const isExternalFile = Boolean(opts.file) && !opts.baseline;
+  const resultsFile = isExternalFile
+    ? path.resolve(process.cwd(), opts.file)
+    : baselineFile;
+  if (isExternalFile && (isSamePath(resultsFile, baselineFile) || isSamePath(resultsFile, sourceBaselineFile))) {
+    throw new Error(
+      `Refusing --file pointing to the built-in reference baseline (${resultsFile}). Use \`eval --baseline\` for CI self-testing, or pass an external model output JSON file.`,
+    );
+  }
+
+  const { checks, passed, total } = evaluateEvalSuite(evalRoot, resultsFile);
+
   const evalModeLabel = isExternalFile
     ? `External Model Output Evaluation (${resultsFile})`
     : 'Harness Reference Baseline (CI Self-Test — static fixture verification, NOT a live LLM benchmark)';
 
-  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.3.0)`));
+  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.4.0)`));
   info(`Mode: ${evalModeLabel}\n`);
-  let passed = 0;
   for (const [id, label, cond] of checks) {
-    if (cond) {
-      ok(`${id} · ${label}`);
-      passed++;
-    } else {
-      fail(`${id} · ${label}`);
-    }
+    if (cond) ok(`${id} · ${label}`);
+    else fail(`${id} · ${label}`);
   }
   console.log('');
-  if (passed === checks.length) {
-    ok(`Skill Evaluation Scorecard: ${passed}/${checks.length} assertions PASSED (100%).`);
+  if (passed === total) {
+    ok(`Skill Evaluation Scorecard: ${passed}/${total} assertions PASSED (100%).`);
   } else {
-    fail(`Skill Evaluation Scorecard: ${passed}/${checks.length} passed (${checks.length - passed} failed).`);
+    fail(`Skill Evaluation Scorecard: ${passed}/${total} passed (${total - passed} failed).`);
     process.exitCode = 1;
   }
+}
+
+function cmdProof() {
+  const pkgPath = [path.join(ROOT, 'package.json'), path.join(SOURCE, 'package.json')].find(f => fs.existsSync(f));
+  const pkg = pkgPath ? JSON.parse(fs.readFileSync(pkgPath, 'utf8')) : {};
+  const version = pkg.version || '1.4.0';
+  const runtimeDeps = Object.keys(pkg.dependencies || {}).length;
+
+  let skillCount = 0;
+  const manifestPath = [path.join(ROOT, 'skills', 'skills-manifest.json'), path.join(SOURCE, 'skills', 'skills-manifest.json')].find(f => fs.existsSync(f));
+  if (manifestPath) {
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (Array.isArray(manifest?.skills)) skillCount = manifest.skills.length;
+  } else {
+    const regPath = [path.join(ROOT, 'skills', 'REGISTRY.md'), path.join(SOURCE, 'skills', 'REGISTRY.md')].find(f => fs.existsSync(f));
+    if (regPath) {
+      skillCount = (fs.readFileSync(regPath, 'utf8').match(/`skills\/[^`]+\.md`/g) || []).length;
+    }
+  }
+
+  const evalRoot = [path.join(ROOT, 'evals'), path.join(SOURCE, 'evals')].find(d => fs.existsSync(d));
+  if (!evalRoot) throw new Error('evals/ directory not found.');
+  const baselineFile = path.join(evalRoot, 'results', 'baseline-verified-run.json');
+  const { passed, total } = evaluateEvalSuite(evalRoot, baselineFile);
+
+  const formsDir = path.join(evalRoot, 'fixtures', 'forms');
+  const atsFixtures = fs.existsSync(formsDir)
+    ? fs.readdirSync(formsDir).filter(f => f.endsWith('.html')).sort()
+    : [];
+  const atsCount = atsFixtures.length;
+  const liveEvalFile = path.join(evalRoot, 'results', 'live-agent-eval-run.json');
+  const liveEvalSummary = fs.existsSync(liveEvalFile)
+    ? (() => {
+        const res = evaluateEvalSuite(evalRoot, liveEvalFile);
+        return `${res.passed}/${res.total}`;
+      })()
+    : 'not run locally';
+
+  const svg = [
+    '<svg xmlns="http://www.w3.org/2000/svg" width="840" height="360" viewBox="0 0 840 360" role="img" aria-label="Job Hunter OS Reproducible Proof Card">',
+    '  <defs>',
+    '    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">',
+    '      <stop offset="0%" stop-color="#070b14"/>',
+    '      <stop offset="60%" stop-color="#0d1628"/>',
+    '      <stop offset="100%" stop-color="#091120"/>',
+    '    </linearGradient>',
+    '    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">',
+    '      <stop offset="0%" stop-color="#10b981"/>',
+    '      <stop offset="100%" stop-color="#38bdf8"/>',
+    '    </linearGradient>',
+    '  </defs>',
+    '  <rect width="840" height="360" rx="18" fill="url(#bg)"/>',
+    '  <rect x="1" y="1" width="838" height="358" rx="17" fill="none" stroke="#334155" stroke-width="1.5"/>',
+    '  <rect x="32" y="28" width="178" height="28" rx="14" fill="#064e3b" fill-opacity="0.55" stroke="#34d399" stroke-opacity="0.5"/>',
+    `  <text x="121" y="47" text-anchor="middle" fill="#6ee7b7" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="12" font-weight="700">JOB HUNTER OS · v${version}</text>`,
+    '  <text x="808" y="47" text-anchor="end" fill="#94a3b8" font-family="Consolas,ui-monospace,monospace" font-size="12">redasalem/job-hunter-os · MIT</text>',
+    '  <text x="32" y="92" fill="#f8fafc" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="26" font-weight="800">Reproducible Safety &amp; Architecture Proof Card</text>',
+    '  <rect x="32" y="106" width="160" height="3" rx="1.5" fill="url(#accent)"/>',
+    '  <g font-family="Segoe UI,Inter,Arial,sans-serif">',
+    '    <rect x="32" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
+    `    <text x="50" y="176" fill="#34d399" font-size="34" font-weight="800">${passed}/${total}</text>`,
+    '    <text x="50" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Fixture Assertions</text>',
+    '    <text x="50" y="222" fill="#94a3b8" font-size="11">Deterministic CI harness</text>',
+    '    <rect x="230" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
+    `    <text x="248" y="176" fill="#38bdf8" font-size="34" font-weight="800">${runtimeDeps}</text>`,
+    '    <text x="248" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Core NPM Deps</text>',
+    '    <text x="248" y="222" fill="#94a3b8" font-size="11">Playwright MCP optional</text>',
+    '    <rect x="428" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
+    `    <text x="446" y="176" fill="#f8fafc" font-size="34" font-weight="800">${skillCount}</text>`,
+    '    <text x="446" y="202" fill="#e2e8f0" font-size="13" font-weight="700">Markdown Skills</text>',
+    '    <text x="446" y="222" fill="#94a3b8" font-size="11">agentskills.io portable</text>',
+    '    <rect x="626" y="128" width="182" height="118" rx="12" fill="#0f172a" stroke="#1e293b"/>',
+    `    <text x="644" y="176" fill="#fbbf24" font-size="34" font-weight="800">${atsCount}</text>`,
+    '    <text x="644" y="202" fill="#e2e8f0" font-size="13" font-weight="700">ATS HTML Fixtures</text>',
+    '    <text x="644" y="222" fill="#94a3b8" font-size="11">Greenhouse · Lever · Ashby</text>',
+    '  </g>',
+    '  <rect x="32" y="264" width="776" height="44" rx="10" fill="#064e3b" fill-opacity="0.35" stroke="#34d399" stroke-opacity="0.35"/>',
+    '  <text x="48" y="291" fill="#a7f3d0" font-family="Consolas,ui-monospace,monospace" font-size="12.5">1 Human APPROVE Authority · 0 Allowed Fabricated Claims · Local-First (No Telemetry)</text>',
+    '  <text x="32" y="336" fill="#94a3b8" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="11.5">Scope: Deterministic fixture validation (not an independent AI accuracy benchmark). Reproduce: npx github:redasalem/job-hunter-os proof</text>',
+    '</svg>',
+    '',
+  ].join('\n');
+
+  const md = [
+    `# Job Hunter OS — Reproducible Proof Card (\`v${version}\`)`,
+    '',
+    '> **Honest Scope:** Deterministic fixture validation generated locally from repository metadata and `eval --baseline` — **not** an independent AI accuracy benchmark. Zero telemetry, zero external servers, zero personal CV data.',
+    '',
+    '| Metric | Verified Value | Source |',
+    '|---|---|---|',
+    `| **Deterministic Fixture Assertions** | **${passed}/${total} PASS** | \`eval --baseline\` against immutable \`evals/fixtures/ground-truth.json\` |`,
+    `| **Live Agent Session Reference** | **${liveEvalSummary}** | \`eval --file evals/results/live-agent-eval-run.json\` |`,
+    `| **Core CLI Runtime Dependencies** | **${runtimeDeps}** | \`package.json\` (\`dependencies: {}\`; optional Playwright MCP via \`npx\`) |`,
+    `| **Consolidated Markdown Skills** | **${skillCount}** | \`skills/skills-manifest.json\` & \`skills/REGISTRY.md\` |`,
+    `| **Fixture-Verified ATS Mocks** | **${atsCount}** (${atsFixtures.map(f => f.replace(/-mock\.html$/, '')).join(', ')}) | \`evals/fixtures/forms/*.html\` |`,
+    '| **Human Approval Authority** | **1 (Explicit `APPROVE` Gate)** | `config/invariants.txt` & `bin/cli.mjs pre-submit` |',
+    '',
+    '### Reproduce Locally',
+    '```bash',
+    'npx github:redasalem/job-hunter-os proof',
+    '```',
+    '',
+  ].join('\n');
+
+  const svgOut = path.join(ROOT, 'logs', 'exports', 'proof-card.svg');
+  const mdOut = path.join(ROOT, 'logs', 'exports', 'proof-card.md');
+  writeAtomic(svgOut, svg);
+  writeAtomic(mdOut, md);
+  console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
+  ok(`Generated reproducible proof card (v${version} · ${passed}/${total} fixture assertions · ${skillCount} skills · ${runtimeDeps} core deps · ${atsCount} ATS fixtures):`);
+  info(`  SVG -> ${svgOut}`);
+  info(`  MD  -> ${mdOut}`);
+  if (passed !== total) process.exitCode = 1;
 }
 
 function cmdPreSubmit() {
@@ -1498,7 +1614,7 @@ function cmdPreSubmit() {
 }
 
 function cmdVersion() {
-  let version = '1.3.0';
+  let version = '1.4.0';
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(SOURCE, 'package.json'), 'utf8'));
     if (pkg?.version) version = pkg.version;
@@ -1509,13 +1625,14 @@ function cmdVersion() {
 
 function cmdHelp() {
   console.log(`${ATTRIBUTION_BANNER}
-job-hunter-os v1.3.0 — Zero-Code Markdown Agent Skills & MCP Installer
+job-hunter-os v1.4.0 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
   job-hunter init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
   job-hunter update [--global | -g] [--ide <name>] Verify SSH signature & refresh playbooks (preserves context/ & logs/)
   job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
   job-hunter eval [--baseline | --file <json>]     Grade Harness Reference Baseline (CI) or external LLM output
+  job-hunter proof [--global | -g]                 Generate reproducible proof-card.svg & proof-card.md in logs/exports/
   job-hunter pre-submit [--draft <f> | --text <t>] Deterministically enforce <=75-word cap & daily warm-up limit
   job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
   job-hunter bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
@@ -1538,6 +1655,7 @@ try {
   else if (command === 'update') cmdUpdate();
   else if (command === 'doctor') await cmdDoctor();
   else if (command === 'eval') cmdEval();
+  else if (command === 'proof') cmdProof();
   else if (command === 'pre-submit') cmdPreSubmit();
   else if (command === 'status') cmdStatus();
   else if (command === 'bundle') cmdBundle();
