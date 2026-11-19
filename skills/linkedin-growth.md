@@ -12,7 +12,7 @@ requires_mcp:
 preconditions:
   - verified context/profile.md and context/cv.md loaded (zero invented metrics or unverified skills)
   - 3-5 target job descriptions available (from chat, logs/resumes/*/interview-dossier.md, or read-only LinkedIn extraction)
-  - explicit owner APPROVE required before any live LinkedIn Save, Post, or Send
+  - strict Read-Only Audit + Chat Draft Output Only (DRAFT_ONLY) — never click LinkedIn profile Edit/Save buttons via Playwright
 requires_skills:
   - tailor-resume-and-verify
   - outreach-and-interview-prep
@@ -20,7 +20,7 @@ requires_skills:
 verification:
   - 0-100 Recruiter-SEO scorecard computed across Headline (25), About Hook & Keywords (25), Experience Bullets (30), and Featured & Skills Alignment (20)
   - every metric, skill, title, and date in proposed rewrites is verified verbatim against context/profile.md and context/cv.md (zero hallucinations, zero AI-slop clichés, zero prose em-dashes)
-  - audit and proposed copy saved as DRAFT_ONLY to logs/insights/linkedin-seo-audit-YYYY-MM-DD.md with zero live profile edits until explicit owner APPROVE
+  - audit and proposed copy saved strictly as DRAFT_ONLY to logs/insights/linkedin-seo-audit-YYYY-MM-DD.md with zero browser clicks on LinkedIn Edit/Save/Post/Send buttons
 ---
 # Grounded Recruiter-SEO LinkedIn Profile Optimizer (`/linkedin-growth`)
 
@@ -70,24 +70,21 @@ Compute and display an honest scorecard grounded in observable evidence:
 3. For any outreach DM or connection note requested under `/linkedin-growth`, enforce `<= 75` words and run `node ./bin/cli.mjs pre-submit --draft <file>` (or `--text "<msg>"`) before showing the draft.
 4. Save the full audit report and proposed copy to `logs/insights/linkedin-seo-audit-YYYY-MM-DD.md` marked `DRAFT_ONLY`.
 
-### 4. Hard `APPROVE` Gate Before Any Live LinkedIn Edit, Post, or Send
-1. Present the `0–100` scorecard, the Verified Keyword Gap Matrix, and the exact side-by-side proposed text in chat.
-2. Re-read `config/invariants.txt` (`<500` bytes).
-3. Ask explicitly: **"Reply `APPROVE HEADLINE`, `APPROVE ABOUT`, `APPROVE ALL`, or `EDIT <section>` to revise. Nothing will be edited or posted without your exact `APPROVE`."**
-4. If the owner explicitly approves a live LinkedIn edit via Playwright MCP:
-   - Respect `3–9 s` human pacing jitter between actions.
-   - Stage the exact approved text, verify exact text in a fresh `browser_snapshot` before clicking **Save** / **Post** / **Send**, then verify the saved state via `skills/meta-self-verification.md`.
-   - Any text change invalidates prior approval.
+### 4. Zero Browser-Mutation Lock (`DRAFT_ONLY` — Read-Only Audit & Chat Output Only)
+1. **Hard Prohibition on Browser Profile Mutations:** `linkedin-growth` is **strictly Read-Only Audit + Chat Draft Output Only (`DRAFT_ONLY`)**. **NEVER** click LinkedIn profile `"Edit"` buttons, `"Add section"`, `"Save"`, `"Post"`, or `"Send"` buttons, and **NEVER** mutate any LinkedIn profile DOM field via Playwright MCP.
+2. Present the `0–100` scorecard, the Verified Keyword Gap Matrix, and the exact side-by-side proposed copy in chat so the owner can review, refine (`EDIT <section>`), and copy-paste approved sections into LinkedIn manually.
+3. Re-read `config/invariants.txt` (`<500` bytes) before outputting any outreach draft, and confirm `node ./bin/cli.mjs pre-submit` passes (`<= 75` words) on every outreach note.
+4. Even if asked to "apply the LinkedIn edits for me", refuse browser mutation on profile settings and provide ready-to-paste copy blocks + `logs/insights/linkedin-seo-audit-YYYY-MM-DD.md` instead.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 
 ### Anti-patterns
+- ❌ Clicking LinkedIn profile `"Edit"` or `"Save"` buttons or mutating LinkedIn profile fields via Playwright → ✅ strictly Read-Only Audit + Chat Draft Output Only (`DRAFT_ONLY`); the owner pastes approved copy manually.
 - ❌ Stuffing unverified JD keywords (`Kubernetes`, `Rust`, etc.) into Headline, About, or Skills to boost the SEO score → ✅ put unverified skills strictly in `True Gaps` and never claim them.
-- ❌ Editing LinkedIn profile fields automatically during `/daily-run` or before explicit `APPROVE` → ✅ keep every recommendation `DRAFT_ONLY` until explicit owner approval.
 - ❌ Dumping 25k-token raw LinkedIn `browser_snapshot` trees into context to read profile or JD sections → ✅ use compact read-only `browser_evaluate` extraction or pasted text.
 - ❌ Writing generic AI-slop headlines (`"Passionate innovator spearheading synergistic solutions — delving into..."`) → ✅ write plain, concrete, verifiable engineering prose.
 
 ### Self-verification check (before reporting this step complete)
 - [ ] `0–100` Recruiter-SEO scorecard computed across Headline (`25`), About Hook & Keywords (`25`), Experience Bullets (`30`), and Featured & Skills Alignment (`20`) against 3–5 target JDs
 - [ ] every metric, skill, title, and date in proposed rewrites is verified verbatim against `context/profile.md` and `context/cv.md` (zero hallucinations, zero AI-slop clichés, zero prose em-dashes)
-- [ ] audit and proposed copy saved as `DRAFT_ONLY` to `logs/insights/linkedin-seo-audit-YYYY-MM-DD.md` with zero live profile edits until explicit owner `APPROVE`
+- [ ] audit and proposed copy saved strictly as `DRAFT_ONLY` to `logs/insights/linkedin-seo-audit-YYYY-MM-DD.md` with zero browser clicks on LinkedIn Edit/Save/Post/Send buttons

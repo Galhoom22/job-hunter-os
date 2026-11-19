@@ -1328,7 +1328,7 @@
       "preconditions": [
         "verified context/profile.md and context/cv.md loaded (zero invented metrics or unverified skills)",
         "3-5 target job descriptions available (from chat, logs/resumes/*/interview-dossier.md, or read-only LinkedIn extraction)",
-        "explicit owner APPROVE required before any live LinkedIn Save, Post, or Send"
+        "strict Read-Only Audit + Chat Draft Output Only (DRAFT_ONLY) — never click LinkedIn profile Edit/Save buttons via Playwright"
       ],
       "requires_skills": [
         "tailor-resume-and-verify",
@@ -1338,7 +1338,7 @@
       "verification": [
         "0-100 Recruiter-SEO scorecard computed across Headline (25), About Hook & Keywords (25), Experience Bullets (30), and Featured & Skills Alignment (20)",
         "every metric, skill, title, and date in proposed rewrites is verified verbatim against context/profile.md and context/cv.md (zero hallucinations, zero AI-slop clichés, zero prose em-dashes)",
-        "audit and proposed copy saved as DRAFT_ONLY to logs/insights/linkedin-seo-audit-YYYY-MM-DD.md with zero live profile edits until explicit owner APPROVE"
+        "audit and proposed copy saved strictly as DRAFT_ONLY to logs/insights/linkedin-seo-audit-YYYY-MM-DD.md with zero browser clicks on LinkedIn Edit/Save/Post/Send buttons"
       ],
       "path": "skills/linkedin-growth.md"
     }

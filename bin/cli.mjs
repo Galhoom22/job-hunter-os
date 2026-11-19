@@ -752,8 +752,17 @@ async function cmdDoctor() {
   if (installed) ok(`Agent Home: ${ROOT} (${isGlobal ? 'global' : 'local'})`);
   else { fail(`Agent Home not initialized at ${ROOT}; run \`init\``); criticalFailures++; }
 
-  if (fs.existsSync(path.join(ROOT, 'skills', 'REGISTRY.md'))) ok('Skill Registry: skills/REGISTRY.md present');
-  else { fail('Missing skills/REGISTRY.md'); criticalFailures++; }
+  if (fs.existsSync(path.join(ROOT, 'skills', 'REGISTRY.md'))) {
+    let manifestCount = null;
+    try {
+      const mPath = [path.join(ROOT, 'skills', 'skills-manifest.json'), path.join(SOURCE, 'skills', 'skills-manifest.json')].find(f => fs.existsSync(f));
+      if (mPath) {
+        const parsed = JSON.parse(fs.readFileSync(mPath, 'utf8'));
+        if (Array.isArray(parsed?.skills)) manifestCount = parsed.skills.length;
+      }
+    } catch { /* ignore */ }
+    ok(`Skill Registry: skills/REGISTRY.md present${manifestCount !== null ? ` (${manifestCount} skills in manifest)` : ''}`);
+  } else { fail('Missing skills/REGISTRY.md'); criticalFailures++; }
 
   // Provenance & Attribution Guard (strict canonical field validation)
   const missingOrTampered = [];
