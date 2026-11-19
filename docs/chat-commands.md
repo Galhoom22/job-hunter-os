@@ -18,7 +18,9 @@ All slash commands below (plus natural-language requests routed via [`skills/REG
 | Antigravity | `AGENTS.md` + `skills/REGISTRY.md` | `.agent/workflows/` (or `~/.gemini/antigravity/global_workflows/`) |
 | Cursor | `.cursor/rules/job-hunter.mdc` | `.agents/skills/` + `.agent/workflows/<command>.md` |
 | Claude Code | `CLAUDE.md` | `commands/*.md` + `.agents/skills/` (global: `~/.claude/commands/` + `~/.claude/skills/`) |
-| Codex / OpenCode / Zed / Goose | `AGENTS.md` | `.agents/skills/*/SKILL.md` (global: `~/.agents/skills/`) |
+| OpenAI Codex CLI | `AGENTS.md` + `$CODEX_HOME/AGENTS.md` | `.agents/skills/*/SKILL.md` (global: `~/.agents/skills/`) + `config.toml` `[mcp_servers.*]` |
+| Google Gemini CLI | `GEMINI.md` + `~/.gemini/GEMINI.md` | `.agents/skills/` (global: `~/.gemini/skills/`) + `settings.json` |
+| OpenCode / Zed / Goose | `AGENTS.md` / `opencode.json` / `.rules` | `.agents/skills/*/SKILL.md` (global: `~/.agents/skills/`) |
 | Windsurf / Devin Desktop | `.windsurfrules` | `.agent/workflows/` (global: `~/.windsurf/workflows/`) |
-| Cline / Roo | `.clinerules` / `.roo/rules/job-hunter.md` | Chat prompt + optional MCP settings |
-| GitHub Copilot | `.github/copilot-instructions.md` | `.github/prompts/` + `.agents/skills/` |
+| Cline / Roo / Kiro / Junie | `.clinerules` / `.roo/rules/` / `.kiro/steering/` / `.junie/` | Chat prompt + `init --ide <name>` + optional MCP settings |
+| GitHub Copilot & VS Code | `.github/copilot-instructions.md` + `~/.copilot/copilot-instructions.md` | `.github/prompts/` + `.agents/skills/` + `.vscode/mcp.json` / `~/.copilot/mcp-config.json` |

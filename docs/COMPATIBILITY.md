@@ -9,10 +9,10 @@ Every major AI IDE, CLI harness, desktop client, and LLM family works out of the
 | Client / Harness | Type | Native Entrypoint | Auto-Discovery / MCP Guide |
 |---|---|---|---|
 | **Antigravity** | AI IDE | [`AGENTS.md`](../AGENTS.md) + [`.agent/workflows/`](../.agent/workflows/daily-run.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
-| **Google Gemini CLI** | Terminal CLI | [`GEMINI.md`](../GEMINI.md) -> `AGENTS.md` | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
+| **Google Gemini CLI** | Terminal CLI | [`GEMINI.md`](../GEMINI.md) + `~/.gemini/GEMINI.md` | [`adapters/apps/gemini-and-copilot.md`](../adapters/apps/gemini-and-copilot.md) (`settings.json`) |
 | **Claude Code** | Terminal CLI | [`CLAUDE.md`](../CLAUDE.md) + [`commands/`](../commands/daily-run.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
 | **Claude Desktop** | Desktop App | [`CLAUDE.md`](../CLAUDE.md) | [`mcp/claude_desktop_config.example.json`](../mcp/claude_desktop_config.example.json) |
-| **OpenAI Codex CLI** | Terminal CLI | [`AGENTS.md`](../AGENTS.md) + [`.agents/skills/`](../.agents/skills/daily-run/SKILL.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
+| **OpenAI Codex CLI** | Terminal CLI | [`AGENTS.md`](../AGENTS.md) + `$CODEX_HOME/AGENTS.md` + [`.agents/skills/`](../.agents/skills/daily-run/SKILL.md) | [`adapters/apps/openai-codex-cli.md`](../adapters/apps/openai-codex-cli.md) (`config.toml`) |
 | **ChatGPT / Claude / Gemini Web** | Desktop / Web Chat | [`adapters/apps/chatgpt-and-web-chats.md`](../adapters/apps/chatgpt-and-web-chats.md) | [`skills/fallback-no-mcp.md`](../skills/fallback-no-mcp.md) |
 | **Cursor** | AI IDE | [`.cursor/rules/job-hunter.mdc`](../.cursor/rules/job-hunter.mdc) + [`.agents/skills/`](../.agents/skills/daily-run/SKILL.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
 | **Devin Desktop / Windsurf** | AI IDE | [`.windsurfrules`](../.windsurfrules) + [`adapters/apps/devin-desktop.md`](../adapters/apps/devin-desktop.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
@@ -22,7 +22,7 @@ Every major AI IDE, CLI harness, desktop client, and LLM family works out of the
 | **AWS Kiro & Amazon Q CLI** | IDE / CLI | [`.kiro/steering/job-hunter.md`](../.kiro/steering/job-hunter.md) + [`.amazonq/rules/job-hunter.md`](../.amazonq/rules/job-hunter.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
 | **Trae** | AI IDE | [`.trae/rules/project_rules.md`](../.trae/rules/project_rules.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
 | **Zed** | Code Editor AI | [`.rules`](../.rules) + [`.agents/skills/`](../.agents/skills/daily-run/SKILL.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
-| **GitHub Copilot** | IDE Agent | [`.github/copilot-instructions.md`](../.github/copilot-instructions.md) + [`.github/prompts/daily-run.prompt.md`](../.github/prompts/daily-run.prompt.md) | VS Code `/skills` + MCP |
+| **GitHub Copilot & VS Code** | IDE / CLI | [`.github/copilot-instructions.md`](../.github/copilot-instructions.md) + [`.github/prompts/daily-run.prompt.md`](../.github/prompts/daily-run.prompt.md) | [`adapters/apps/gemini-and-copilot.md`](../adapters/apps/gemini-and-copilot.md) (`.vscode/mcp.json`) |
 | **Cline & Roo Code** | VS Code Agents | [`.clinerules`](../.clinerules) + [`.roo/rules/job-hunter.md`](../.roo/rules/job-hunter.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
 | **Block Goose & Amp** | Terminal Agents | [`.goosehints`](../.goosehints) + [`.agents/skills/`](../.agents/skills/daily-run/SKILL.md) | [`mcp/mcp.template.json`](../mcp/mcp.template.json) |
 | **Aider** | Terminal CLI | [`.aider.conf.yml`](../.aider.conf.yml) (`read: [AGENTS.md, skills/REGISTRY.md]`) | Text / file edits |

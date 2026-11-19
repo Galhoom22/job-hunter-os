@@ -99,7 +99,7 @@ for (let i = 0; i < ARGV.length; i++) {
     else opts.maxWords = val;
   } else if (a === '--ide') {
     const val = ARGV[++i];
-    if (!val || val.startsWith('-')) argErr = '--ide requires an IDE name (e.g., all, claude, cursor, antigravity, codex, opencode, windsurf, devin, cline).';
+    if (!val || val.startsWith('-')) argErr = '--ide requires an IDE name (e.g., all, codex, gemini, copilot, claude, cursor, antigravity, opencode, windsurf, devin, cline, roo, kiro, junie, zed, goose, aider).';
     else opts.ide = val.toLowerCase();
   } else if (a.startsWith('--ide=')) {
     const val = a.slice(6).toLowerCase();
@@ -248,6 +248,9 @@ function ensurePrivateGitignore(root) {
     '!.env.example',
     '.mcp.json',
     '.cursor/mcp.json',
+    '.codex/config.toml',
+    '.gemini/settings.json',
+    '.vscode/mcp.json',
     '/mcp/*.import.json',
     '/assets/*.pdf',
     '/context/*.pdf',
@@ -267,7 +270,38 @@ function ensurePrivateGitignore(root) {
 }
 
 // ---------------- IDE skill injection ----------------
-const SUPPORTED_IDES = new Set(['all', 'antigravity', 'claude', 'cursor', 'codex', 'opencode', 'windsurf', 'devin', 'cline']);
+const SUPPORTED_IDES = new Set([
+  'all', 'antigravity', 'claude', 'cursor', 'codex', 'gemini', 'copilot',
+  'opencode', 'windsurf', 'devin', 'cline', 'roo', 'kiro', 'junie', 'zed', 'goose', 'aider',
+]);
+
+function resolveCodexHome() {
+  const custom = process.env.CODEX_HOME && process.env.CODEX_HOME.trim();
+  return custom ? path.resolve(custom) : path.join(HOME, '.codex');
+}
+
+function upsertManagedBlock(file, blockBody, { preserve = false } = {}) {
+  const START = '<!-- job-hunter-os:start -->';
+  const END = '<!-- job-hunter-os:end -->';
+  const wrapped = `${START}\n${blockBody.trimEnd()}\n${END}\n`;
+  refuseSymlink(file);
+  if (!fs.existsSync(file)) {
+    return writeAtomic(file, wrapped, { preserve: false });
+  }
+  const current = fs.readFileSync(file, 'utf8');
+  const startIdx = current.indexOf(START);
+  const endIdx = current.indexOf(END);
+  if (startIdx !== -1 && endIdx > startIdx) {
+    if (preserve) return false;
+    const before = current.slice(0, startIdx);
+    const after = current.slice(endIdx + END.length).replace(/^\r?\n/, '');
+    const next = `${before}${wrapped}${after}`;
+    if (next === current) return false;
+    return writeAtomic(file, next, { preserve: false });
+  }
+  const sep = current.endsWith('\n') ? '\n' : '\n\n';
+  return writeAtomic(file, `${current}${sep}${wrapped}`, { preserve: false });
+}
 
 function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false }) {
   if (!SUPPORTED_IDES.has(ide)) {
@@ -286,9 +320,47 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
   };
 
   if (isGlobal) {
-    // Universal agentskills.io auto-discovery (~/.agents/skills/) for Codex, OpenCode, Goose, Amp, Zed
-    if (want('codex') || want('opencode')) {
+    // Universal agentskills.io auto-discovery (~/.agents/skills/) for Codex, OpenCode, Copilot, Goose, Zed, Roo
+    if (want('codex') || want('opencode') || want('copilot') || want('goose') || want('zed') || want('roo')) {
       written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(HOME, '.agents', 'skills'), { preserve, skipped });
+    }
+    // OpenAI Codex CLI global AGENTS.md (~/.codex/AGENTS.md or $CODEX_HOME/AGENTS.md)
+    if (want('codex')) {
+      const codexPointer = [
+        '# Job Hunter OS (Global Codex Instructions)',
+        '',
+        `For job-hunting, CV tailoring, LinkedIn audits, or career tasks, read \`${path.join(targetRoot, 'AGENTS.md')}\` and \`${path.join(targetRoot, 'skills', 'REGISTRY.md')}\` first.`,
+        `Resolve \`context/\`, \`logs/\`, \`templates/\`, and \`skills/\` inside \`${targetRoot}\`.`,
+        'Route natural-language requests via the Task Intent Router without forcing `/setup` for standalone tasks.',
+        'Respect `dry_run: true`, verified facts only, explicit `DRAFT_ONLY` for LinkedIn/outreach, and explicit job-specific human `APPROVE` before every Submit/Save/Send.',
+      ].join('\n');
+      if (upsertManagedBlock(path.join(resolveCodexHome(), 'AGENTS.md'), codexPointer, { preserve })) written++;
+      else if (preserve) skipped.push(path.join(resolveCodexHome(), 'AGENTS.md'));
+    }
+    // Google Gemini CLI global skills & GEMINI.md (~/.gemini/skills/, ~/.gemini/GEMINI.md)
+    if (want('gemini')) {
+      written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(HOME, '.gemini', 'skills'), { preserve, skipped });
+      const geminiPointer = [
+        '# Job Hunter OS (Global Gemini CLI Instructions)',
+        '',
+        `For job-hunting and career workflows, read \`${path.join(targetRoot, 'AGENTS.md')}\` and \`${path.join(targetRoot, 'skills', 'REGISTRY.md')}\` first.`,
+        `Resolve \`context/\`, \`logs/\`, \`templates/\`, and \`skills/\` inside \`${targetRoot}\`.`,
+        'Respect `dry_run: true`, verified facts only, and explicit job-specific human `APPROVE` before every Submit/Save/Send.',
+      ].join('\n');
+      if (upsertManagedBlock(path.join(HOME, '.gemini', 'GEMINI.md'), geminiPointer, { preserve })) written++;
+      else if (preserve) skipped.push(path.join(HOME, '.gemini', 'GEMINI.md'));
+    }
+    // GitHub Copilot CLI global instructions (~/.copilot/copilot-instructions.md)
+    if (want('copilot')) {
+      const copilotPointer = [
+        '# Job Hunter OS (Global Copilot Instructions)',
+        '',
+        `For job-hunting workflows, read \`${path.join(targetRoot, 'AGENTS.md')}\` and \`${path.join(targetRoot, 'skills', 'REGISTRY.md')}\` first.`,
+        `Resolve \`context/\`, \`logs/\`, \`templates/\`, and \`skills/\` inside \`${targetRoot}\`.`,
+        'Never invent facts, bypass challenges, or submit without explicit job-specific human `APPROVE`.',
+      ].join('\n');
+      if (upsertManagedBlock(path.join(HOME, '.copilot', 'copilot-instructions.md'), copilotPointer, { preserve })) written++;
+      else if (preserve) skipped.push(path.join(HOME, '.copilot', 'copilot-instructions.md'));
     }
     // Claude Code global skills & commands (~/.claude/skills/, ~/.claude/commands/)
     if (want('claude')) {
@@ -327,17 +399,63 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
       const ruleText = `For job-hunting workflows, read ${path.join(targetRoot, 'AGENTS.md')} and ${path.join(targetRoot, 'skills', 'REGISTRY.md')} first. Agent home: ${targetRoot}.\n`;
       writeManaged(path.join(HOME, '.clinerules', 'job-hunter.md'), ruleText);
     }
+    // Roo Code & AWS Kiro global rules (~/.roo/rules/, ~/.kiro/steering/)
+    if (want('roo')) {
+      const ruleText = `For job-hunting workflows, read ${path.join(targetRoot, 'AGENTS.md')} and ${path.join(targetRoot, 'skills', 'REGISTRY.md')} first. Agent home: ${targetRoot}.\n`;
+      writeManaged(path.join(HOME, '.roo', 'rules', 'job-hunter.md'), ruleText);
+    }
+    if (want('kiro')) {
+      const ruleText = `For job-hunting workflows, read ${path.join(targetRoot, 'AGENTS.md')} and ${path.join(targetRoot, 'skills', 'REGISTRY.md')} first. Agent home: ${targetRoot}.\n`;
+      writeManaged(path.join(HOME, '.kiro', 'steering', 'job-hunter.md'), ruleText);
+    }
     if (preserve && skipped.length > 0) {
       warn(`Preserved ${skipped.length} existing global IDE skill/rule collision(s) (pass --force to overwrite).`);
     }
   } else {
-    // Local project mode: ensure .agents/skills, .agent/workflows, .cursor/rules, .windsurfrules, .clinerules exist
-    written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(targetRoot, '.agents', 'skills'), { preserve });
-    written += copyTree(path.join(srcRoot, '.agent', 'workflows'), path.join(targetRoot, '.agent', 'workflows'), { preserve });
-    written += copyTree(path.join(srcRoot, 'commands'), path.join(targetRoot, 'commands'), { preserve });
-    written += copyTree(path.join(srcRoot, '.cursor'), path.join(targetRoot, '.cursor'), { preserve: true });
-    written += copyTree(path.join(srcRoot, '.github', 'prompts'), path.join(targetRoot, '.github', 'prompts'), { preserve: true });
-    for (const f of ['.windsurfrules', '.clinerules', '.goosehints', '.rules', '.aider.conf.yml', 'opencode.json']) {
+    // Local project mode: copy skills, workflows, and IDE entrypoints safely
+    if (want('codex') || want('gemini') || want('opencode') || want('copilot') || want('goose') || want('zed') || want('roo') || want('claude') || want('cursor') || want('kiro')) {
+      written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(targetRoot, '.agents', 'skills'), { preserve });
+    }
+    if (want('antigravity') || want('windsurf') || want('devin')) {
+      written += copyTree(path.join(srcRoot, '.agent', 'workflows'), path.join(targetRoot, '.agent', 'workflows'), { preserve });
+    }
+    if (want('claude')) {
+      written += copyTree(path.join(srcRoot, 'commands'), path.join(targetRoot, 'commands'), { preserve });
+    }
+    if (want('cursor')) {
+      written += copyTree(path.join(srcRoot, '.cursor'), path.join(targetRoot, '.cursor'), { preserve: true });
+    }
+    if (want('copilot')) {
+      written += copyTree(path.join(srcRoot, '.github', 'prompts'), path.join(targetRoot, '.github', 'prompts'), { preserve: true });
+      const copilotInstr = path.join(srcRoot, '.github', 'copilot-instructions.md');
+      if (fs.existsSync(copilotInstr) && writeAtomic(path.join(targetRoot, '.github', 'copilot-instructions.md'), fs.readFileSync(copilotInstr), { preserve: true })) {
+        written++;
+      }
+    }
+    for (const [dir, ownerIde] of [
+      ['.roo', 'roo'],
+      ['.trae', 'all'],
+      ['.junie', 'junie'],
+      ['.aiassistant', 'junie'],
+      ['.kiro', 'kiro'],
+      ['.amazonq', 'kiro'],
+      ['.continue', 'all'],
+      ['.openhands', 'all'],
+      ['.augment', 'all'],
+    ]) {
+      if (want(ownerIde)) {
+        written += copyTree(path.join(srcRoot, dir), path.join(targetRoot, dir), { preserve: true });
+      }
+    }
+    for (const [f, ownerIde] of [
+      ['.windsurfrules', 'windsurf'],
+      ['.clinerules', 'cline'],
+      ['.goosehints', 'goose'],
+      ['.rules', 'zed'],
+      ['.aider.conf.yml', 'aider'],
+      ['opencode.json', 'opencode'],
+    ]) {
+      if (!want(ownerIde) && !(f === '.windsurfrules' && want('devin'))) continue;
       const s = path.join(srcRoot, f);
       if (fs.existsSync(s) && writeAtomic(path.join(targetRoot, f), fs.readFileSync(s), { preserve: true })) written++;
     }
@@ -365,13 +483,67 @@ function mcpTargetFiles(root, isGlobal) {
       path.join(HOME, '.claude.json'),
       path.join(HOME, '.cursor', 'mcp.json'),
       path.join(HOME, '.gemini', 'antigravity', 'mcp_config.json'),
+      path.join(HOME, '.gemini', 'settings.json'),
       path.join(HOME, '.codeium', 'windsurf', 'mcp_config.json'),
+      path.join(HOME, '.copilot', 'mcp-config.json'),
     ];
   }
   return [
     path.join(root, '.mcp.json'),
     path.join(root, '.cursor', 'mcp.json'),
+    path.join(root, '.gemini', 'settings.json'),
   ];
+}
+
+function codexConfigTomlPath(root, isGlobal) {
+  return isGlobal ? path.join(resolveCodexHome(), 'config.toml') : path.join(root, '.codex', 'config.toml');
+}
+
+function formatTomlMcpSection(name, cfg) {
+  const q = v => JSON.stringify(String(v));
+  const argsList = (cfg.args || []).map(q).join(', ');
+  const envEntries = Object.entries(cfg.env || {})
+    .map(([k, v]) => `${q(k)} = ${q(v)}`)
+    .join(', ');
+  const lines = [
+    `[mcp_servers.${name}]`,
+    `command = ${q(cfg.command)}`,
+    `args = [${argsList}]`,
+  ];
+  if (envEntries) lines.push(`env = { ${envEntries} }`);
+  return lines.join('\n') + '\n';
+}
+
+function findTomlSectionRange(lines, sectionHeader) {
+  const start = lines.findIndex(line => line.trim() === sectionHeader);
+  if (start === -1) return null;
+  let end = lines.length;
+  for (let i = start + 1; i < lines.length; i++) {
+    if (/^\s*\[[^\]]+\]\s*$/.test(lines[i])) {
+      end = i;
+      break;
+    }
+  }
+  return { start, end };
+}
+
+function upsertTomlMcpServer(tomlText, name, cfg) {
+  const section = formatTomlMcpSection(name, cfg);
+  const lines = tomlText ? tomlText.replace(/\r\n/g, '\n').split('\n') : [];
+  const header = `[mcp_servers.${name}]`;
+  const range = findTomlSectionRange(lines, header);
+  if (range) {
+    const existingBlock = lines
+      .slice(range.start, range.end)
+      .filter(l => l.trim() !== '')
+      .join('\n') + '\n';
+    const expectedBlock = section.trimEnd() + '\n';
+    if (existingBlock === expectedBlock) return { status: 'unchanged', text: tomlText };
+    return { status: 'preserved', text: tomlText };
+  }
+  const trimmed = tomlText.replace(/\r\n/g, '\n').trimEnd();
+  const next = trimmed ? `${trimmed}\n\n${section}` : section;
+  return { status: 'added', text: next };
 }
 
 const MCP_QUIET_NPM_ENV = {
@@ -435,6 +607,52 @@ function syncMcp({ root = ROOT, isGlobal = opts.global || isGlobalRoot(root), sr
     writeAtomic(file, nextText, { mode: 0o600 });
     updated++;
     ok(`Synced Playwright MCP -> ${file}`);
+  }
+
+  // VS Code / GitHub Copilot local workspace MCP uses top-level "servers" key
+  if (!isGlobal) {
+    const vscodeMcp = path.join(root, '.vscode', 'mcp.json');
+    const current = readJsonSafe(vscodeMcp);
+    const servers = isObj(current.servers) ? { ...current.servers } : {};
+    const vsPlaywright = { type: 'stdio', ...playwrightCfg };
+    if (servers.playwright && JSON.stringify(servers.playwright) !== JSON.stringify(vsPlaywright)) {
+      warn(`Preserved existing custom playwright MCP server in ${vscodeMcp}`);
+    } else {
+      servers.playwright = vsPlaywright;
+      if (process.env.NOTION_TOKEN && notionCfg && !servers.notion) {
+        servers.notion = { type: 'stdio', ...notionCfg };
+      }
+      const nextText = JSON.stringify({ ...current, servers }, null, 2) + '\n';
+      if (!fs.existsSync(vscodeMcp) || fs.readFileSync(vscodeMcp, 'utf8') !== nextText) {
+        writeAtomic(vscodeMcp, nextText, { mode: 0o600 });
+        updated++;
+        ok(`Synced VS Code MCP -> ${vscodeMcp}`);
+      }
+    }
+  }
+
+  // OpenAI Codex CLI uses TOML [mcp_servers.<name>] in config.toml
+  const codexToml = codexConfigTomlPath(root, isGlobal);
+  refuseSymlink(codexToml);
+  let tomlText = fs.existsSync(codexToml) ? fs.readFileSync(codexToml, 'utf8') : '';
+  const pwRes = upsertTomlMcpServer(tomlText, 'playwright', playwrightCfg);
+  if (pwRes.status === 'preserved') {
+    warn(`Preserved existing custom playwright MCP server in ${codexToml}`);
+  } else {
+    tomlText = pwRes.text;
+    let tomlChanged = pwRes.status === 'added';
+    if (process.env.NOTION_TOKEN && notionCfg) {
+      const notionRes = upsertTomlMcpServer(tomlText, 'notion', notionCfg);
+      if (notionRes.status === 'added') {
+        tomlText = notionRes.text;
+        tomlChanged = true;
+      }
+    }
+    if (tomlChanged) {
+      writeAtomic(codexToml, tomlText, { mode: 0o600 });
+      updated++;
+      ok(`Synced Codex CLI MCP -> ${codexToml}`);
+    }
   }
 
   // Write opt-in Notion staging import file without secrets
@@ -526,7 +744,7 @@ function installGitPreCommitHook(root) {
     'for f in $STAGED; do',
     '  case "$f" in',
     '    context/*.example|context/DROP_YOUR_FILES_HERE.md) ;;',
-    '    context/*|logs/*|browser-profile/*|*.pdf|.env|.env.*|.mcp.json|.cursor/mcp.json)',
+    '    context/*|logs/*|browser-profile/*|*.pdf|.env|.env.*|.mcp.json|.cursor/mcp.json|.codex/config.toml|.gemini/settings.json|.vscode/mcp.json)',
     '      echo "[job-hunter-os PII Shield] BLOCKED commit of private file: $f" >&2',
     '      exit 1',
     '      ;;',
@@ -935,11 +1153,39 @@ async function cmdDoctor() {
       criticalFailures++;
     }
   }
+  if (!isGlobal) {
+    const vsFile = path.join(ROOT, '.vscode', 'mcp.json');
+    if (fs.existsSync(vsFile)) {
+      try {
+        const cfg = readJsonSafe(vsFile);
+        const args = cfg?.servers?.playwright?.args || [];
+        if (Array.isArray(args) && args.some(a => typeof a === 'string' && a.startsWith('--user-data-dir='))) ok(`VS Code MCP Config: ${vsFile}`);
+        else warn(`VS Code MCP Config: ${vsFile} missing playwright --user-data-dir`);
+      } catch {
+        fail(`VS Code MCP Config invalid JSON: ${vsFile}`);
+        criticalFailures++;
+      }
+    } else {
+      info(`VS Code MCP Config: ${vsFile} (not created yet — run sync-mcp if using VS Code/Copilot)`);
+    }
+  }
+  const codexToml = codexConfigTomlPath(ROOT, isGlobal);
+  if (fs.existsSync(codexToml)) {
+    const toml = fs.readFileSync(codexToml, 'utf8');
+    if (/^\s*\[mcp_servers\.playwright\]/m.test(toml) && toml.includes('--user-data-dir=')) ok(`Codex MCP Config: ${codexToml}`);
+    else warn(`Codex MCP Config: ${codexToml} missing [mcp_servers.playwright] --user-data-dir`);
+  } else {
+    info(`Codex MCP Config: ${codexToml} (not created yet — run sync-mcp if using OpenAI Codex CLI)`);
+  }
 
   // Global IDE discovery folders (informational)
   if (isGlobal) {
     for (const [label, p] of [
       ['~/.agents/skills', path.join(HOME, '.agents', 'skills')],
+      ['~/.codex/AGENTS.md', path.join(resolveCodexHome(), 'AGENTS.md')],
+      ['~/.gemini/GEMINI.md', path.join(HOME, '.gemini', 'GEMINI.md')],
+      ['~/.gemini/skills', path.join(HOME, '.gemini', 'skills')],
+      ['~/.copilot/copilot-instructions.md', path.join(HOME, '.copilot', 'copilot-instructions.md')],
       ['~/.claude/skills', path.join(HOME, '.claude', 'skills')],
       ['~/.cursor/rules/job-hunter.mdc', path.join(HOME, '.cursor', 'rules', 'job-hunter.mdc')],
       ['~/.gemini/antigravity/global_workflows', path.join(HOME, '.gemini', 'antigravity', 'global_workflows')],

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **First-Class OpenAI Codex CLI, Google Gemini CLI & GitHub Copilot / VS Code Sync (`bin/cli.mjs`, `adapters/apps/openai-codex-cli.md`, `adapters/apps/gemini-and-copilot.md`):** Added non-destructive managed instruction injection (`$CODEX_HOME/AGENTS.md`, `~/.gemini/GEMINI.md`, `~/.copilot/copilot-instructions.md`), safe TOML `[mcp_servers.*]` syncing (`.codex/config.toml` / `$CODEX_HOME/config.toml`), Gemini CLI `settings.json`, VS Code `.vscode/mcp.json` (`"servers"`), expanded `--ide` targets (`codex`, `gemini`, `copilot`, `roo`, `kiro`, `junie`, `zed`, `goose`, `aider`), local scaffolding for all repo IDE adapters, and Test 7 in `evals/journeys/run-journeys.test.mjs`.
+
 ## [1.5.0] - 2026-11-19 — Universal Guided AI Workflow Engine & Release Hardening
 
 ### Added

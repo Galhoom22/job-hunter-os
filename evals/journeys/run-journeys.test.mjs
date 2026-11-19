@@ -406,3 +406,86 @@ test('6. Tool-Availability Scenarios & Manual Fallback: all 5 scenarios succeed 
   assert.match(fallbackMd, /never fake `?\.docx`?/i);
   assert.match(fallbackMd, /requires_mcp:\s*\n\s*- none/);
 });
+
+test('7. Multi-IDE Adapter Setup: OpenAI Codex CLI (TOML + AGENTS.md), Gemini CLI, Copilot/VS Code & preservation guarantees', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'jho-ides-'));
+  try {
+    const fakeHome = path.join(tmp, 'home');
+    const codexHome = path.join(fakeHome, '.codex');
+    const emptyCwd = path.join(tmp, 'empty');
+    const localProj = path.join(tmp, 'local-proj');
+    fs.mkdirSync(codexHome, { recursive: true });
+    fs.mkdirSync(emptyCwd, { recursive: true });
+    fs.mkdirSync(localProj, { recursive: true });
+
+    // Pre-existing user Codex AGENTS.md + custom model in config.toml MUST be preserved
+    const codexAgents = path.join(codexHome, 'AGENTS.md');
+    const codexToml = path.join(codexHome, 'config.toml');
+    fs.writeFileSync(codexAgents, '# Personal Codex Coding Rules\n- Always run tests.\n');
+    fs.writeFileSync(codexToml, 'model = "gpt-5"\napproval_policy = "on-request"\n');
+
+    const env = { ...process.env, HOME: fakeHome, USERPROFILE: fakeHome, CODEX_HOME: codexHome };
+    const initGlobal = spawnSync(process.execPath, [CLI, 'init', '--global', '--ide', 'all'], {
+      cwd: emptyCwd,
+      env,
+      encoding: 'utf8',
+    });
+    assert.equal(initGlobal.status, 0, initGlobal.stdout + initGlobal.stderr);
+
+    // Check OpenAI Codex CLI files + preservation
+    const agentsAfter = fs.readFileSync(codexAgents, 'utf8');
+    assert.match(agentsAfter, /# Personal Codex Coding Rules/);
+    assert.match(agentsAfter, /<!-- job-hunter-os:start -->/);
+    assert.match(agentsAfter, /AGENTS\.md/);
+    const tomlAfter = fs.readFileSync(codexToml, 'utf8');
+    assert.match(tomlAfter, /model = "gpt-5"/);
+    assert.match(tomlAfter, /\[mcp_servers\.playwright\]/);
+    assert.match(tomlAfter, /--user-data-dir=/);
+    assert.ok(fs.existsSync(path.join(fakeHome, '.agents', 'skills', 'daily-run', 'SKILL.md')));
+
+    // Check Google Gemini CLI & GitHub Copilot global files
+    assert.ok(fs.existsSync(path.join(fakeHome, '.gemini', 'GEMINI.md')));
+    assert.ok(fs.existsSync(path.join(fakeHome, '.gemini', 'skills', 'quick-tailor', 'SKILL.md')));
+    const geminiSettings = JSON.parse(fs.readFileSync(path.join(fakeHome, '.gemini', 'settings.json'), 'utf8'));
+    assert.ok(geminiSettings.mcpServers?.playwright);
+    assert.ok(fs.existsSync(path.join(fakeHome, '.copilot', 'copilot-instructions.md')));
+    const copilotMcp = JSON.parse(fs.readFileSync(path.join(fakeHome, '.copilot', 'mcp-config.json'), 'utf8'));
+    assert.ok(copilotMcp.mcpServers?.playwright);
+
+    // Custom [mcp_servers.playwright] in config.toml MUST be preserved on re-sync
+    fs.writeFileSync(codexToml, 'model = "gpt-5"\n\n[mcp_servers.playwright]\ncommand = "custom-pw"\nargs = ["--user-data-dir=custom"]\n');
+    const reSync = spawnSync(process.execPath, [CLI, 'sync-mcp', '--global'], { cwd: emptyCwd, env, encoding: 'utf8' });
+    assert.equal(reSync.status, 0, reSync.stdout + reSync.stderr);
+    const tomlPreserved = fs.readFileSync(codexToml, 'utf8');
+    assert.match(tomlPreserved, /command = "custom-pw"/);
+
+    // Local init scaffolds Codex, Gemini, Copilot/VS Code, Roo, Kiro, Junie, Trae, Continue, OpenHands, Augment
+    const initLocal = spawnSync(process.execPath, [CLI, 'init', '--ide', 'all'], {
+      cwd: localProj,
+      env,
+      encoding: 'utf8',
+    });
+    assert.equal(initLocal.status, 0, initLocal.stdout + initLocal.stderr);
+    for (const rel of [
+      '.codex/config.toml',
+      '.gemini/settings.json',
+      '.vscode/mcp.json',
+      '.github/copilot-instructions.md',
+      '.roo/rules/job-hunter.md',
+      '.kiro/steering/job-hunter.md',
+      '.junie/guidelines.md',
+      '.aiassistant/rules/AGENTS.md',
+      '.trae/rules/project_rules.md',
+      '.continue/rules/job-hunter.md',
+      '.openhands/microagents/repo.md',
+      '.augment/rules/job-hunter.md',
+      '.amazonq/rules/job-hunter.md',
+    ]) {
+      assert.ok(fs.existsSync(path.join(localProj, rel)), `Missing local IDE file: ${rel}`);
+    }
+    const vscodeMcp = JSON.parse(fs.readFileSync(path.join(localProj, '.vscode', 'mcp.json'), 'utf8'));
+    assert.equal(vscodeMcp.servers?.playwright?.type, 'stdio');
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});

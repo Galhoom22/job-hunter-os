@@ -259,6 +259,12 @@ jobs:
           test -f "$ISO_PROJ/logs/exports/dashboard.html"
           test -f "$ISO_PROJ/.mcp.json"
           test -f "$ISO_PROJ/.cursor/mcp.json"
+          test -f "$ISO_PROJ/.gemini/settings.json"
+          test -f "$ISO_PROJ/.vscode/mcp.json"
+          test -f "$ISO_PROJ/.codex/config.toml"
+          test -f "$ISO_PROJ/.github/copilot-instructions.md"
+          test -f "$ISO_PROJ/.roo/rules/job-hunter.md"
+          test -f "$ISO_PROJ/.kiro/steering/job-hunter.md"
 
       - name: Test global init and doctor in isolated HOME
         shell: bash
@@ -269,12 +275,19 @@ jobs:
           mkdir -p "$ISO_HOME"
           REPO_DIR="$(pwd)"
 
-          HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" init --global
-          HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" node "$REPO_DIR/bin/cli.mjs" doctor --global
+          HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" CODEX_HOME="$ISO_HOME/.codex" node "$REPO_DIR/bin/cli.mjs" init --global
+          HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" CODEX_HOME="$ISO_HOME/.codex" node "$REPO_DIR/bin/cli.mjs" doctor --global
 
           test -f "$ISO_HOME/.job-hunter-os/AGENTS.md"
           test -f "$ISO_HOME/.agents/skills/daily-run/SKILL.md"
           test -f "$ISO_HOME/.agents/skills/quick-tailor/SKILL.md"
+          test -f "$ISO_HOME/.codex/AGENTS.md"
+          test -f "$ISO_HOME/.codex/config.toml"
+          test -f "$ISO_HOME/.gemini/GEMINI.md"
+          test -f "$ISO_HOME/.gemini/skills/daily-run/SKILL.md"
+          test -f "$ISO_HOME/.gemini/settings.json"
+          test -f "$ISO_HOME/.copilot/copilot-instructions.md"
+          test -f "$ISO_HOME/.copilot/mcp-config.json"
           test -f "$ISO_HOME/.claude/skills/daily-run/SKILL.md"
           test -f "$ISO_HOME/.claude/skills/quick-tailor/SKILL.md"
           test -f "$ISO_HOME/.claude/commands/quick-tailor.md"

@@ -37,6 +37,9 @@ browser-profile/
 !.env.example
 .mcp.json
 .cursor/mcp.json
+.codex/config.toml
+.gemini/settings.json
+.vscode/mcp.json
 assets/*.pdf
 context/*.pdf
 context/*
