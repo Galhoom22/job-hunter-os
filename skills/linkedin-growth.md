@@ -1,13 +1,16 @@
 ---
 name: linkedin-growth
-version: "1.3.0"
-description: Load when the owner runs /linkedin-growth or asks to review their LinkedIn profile, improve headline/About/experience, align LinkedIn with their CV, optimize for target roles, or draft posts/<=75-word outreach; defaults to DRAFT_ONLY and permits live profile updates only with legitimate Playwright auth plus explicit APPROVE and post-save snapshot verification.
+version: "2.0.0"
+description: Load when the owner runs /linkedin-growth or asks to review/optimize their LinkedIn profile, diagnose ranking & SEO errors, improve headline/About/experience/projects/skills, align LinkedIn with their CV, craft personal-brand marketing copy, or draft/publish LinkedIn posts & <=75-word outreach; defaults to DRAFT_ONLY and permits live updates/publishing only with legitimate browser auth plus explicit APPROVE and post-save snapshot verification.
 triggers:
   - /linkedin-growth
   - review or audit my LinkedIn profile
   - improve my LinkedIn headline or About section
   - make my LinkedIn profile consistent with my CV
   - optimize my LinkedIn profile for target roles
+  - check my LinkedIn rank, analytics, or profile errors
+  - write or publish a LinkedIn post or personal-brand marketing copy
+  - add open-source projects or optimize LinkedIn skills and Featured section
 requires_mcp:
   - none
 optional_mcp:
@@ -74,6 +77,42 @@ Compute and display an honest scorecard grounded in observable evidence:
    - Execute a live LinkedIn section edit **ONLY** if: (a) the owner explicitly asks to apply a specific section update in LinkedIn, (b) Playwright MCP is connected **and** a signed-in LinkedIn session for the owner's account is verified (never assume Playwright == auth), and (c) the owner inspects the exact final Before/After text and replies **`APPROVE`** for that specific section.
    - Edit only the approved section, click Save once, wait 3–9 s, reload/re-open the profile view, and verify via a fresh `browser_snapshot` (`skills/meta-self-verification.md`) that the persisted text matches verbatim before reporting `"updated"`.
    - Never bypass CAPTCHA, 2FA, or login walls (`skills/24-circuit-breaker-and-antiban.md`). If browser access or auth is unavailable, deliver the `DRAFT_ONLY` copy and clear manual paste steps cleanly without failing the task.
+
+### 5. Deep Rank & Error Diagnostics (Recruiter Search & Algorithm Health)
+When auditing any LinkedIn profile, automatically scan for high-impact ranking killers and report a **Top-3 Immediate Fix Plan**:
+1. **Skill Spelling & Normalization Traps:** Detect typos, casing bugs, or stray spaces in pinned Top Skills and Skills list (e.g., `Java Script` vs `JavaScript`, `type Script` vs `TypeScript`, `next.js` vs `Next.js`, `tailwindcss` vs `Tailwind CSS`) that break LinkedIn Recruiter Boolean filters.
+2. **Private Analytics Diagnosis:** Inspect `Profile views`, `Search appearances`, and `Post impressions` (last 7 days). Diagnose the bottleneck:
+   - Low `Search appearances` → fix Headline keywords, standard Skills, and `Open to Work (Recruiters only)` job titles + Remote locations.
+   - Good `Search appearances` but low inbound messages → strengthen Above-the-Fold About hook, Featured proof links, and Experience outcomes.
+   - `0 Post impressions` → activate a 1–2x/week technical content cadence.
+3. **Recruiter-Visibility Toggles & Completeness:** Check `Open to Work (Recruiters only — never force public green banner unless asked)`, custom vanity URL, Projects / Open Source entries (`details/projects/`), Featured links, and CV-to-LinkedIn date/title parity.
+
+### 6. Personal-Brand & Positioning Copywriting (Marketing Mastery)
+Apply high-conversion technical positioning across every LinkedIn section (grounded strictly in verified facts):
+- **Reframe Freelance / Independent Work:** Position freelance or solo work as **production-grade engineering & end-to-end client delivery** (shipped architectures, test coverage, performance scores, international stakeholders) rather than generic "freelancer" filler.
+- **Copywriting Formula (`Hook → Proof → Outcome → Soft CTA`):**
+  - *Headline (`<= 220` chars):* `[Primary Target Role] | [Top 3–5 Recruiter-Filter Stack Keywords] | [Differentiator: e.g., AI-First Engineering & Scalable Web Apps]`.
+  - *About First 220 Chars:* Lead with concrete specialty + shipped impact before the `"See more"` fold, followed by scannable domain pillars and a clear contact/collaboration CTA.
+  - *Experience & Projects:* Lead with system scope, technical stack, and verified metrics (`73+ automated tests`, `95+ performance scores`, `RTL/bilingual`, CI/CD).
+
+### 7. LinkedIn Content & Post Publishing Engine (Algorithm-Smart)
+Draft high-signal posts (English, Arabic, or bilingual as requested) that build authority with recruiters and engineering managers:
+- **4 Proven Engineering Post Templates:**
+  1. **Build-in-Public / Open-Source Launch:** Problem solved → architecture highlight → real screenshot/demo → GitHub link in the **first comment**.
+  2. **Technical Breakdown / Architecture Lesson:** Real bug or bottleneck faced → how you solved it → concrete takeaway.
+  3. **Before/After Case Study:** Verified performance, testing, or workflow improvement with real numbers from shipped work.
+  4. **AI-First Engineering Workflow:** Practical lesson using tools like Claude Code, Cursor, or agent orchestration (real workflow, zero hype).
+- **LinkedIn Algorithm & Formatting Rules:**
+  - Strong **2-line scroll-stopping hook** above `"See more"` (no clickbait, no cringe).
+  - Short 1–2 sentence paragraphs with clean whitespace for mobile readability.
+  - **No external links in the main post body** (external links suppress reach) — place GitHub / portfolio / demo URLs in the **first comment** (`First Comment Draft` always provided alongside the post).
+  - `3–5` targeted technical hashtags max; zero banned AI-slop clichés (`delve`, `tapestry`, `spearheaded`, `synergy`, `game-changer`, `thrilled to announce`) and zero prose em-dashes.
+- **Publishing Gate:** Always deliver the post + first-comment draft in `DRAFT_ONLY` first. Publish live via browser **only** after explicit owner approval (`APPROVE` / `"انشر"`), then add the first comment if requested and verify the live post URL via fresh snapshot.
+
+### 8. Full LinkedIn Surface Coverage & Safe Navigation
+Know and navigate every key LinkedIn surface cleanly (with `3–9 s` human pacing, `Role -> Label -> Text` selectors, and zero CAPTCHA/2FA bypasses):
+- **Profile Surfaces:** Intro/Headline, About, Experience (`details/experience/`), Projects (`details/projects/`), Skills (`details/skills/`), Featured, Open to Work (`Recruiters only`), and Recommendations.
+- **Growth Surfaces:** Post composer (feed), strategic technical commenting on hiring-manager/founder posts (draft-first, insightful, never spammy `"Great post!"`), and `<= 75`-word recruiter/hiring-manager outreach DMs (`skills/05-outreach-and-interview-prep.md`).
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 
