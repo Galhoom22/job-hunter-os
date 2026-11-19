@@ -103,3 +103,8 @@ Whenever presenting discovered jobs in the Mission Control table, always include
 1. When starting a job search, inform the user upfront that we will **prioritize Easy Apply jobs first** and review each job description for fit.
 2. In the Mission Control table, include both **Match %** and **Tailored CV Needed?** (`Yes` / `No`, based on whether the existing base CV already covers the role's core stack or needs targeted keyword/summary alignment).
 3. If the user asks to create a tailored CV, ask first whether they prefer **(A) Local AI Tailoring** or **(B) External Web Tailoring (`https://www.resume-tailor-ai.tech/`)**, and then proceed with their chosen method.
+
+### Fast-Track & Skip Aggregators
+To maximize speed and minimize friction:
+1. Prioritize **LinkedIn Easy Apply** first, then **direct ATS forms** (Greenhouse, Lever, Ashby, Workable).
+2. Immediately skip stale aggregator/repost sites that require creating new accounts, show old posting dates, or have non-working Apply buttons.
