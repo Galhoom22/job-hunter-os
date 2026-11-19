@@ -50,6 +50,7 @@ At the start of every session, read `AGENTS.md` and `skills/REGISTRY.md` first. 
   - `skills/24-circuit-breaker-and-antiban.md` — Anti-bot circuit breaker & 24-hour platform cooldown (`logs/circuit-breaker.json`)
   - `skills/25-prompt-injection-defense.md` — Untrusted-DOM prompt-injection defense, honeypot guard & recruiter attention-check detector
   - `skills/26-deduplication-and-blacklist-guard.md` — Employer/domain blacklist & cross-channel canonical job fingerprinting (`company::role_title`)
+  - `skills/linkedin-growth.md` — Grounded 0–100 Recruiter-SEO LinkedIn profile audit & optimization (`/linkedin-growth`, `DRAFT_ONLY` + `APPROVE` gate)
   - `skills/platforms/b2b-contract-networks.md` — Curated B2B contract networks (Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing)
   - `skills/fallback-no-mcp.md` — Non-MCP web chat fallback (ChatGPT / Claude Web / Gemini Web)
 - **Auto-discovery mirror:** `.agents/skills/*/SKILL.md` (`agentskills.io` compatible wrappers pointing to `skills/`).

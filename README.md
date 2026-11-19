@@ -6,12 +6,12 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
 [![Harness Validator 20/20](https://img.shields.io/badge/CI_Harness_Validator-20%2F20_Baseline-2ea44f)](evals/README.md)
-[![47 Consolidated Skills](https://img.shields.io/badge/Skills-47_Consolidated_Markdown-167d60)](skills/REGISTRY.md)
+[![48 Consolidated Skills](https://img.shields.io/badge/Skills-48_Consolidated_Markdown-167d60)](skills/REGISTRY.md)
 [![Playwright MCP](https://img.shields.io/badge/Browser-Playwright_MCP-167d60)](mcp/README.md)
 [![Multi-IDE ready](https://img.shields.io/badge/IDE-25%2B_AI_Apps_%26_Harnesses-167d60)](docs/COMPATIBILITY.md)
 [![agentskills.io](https://img.shields.io/badge/Standard-agentskills.io-2ea44f)](.agents/skills/daily-run/SKILL.md)
 
-`job-hunter-os` turns your AI IDE or CLI harness into a disciplined career co-pilot built on **47 consolidated Markdown skills** and a **zero-dependency Node CLI** (`dependencies: {}`). It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), scores job fit honestly, maps ATS keywords (`Before vs. After %`), generates single-column HTML/PDF CVs and interview dossiers, prepares `<= 75`-word hiring-manager notes, and logs everything locally (`logs/` + optional Notion MCP).
+`job-hunter-os` turns your AI IDE or CLI harness into a disciplined career co-pilot built on **48 consolidated Markdown skills** and a **zero-dependency Node CLI** (`dependencies: {}`). It reads [`AGENTS.md`](AGENTS.md) and [`skills/REGISTRY.md`](skills/REGISTRY.md), scores job fit honestly, maps ATS keywords (`Before vs. After %`), generates single-column HTML/PDF CVs and interview dossiers, runs grounded `0–100` LinkedIn Recruiter-SEO profile audits, prepares `<= 75`-word hiring-manager notes, and logs everything locally (`logs/` + optional Notion MCP).
 
 > **What `job-hunter-os` Will NEVER Do (Hard Operational Boundaries):**
 > - **No blind auto-submit:** `dry_run: true` is on by default; live forms pause at a **Live DOM Read-Back Table** and require your explicit job-bound `APPROVE` reply before clicking Submit.
@@ -101,7 +101,7 @@ npx github:redasalem/job-hunter-os eval --baseline
 | `/tailor-cv URL` | [`.agent/workflows/tailor-cv.md`](.agent/workflows/tailor-cv.md) | Generates ATS Keyword Heatmap + fact-checked PDF + `interview-dossier.md` (never submits) |
 | `/apply-url URL` | [`.agent/workflows/apply-url.md`](.agent/workflows/apply-url.md) | Applies all safety gates to a single HTTPS job posting URL |
 | `/weekly-report` | [`.agent/workflows/weekly-report.md`](.agent/workflows/weekly-report.md) | Generates funnel conversion, rejection pattern, and score calibration insights |
-| `/linkedin-growth` | [`.agent/workflows/linkedin-growth.md`](.agent/workflows/linkedin-growth.md) | Drafts profile improvements or `<= 75`-word outreach (`DRAFT_ONLY` until explicit `approve`) |
+| `/linkedin-growth` | [`.agent/workflows/linkedin-growth.md`](.agent/workflows/linkedin-growth.md) | `0–100` Recruiter-SEO profile audit & grounded rewrites ([`skills/linkedin-growth.md`](skills/linkedin-growth.md)), posts, or `<= 75`-word outreach (`DRAFT_ONLY` until explicit `APPROVE`) |
 
 ---
 
@@ -109,14 +109,14 @@ npx github:redasalem/job-hunter-os eval --baseline
 
 | Guide | Contents |
 |---|---|
-| [**`AGENTS.md`**](AGENTS.md) & [**`skills/REGISTRY.md`**](skills/REGISTRY.md) | Canonical rules, compact Progressive Disclosure index (**47 consolidated skills**), and 10 non-negotiable guardrails |
-| [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) | Complete guide to all **47 consolidated skills**: 29 core/career playbooks, 4 `meta-*` skills, 7 board playbooks, and 7 ATS engines |
+| [**`AGENTS.md`**](AGENTS.md) & [**`skills/REGISTRY.md`**](skills/REGISTRY.md) | Canonical rules, compact Progressive Disclosure index (**48 consolidated skills**), and 10 non-negotiable guardrails |
+| [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) | Complete guide to all **48 consolidated skills**: 30 core/career playbooks, 4 `meta-*` skills, 7 board playbooks, and 7 ATS engines |
 | [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) | System diagram, 6-phase execution pipeline, and `/setup` readiness interrogation transcript |
 | [**`docs/COMPATIBILITY.md`**](docs/COMPATIBILITY.md) | Setup matrix for **25+ AI IDEs & CLI harnesses**, **6 LLM tuning guides** (`adapters/`), and manual copy commands |
 | [**`PLATFORMS.md`**](PLATFORMS.md) & [**`context/targets.yaml.example`**](context/targets.yaml.example) | Global, Remote, Regional (Europe, MENA, APAC, LATAM), B2B Contract Networks, and Employer ATS matrix |
 | [**`evals/README.md`**](evals/README.md), [**`RUBRIC.md`**](evals/RUBRIC.md) & [**`PROMPT.md`**](evals/PROMPT.md) | Deterministic CI harness validator, 20-assertion rubric, and reproducible external LLM prompt |
-| [**`mcp/mcp.template.json`**](mcp/mcp.template.json) | Portable Playwright MCP (`-y`, `--caps=pdf`, `./browser-profile`) and optional Notion MCP configuration |
-| [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) | Community success ledger and release history (`v1.0.0` -> `v1.2.3`) |
+| [**`mcp/mcp.template.json`**](mcp/mcp.template.json) & [**`docs/OPTIONAL_MCP_PLUGINS.md`**](docs/OPTIONAL_MCP_PLUGINS.md) | Pinned Playwright MCP (`-y`, `--caps=pdf`, `./browser-profile`), optional Notion MCP, and opt-in community MCP plugins |
+| [**`HIRED.md`**](HIRED.md) & [**`CHANGELOG.md`**](CHANGELOG.md) | Community success ledger and release history (`v1.0.0` -> `v1.3.0`) |
 
 ---
 

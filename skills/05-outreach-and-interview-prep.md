@@ -59,9 +59,10 @@ When a posting (Wuzzuf, LinkedIn Post, Hacker News Who's Hiring, RemoteOK) instr
    - Status: `DRAFT_ONLY — send manually from your mail client`
 4. Log the job as `apply_type: "manual_apply"`, `status: "needs_review"`, and show the draft in chat.
 
-### 4. `/linkedin-growth` (Profile, Posts & Explicit-Send Outreach)
+### 4. `/linkedin-growth` (Recruiter-SEO Profile Optimizer, Posts & Explicit-Send Outreach)
 - Only when explicitly requested outside a daily application run.
-- Show side-by-side proposed profile edits, post drafts, or exact recipient + `<= 75`-word outreach text in chat, wait for exact `approve`, then stage/save and read back via `skills/meta-self-verification.md`.
+- For full **0–100 Recruiter-SEO Profile Audits** and grounded section-by-section rewrites (`Headline`, `About`, `Experience Bullets`, `Featured & Skills`), load `skills/linkedin-growth.md`.
+- Show side-by-side proposed profile edits, post drafts, or exact recipient + `<= 75`-word outreach text in chat (`DRAFT_ONLY`), run `node ./bin/cli.mjs pre-submit` on outreach drafts, wait for exact `APPROVE`, then stage/save and read back via `skills/meta-self-verification.md`.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

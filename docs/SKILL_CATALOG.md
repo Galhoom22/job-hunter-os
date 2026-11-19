@@ -1,10 +1,10 @@
-# Consolidated 47-Skill Catalog & URL Construction Guide
+# Consolidated 48-Skill Catalog & URL Construction Guide
 
-Every skill in `job-hunter-os` (`47` consolidated skills total: `29` core/career playbooks, `4` `meta-*` skills, `7` platform playbooks, and `7` ATS engines) follows the **`agentskills.io` / `SKILL.md` progressive disclosure standard** (`skills/REGISTRY.md` & `skills/skills-manifest.json`), loading only when its trigger matches the active phase of work.
+Every skill in `job-hunter-os` (`48` consolidated skills total: `30` core/career playbooks, `4` `meta-*` skills, `7` platform playbooks, and `7` ATS engines) follows the **`agentskills.io` / `SKILL.md` progressive disclosure standard** (`skills/REGISTRY.md` & `skills/skills-manifest.json`), loading only when its trigger matches the active phase of work.
 
 ---
 
-## 1. Core & Career-Ops Playbooks (29 Skills)
+## 1. Core & Career-Ops Playbooks (30 Skills)
 
 | # | Skill File | Responsibility |
 |---|---|---|
@@ -36,6 +36,7 @@ Every skill in `job-hunter-os` (`47` consolidated skills total: `29` core/career
 | `24` | [`skills/24-circuit-breaker-and-antiban.md`](../skills/24-circuit-breaker-and-antiban.md) | Anti-bot circuit breaker & 24-hour platform cooldown (`logs/circuit-breaker.json`) |
 | `25` | [`skills/25-prompt-injection-defense.md`](../skills/25-prompt-injection-defense.md) | Untrusted-DOM prompt-injection defense, honeypot guard, and recruiter attention-check detector |
 | `26` | [`skills/26-deduplication-and-blacklist-guard.md`](../skills/26-deduplication-and-blacklist-guard.md) | Employer/domain blacklist & cross-channel canonical job fingerprinting (`company::role_title`) |
+| `—` | [`skills/linkedin-growth.md`](../skills/linkedin-growth.md) | Grounded 0–100 Recruiter-SEO LinkedIn profile audit & section-by-section optimizer (`DRAFT_ONLY` + `APPROVE` gate) |
 | `—` | [`skills/fallback-no-mcp.md`](../skills/fallback-no-mcp.md) | Non-MCP web chat fallback (ChatGPT Web, Claude Web, Gemini Web) |
 
 ---

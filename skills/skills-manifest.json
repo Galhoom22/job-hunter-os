@@ -1310,6 +1310,37 @@
         "any matched duplicate or blacklisted posting was skipped cleanly and logged to logs/skipped-jobs.json with reason duplicate_cross_channel or blacklisted_employer"
       ],
       "path": "skills/26-deduplication-and-blacklist-guard.md"
+    },
+    {
+      "name": "linkedin-growth",
+      "version": "1.3.0",
+      "category": "core",
+      "description": "Load when the owner runs /linkedin-growth or asks for a Recruiter-SEO LinkedIn profile audit (0-100 rubric against 3-5 target JDs), grounded section-by-section profile optimization, posts, or <=75-word outreach with explicit APPROVE gating.",
+      "triggers": [
+        "/linkedin-growth",
+        "audit my LinkedIn profile",
+        "optimize my LinkedIn",
+        "LinkedIn Recruiter SEO"
+      ],
+      "requires_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "verified context/profile.md and context/cv.md loaded (zero invented metrics or unverified skills)",
+        "3-5 target job descriptions available (from chat, logs/resumes/*/interview-dossier.md, or read-only LinkedIn extraction)",
+        "explicit owner APPROVE required before any live LinkedIn Save, Post, or Send"
+      ],
+      "requires_skills": [
+        "tailor-resume-and-verify",
+        "outreach-and-interview-prep",
+        "meta-self-verification"
+      ],
+      "verification": [
+        "0-100 Recruiter-SEO scorecard computed across Headline (25), About Hook & Keywords (25), Experience Bullets (30), and Featured & Skills Alignment (20)",
+        "every metric, skill, title, and date in proposed rewrites is verified verbatim against context/profile.md and context/cv.md (zero hallucinations, zero AI-slop clichés, zero prose em-dashes)",
+        "audit and proposed copy saved as DRAFT_ONLY to logs/insights/linkedin-seo-audit-YYYY-MM-DD.md with zero live profile edits until explicit owner APPROVE"
+      ],
+      "path": "skills/linkedin-growth.md"
     }
   ]
 }

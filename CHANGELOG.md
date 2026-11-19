@@ -5,6 +5,18 @@ All notable changes to **`job-hunter-os`** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-11-19 — Token-Slim LinkedIn Extraction & Grounded Recruiter-SEO Optimizer
+
+### Added
+- **Token-Slim Structured Extraction for LinkedIn (`skills/platforms/linkedin.md` & `skills/02-discover-and-triage.md`):**
+  - Added a deterministic, read-only Playwright `browser_evaluate` extraction pattern returning compact `<2 KB` JSON (`job_id`, `canonical_url`, `title`, `company`, `location`, `workplace_type`, `jd_text`, `required_skills`, `hiring_team`, `already_applied`, `closed_banner`) instead of dumping raw 25k-token accessibility trees into LLM context.
+  - Preserves `3–9 s` human pacing jitter, `>= 10 s` reading dwell time, `UNTRUSTED_EXTERNAL_DATA` prompt-injection quarantine, and immediate 24-hour circuit-breaker stops.
+- **Grounded Recruiter-SEO LinkedIn Profile Optimizer (`skills/linkedin-growth.md` — 48 Consolidated Skills):**
+  - Added a dedicated `/linkedin-growth` skill scoring LinkedIn sections on a transparent `0–100` rubric (`Headline` 25, `About Hook & Keywords` 25, `Experience Bullets` 30, `Featured & Skills Alignment` 20) against 3–5 target JDs.
+  - Generates side-by-side Before/After rewrites strictly grounded in `context/profile.md` & `context/cv.md` (zero invented metrics, zero unverified skills, zero AI-slop clichés/em-dashes), saved as `DRAFT_ONLY` and gated behind explicit human `APPROVE`.
+- **Optional External MCP Plugin Guide (`docs/OPTIONAL_MCP_PLUGINS.md`):**
+  - Documented `stickerdaniel/linkedin-mcp-server` as an opt-in external MCP plugin with clear LinkedIn ToS, `li_at` credential hygiene, and rate-limit warnings alongside our zero-dependency native Playwright MCP default.
+
 ## [1.2.3] - 2026-11-19 — Security & Cross-Platform Hardening
 
 ### Security

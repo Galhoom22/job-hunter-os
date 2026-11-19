@@ -6,11 +6,11 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
 [![Harness Validator 20/20](https://img.shields.io/badge/CI_Harness_Validator-20%2F20_Baseline-2ea44f)](evals/README.md)
-[![47 Consolidated Skills](https://img.shields.io/badge/Skills-47_Consolidated_Markdown-167d60)](skills/REGISTRY.md)
+[![48 Consolidated Skills](https://img.shields.io/badge/Skills-48_Consolidated_Markdown-167d60)](skills/REGISTRY.md)
 [![Zero Code](https://img.shields.io/badge/Runtime-Zero_Code_Markdown-167d60)](AGENTS.md)
 [![Live Dashboard Demo](https://img.shields.io/badge/Live_Preview-Kanban_Dashboard-3b82f6)](https://redasalem.github.io/job-hunter-os/demo-dashboard.html)
 
-مساعد مهني مفتوح المصدر يعتمد على **47 مهارة Markdown موحدة (`agentskills.io`) + أداة CLI بدون أي مكتبات خارجية (`dependencies: {}`)**. يفصل لك السيرة الذاتية حسب كل وظيفة بدقة من حقائقك المؤكدة، يحسب نسبة تطابق كلمات `ATS`، يجهز ملف التحضير للمقابلة (`interview-dossier.md`) ورسائل التواصل المختصرة (`<= 75` كلمة)، ويجهز نماذج التقديم عبر **Playwright MCP** دون إرسال تلقائي أعمى.
+مساعد مهني مفتوح المصدر يعتمد على **48 مهارة Markdown موحدة (`agentskills.io`) + أداة CLI بدون أي مكتبات خارجية (`dependencies: {}`)**. يفصل لك السيرة الذاتية حسب كل وظيفة بدقة من حقائقك المؤكدة، يحسب نسبة تطابق كلمات `ATS`، يقدم تدقيقًا وتطويرًا موثقًا لملف LinkedIn (`0–100` Recruiter-SEO عبر [`skills/linkedin-growth.md`](skills/linkedin-growth.md))، يجهز ملف التحضير للمقابلة (`interview-dossier.md`) ورسائل التواصل المختصرة (`<= 75` كلمة)، ويجهز نماذج التقديم عبر **Playwright MCP** باستخراج JSON خفيف للتوكنات ودون إرسال تلقائي أعمى.
 
 > **ما الذي لن يفعله النظام أبدًا (حدود ثقة تشغيلية صارمة):**
 > - **لا إرسال تلقائي أعمى:** وضع `dry_run: true` مفعّل افتراضيًا؛ وعند التفعيل الحي يتوقف النموذج عند **جدول قراءة الـ DOM النهائي** وينتظر كلمة `APPROVE` صراحةً منك.
@@ -75,11 +75,12 @@ npx github:redasalem/job-hunter-os eval --baseline
 | `/weekly-report` | تقرير أسبوعي لمعدلات الاستجابة وفجوات المهارات |
 
 - [`AGENTS.md`](AGENTS.md) — الضمانات العشر غير القابلة للتجاوز.
-- [`docs/SKILL_CATALOG.md`](docs/SKILL_CATALOG.md) — دليل المهارات الموحد (**47 مهارة موحدة**).
+- [`docs/SKILL_CATALOG.md`](docs/SKILL_CATALOG.md) — دليل المهارات الموحد (**48 مهارة موحدة**).
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — المعمارية ودورة حياة التنفيذ.
 - [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) — التوافق مع أكثر من 25 محررًا ونموذجًا.
+- [`docs/OPTIONAL_MCP_PLUGINS.md`](docs/OPTIONAL_MCP_PLUGINS.md) — إضافات MCP الاختيارية (مثل `stickerdaniel/linkedin-mcp-server`) مع تحذيرات حدود الاستخدام.
 - [`PLATFORMS.md`](PLATFORMS.md) — مصفوفة منصات التوظيف العالمية والعربية (`Wuzzuf`، `Bayt`، `LinkedIn`) وشبكات عقود `B2B`.
-- [`HIRED.md`](HIRED.md) & [`CHANGELOG.md`](CHANGELOG.md) — سجل قصص النجاح وتاريخ الإصدارات (`v1.2.3`).
+- [`HIRED.md`](HIRED.md) & [`CHANGELOG.md`](CHANGELOG.md) — سجل قصص النجاح وتاريخ الإصدارات (`v1.3.0`).
 
 مرخص تحت رخصة [MIT](LICENSE) — Reda Salem (`redasalem`).
 

@@ -1375,7 +1375,7 @@ function cmdEval() {
     ? `External Model Output Evaluation (${resultsFile})`
     : 'Harness Reference Baseline (CI Self-Test — static fixture verification, NOT a live LLM benchmark)';
 
-  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.2.3)`));
+  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v1.3.0)`));
   info(`Mode: ${evalModeLabel}\n`);
   let passed = 0;
   for (const [id, label, cond] of checks) {
@@ -1489,7 +1489,7 @@ function cmdPreSubmit() {
 }
 
 function cmdVersion() {
-  let version = '1.2.3';
+  let version = '1.3.0';
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(SOURCE, 'package.json'), 'utf8'));
     if (pkg?.version) version = pkg.version;
@@ -1500,7 +1500,7 @@ function cmdVersion() {
 
 function cmdHelp() {
   console.log(`${ATTRIBUTION_BANNER}
-job-hunter-os v1.2.3 — Zero-Code Markdown Agent Skills & MCP Installer
+job-hunter-os v1.3.0 — Zero-Code Markdown Agent Skills & MCP Installer
 
 Usage:
   job-hunter init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP

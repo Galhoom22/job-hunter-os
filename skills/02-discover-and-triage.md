@@ -1,6 +1,6 @@
 ---
 name: discover-and-triage
-version: "2.0.0"
+version: "2.1.0"
 description: Load when discovering and scoring jobs during /daily-run or /apply-url; constructs search URLs from context/targets.yaml, inspects pages via Playwright MCP, filters ghost/expired postings, scores 1-10 against context/cv.md, and displays the Mission Control table before any Apply click.
 triggers:
   - daily run discovery and scoring
@@ -43,9 +43,10 @@ Use to discover, verify freshness, score, and triage jobs into **Tier A / B / C*
    - **Fast Direct ATS Option:** If the target specifies Greenhouse/Lever/Ashby company slugs (`board_tokens`), you may also navigate directly to their public JSON endpoints (`https://boards-api.greenhouse.io/v1/boards/<token>/jobs?content=true`, `https://api.lever.co/v0/postings/<company>?mode=json`, `https://api.ashbyhq.com/posting-api/job-board/<board>`) via Playwright MCP to collect fresh job URLs in seconds, then filter locally by confirmed role/location keywords.
    - Navigate with **3–9 s random pacing** (`browser_navigate`), take a `browser_snapshot`, and verify visible filters match confirmed preferences.
 
-2. **Expand full JD & run Ghost-Job Detector:**
+2. **Expand full JD, use Token-Slim Extraction & run Ghost-Job Detector:**
    - Deduplicate first: skip any `job_id` or canonical URL already in `logs/applications-log.json` or `logs/skipped-jobs.json`.
-   - Open each new posting (up to `batch_size`, default 10), click `"See more"` / `"Show more"` / `"Read more"` / `"عرض المزيد"`, wait 3–9 s, and take a fresh `browser_snapshot`. Read the full JD for at least **10 seconds**.
+   - Open each new posting (up to `batch_size`, default 10), click `"See more"` / `"Show more"` / `"Read more"` / `"عرض المزيد"`, wait **3–9 s** random human pacing, and extract job details.
+   - **Token-Slim Structured Extraction (Read-Only `browser_evaluate`):** On heavy SPA boards like LinkedIn (where raw `browser_snapshot` trees run 15k–35k tokens), run the platform playbook's read-only `browser_evaluate` extractor (`skills/platforms/linkedin.md`) to return a compact JSON object (`title`, `company`, `location`, `workplace_type`, `jd_text`, `required_skills`, `hiring_team`) instead of dumping full accessibility trees into chat history. Reserve `browser_snapshot` for interactive clicks, form fills, and self-verification. Read the full JD for at least **10 seconds**.
    - **Ghost-Job & Live-Status Check:**
      - Check for closed/expired banners (`"No longer accepting applications"`, `"Job closed"`, `"Position filled"`, `"404"`).
      - Check visible posting age and JSON-LD `datePosted` / `validThrough` when present: warn or skip if `datePosted` is **> 30 days old**, `validThrough` has passed, or it shows repeated ghost-reposting signals without an active employer ATS page.

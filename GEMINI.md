@@ -8,7 +8,7 @@ This is a **100% zero-code Markdown skills + Playwright/Notion MCP repository**.
 - `/daily-run` or `/apply-url <url>` -> `skills/00-daily-run.md`
 - `/tailor-cv <url>` -> `skills/03-tailor-resume-and-verify.md`
 - `/weekly-report` -> `skills/06-log-and-insights.md`
-- `/linkedin-growth` -> `skills/05-outreach-and-interview-prep.md`
+- `/linkedin-growth` -> `skills/linkedin-growth.md` + `skills/05-outreach-and-interview-prep.md`
 - Persona switch -> `skills/07-persona-switcher.md`
 - 7-day follow-up -> `skills/08-follow-up-radar.md`
 - Offer negotiation -> `skills/09-offer-negotiator.md`

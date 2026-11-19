@@ -5,15 +5,15 @@
 ## Core Entrypoints
 
 - [AGENTS.md](AGENTS.md): Canonical rules, progressive disclosure protocol, strict daily-run execution order, and 10 non-negotiable guardrails.
-- [skills/REGISTRY.md](skills/REGISTRY.md): Consolidated 47-skill routing index (triggers, preconditions, verification contracts).
-- [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 47 consolidated skills.
+- [skills/REGISTRY.md](skills/REGISTRY.md): Consolidated 48-skill routing index (triggers, preconditions, verification contracts).
+- [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 48 consolidated skills.
 - [evals/README.md](evals/README.md) & [evals/RUBRIC.md](evals/RUBRIC.md): Deterministic CI schema & fixture validator (`npx github:redasalem/job-hunter-os eval --baseline` or `--file <output.json>`).
 - [evals/PROMPT.md](evals/PROMPT.md): Zero-shot reproducible evaluation prompt for external LLMs.
 - [PLATFORMS.md](PLATFORMS.md): Global job board, B2B contract network, regional portal, and employer ATS compatibility matrix.
 - [HIRED.md](HIRED.md): Community success ledger & setup tips from landed interviews and offers.
-- [CHANGELOG.md](CHANGELOG.md): Release history (`v1.0.0`, `v1.1.0`, `v1.2.0`, `v1.2.1`, `v1.2.2`, `v1.2.3`).
+- [CHANGELOG.md](CHANGELOG.md): Release history (`v1.0.0`, `v1.1.0`, `v1.2.0`, `v1.2.1`, `v1.2.2`, `v1.2.3`, `v1.3.0`).
 - [README.md](README.md) & [README.ar.md](README.ar.md): English & RTL Arabic Quick Start, Eval Scorecard, and workflow guide.
-- [docs/SKILL_CATALOG.md](docs/SKILL_CATALOG.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md): Deep documentation.
+- [docs/SKILL_CATALOG.md](docs/SKILL_CATALOG.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md), [docs/OPTIONAL_MCP_PLUGINS.md](docs/OPTIONAL_MCP_PLUGINS.md): Deep documentation.
 
 ## Playbooks & Modular Skills
 
@@ -45,6 +45,7 @@
 - [Circuit Breaker & Anti-Ban](skills/24-circuit-breaker-and-antiban.md): Immediate 24-hour platform cooldown on CAPTCHA, Cloudflare/DataDome, 429s, or forced login redirects.
 - [Prompt-Injection Defense](skills/25-prompt-injection-defense.md): Treats scraped JDs as untrusted data, blocks honeypots/injections, and surfaces benign recruiter attention checks.
 - [Deduplication & Blacklist Guard](skills/26-deduplication-and-blacklist-guard.md): Cross-channel `company::role_title` fingerprinting and employer/domain blacklists.
+- [LinkedIn Growth & Recruiter-SEO Optimizer](skills/linkedin-growth.md): Grounded `0-100` LinkedIn profile audit and section-by-section optimizer (`DRAFT_ONLY` + `APPROVE` gate).
 - [B2B Contract Networks](skills/platforms/b2b-contract-networks.md): Playbook for Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, and Turing.
 
 ## Examples & Adapters
