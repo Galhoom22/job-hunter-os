@@ -1,6 +1,6 @@
 # Job Hunter — Gemini CLI & Antigravity
 
-Read [AGENTS.md](./AGENTS.md) and [skills/REGISTRY.md](./skills/REGISTRY.md) first; only load a full skill body when its trigger matches the current phase of work.
+Read [AGENTS.md](./AGENTS.md) and [skills/REGISTRY.md](./skills/REGISTRY.md) first; route natural-language requests via the Intent Router in `skills/REGISTRY.md` without forcing `/setup` for standalone tasks, and load only the active skill bodies needed.
 
 This is a **Markdown-first career operations repository with a zero-dependency Node.js CLI (`bin/cli.mjs`)** and optional Playwright/Notion MCP. Execute workflows directly using your file tools and optional MCP tools:
 - `/demo` -> `.agent/workflows/demo.md` + `examples/sandbox-demo/expected-mission-control.md` (instant synthetic preview; no personal data or browser login)

@@ -17,31 +17,32 @@ verification:
   - tailored HTML uses only verified facts from the owner's pasted profile/CV and passes the Anti-AI Slop filter
   - owner received clear manual print-to-PDF and local logging instructions
 ---
-# Non-MCP Web Chat Fallback
+# Non-MCP & Missing-Capability Fallback
 
 ## When to Use & Preconditions
 
-Use when the owner interacts through a browser-based AI chat (ChatGPT, Claude.ai, Gemini) that has **no Playwright MCP** and **no local filesystem access**. Never pretend web chat opened a browser, uploaded a PDF, or submitted an application.
+Use whenever the owner interacts through a web chat without MCP/local filesystem access **OR** inside an IDE/CLI when Playwright MCP, LinkedIn login, Notion MCP, PDF export, or native DOCX generation is unavailable. Never pretend an unavailable tool ran, and never terminate independent work because an optional integration is missing.
 
-- **Load when:** web chat without MCP; no Playwright MCP available; manual browser fallback.
+- **Load when:** web chat without MCP; no Playwright MCP available; manual browser fallback; LinkedIn/browser access unavailable.
 - **Preconditions (stop if any is false):**
-  - owner pasted or attached a job description and verified profile/CV facts in chat
+  - owner supplied or can paste a CV/profile, job description/URL/screenshot, or target task inputs
 - **Requires skills:** `tailor-resume-and-verify`. **MCP:** none.
 
 ## Deterministic Step-by-Step Execution
 
-1. **State the boundary clearly:** Tell the owner upfront that web chat cannot access `./browser-profile`, fill live forms, or verify submission receipts; you will prepare truthful, ready-to-use artifacts for manual execution.
-2. **Request redacted context & full JD:** Ask the owner to paste:
-   - The full job description (plus company & URL)
-   - Their verified `context/profile.md` / `context/cv.md` (redacting passwords or private tokens) and any required form questions.
-3. **Score honestly (`0–10`) & check for red flags:** Evaluate match score and missing skills against verified facts only, and flag any closed/stale posting warnings.
-4. **Generate fact-checked, humanized ATS HTML:**
-   - Produce clean single-column HTML following `templates/ats-resume-template.html` (and `templates/ats-cover-letter-template.html` only if requested).
-   - Enforce the **Fact-Check Guard** (zero invented metrics, dates, companies, or skills) and **Anti-AI Slop filter** (`skills/03-tailor-resume-and-verify.md`).
-5. **Guide manual PDF print, form fill & logging:**
-   - Instruct the owner to save the HTML locally as `logs/resumes/<company>-<role>/resume.html`, open it in Chrome/Edge, and `Print -> Save as PDF` (A4, margins default/none, headers/footers OFF, verify <= 200 KB and selectable text).
-   - Provide grounded plain-text answers for every form question (leaving any unknown legal/salary question explicitly marked for the owner to confirm).
-   - Remind the owner to inspect the final confirmation page themselves and record the real status in `logs/applications-log.json` (plus `interview-dossier.md` if preparing for interviews).
+1. **State exact boundaries & available route:** Tell the owner upfront which step cannot run automatically (e.g., web chat cannot write local files or open `./browser-profile`; missing Playwright cannot browse live LinkedIn or export PDF directly; no native `.docx` converter exists). Keep all independent steps moving immediately.
+2. **Request only missing inputs cleanly:** Ask for whichever input is missing:
+   - Pasted JD text / screenshot / URL content (when live browsing is blocked)
+   - Pasted CV text / `.md` / `.txt` / `.docx` / readable profile PDF (when local files or PDF readers are unavailable)
+   - Redacted profile/form context (never passwords, cookies, or tokens).
+3. **Score honestly (`0–10`) & check for red flags:** Evaluate match score with evidence separating **verified matches** from **unknown/unclaimed requirements**, and flag any closed/stale/prompt-injection warnings.
+4. **Generate fact-checked, humanized deliverables:**
+   - Produce clean single-column HTML (`templates/ats-resume-template.html`), Word-compatible HTML `.doc` (never fake `.docx`), plain `.txt`, `tailoring-notes.md`, `interview-dossier.md`, and optional cover letter (`templates/ats-cover-letter-template.html`) using ONLY verified facts (`skills/03-tailor-resume-and-verify.md`).
+   - Enforce the **Fact-Check Guard**, **Anti-AI Slop filter**, and **Post-Write Re-Read Verification** (when local FS is accessible; otherwise output clean code blocks in chat).
+5. **Guide manual PDF print, ATS upload & local tracking:**
+   - Provide one-step `Print -> Save as PDF` (A4, headers/footers OFF, verify `<= 200 KB` and selectable text) for Chrome/Edge.
+   - Provide grounded plain-text answers for every form question (explicitly marking unknowns for owner confirmation) and step-by-step manual ATS upload instructions.
+   - Remind the owner (or write directly when local FS is accessible) to track the application as `prepared` / `needs_review` (or `applied` only after their real receipt) in `logs/applications-log.json` (Notion sync skipped cleanly when unavailable).
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

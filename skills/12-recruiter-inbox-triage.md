@@ -7,6 +7,8 @@ triggers:
   - recruiter replied with interview invite
   - draft reply to recruiter inbox
 requires_mcp:
+  - none
+optional_mcp:
   - notion
 preconditions:
   - incoming recruiter message(s) provided by the owner in chat (or read from an owner-approved view)

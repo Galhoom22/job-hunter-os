@@ -1,10 +1,10 @@
 ---
 name: linkedin-growth
-description: Load when the owner explicitly asks to audit their LinkedIn profile (0-100 Recruiter-SEO rubric), optimize profile copy, draft a post, or draft <=75-word outreach (/linkedin-growth) — strictly Read-Only Audit + Chat Draft Output Only (DRAFT_ONLY, zero browser mutations).
+description: Load when the owner asks to review/audit their LinkedIn profile, improve headline/About/experience, sync LinkedIn with their CV, optimize for target roles, or draft posts/<=75-word outreach (/linkedin-growth); defaults to DRAFT_ONLY with APPROVE-gated live edits when authenticated Playwright exists.
 ---
 
 # Job Hunter LinkedIn Growth
 
 1. Read `AGENTS.md` and `skills/REGISTRY.md` first.
-2. Load `skills/linkedin-growth.md` for the `0–100` Recruiter-SEO Profile Audit & Grounded Copy Optimizer (plus `skills/05-outreach-and-interview-prep.md` for hiring-manager outreach and `skills/03-tailor-resume-and-verify.md` for Anti-Hallucination & Anti-AI Slop rules).
-3. **Zero Browser-Mutation Lock:** Never click LinkedIn profile `"Edit"`, `"Save"`, `"Post"`, or `"Send"` buttons via Playwright. Output strictly `DRAFT_ONLY` copy in chat (and `logs/insights/`) and verify `<= 75`-word outreach via `node ./bin/cli.mjs pre-submit`.
+2. Follow `.agent/workflows/linkedin-growth.md` and `skills/linkedin-growth.md` (plus `skills/05-outreach-and-interview-prep.md` and `skills/03-tailor-resume-and-verify.md`).
+3. Default strictly to `DRAFT_ONLY` output in chat and `logs/insights/` (working offline from pasted/PDF/screenshot profile data if Playwright or LinkedIn auth is unavailable). Execute live Save/Post/Send only when signed-in Playwright access exists and the owner explicitly replies `APPROVE` on the exact final diff, then verify persisted state via `browser_snapshot`. Verify `<= 75`-word outreach via `node ./bin/cli.mjs pre-submit`.

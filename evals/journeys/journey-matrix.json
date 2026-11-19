@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "description": "Synthetic task-journey & LinkedIn/platform capability-fallback verification matrix for job-hunter-os.",
+  "tool_scenarios": [
+    {
+      "id": "full_local_plus_playwright",
+      "local_fs": true,
+      "playwright_mcp": true,
+      "linkedin_auth": true,
+      "pdf_export": true,
+      "docx_converter": false,
+      "notion_mcp": true
+    },
+    {
+      "id": "local_without_playwright",
+      "local_fs": true,
+      "playwright_mcp": false,
+      "linkedin_auth": false,
+      "pdf_export": false,
+      "docx_converter": false,
+      "notion_mcp": false
+    },
+    {
+      "id": "chat_attachments_no_local_fs",
+      "local_fs": false,
+      "playwright_mcp": false,
+      "linkedin_auth": false,
+      "pdf_export": false,
+      "docx_converter": false,
+      "notion_mcp": false
+    },
+    {
+      "id": "partial_file_access_scanned_pdf",
+      "local_fs": true,
+      "playwright_mcp": false,
+      "linkedin_auth": false,
+      "pdf_export": false,
+      "docx_converter": false,
+      "notion_mcp": false
+    },
+    {
+      "id": "notion_unavailable_local_json_only",
+      "local_fs": true,
+      "playwright_mcp": true,
+      "linkedin_auth": true,
+      "pdf_export": true,
+      "docx_converter": false,
+      "notion_mcp": false
+    }
+  ],
+  "journeys": [
+    {
+      "id": "J01",
+      "prompt": "Review my uploaded CV.",
+      "expected_intent": "cv-review-import",
+      "required_skills": ["01-resume-ingestion", "14-privacy-pii-shield"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J02",
+      "prompt": "Improve my CV summary.",
+      "expected_intent": "cv-edit",
+      "required_skills": ["01-resume-ingestion", "03-tailor-resume-and-verify", "meta-self-verification"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J03",
+      "prompt": "Create a CV from scratch.",
+      "expected_intent": "cv-create",
+      "required_skills": ["01-resume-ingestion", "03-tailor-resume-and-verify"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J04",
+      "prompt": "Tailor my CV to this job.",
+      "expected_intent": "tailor-cv",
+      "required_skills": ["01-resume-ingestion", "03-tailor-resume-and-verify", "21-ats-keyword-heatmap"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J05",
+      "prompt": "Create a PDF version of my CV.",
+      "expected_intent": "cv-convert",
+      "required_skills": ["01-resume-ingestion", "03-tailor-resume-and-verify"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J06",
+      "prompt": "Create an English CV from my Arabic one.",
+      "expected_intent": "cv-translate",
+      "required_skills": ["01-resume-ingestion", "03-tailor-resume-and-verify", "15-multilingual-adaptation"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J07",
+      "prompt": "Add this new project to my CV.",
+      "expected_intent": "cv-edit",
+      "required_skills": ["01-resume-ingestion", "03-tailor-resume-and-verify", "meta-self-verification"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J08",
+      "prompt": "Prepare my application for this position.",
+      "expected_intent": "application-prep-and-fill",
+      "required_skills": ["03-tailor-resume-and-verify", "04-fill-and-apply", "05-outreach-and-interview-prep", "06-log-and-insights"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J09",
+      "prompt": "Upload the tailored resume to this ATS form.",
+      "expected_intent": "application-prep-and-fill",
+      "required_skills": ["03-tailor-resume-and-verify", "04-fill-and-apply", "meta-self-verification"],
+      "requires_full_setup": true
+    },
+    {
+      "id": "J10",
+      "prompt": "Help me answer this application question.",
+      "expected_intent": "application-prep-and-fill",
+      "required_skills": ["04-fill-and-apply"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J11",
+      "prompt": "Prepare me for an interview.",
+      "expected_intent": "interview-prep",
+      "required_skills": ["05-outreach-and-interview-prep", "22-technical-assessment-architect"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J12",
+      "prompt": "Improve my LinkedIn headline.",
+      "expected_intent": "linkedin-profile",
+      "required_skills": ["linkedin-growth", "03-tailor-resume-and-verify", "meta-self-verification"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J13",
+      "prompt": "Analyze my job application history.",
+      "expected_intent": "tracking-and-insights",
+      "required_skills": ["06-log-and-insights", "16-rejection-pattern-analyzer"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "J14",
+      "prompt": "Export my application report.",
+      "expected_intent": "tracking-and-insights",
+      "required_skills": ["06-log-and-insights"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "LI01",
+      "prompt": "Review my LinkedIn profile.",
+      "expected_intent": "linkedin-profile",
+      "required_skills": ["linkedin-growth"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "LI02",
+      "prompt": "Improve my LinkedIn headline and About section.",
+      "expected_intent": "linkedin-profile",
+      "required_skills": ["linkedin-growth", "03-tailor-resume-and-verify"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "LI03",
+      "prompt": "Make my profile consistent with my CV.",
+      "expected_intent": "linkedin-profile",
+      "required_skills": ["linkedin-growth"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "LI04",
+      "prompt": "Optimize my profile for React and Full-Stack JavaScript roles.",
+      "expected_intent": "linkedin-profile",
+      "required_skills": ["linkedin-growth"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "JP01",
+      "prompt": "Find suitable remote React jobs.",
+      "expected_intent": "job-discovery-and-triage",
+      "required_skills": ["02-discover-and-triage", "platforms/linkedin"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "JP02",
+      "prompt": "Find Full-Stack JavaScript jobs in Egypt.",
+      "expected_intent": "job-discovery-and-triage",
+      "required_skills": ["02-discover-and-triage"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "JP03",
+      "prompt": "Analyze this LinkedIn job and tell me whether I should apply.",
+      "expected_intent": "job-discovery-and-triage",
+      "required_skills": ["02-discover-and-triage", "25-prompt-injection-defense"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "JP04",
+      "prompt": "Compare these jobs and rank them by suitability.",
+      "expected_intent": "job-discovery-and-triage",
+      "required_skills": ["02-discover-and-triage"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "EX01",
+      "prompt": "Make a Word-compatible CV.",
+      "expected_intent": "cv-convert",
+      "required_skills": ["03-tailor-resume-and-verify"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "EX02",
+      "prompt": "Compare my CV against this job description.",
+      "expected_intent": "tailor-cv",
+      "required_skills": ["03-tailor-resume-and-verify", "21-ats-keyword-heatmap"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "EX03",
+      "prompt": "Review a job offer.",
+      "expected_intent": "offer-and-contract",
+      "required_skills": ["09-offer-negotiator", "23-contract-and-nda-auditor"],
+      "requires_full_setup": false
+    },
+    {
+      "id": "EX04",
+      "prompt": "Update an existing application record.",
+      "expected_intent": "tracking-and-insights",
+      "required_skills": ["06-log-and-insights"],
+      "requires_full_setup": false
+    }
+  ]
+}

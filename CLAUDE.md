@@ -1,6 +1,6 @@
 # Job Hunter — Claude Code
 
-Read [AGENTS.md](./AGENTS.md) and [skills/REGISTRY.md](./skills/REGISTRY.md) first; only load a full skill body when its trigger matches the current phase of work.
+Read [AGENTS.md](./AGENTS.md) and [skills/REGISTRY.md](./skills/REGISTRY.md) first; route natural-language requests via the Intent Router in `skills/REGISTRY.md` without forcing `/setup` for standalone tasks, and load only the active skill bodies needed.
 
 This is a **Markdown-first career operations repository with a zero-dependency Node.js CLI (`bin/cli.mjs`)** and optional Playwright/Notion MCP. You execute workflows directly using your file tools and optional MCP tools:
 - `/demo` -> `.agent/workflows/demo.md` (15-second synthetic sandbox with immediate Job #1 tailored preview; zero personal data or browser login)
@@ -9,6 +9,6 @@ This is a **Markdown-first career operations repository with a zero-dependency N
 - `/daily-run` or `/apply-url <url>` -> `skills/00-daily-run.md` (Step 0 `00-interrogate-and-onboard.md` -> `02` -> `03` -> `04` -> `05` -> `06`)
 - `/tailor-cv <url>` -> `skills/03-tailor-resume-and-verify.md` (never submits)
 - `/weekly-report` -> `skills/06-log-and-insights.md`
-- `/linkedin-growth` -> `skills/linkedin-growth.md` + `skills/05-outreach-and-interview-prep.md` (read-only audit + `DRAFT_ONLY`)
+- `/linkedin-growth` -> `skills/linkedin-growth.md` + `skills/05-outreach-and-interview-prep.md` (`DRAFT_ONLY` default; explicit `APPROVE` + snapshot verification for live edits)
 
 Connect MCP using `mcp/mcp.template.json` (or `mcp/claude_desktop_config.example.json` for Claude Desktop; persistent `./browser-profile` for Playwright and optional `NOTION_TOKEN` for Notion). See `adapters/models/claude.md` for Claude Sonnet/Opus XML verification tuning. Local JSON under `logs/` is primary. Never invent facts, bypass challenges, or submit without gate checks.

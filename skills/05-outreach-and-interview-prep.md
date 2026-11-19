@@ -1,15 +1,18 @@
 ---
 name: outreach-and-interview-prep
 version: "2.0.0"
-description: Load when a Tier A application is prepared or submitted, a posting asks for direct email application, or the owner invokes /linkedin-growth; creates interview-dossier.md, <=75-word draft-only outreach-draft.md, or email-draft.md without auto-sending.
+description: Load when preparing for an interview, a Tier A application is prepared or submitted, a posting asks for direct email application, or drafting hiring-manager outreach; creates interview-dossier.md, <=75-word draft-only outreach-draft.md, or email-draft.md without auto-sending.
 triggers:
+  - prepare me for an interview
   - Tier A application prepared or submitted
   - posting asks to apply via email (careers@...)
   - /linkedin-growth
 requires_mcp:
+  - none
+optional_mcp:
   - playwright
 preconditions:
-  - full job description and verified context/profile.md available
+  - job description or target role context and verified candidate facts available
   - explicit owner approve before any live LinkedIn Save, Post, or Send
 requires_skills:
   - tailor-resume-and-verify
@@ -23,22 +26,22 @@ verification:
 
 ## When to Use & Preconditions
 
-Turns each high-match application into an interview-ready package while keeping all outreach strictly draft-only until the owner explicitly asks to send.
+Turns each target role or high-match application into an interview-ready package while keeping all outreach strictly `DRAFT_ONLY` until the owner explicitly approves sending. Works standalone for interview preparation even without a prior application submission or Playwright MCP.
 
-- **Load when:** Tier A application prepared or submitted; posting asks to apply via email (`careers@...`); `/linkedin-growth`.
+- **Load when:** prepare me for an interview; Tier A application prepared or submitted; posting asks to apply via email (`careers@...`); `/linkedin-growth`.
 - **Preconditions (stop if any is false):**
-  - full job description and verified `context/profile.md` available
-  - explicit owner `approve` before any live LinkedIn Save, Post, or Send
-- **Requires skills:** `tailor-resume-and-verify`, `meta-self-verification`. **MCP:** playwright.
+  - job description (or target company/role) and verified candidate facts (`context/profile.md` or session CV) available
+  - explicit owner `APPROVE` / `approve` before any live LinkedIn Save, Post, or Send
+- **Requires skills:** `tailor-resume-and-verify`, `meta-self-verification`. **MCP:** none (`playwright` optional only when reading a live Hiring Team / People tab).
 
 ## Deterministic Step-by-Step Execution
 
-### 1. Post-Application Interview Prep & Archived JD Dossier (`interview-dossier.md`)
-Whenever an application is prepared or submitted, save `logs/resumes/<company>-<role>-<job-id>/interview-dossier.md` containing:
-1. **Application Snapshot:** Company, Role, `job_id`, canonical URL, ATS hostname, status, timestamp, match score, and `resume.pdf` path.
-2. **Archived Full Job Description:** Verbatim copy of the complete expanded JD so the owner still has it if the employer deletes the posting before calling.
-3. **Tailored CV Emphasis & Evidence:** Which verified projects, employers, and skills were moved up or highlighted in `resume.pdf` (matching `tailoring-notes.md`), plus identified skill gaps.
-4. **Top 5 Likely Technical & Behavioral Interview Questions:** 5 targeted questions derived directly from the gaps and core requirements between `context/profile.md` and the archived JD, paired with honest talking-point cues grounded in verified projects.
+### 1. Interview Prep & Archived JD Dossier (`interview-dossier.md`)
+Whenever preparing for an interview (standalone `"Prepare me for an interview"` or after tailoring/submitting an application), save `logs/resumes/<company>-<role>-<job-id>/interview-dossier.md` (and summarize key cues directly in chat) containing:
+1. **Application Snapshot:** Company, Role, `job_id` (if applicable), canonical URL, ATS hostname, status (`prepared` / `applied` / `interview`), timestamp, match score, and tailored resume path.
+2. **Archived Full Job Description:** Verbatim copy of the complete expanded JD (or target role notes) so the owner keeps it even if the posting expires.
+3. **Tailored CV Emphasis & Verified Evidence:** Which verified projects, employers, and skills match core requirements, plus honest **True Gaps** to address transparently if asked.
+4. **Top 5–8 Likely Technical & Behavioral Interview Questions:** Targeted questions derived directly from the gaps and core requirements between candidate facts and the JD, paired with grounded STAR / architecture talking points (no fabricated stories).
 
 ### 2. Hiring Manager Radar & 75-Word Outreach Drafter (`outreach-draft.md`)
 For any high-match job (**Score >= 8**):
@@ -61,8 +64,8 @@ When a posting (Wuzzuf, LinkedIn Post, Hacker News Who's Hiring, RemoteOK) instr
 
 ### 4. `/linkedin-growth` (Recruiter-SEO Profile Optimizer, Posts & Draft-Only Outreach)
 - Only when explicitly requested outside a daily application run.
-- For full **0–100 Recruiter-SEO Profile Audits** and grounded section-by-section rewrites (`Headline`, `About`, `Experience Bullets`, `Featured & Skills`), load `skills/linkedin-growth.md` — **Read-Only Audit + Chat Draft Output Only (`DRAFT_ONLY`)**: never click LinkedIn profile `"Edit"` or `"Save"` buttons via Playwright.
-- Show side-by-side proposed profile copy, post drafts, or exact recipient + `<= 75`-word outreach text in chat (`DRAFT_ONLY`) and verify outreach word caps via `node ./bin/cli.mjs pre-submit`.
+- For LinkedIn profile reviews, CV-consistency checks, **0–100 Recruiter-SEO Profile Audits**, and grounded section-by-section rewrites (`Headline`, `About`, `Experience Bullets`, `Featured & Skills`), load `skills/linkedin-growth.md`.
+- Default strictly to `DRAFT_ONLY` copy in chat (`logs/insights/linkedin-seo-audit-YYYY-MM-DD.md`) and verify `<= 75`-word outreach via `node ./bin/cli.mjs pre-submit`. Any live LinkedIn Save, Post, or Send requires legitimate signed-in Playwright access, explicit owner `APPROVE` on the exact copy, and post-action `browser_snapshot` verification (`skills/meta-self-verification.md`).
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

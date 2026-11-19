@@ -8,6 +8,8 @@ triggers:
   - /apply-url (Step 0)
   - Check my folder
 requires_mcp:
+  - none
+optional_mcp:
   - playwright
 preconditions:
   - repository root or agent home readable with IDE file tools
@@ -24,12 +26,13 @@ verification:
 
 ## When to Use & Preconditions
 
-Run at the start of `/setup`, `/daily-run`, `/apply-url`, or `"Check my folder"`. You perform readiness audits directly using your file-reading and editing tools (optionally complemented by `node ./bin/cli.mjs doctor`).
+Run at the start of `/setup`, `/daily-run`, `/apply-url` (live browser mode), or `"Check my folder"`. You perform readiness audits directly using your file-reading and editing tools (optionally complemented by `node ./bin/cli.mjs doctor`).
+**Task-Specific Readiness Rule:** Do **not** force `/setup` or block standalone tasks (CV upload/review/edit/create, `/quick-tailor`, `/tailor-cv`, LinkedIn profile review/drafts, standalone JD analysis/ranking, interview prep, offer/contract review, or local tracking/reports) behind the full 5-gate check. Full 5-gate readiness applies only to `/setup`, `/daily-run`, and live automated ATS submission.
 
 - **Load when:** `/setup`; `/daily-run` (Step 0); `/apply-url` (Step 0); `Check my folder`.
 - **Preconditions (stop if any is false):**
   - repository root or agent home readable with IDE file tools
-- **Requires skills:** `resume-ingestion`, `portfolio-and-github-auditor`. **MCP:** playwright.
+- **Requires skills:** `resume-ingestion`, `portfolio-and-github-auditor`. **MCP:** none (optional `playwright` for Gate 5 headed login and PDF export).
 
 ## Deterministic Step-by-Step Execution
 
@@ -46,7 +49,9 @@ Read these files yourself and check for missing files or placeholder tokens (`ex
 
 - **Live Link Verification Pass:** Extract all URLs from `context/profile.md` and `context/resume-data.json`. Verify each link is well-formed `https://` and contains zero placeholder domains. During `/setup` (or via `npx github:redasalem/job-hunter-os doctor`), verify reachability so a broken `404` portfolio or GitHub project URL is never sent to a recruiter (`skills/11-portfolio-and-github-auditor.md`).
 
-If `.example` templates exist and private `context/` files are absent, copy the structure from `context/*.example` only after replacing placeholders with real owner-confirmed values.
+- If `.example` templates exist and private `context/` files are absent, copy the structure from `context/*.example` only after replacing placeholders with real owner-confirmed values.
+- **Missing Base `assets/resume.pdf` Fallback:** If the owner provides CV text or `.md` during `/setup` and does not yet have a base `assets/resume.pdf`, generate `logs/resumes/base/resume.html` from `templates/ats-resume-template.html` and export `assets/resume.pdf` via Playwright MCP (or give one-step browser `Print -> Save as PDF` instructions) instead of blocking them at Gate 1.
+- **No-Browser-Login Alternative:** If the owner only wants to tailor a CV right now without full multi-platform setup, remind them they can run `/quick-tailor` immediately with zero browser login.
 
 ### 2. Hard Block & Focused 3–4-Question Interview
 If ANY gate fails:

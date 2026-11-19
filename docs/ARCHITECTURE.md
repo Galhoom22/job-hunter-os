@@ -9,21 +9,21 @@
 ## 1. End-to-End Architecture
 
 ```text
-USER CHAT: /demo | /quick-tailor | /setup | /daily-run | /apply-url URL | /tailor-cv URL | /weekly-report | /linkedin-growth
+USER CHAT: Natural-Language Request OR /demo | /quick-tailor | /setup | /daily-run | /apply-url URL | /tailor-cv URL | /weekly-report | /linkedin-growth
                                |
                                v
 +--------------------------------------------------------------------+
 | AI IDE + Model (Antigravity / Cursor / Claude / Codex / OpenCode)  |
-| Reads AGENTS.md + skills/REGISTRY.md (Progressive Disclosure)      |
+| Reads AGENTS.md + skills/REGISTRY.md (Intent Router & Disclosure)  |
 +-------------------------------+------------------------------------+
                                 |
           +---------------------+---------------------+
-          | Fast-Start (No Browser)                   | Full Career OS
+          | Standalone / Fast-Start (No /setup Wall)  | Full Career OS
           v                                           v
 +-------------------------------+       +------------------------------------+
-| /demo or /quick-tailor        |       | 00-interrogate-and-onboard (5 Gates)|
-| CV + JD -> Fact-Checked HTML  |       | Audits context/ + live URLs -> Go  |
-| + Evidence Map + True Gaps    |       +-----------------+------------------+
+| CV CRUD, /demo, /quick-tailor,|       | 00-interrogate-and-onboard (5 Gates)|
+| LinkedIn, JD Rank, Prep, Logs |       | Audits context/ + live URLs -> Go  |
++-------------------------------+       +-----------------+------------------+
 +-------------------------------+                         |
                                      +--------------------+--------------------+
                                      v                                         v

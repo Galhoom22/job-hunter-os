@@ -26,10 +26,10 @@ verification:
 
 Use for LinkedIn discovery and Easy Apply; profile/post work uses the growth skills.
 
-- **Load when:** target.platform == linkedin; linkedin.com/jobs URL.
+- **Load when:** `target.platform == linkedin`; `linkedin.com/jobs` URL; standalone LinkedIn job discovery/inspection.
 - **Preconditions (stop if any is false):**
-  - readiness gates passed, auth verified via Playwright MCP, and context loaded
-  - named LinkedIn account indicator observed
+  - **For `/daily-run` or Easy Apply:** readiness gates passed, auth verified via Playwright MCP (`named LinkedIn account indicator observed`), and context loaded.
+  - **For standalone read-only LinkedIn search/JD analysis:** verified CV facts (`context/cv.md` or session CV); never equate Playwright MCP availability with LinkedIn authentication or permission—if unauthenticated, authwalled, or Playwright is absent, fall back honestly to pasted JD/URL/screenshot or other legitimate boards without fabricating live listings.
 - **Requires skills:** `discover-and-triage`, `fill-and-apply`. **MCP:** playwright.
 
 ## Deterministic Step-by-Step Execution
@@ -145,7 +145,7 @@ To prevent 20k–35k-token accessibility trees from triggering mid-run context c
 Inspect/switch new tabs using actual MCP tab tools. Confirm HTTPS destination/employer, preserve ID and use ats-engines.md / 04-fill-and-apply.md. Unknown host/account creation/manual portal → review. Login/challenge/warning aborts the run, not merely this job.
 
 ### Profile optimization and posts
-These are separate owner-requested actions, never daily-run side effects. Route all `/linkedin-growth` Recruiter-SEO audits (`0–100` rubric), profile copy rewrites, posts, and `<= 75`-word outreach to `skills/linkedin-growth.md` and `skills/05-outreach-and-interview-prep.md`. **Zero Browser-Mutation Lock:** never click LinkedIn profile `"Edit"` or `"Save"` buttons or mutate LinkedIn profile fields via Playwright; output strictly **Read-Only Audit + Chat Draft Output (`DRAFT_ONLY`)** so the owner copies and applies approved text manually. Keep private audit steps in `logs/`.
+These are separate owner-requested actions, never `/daily-run` side effects. Route all LinkedIn profile reviews, CV-consistency checks, Recruiter-SEO audits (`0–100`), copy rewrites, posts, and `<= 75`-word outreach to `skills/linkedin-growth.md` and `skills/05-outreach-and-interview-prep.md`. Default strictly to **Read-Only Inspection + `DRAFT_ONLY` Output**; perform live profile section edits ONLY when legitimate signed-in Playwright access exists AND the owner explicitly gives `APPROVE` after inspecting the exact Before/After diff—then verify the saved text via a fresh `browser_snapshot` (`skills/meta-self-verification.md`). Keep private audit logs in `logs/`.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

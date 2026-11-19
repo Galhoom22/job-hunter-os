@@ -32,11 +32,13 @@ verification:
 
 Use for every internal Easy Apply modal and external ATS redirect (Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR; Workday/Taleo remain `manual_apply` + `needs_review`). Always use fresh `browser_snapshot` refs and roles/labels—never CSS selectors.
 
-- **Load when:** selected job from `APPLY` reply; Easy Apply modal or external ATS form open; about to click Submit / Apply.
+- **Two-Way Upload Boundary:** Providing a CV *from the user to Job Hunter OS* uses `skills/01-resume-ingestion.md`. Uploading a tailored CV *from Job Hunter OS to an employer ATS form* uses this skill (`04-fill-and-apply.md`)—requiring company + role verification, exact tailored file path verification, fresh post-upload `browser_snapshot` filename confirmation, populated DOM Read-Back Table, and explicit job-specific `APPROVE`. If Playwright automation is unavailable, deliver the complete manual application package (`resume.html`/`.doc`/`.txt`/optional `.pdf`, `interview-dossier.md`, copy-paste answers, and manual upload steps via `skills/fallback-no-mcp.md`).
+
+- **Load when:** selected job from `APPLY` reply; Easy Apply modal or external ATS form open; about to click Submit / Apply; prepare or upload an application.
 - **Preconditions (stop if any is false):**
   - job is not a duplicate in `logs/applications-log.json` and daily/platform caps & active hours allow it
-  - verified `context/form-answers.yaml`, `context/resume-data.json`, and exact tailored `resume.pdf` path ready
-- **Requires skills:** `tailor-resume-and-verify`, `meta-dom-recovery`, `meta-structured-debugging`, `meta-self-verification`. **MCP:** playwright.
+  - verified `context/form-answers.yaml`, `context/resume-data.json`, and exact tailored resume file path ready
+- **Requires skills:** `tailor-resume-and-verify`, `meta-dom-recovery`, `meta-structured-debugging`, `meta-self-verification`. **MCP:** playwright (required for live ATS upload/fill; falls back to manual prep when unavailable).
 
 ## Deterministic Step-by-Step Execution
 
@@ -44,8 +46,9 @@ Use for every internal Easy Apply modal and external ATS redirect (Greenhouse, L
 - If clicking Apply opens a new tab, switch to it (`browser_tabs`), take a `browser_snapshot`, verify HTTPS hostname and that company + role match the original posting.
 - **Embedded ATS Iframes (e.g., Greenhouse `#grnhse_iframe`):** If the employer embeds the ATS inside an `<iframe>`, verify the frame tree in `browser_snapshot` and switch/target inside that frame (`skills/meta-dom-recovery.md`) before filling fields or uploading files.
 - Load the matching playbook (`skills/ats/<engine>.md` or `skills/platforms/<platform>.md`).
-- If the site requires creating a new account, solving a CAPTCHA/2FA, or is Workday/Taleo/unsupported, set `apply_type: "manual_apply"`, `status: "needs_review"`, leave the tab open, and inform the owner.
+- If the site requires creating a new account, solving a CAPTCHA/2FA, or is Workday/Taleo/unsupported, set `apply_type: "manual_apply"`, `status: "needs_review"`, keep the tab open, **print the exact absolute path to `resume.pdf` (plus `resume.txt`/`resume.doc` and grounded form answers ready to copy-paste)**, and inform the owner so they can finish in one pass without redoing any prep.
 - **Mid-run expired session:** Pause, ask the owner to log in privately in the open browser and reply `CONTINUE`, re-verify auth, then resume this same job.
+- **Handling `EDIT <field>` or newly confirmed facts:** If the owner replies `EDIT <field>` or supplies a real answer/fact during review, save confirmed reusable answers to `context/form-answers.yaml` (or `context/profile.md`), update the form/resume, take a fresh `browser_snapshot`, re-display the **Live DOM Read-Back Table**, and request a fresh explicit `APPROVE`.
 
 ### 2. Five Mandatory ATS Form Traps & Unified Waiting Rule
 Apply one timing rule across all steps: **condition-based `browser_snapshot` verification first** (`skills/18-condition-based-browser-waiting.md`), followed by a **single 3–9 s human pacing jitter** between page navigations and submissions:

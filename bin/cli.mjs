@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import crypto from 'node:crypto';
+import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { spawnSync, spawn } from 'node:child_process';
 
@@ -23,7 +24,7 @@ const fail = msg => console.error(paint('31', `[✗] ${msg}`));
 const ATTRIBUTION_BANNER = 'Job Hunter OS — Created by Reda Salem (@redasalem) | https://github.com/redasalem/job-hunter-os';
 const PINNED_SIGNING_PRINCIPAL = '192090175+redasalem@users.noreply.github.com';
 const PINNED_SIGNING_PUBKEY = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7t6GfNExgWOy+djcVZlb62BD9DKRrz81Xk++LTZTSo';
-const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline', '--force', '--share']);
+const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline', '--force', '--share', '--json', '--journeys']);
 const positional = [];
 const opts = {
   global: false,
@@ -35,7 +36,10 @@ const opts = {
   baseline: false,
   force: false,
   share: false,
+  json: false,
+  journeys: false,
   file: null,
+  facts: null,
   draft: null,
   text: null,
   maxWords: 75,
@@ -53,6 +57,8 @@ for (let i = 0; i < ARGV.length; i++) {
   else if (a === '--baseline') opts.baseline = true;
   else if (a === '--force') opts.force = true;
   else if (a === '--share') opts.share = true;
+  else if (a === '--json') opts.json = true;
+  else if (a === '--journeys') opts.journeys = true;
   else if (a === '--file' || a === '-f') {
     const val = ARGV[++i];
     if (!val || val.startsWith('-')) argErr = '--file requires a path to a JSON model-output file.';
@@ -61,6 +67,14 @@ for (let i = 0; i < ARGV.length; i++) {
     const val = a.slice(7);
     if (!val) argErr = '--file= requires a file path.';
     else opts.file = val;
+  } else if (a === '--facts') {
+    const val = ARGV[++i];
+    if (!val || val.startsWith('-')) argErr = '--facts requires a path to a verified facts JSON/MD/TXT file.';
+    else opts.facts = val;
+  } else if (a.startsWith('--facts=')) {
+    const val = a.slice(8);
+    if (!val) argErr = '--facts= requires a file path.';
+    else opts.facts = val;
   } else if (a === '--draft') {
     const val = ARGV[++i];
     if (!val || val.startsWith('-')) argErr = '--draft requires a path to a draft text/markdown file.';
@@ -1048,7 +1062,7 @@ function cmdStatus() {
   for (const r of records) {
     const status = String(r?.status || '').toLowerCase();
     const datePrefix = String(r?.applied_at || r?.date || '').slice(0, 10);
-    if (status === 'dry_run' || status === 'skipped' || status === 'aborted' || status === 'needs_review') continue;
+    if (status === 'dry_run' || status === 'skipped' || status === 'aborted' || status === 'needs_review' || status === 'discovered' || status === 'prepared') continue;
 
     totalApplied++;
     if (datePrefix) runDates.add(datePrefix);
@@ -1413,6 +1427,21 @@ function cmdEval() {
   const evalRoot = [path.join(ROOT, 'evals'), path.join(SOURCE, 'evals')].find(d => fs.existsSync(d));
   if (!evalRoot) throw new Error('evals/ directory not found.');
 
+  if (opts.journeys) {
+    const journeyTest = path.join(evalRoot, 'journeys', 'run-journeys.test.mjs');
+    if (!fs.existsSync(journeyTest)) {
+      throw new Error(`Journey test suite not found: ${journeyTest}`);
+    }
+    const { version } = readPackageMeta();
+    console.log(paint('36', `\nJob Hunter OS — Synthetic Task-Journey Test Matrix (v${version})`));
+    const res = spawnSync(process.execPath, ['--test', journeyTest], {
+      stdio: 'inherit',
+      env: { ...process.env, JHO_CLI_PATH: fileURLToPath(import.meta.url) },
+    });
+    if (res.status !== 0) process.exitCode = res.status || 1;
+    return;
+  }
+
   const baselineFile = path.join(evalRoot, 'results', 'baseline-verified-run.json');
   const sourceBaselineFile = path.join(SOURCE, 'evals', 'results', 'baseline-verified-run.json');
   const isExternalFile = Boolean(opts.file) && !opts.baseline;
@@ -1586,7 +1615,7 @@ function cmdPreSubmit() {
   for (const r of records) {
     const status = String(r?.status || '').toLowerCase();
     const datePrefix = String(r?.applied_at || r?.date || '').slice(0, 10);
-    if (status === 'dry_run' || status === 'skipped' || status === 'aborted' || status === 'needs_review') continue;
+    if (status === 'dry_run' || status === 'skipped' || status === 'aborted' || status === 'needs_review' || status === 'discovered' || status === 'prepared') continue;
     if (datePrefix) runDates.add(datePrefix);
     if (datePrefix === todayStr && (status === 'applied' || status === 'submission_uncertain' || status.includes('interview') || status.includes('assess') || status.includes('offer'))) {
       todayCounted++;
@@ -1655,36 +1684,165 @@ function cmdPreSubmit() {
   }
 }
 
+const BANNED_AI_CLICHES = [
+  'delve', 'testament', 'tapestry', 'spearheaded', 'synergy', 'thrilled to apply',
+  'moreover', 'furthermore', 'orchestrated', 'hit the ground running',
+  'results-driven', 'passionate about', 'seasoned professional', 'dynamic team player',
+  'fast-paced environment', 'leveraged', 'proven track record', 'deeply excited',
+];
+
+function decodeHtmlEntities(str) {
+  return String(str || '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&#(\d+);/g, (_, n) => {
+      const code = Number(n);
+      return Number.isInteger(code) && code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : '';
+    })
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => {
+      const code = parseInt(hex, 16);
+      return Number.isInteger(code) && code > 0 && code <= 0x10ffff ? String.fromCodePoint(code) : '';
+    });
+}
+
+function extractHtmlText(html) {
+  return decodeHtmlEntities(
+    String(html || '')
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+      .replace(/<\/?(?:p|div|li|tr|h[1-6]|br|section|header|main|article)\b[^>]*>/gi, '\n')
+      .replace(/<[^>]+>/g, ' '),
+  )
+    .split(/\r?\n/)
+    .map(l => l.replace(/[ \t]+/g, ' ').trim())
+    .filter(Boolean)
+    .join('\n');
+}
+
+function extractDocxText(rawBuf) {
+  if (!Buffer.isBuffer(rawBuf) || rawBuf.length < 22 || rawBuf.subarray(0, 4).toString('latin1') !== 'PK\x03\x04') {
+    throw new Error('Invalid .docx file (not a genuine OOXML ZIP archive). Do not rename HTML/text files to .docx.');
+  }
+  let eocdOffset = -1;
+  const minOffset = Math.max(0, rawBuf.length - 65557);
+  for (let i = rawBuf.length - 22; i >= minOffset; i--) {
+    if (rawBuf.readUInt32LE(i) === 0x06054b50) {
+      eocdOffset = i;
+      break;
+    }
+  }
+  if (eocdOffset < 0) throw new Error('Corrupted .docx archive (missing ZIP central directory).');
+
+  const entryCount = rawBuf.readUInt16LE(eocdOffset + 10);
+  let cdOffset = rawBuf.readUInt32LE(eocdOffset + 16);
+  const xmlParts = [];
+
+  for (let idx = 0; idx < entryCount; idx++) {
+    if (cdOffset + 46 > rawBuf.length || rawBuf.readUInt32LE(cdOffset) !== 0x02014b50) {
+      throw new Error('Corrupted .docx central directory entry.');
+    }
+    const flags = rawBuf.readUInt16LE(cdOffset + 8);
+    const method = rawBuf.readUInt16LE(cdOffset + 10);
+    const compSize = rawBuf.readUInt32LE(cdOffset + 20);
+    const nameLen = rawBuf.readUInt16LE(cdOffset + 28);
+    const extraLen = rawBuf.readUInt16LE(cdOffset + 30);
+    const commentLen = rawBuf.readUInt16LE(cdOffset + 32);
+    const localHeaderOffset = rawBuf.readUInt32LE(cdOffset + 42);
+    const fileName = rawBuf.subarray(cdOffset + 46, cdOffset + 46 + nameLen).toString('utf8');
+    cdOffset += 46 + nameLen + extraLen + commentLen;
+
+    if (!/^word\/(?:document|header\d*|footer\d*)\.xml$/i.test(fileName)) continue;
+    if (flags & 1) throw new Error('Encrypted .docx file is not supported; save an unencrypted .docx or export .md/.txt.');
+    if (localHeaderOffset + 30 > rawBuf.length || rawBuf.readUInt32LE(localHeaderOffset) !== 0x04034b50) {
+      throw new Error('Corrupted .docx local file header.');
+    }
+    const lhNameLen = rawBuf.readUInt16LE(localHeaderOffset + 26);
+    const lhExtraLen = rawBuf.readUInt16LE(localHeaderOffset + 28);
+    const dataStart = localHeaderOffset + 30 + lhNameLen + lhExtraLen;
+    const dataEnd = dataStart + compSize;
+    if (dataEnd > rawBuf.length) throw new Error('Truncated .docx entry data.');
+    const compressed = rawBuf.subarray(dataStart, dataEnd);
+    let xmlBuf;
+    if (method === 0) xmlBuf = compressed;
+    else if (method === 8) xmlBuf = zlib.inflateRawSync(compressed);
+    else throw new Error(`Unsupported .docx compression method (${method}); export .md or .txt instead.`);
+    xmlParts.push({ name: fileName.toLowerCase(), xml: xmlBuf.toString('utf8') });
+  }
+
+  const hasMainDoc = xmlParts.some(p => p.name === 'word/document.xml');
+  if (!hasMainDoc) {
+    throw new Error('Invalid .docx package (missing word/document.xml). Do not rename HTML/text files to .docx.');
+  }
+  const combined = xmlParts
+    .sort((a, b) => (a.name === 'word/document.xml' ? -1 : b.name === 'word/document.xml' ? 1 : a.name.localeCompare(b.name)))
+    .map(p =>
+      decodeHtmlEntities(
+        p.xml
+          .replace(/<\/w:p>/gi, '\n')
+          .replace(/<\/w:tr>/gi, '\n')
+          .replace(/<w:br\b[^>]*\/>/gi, '\n')
+          .replace(/<w:tab\b[^>]*\/>/gi, ' ')
+          .replace(/<[^>]+>/g, ''),
+      ),
+    )
+    .join('\n')
+    .split(/\r?\n/)
+    .map(l => l.replace(/[ \t]+/g, ' ').trim())
+    .filter(Boolean)
+    .join('\n');
+
+  if (!combined.trim()) {
+    throw new Error('No readable text found inside .docx (possibly image-only content); paste your CV text or provide .md/.txt.');
+  }
+  return combined;
+}
+
+function readCvInputText(resolved) {
+  const ext = path.extname(resolved).toLowerCase();
+  const rawBuf = fs.readFileSync(resolved);
+  if (rawBuf.subarray(0, 5).toString('utf8') === '%PDF-' || ext === '.pdf') {
+    throw new Error('Binary/PDF file detected. Read natively if your AI IDE supports PDFs, open via Playwright MCP file:///..., or paste/export as .md/.txt/.docx for instant CLI audit.');
+  }
+  if (ext === '.docx') {
+    return { text: extractDocxText(rawBuf), format: 'docx' };
+  }
+  if (ext === '.doc' && rawBuf.length >= 4 && rawBuf[0] === 0xd0 && rawBuf[1] === 0xcf && rawBuf[2] === 0x11 && rawBuf[3] === 0xe0) {
+    throw new Error('Legacy binary .doc (OLE2) detected. Save as .docx/.txt/.md or paste your CV text in chat.');
+  }
+  if (rawBuf.includes(0)) {
+    throw new Error('Binary file detected. Pass a readable .md, .txt, .docx, .html, or Word-compatible .doc CV file.');
+  }
+  const rawText = rawBuf.toString('utf8');
+  if (ext === '.html' || ext === '.htm' || (ext === '.doc' && /<html|<body|<p|<div/i.test(rawText))) {
+    return { text: extractHtmlText(rawText), format: ext === '.doc' ? 'word-html-doc' : 'html' };
+  }
+  if (ext && ext !== '.md' && ext !== '.txt' && ext !== '.markdown' && ext !== '.doc') {
+    throw new Error(`Unsupported file extension "${ext}". Pass .md, .txt, .docx, .html, or Word-compatible .doc.`);
+  }
+  return { text: rawText, format: ext.replace(/^\./, '') || 'txt' };
+}
+
 function cmdAudit() {
   const targetArg = positional[1];
   if (!targetArg) {
-    throw new Error('Usage: job-hunter audit <path/to/resume.md|txt> [--share]');
+    throw new Error('Usage: job-hunter audit <path/to/resume.md|txt|docx|html|doc> [--share]');
   }
   const resolved = path.resolve(process.cwd(), targetArg);
   if (!fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) {
     throw new Error(`Resume file not found: ${resolved}`);
   }
-  const ext = path.extname(resolved).toLowerCase();
-  if (ext && ext !== '.md' && ext !== '.txt' && ext !== '.markdown') {
-    throw new Error(`Unsupported file extension "${ext}". Pass a plain-text .md or .txt CV file.`);
-  }
-  const rawBuf = fs.readFileSync(resolved);
-  if (rawBuf.subarray(0, 5).toString('utf8') === '%PDF-' || rawBuf.includes(0)) {
-    throw new Error('Binary/PDF file detected. Export or paste your CV as .md or .txt for instant terminal audit, or use /quick-tailor in your AI IDE.');
-  }
-  const text = rawBuf.toString('utf8');
+  const { text } = readCvInputText(resolved);
   const trimmed = text.trim();
   if (!trimmed) {
     throw new Error(`CV file is empty: ${resolved}`);
   }
 
   // 1. AI-Slop Clichés & Prose Em-Dashes (25 pts)
-  const clicheList = [
-    'delve', 'testament', 'tapestry', 'spearheaded', 'synergy', 'thrilled to apply',
-    'moreover', 'furthermore', 'orchestrated', 'hit the ground running',
-    'results-driven', 'passionate about', 'seasoned professional', 'dynamic team player',
-  ];
-  const clichésFound = clicheList.filter(cl => buildSkillRegex(cl).test(trimmed));
+  const clichésFound = BANNED_AI_CLICHES.slice(0, 14).filter(cl => buildSkillRegex(cl).test(trimmed));
   const emDashCount = (trimmed.match(/—/g) || []).length;
   const tonePenalty = Math.min(25, clichésFound.length * 6 + Math.min(10, emDashCount * 2));
   const toneScore = 25 - tonePenalty;
@@ -1867,6 +2025,351 @@ function cmdAudit() {
   info('Next: Open your AI IDE and run `/quick-tailor` with this CV + 1 job description (zero browser login required).');
 }
 
+const ROUTE_RULES = [
+  {
+    intent: 'sandbox-demo',
+    match: q => /(^|\s)\/demo\b|\bsandbox demo\b/i.test(q),
+    skills: ['02-discover-and-triage', '03-tailor-resume-and-verify', '13-company-due-diligence', '14-privacy-pii-shield', '21-ats-keyword-heatmap'],
+    workflow: '.agent/workflows/demo.md',
+    readiness: 'none (zero personal data or browser login required)',
+    required_inputs: [],
+    optional_tools: [],
+    fallback: 'Works offline from examples/sandbox-demo/',
+    outputs: ['Mission Control table', 'Synthetic Job #1 tailored preview'],
+  },
+  {
+    intent: 'setup-full-career-os',
+    match: q => /(^|\s)\/setup\b|\bcheck my folder\b|\b5 readiness gates\b/i.test(q),
+    skills: ['00-interrogate-and-onboard', '01-resume-ingestion', '11-portfolio-and-github-auditor'],
+    workflow: '.agent/workflows/setup.md',
+    readiness: 'full-5-gate-onboarding',
+    required_inputs: ['CV file or pasted CV', 'target roles/regions', 'comp/legal/skills_years', 'enabled platforms'],
+    optional_tools: ['playwright (for live login & PDF)'],
+    fallback: 'Gates 1-4 complete locally without Playwright; standalone tasks never require /setup',
+    outputs: ['context/profile.md', 'context/cv.md', 'context/resume-data.json', 'context/preferences.yaml', 'context/form-answers.yaml', 'context/targets.yaml'],
+  },
+  {
+    intent: 'daily-run',
+    match: q => /(^|\s)\/daily-run\b|\brun today'?s job run\b|\bstart applying\b/i.test(q),
+    skills: ['00-daily-run', '00-interrogate-and-onboard', '02-discover-and-triage', '03-tailor-resume-and-verify', '04-fill-and-apply', '05-outreach-and-interview-prep', '06-log-and-insights'],
+    workflow: '.agent/workflows/daily-run.md',
+    readiness: 'full-5-gate-readiness + launch consent + browser auth',
+    required_inputs: ['5 passed readiness gates', 'fresh launch confirmation'],
+    optional_tools: ['playwright (required for live board automation)', 'notion'],
+    fallback: 'If Playwright is absent, offer /quick-tailor or URL/pasted-JD manual prep',
+    outputs: ['Mission Control table', 'logs/resumes/<job>/', 'logs/applications-log.json', 'logs/runs/YYYY-MM-DD.json'],
+  },
+  {
+    intent: 'linkedin-profile',
+    match: q => /(^|\s)\/linkedin-growth\b/i.test(q) || (/\blinkedin\b/i.test(q) && /\b(profile|headline|about|consistent|optimize|audit|review|improve|post|outreach)\b/i.test(q) && !/\b(job|apply|jobs)\b/i.test(q)) || /\b(profile consistent with my cv|optimize my profile)\b/i.test(q),
+    skills: ['linkedin-growth', '03-tailor-resume-and-verify', '05-outreach-and-interview-prep', 'meta-self-verification'],
+    workflow: '.agent/workflows/linkedin-growth.md',
+    readiness: 'task-specific (profile text/PDF/screenshot or signed-in Playwright + CV facts; no /setup required)',
+    required_inputs: ['LinkedIn profile (pasted, PDF, screenshot, or signed-in Playwright)', 'verified CV facts'],
+    optional_tools: ['playwright (for read-only profile read or APPROVE-gated live edit)'],
+    fallback: 'Works 100% offline from pasted profile text, Save-to-PDF, or screenshots as DRAFT_ONLY',
+    outputs: ['0-100 scorecard & CV consistency gaps', 'DRAFT_ONLY Before/After copy in logs/insights/linkedin-seo-audit-YYYY-MM-DD.md'],
+  },
+  {
+    intent: 'interview-prep',
+    match: q => /\b(interview|take-home|coding challenge|system design)\b/i.test(q) && !/\b(rejected|rejection|rate|offer|history)\b/i.test(q),
+    skills: ['05-outreach-and-interview-prep', '22-technical-assessment-architect'],
+    workflow: null,
+    readiness: 'task-specific (target JD/prompt + CV facts; no prior application submission required)',
+    required_inputs: ['target job description / company / prompt', 'verified CV facts'],
+    optional_tools: ['playwright'],
+    fallback: 'Works 100% locally from pasted JD/prompt and CV facts',
+    outputs: ['logs/resumes/<folder>/interview-dossier.md or assessment-blueprint.md', 'targeted technical & behavioral prep Q&As'],
+  },
+  {
+    intent: 'offer-and-contract',
+    match: q => /\b(job offer|negotiate|salary expectation|rate check|contract|nda|msa|sow|agreement)\b/i.test(q),
+    skills: ['09-offer-negotiator', '23-contract-and-nda-auditor'],
+    workflow: null,
+    readiness: 'task-specific (offer/contract text + verified compensation/notice floor; no /setup required)',
+    required_inputs: ['offer/rate message or contract/NDA text', 'verified comp/work terms'],
+    optional_tools: [],
+    fallback: 'Works 100% locally as DRAFT_ONLY comparison and redline proposals',
+    outputs: ['Grounded offer comparison or 6-category contract red-flag audit', 'DRAFT_ONLY reply/counter-clauses'],
+  },
+  {
+    intent: 'application-prep-and-fill',
+    match: q => /(^|\s)\/apply-url\b|\b(prepare (?:my |an )?application|upload (?:my |the tailored )?resume to|answer (?:this |these )?application question|ats form|easy apply)\b/i.test(q),
+    skills: ['03-tailor-resume-and-verify', '04-fill-and-apply', '05-outreach-and-interview-prep', '06-log-and-insights', 'meta-self-verification'],
+    workflow: '.agent/workflows/apply-url.md',
+    readiness: 'task-specific for prep (CV + JD + relevant answers); full gate + DOM Read-Back + explicit APPROVE for live ATS Submit',
+    required_inputs: ['target job URL or JD', 'verified CV facts', 'application question answers'],
+    optional_tools: ['playwright (required for live ATS upload/submit; manual prep fallback if unavailable)'],
+    fallback: 'Generates complete manual package (resume.html/.doc/.txt, cover letter, answers, dossier, local tracking) via skills/fallback-no-mcp.md',
+    outputs: ['logs/resumes/<folder>/ artifacts', 'Live DOM Read-Back Table + APPROVE gate (or manual upload guide)', 'logs/applications-log.json entry'],
+  },
+  {
+    intent: 'tracking-and-insights',
+    match: q => /(^|\s)\/weekly-report\b|\b(track (?:my )?applications|application history|analy[sz]e (?:my )?rejections|why am i getting rejected|ghosted|export (?:my )?application report|update (?:an )?existing application|follow-?up|calibrate|recruiter (?:email|message|replied))\b/i.test(q),
+    skills: ['06-log-and-insights', '08-follow-up-radar', '12-recruiter-inbox-triage', '16-rejection-pattern-analyzer', '17-score-calibration'],
+    workflow: '.agent/workflows/weekly-report.md',
+    readiness: 'task-specific (logs/applications-log.json; no Playwright or Notion required)',
+    required_inputs: ['local logs/applications-log.json (and update/message if provided)'],
+    optional_tools: ['notion'],
+    fallback: 'Local JSON is primary truth; exports Markdown/CSV/JSON/HTML dashboard without Notion',
+    outputs: ['Updated logs/applications-log.json', 'logs/insights/ or logs/exports/ report'],
+  },
+  {
+    intent: 'job-discovery-and-triage',
+    match: q => /\b(find .*jobs?|jobs? in |remote .*jobs?|analy[sz]e this .*job|should i apply|compare these jobs|rank them|discover jobs)\b/i.test(q),
+    skills: ['02-discover-and-triage', '25-prompt-injection-defense', '26-deduplication-and-blacklist-guard', 'platforms/linkedin'],
+    workflow: null,
+    readiness: 'task-specific (verified CV facts + query or URLs/JDs/screenshots; no /setup wall for read-only analysis)',
+    required_inputs: ['verified CV facts', 'search query or job URLs/pasted JDs/screenshots'],
+    optional_tools: ['playwright (for live multi-board search; URL/JD/screenshot fallback if absent or unauthenticated)'],
+    fallback: 'Searches legitimate accessible boards when authorized; otherwise scores/ranks user-supplied URLs, JDs, or screenshots without fabricating live listings',
+    outputs: ['Evidence-backed shortlist/ranking with source URL + verification date', 'Verified matches vs. unknown requirements'],
+  },
+  {
+    intent: 'tailor-cv',
+    match: q => /(^|\s)\/(?:quick-tailor|tailor-cv)\b|\b(tailor (?:my )?cv|compare (?:my )?cv against)\b/i.test(q),
+    skills: ['01-resume-ingestion', '03-tailor-resume-and-verify', '21-ats-keyword-heatmap'],
+    workflow: '.agent/workflows/quick-tailor.md',
+    readiness: 'task-specific (CV + 1 JD; zero browser login or /setup required)',
+    required_inputs: ['candidate CV', 'target job description (or URL)'],
+    optional_tools: ['playwright (optional for PDF print or URL read)'],
+    fallback: 'Ask for pasted JD if URL blocked; deliver HTML + Word-compatible .doc + TXT + Print-to-PDF guidance',
+    outputs: ['resume.html', 'resume.doc (Word-compatible HTML)', 'resume.txt', 'tailoring-notes.md (Evidence Map, ATS Heatmap, True Gaps)', 'optional resume.pdf'],
+  },
+  {
+    intent: 'cv-translate',
+    match: q => /\b(arabic|english|german|french|spanish|rtl|translate)\b/i.test(q) && /\b(cv|resume)\b/i.test(q),
+    skills: ['01-resume-ingestion', '03-tailor-resume-and-verify', '15-multilingual-adaptation'],
+    workflow: null,
+    readiness: 'task-specific (source CV + target language; preserves original file)',
+    required_inputs: ['source CV', 'target language'],
+    optional_tools: ['playwright (optional for PDF export)'],
+    fallback: 'Outputs translated HTML/Word-compatible .doc/TXT locally without browser',
+    outputs: ['Preserved original CV', 'Translated resume.html / resume.doc / resume.txt in logs/resumes/<slug>-<lang>/'],
+  },
+  {
+    intent: 'cv-convert',
+    match: q => /\b(convert|export|make|create)\b/i.test(q) && /\b(pdf|word|word-compatible|docx|doc|html|txt)\b/i.test(q) && /\b(cv|resume)\b/i.test(q),
+    skills: ['01-resume-ingestion', '03-tailor-resume-and-verify'],
+    workflow: null,
+    readiness: 'task-specific (source CV; no /setup required)',
+    required_inputs: ['source CV'],
+    optional_tools: ['playwright (for PDF export)'],
+    fallback: 'If PDF/native DOCX unavailable, outputs HTML + Word-compatible .doc + TXT + Print-to-PDF instructions (never renames HTML to .docx)',
+    outputs: ['resume.html', 'resume.doc (Word-compatible HTML)', 'resume.txt', 'resume.pdf (when PDF export exists)'],
+  },
+  {
+    intent: 'cv-create',
+    match: q => /\b(create|build|write|make)\b/i.test(q) && /\b(new cv|cv from scratch|resume from scratch|from scratch)\b/i.test(q),
+    skills: ['01-resume-ingestion', '03-tailor-resume-and-verify'],
+    workflow: null,
+    readiness: 'task-specific (guided interview; zero /setup or browser login required)',
+    required_inputs: ['guided interview answers (contact, roles/dates, projects, skills, education)'],
+    optional_tools: ['playwright (optional for PDF export)'],
+    fallback: 'Writes confirmed profile + ATS HTML/Word-compatible .doc/TXT locally',
+    outputs: ['Confirmed Fact Table', 'context/profile.md + cv.md (when saving)', 'ATS resume.html / resume.doc / resume.txt'],
+  },
+  {
+    intent: 'cv-edit',
+    match: q => /\b(improve|edit|update|rewrite|strengthen|shorten|reorder|remove|add .*project|change .*summary|summary|bullet)\b/i.test(q) && /\b(cv|resume|summary|project|skills|bullets|section|page)\b/i.test(q),
+    skills: ['01-resume-ingestion', '03-tailor-resume-and-verify', 'meta-self-verification'],
+    workflow: null,
+    readiness: 'task-specific (existing CV or session CV + requested edit; preserves original)',
+    required_inputs: ['existing CV (if not already loaded)', 'requested section change'],
+    optional_tools: ['playwright (optional for PDF export)'],
+    fallback: 'Modifies only requested sections locally, preserves original, re-reads outputs to verify',
+    outputs: ['Preserved original CV', 'Verified revised resume.html / resume.doc / resume.txt + diff summary'],
+  },
+  {
+    intent: 'cv-review-import',
+    match: q => /\b(upload|import|review|audit|check|read|parse)\b/i.test(q) && /\b(cv|resume)\b/i.test(q),
+    skills: ['01-resume-ingestion', '14-privacy-pii-shield'],
+    workflow: null,
+    readiness: 'task-specific (CV file or pasted text; no /setup or browser login required)',
+    required_inputs: ['CV file (.md/.txt/.docx/.html/readable .pdf) or pasted text'],
+    optional_tools: ['playwright (optional only for PDF reading when native PDF reader unavailable)'],
+    fallback: 'Built-in CLI/text extraction; warns if PDF is scanned/unreadable and requests pasted text',
+    outputs: ['Extracted Fact Table for confirmation', 'Actionable CV hygiene & structure review'],
+  },
+];
+
+function matchNaturalLanguageRoute(query) {
+  const q = String(query || '').trim();
+  if (!q) {
+    throw new Error('Usage: job-hunter route "<natural-language request>" [--json]');
+  }
+  const hit = ROUTE_RULES.find(r => r.match(q)) || {
+    intent: 'general-career-assistant',
+    skills: ['01-resume-ingestion', '03-tailor-resume-and-verify'],
+    workflow: null,
+    readiness: 'task-specific (ask one clarifying question for missing goal/file)',
+    required_inputs: ['clarify desired career outcome or share CV/JD'],
+    optional_tools: ['playwright', 'notion'],
+    fallback: 'Inspect context/ first and ask 1 targeted question',
+    outputs: ['Focused next step without forcing /setup'],
+  };
+  return { query: q, ...hit };
+}
+
+function cmdRoute() {
+  const query = positional.slice(1).join(' ').trim();
+  const res = matchNaturalLanguageRoute(query);
+  if (opts.json) {
+    console.log(JSON.stringify(res, null, 2));
+    return;
+  }
+  console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
+  ok(`Matched Intent: ${res.intent}`);
+  info(`Minimal Skills: ${res.skills.join(', ')}`);
+  if (res.workflow) info(`Workflow:       ${res.workflow}`);
+  info(`Readiness:      ${res.readiness}`);
+  info(`Required Input: ${res.required_inputs.join(' | ') || 'none'}`);
+  info(`Optional Tools: ${res.optional_tools.join(' | ') || 'none'}`);
+  info(`Fallback:       ${res.fallback}`);
+  info(`Outputs:        ${res.outputs.join(', ')}`);
+}
+
+function verifyArtifactFile(filePath, factsConfig = null) {
+  const errors = [];
+  const warnings = [];
+  const ext = path.extname(filePath).toLowerCase();
+  const name = path.basename(filePath);
+  const rawBuf = fs.readFileSync(filePath);
+
+  if (rawBuf.length === 0) {
+    errors.push(`${name}: file is empty (0 bytes)`);
+    return { name, errors, warnings };
+  }
+  if (ext === '.pdf') {
+    if (rawBuf.subarray(0, 5).toString('utf8') !== '%PDF-') {
+      errors.push(`${name}: invalid PDF header (does not start with %PDF-)`);
+    } else if (rawBuf.length > 200 * 1024) {
+      warnings.push(`${name}: PDF size is ${Math.round(rawBuf.length / 1024)} KB (target <= 200 KB)`);
+    }
+    return { name, errors, warnings };
+  }
+  if (ext === '.docx') {
+    try {
+      extractDocxText(rawBuf);
+    } catch (e) {
+      errors.push(`${name}: ${e.message}`);
+    }
+    return { name, errors, warnings };
+  }
+
+  const rawText = rawBuf.toString('utf8');
+  if (/\{\{[A-Za-z0-9_]+\}\}/.test(rawText)) {
+    const matches = rawText.match(/\{\{[A-Za-z0-9_]+\}\}/g) || [];
+    errors.push(`${name}: unresolved template placeholder(s): ${[...new Set(matches)].join(', ')}`);
+  }
+
+  let prose = rawText;
+  const isNotesDoc = /^(?:tailoring-notes|interview-dossier)\b/i.test(name);
+  const isLinkedinAudit = /^linkedin-seo-audit\b/i.test(name);
+  if (ext === '.html' || ext === '.htm' || (ext === '.doc' && /<html|<body/i.test(rawText))) {
+    // Exclude structural h1/h2/h3 headings and title when scanning prose em-dashes; still scan entire body for clichés
+    const bodyWithoutTitle = rawText.replace(/<title\b[^>]*>[\s\S]*?<\/title>/gi, ' ');
+    const proseMatches = [...bodyWithoutTitle.matchAll(/<(?:p|li)\b[^>]*>([\s\S]*?)<\/(?:p|li)>/gi)];
+    prose = proseMatches.map(m => extractHtmlText(m[1])).join('\n') || extractHtmlText(bodyWithoutTitle);
+    const fullPlain = extractHtmlText(bodyWithoutTitle);
+    const cliches = BANNED_AI_CLICHES.filter(cl => buildSkillRegex(cl).test(fullPlain));
+    if (cliches.length > 0) errors.push(`${name}: banned AI cliché(s) found: ${cliches.join(', ')}`);
+  } else if (!isNotesDoc) {
+    const nonHeadingLines = rawText
+      .split(/\r?\n/)
+      .filter(l => !/^\s*(?:#{1,6}\s|\*\*[^*]+—[^*]+\*\*)/.test(l));
+    prose = nonHeadingLines.join('\n');
+    const cliches = BANNED_AI_CLICHES.filter(cl => buildSkillRegex(cl).test(rawText));
+    if (cliches.length > 0) errors.push(`${name}: banned AI cliché(s) found: ${cliches.join(', ')}`);
+  }
+
+  if (!isNotesDoc && prose.includes('—')) {
+    errors.push(`${name}: prose em-dash (—) detected inside paragraph/bullet text`);
+  }
+
+  if (factsConfig && (ext === '.html' || ext === '.doc' || ext === '.txt' || ext === '.md') && !isNotesDoc) {
+    let plain = (ext === '.html' || ext === '.doc') ? extractHtmlText(rawText) : rawText;
+    if (isLinkedinAudit) {
+      plain = plain.split(/\r?\n/).filter(l => !/True Gaps/i.test(l)).join('\n');
+    }
+    const metricTokenRe = /(?<![A-Za-z0-9_])\$?\d[\d,]*(?:\.\d+)?(?:\s*(?:%|k|m|b|x|ms|sec|seconds|min|minutes|hrs|hours|days|weeks|months|years)\b|%|[KMBX]\b|\+)/gi;
+    const foundMetrics = plain.match(metricTokenRe) || [];
+    const unverified = foundMetrics.filter(tok => !factsConfig.allowedMetrics.has(tok.trim().toLowerCase()));
+    if (unverified.length > 0) {
+      errors.push(`${name}: unverified metric token(s) not in source facts: ${[...new Set(unverified)].join(', ')}`);
+    }
+    const forbidden = factsConfig.forbiddenSkills.filter(sk => buildSkillRegex(sk).test(plain));
+    if (forbidden.length > 0) {
+      errors.push(`${name}: forbidden/unclaimed skill(s) found: ${forbidden.join(', ')}`);
+    }
+  }
+  return { name, errors, warnings };
+}
+
+function loadFactsConfig(factsPath) {
+  const resolved = path.resolve(process.cwd(), factsPath);
+  if (!fs.existsSync(resolved)) throw new Error(`Facts file not found: ${resolved}`);
+  const text = fs.readFileSync(resolved, 'utf8');
+  if (resolved.endsWith('.json')) {
+    const parsed = JSON.parse(text);
+    const allowedMetrics = new Set(
+      (Array.isArray(parsed.ground_truth_metrics) ? parsed.ground_truth_metrics : []).map(m => String(m).trim().toLowerCase()),
+    );
+    const forbiddenSkills = Array.isArray(parsed.forbidden_skills) ? parsed.forbidden_skills : [];
+    return { allowedMetrics, forbiddenSkills };
+  }
+  const metricTokenRe = /(?<![A-Za-z0-9_])\$?\d[\d,]*(?:\.\d+)?(?:\s*(?:%|k|m|b|x|ms|sec|seconds|min|minutes|hrs|hours|days|weeks|months|years)\b|%|[KMBX]\b|\+)/gi;
+  const allowedMetrics = new Set((text.match(metricTokenRe) || []).map(m => m.trim().toLowerCase()));
+  return { allowedMetrics, forbiddenSkills: [] };
+}
+
+function cmdVerify() {
+  const targetArg = positional[1];
+  if (!targetArg) {
+    throw new Error('Usage: job-hunter verify <path/to/dir-or-file> [--facts <ground-truth.json|cv.md>]');
+  }
+  const resolved = path.resolve(process.cwd(), targetArg);
+  if (!fs.existsSync(resolved)) {
+    throw new Error(`Target path not found: ${resolved}`);
+  }
+  const factsConfig = opts.facts ? loadFactsConfig(opts.facts) : null;
+  const stat = fs.statSync(resolved);
+  const files = stat.isDirectory()
+    ? fs.readdirSync(resolved)
+        .filter(f => /\.(html|doc|docx|txt|pdf|md)$/i.test(f))
+        .sort()
+        .map(f => path.join(resolved, f))
+    : [resolved];
+
+  if (files.length === 0) {
+    throw new Error(`No resume/deliverable files found in ${resolved}`);
+  }
+
+  console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
+  console.log(paint('36', `Job Hunter OS Deliverable Verification — ${resolved}\n`));
+
+  let errorCount = 0;
+  for (const f of files) {
+    const res = verifyArtifactFile(f, factsConfig);
+    if (res.errors.length === 0) {
+      ok(`${res.name} verified`);
+    } else {
+      for (const e of res.errors) {
+        fail(e);
+        errorCount++;
+      }
+    }
+    for (const w of res.warnings) warn(w);
+  }
+  console.log('');
+  if (errorCount > 0) {
+    fail(`Verification FAILED (${errorCount} issue(s)).`);
+    process.exitCode = 1;
+  } else {
+    ok(`All ${files.length} deliverable file(s) passed post-write verification.`);
+  }
+}
+
 function cmdVersion() {
   const { version } = readPackageMeta();
   console.log(`v${version}`);
@@ -1880,9 +2383,11 @@ job-hunter-os v${version} — Truthful CV Tailoring & Local-First AI Career Fram
 
 Usage:
   job-hunter init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
-  job-hunter audit <cv.md|txt> [--share]           Instant offline CV hygiene audit + privacy-safe SVG/MD scorecard
+  job-hunter audit <cv.md|txt|docx|html|doc> [--share]         Instant offline CV hygiene audit + scorecard
+  job-hunter route "<request>" [--json]                        Route natural-language task to minimal skills
+  job-hunter verify <dir|file> [--facts <json|md>]             Post-write deliverable, format & fact check
   job-hunter proof [--global | -g]                 Generate reproducible proof-card.svg & proof-card.md in logs/exports/
-  job-hunter eval [--baseline | --file <json>]     Grade Harness Reference Baseline (CI) or external LLM output
+  job-hunter eval [--baseline | --file <json> | --journeys]    Grade Baseline, external JSON, or synthetic journeys
   job-hunter pre-submit [--draft <f> | --text <t>] Deterministically enforce <=75-word cap & daily warm-up limit
   job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
   job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
@@ -1905,6 +2410,8 @@ try {
   else if (command === 'help' || opts.help) cmdHelp();
   else if (command === 'init') cmdInit();
   else if (command === 'audit') cmdAudit();
+  else if (command === 'route') cmdRoute();
+  else if (command === 'verify') cmdVerify();
   else if (command === 'update') cmdUpdate();
   else if (command === 'doctor') await cmdDoctor();
   else if (command === 'eval') cmdEval();

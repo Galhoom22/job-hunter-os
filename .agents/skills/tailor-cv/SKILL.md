@@ -1,10 +1,10 @@
 ---
 name: tailor-cv
-description: Load when the owner wants to tailor an ATS resume and cover letter for a specific job URL (/tailor-cv) with zero hallucinated metrics or AI-slop clichés (never submits).
+description: Load when the owner wants to tailor an ATS resume and cover letter for a specific job URL or pasted JD (/tailor-cv) with zero hallucinated metrics or AI-slop clichés (never submits).
 ---
 
 # Job Hunter Tailor CV
 
 1. Read `AGENTS.md` and `skills/REGISTRY.md` first.
-2. Inspect the supplied job URL via Playwright MCP and execute `skills/03-tailor-resume-and-verify.md` (fact-check guard + anti-AI slop filter + `.pdf`/`.doc`/`.txt` artifacts under `logs/resumes/`).
-3. Archive the JD and prep questions via `skills/05-outreach-and-interview-prep.md` (`interview-dossier.md`). Never apply or submit.
+2. Follow `.agent/workflows/tailor-cv.md`: inspect the supplied job URL via Playwright MCP if connected, or ask the owner to paste the JD text if MCP is unavailable. If `context/profile.md` / `context/cv.md` are not yet set up, ask for the CV directly in chat (`skills/01-resume-ingestion.md`) instead of blocking.
+3. Execute `skills/03-tailor-resume-and-verify.md` + `skills/21-ats-keyword-heatmap.md` (`resume.html`, `resume.doc`, `resume.txt`, `tailoring-notes.md`, plus `resume.pdf` or print-to-PDF instructions) and `skills/05-outreach-and-interview-prep.md` (`interview-dossier.md`). Support owner revisions and never apply or submit.

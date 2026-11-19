@@ -1,6 +1,6 @@
 # Chat Commands & IDE Portability
 
-All slash commands below are executed directly by the AI model inside your IDE or CLI harness (accompanied by a lightweight zero-dependency Node.js CLI in `bin/cli.mjs` for offline audit, proof generation, pre-submit cap/word checks, and IDE setup). Read `AGENTS.md` and `skills/REGISTRY.md` first.
+All slash commands below (plus natural-language requests routed via [`skills/REGISTRY.md`](../skills/REGISTRY.md)) are executed directly by the AI model inside your IDE or CLI harness (accompanied by a lightweight zero-dependency Node.js CLI in `bin/cli.mjs` for offline audit, artifact verification, intent routing, proof generation, pre-submit cap/word checks, and IDE setup). Standalone CV, LinkedIn, interview-prep, offer/contract, and reporting tasks run independently without requiring `/setup`. Read `AGENTS.md` and `skills/REGISTRY.md` first.
 
 | Alias | Fast-Start / Scope | Fallback Chat Prompt | Workflow | Primary Skill(s) |
 |---|---|---|---|---|
@@ -11,7 +11,7 @@ All slash commands below are executed directly by the AI model inside your IDE o
 | `/tailor-cv` | Single URL (never submits) | Tailor my CV for this job URL; do not apply | [tailor-cv](../.agent/workflows/tailor-cv.md) | [03-tailor-resume-and-verify](../skills/03-tailor-resume-and-verify.md) |
 | `/apply-url` | Single URL (`APPROVE`-gated) | Score, tailor, and safely process this one job URL | [apply-url](../.agent/workflows/apply-url.md) | [00-daily-run](../skills/00-daily-run.md) |
 | `/weekly-report` | Local logs only (no MCP needed) | Generate my weekly market and skill-gap report | [weekly-report](../.agent/workflows/weekly-report.md) | [06-log-and-insights](../skills/06-log-and-insights.md) |
-| `/linkedin-growth` | Read-only audit + `DRAFT_ONLY` | Audit my LinkedIn profile (`0-100`) or draft copy/outreach (`DRAFT_ONLY`) | [linkedin-growth](../.agent/workflows/linkedin-growth.md) | [linkedin-growth](../skills/linkedin-growth.md), [05-outreach-and-interview-prep](../skills/05-outreach-and-interview-prep.md) |
+| `/linkedin-growth` | `DRAFT_ONLY` default (`APPROVE` for live edits) | Review my LinkedIn profile, sync it with my CV, or draft `<=75`-word outreach | [linkedin-growth](../.agent/workflows/linkedin-growth.md) | [linkedin-growth](../skills/linkedin-growth.md), [05-outreach-and-interview-prep](../skills/05-outreach-and-interview-prep.md) |
 
 | IDE / Harness | Canonical Instruction Entry | Workflow / Command Discovery |
 |---|---|---|

@@ -40,7 +40,7 @@ Ensures every community-contributed career skill, ATS playbook, or regional boar
    - Write in clear **imperative steps** and explain *why* non-obvious constraints exist.
 3. **Follow Exact `job-hunter-os` + `agentskills.io` Contract:**
    - **Location:** core/career skills live at `skills/<NN>-<slug>.md`; job boards live at `skills/platforms/<board>.md` (start from `skills/platforms/_template.md`); employer ATS guides live at `skills/ats/<engine>.md`.
-   - **8 Required YAML Frontmatter Keys:** `name`, `version`, `description` (explicitly state *when to trigger* and what contexts activate it — never spoil a shortcut summary of the whole workflow so models still read the body), `triggers`, `requires_mcp` (`playwright`, `notion`, or `none`), `preconditions`, `requires_skills` (matching existing `name`s), and `verification`.
+   - **8 Required YAML Frontmatter Keys:** `name`, `version`, `description` (explicitly state *when to trigger* and what contexts activate it — never spoil a shortcut summary of the whole workflow so models still read the body), `triggers`, `requires_mcp` (strictly required MCPs: `playwright`, `notion`, or `none`; add optional `optional_mcp` when an MCP only enhances optional steps such as PDF printing or Notion sync), `preconditions`, `requires_skills` (matching existing `name`s), and `verification`.
    - **3 Mandatory Exact H2 Headings:**
      - `## When to Use & Preconditions`
      - `## Deterministic Step-by-Step Execution`

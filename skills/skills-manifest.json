@@ -49,6 +49,9 @@
         "Check my folder"
       ],
       "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
         "playwright"
       ],
       "preconditions": [
@@ -70,33 +73,39 @@
       "name": "resume-ingestion",
       "version": "2.0.0",
       "category": "core",
-      "description": "Load when the owner shares a CV in chat, drops a Markdown/text/PDF/DOCX file in context/ or assets/, or needs to build their CV from scratch; reads it directly or via Playwright MCP, extracts facts into context/profile.md and context/cv.md, and warns if scanned or missing details.",
+      "description": "Load when the owner shares or uploads a CV in chat, drops a PDF/DOCX/DOC/MD/TXT file in context/ or assets/, wants to review or edit an existing CV, or needs to create a CV from scratch; reads via the best local reader (or optional Playwright MCP for PDFs), verifies facts, and preserves original files.",
       "triggers": [
-        "CV pasted in chat",
-        "PDF or Markdown resume in context/ or assets/",
-        "build CV from scratch"
+        "CV pasted or uploaded in chat",
+        "PDF, DOCX, DOC, or Markdown resume in context/ or assets/",
+        "review or edit existing CV",
+        "create CV from scratch"
       ],
       "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
         "playwright"
       ],
       "preconditions": [
-        "owner supplied a CV file, pasted CV text, or asked to build one in chat"
+        "owner supplied a CV file/text or asked to review, edit, or create a CV"
       ],
       "requires_skills": [],
       "verification": [
-        "every extracted employer, title, date, degree, skill, and contact detail was explicitly confirmed by the owner",
+        "every extracted or added employer, title, date, degree, skill, and contact detail was explicitly confirmed by the owner",
         "context/profile.md, context/cv.md, and context/resume-data.json contain no unconfirmed or placeholder facts",
-        "if the source PDF was scanned or unreadable, the owner was warned that ATS parsers may see it as blank"
+        "edits preserve the original source CV file and if a PDF was scanned or unreadable the owner was warned with paste/text alternatives"
       ],
       "path": "skills/01-resume-ingestion.md"
     },
     {
       "name": "discover-and-triage",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "category": "core",
-      "description": "Load when discovering and scoring jobs during /daily-run or /apply-url; constructs search URLs from context/targets.yaml, inspects pages via Playwright MCP, filters ghost/expired postings, scores 1-10 against context/cv.md, and displays the Mission Control table before any Apply click.",
+      "description": "Load when finding suitable jobs across platforms, analyzing or comparing/ranking job descriptions, or running /daily-run and /apply-url; filters ghost/expired postings, scores 0-10 with evidence, and displays Mission Control before any Apply click (with URL/pasted-JD/screenshot fallback when live browsing is unavailable).",
       "triggers": [
         "daily run discovery and scoring",
+        "find suitable remote or local jobs",
+        "analyze or compare and rank jobs",
         "/apply-url <url> inspection",
         "APPLY ALL GREEN / APPLY 1,3 reply"
       ],
@@ -104,8 +113,8 @@
         "playwright"
       ],
       "preconditions": [
-        "all readiness gates passed and owner gave launch consent for this run",
-        "context/targets.yaml, context/preferences.yaml, context/cv.md, and logs/applications-log.json loaded"
+        "for /daily-run: all 5 readiness gates passed and owner gave launch consent",
+        "for standalone job search, single-JD analysis, or multi-job comparison: verified CV facts (context/cv.md or session CV) plus search query or supplied URLs/JDs/screenshots"
       ],
       "requires_skills": [
         "interrogate-and-onboard",
@@ -114,8 +123,9 @@
         "meta-dom-recovery"
       ],
       "verification": [
-        "every scanned job had its full description expanded (\"See more\") before scoring",
-        "closed, expired, or >30-day ghost listings were skipped and logged to logs/skipped-jobs.json with reason \"ghost_or_expired",
+        "every discovered role includes source URL and verification date with zero fabricated live listings",
+        "every match score cites verified CV matches separately from unknown/unclaimed requirements (full JD expanded before scoring)",
+        "closed, expired, or >30-day ghost listings were skipped and logged to logs/skipped-jobs.json with reason \"ghost_or_expired\"",
         "Mission Control table was shown and no Apply button was clicked before the owner's APPLY reply"
       ],
       "path": "skills/02-discover-and-triage.md"
@@ -124,29 +134,34 @@
       "name": "tailor-resume-and-verify",
       "version": "2.0.0",
       "category": "core",
-      "description": "Load when tailoring a CV or cover letter for an eligible job (/tailor-cv or Tier A pre-generation); injects verified facts into templates/ats-resume-template.html, runs the Anti-Hallucination Fact-Check Guard and Anti-AI Slop filter, and exports/verifies PDF via Playwright MCP.",
+      "description": "Load when tailoring or revising a CV or cover letter (/quick-tailor, /tailor-cv, Tier A pre-generation, or standalone format conversion/edits); renders verified facts into templates/ats-resume-template.html, runs the Fact-Check Guard and Anti-AI Slop filter, writes and re-reads HTML/TXT/Word-compatible .doc (never fake .docx), and exports PDF optionally via Playwright MCP.",
       "triggers": [
         "/tailor-cv <url>",
+        "/quick-tailor",
         "Tier A pre-generation",
-        "eligible job before form upload"
+        "eligible job before form upload",
+        "revise tailored CV or convert CV to PDF / Word"
       ],
       "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
         "playwright"
       ],
       "preconditions": [
-        "owner-verified context/profile.md, context/cv.md, and context/resume-data.json loaded",
-        "full expanded job description captured"
+        "owner-verified context/profile.md, context/cv.md, and context/resume-data.json loaded OR verified candidate facts confirmed in the current session",
+        "full expanded job description captured (or standalone CV revision/format conversion requested)"
       ],
       "requires_skills": [
         "resume-ingestion",
         "ats-keyword-heatmap"
       ],
       "verification": [
-        "evidence map links every tailored bullet and summary claim to an exact verified fact in context/profile.md",
+        "evidence map links every tailored bullet and summary claim to an exact verified fact from confirmed candidate data",
         "fact-check audit confirmed 0 unverified percentages, currency amounts, multipliers, years, dates, employers, degrees, or tools",
         "humanized prose contains 0 banned AI-slop clichés and no em-dash overuse",
-        "page-overflow & character budget gate passed (clean 1-page A4 fit or intentional full 2-page layout with zero 2-page orphan spill of < 10 lines)",
-        "tailored HTML and printed PDF (< 200 KB, text-selectable) saved in logs/resumes/<company>-<role>-<job-id>/"
+        "page-overflow & character budget gate checked (clean 1-page A4 fit or balanced 2-page layout with zero <10-line orphan spill)",
+        "saved HTML, TXT, Word-compatible .doc (never renamed .docx), and tailoring-notes.md in logs/resumes/<folder>/ were re-read to verify 0 placeholders and factual parity (plus resume.pdf <= 200 KB when PDF export is available, or Print-to-PDF guidance)"
       ],
       "path": "skills/03-tailor-resume-and-verify.md"
     },
@@ -189,17 +204,21 @@
       "name": "outreach-and-interview-prep",
       "version": "2.0.0",
       "category": "core",
-      "description": "Load when a Tier A application is prepared or submitted, a posting asks for direct email application, or the owner invokes /linkedin-growth; creates interview-dossier.md, <=75-word draft-only outreach-draft.md, or email-draft.md without auto-sending.",
+      "description": "Load when preparing for an interview, a Tier A application is prepared or submitted, a posting asks for direct email application, or drafting hiring-manager outreach; creates interview-dossier.md, <=75-word draft-only outreach-draft.md, or email-draft.md without auto-sending.",
       "triggers": [
+        "prepare me for an interview",
         "Tier A application prepared or submitted",
         "posting asks to apply via email (careers@...)",
         "/linkedin-growth"
       ],
       "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
         "playwright"
       ],
       "preconditions": [
-        "full job description and verified context/profile.md available",
+        "job description or target role context and verified candidate facts available",
         "explicit owner approve before any live LinkedIn Save, Post, or Send"
       ],
       "requires_skills": [
@@ -217,13 +236,17 @@
       "name": "log-and-insights",
       "version": "2.0.0",
       "category": "core",
-      "description": "Load whenever writing job dispositions, skipped ghost/mismatch logs, daily run summaries, Notion MCP syncs, or /weekly-report market/skill-gap insights; uses local JSON files as primary truth and Notion MCP optionally.",
+      "description": "Load whenever tracking or updating applications, writing skipped ghost/mismatch logs, daily run summaries, exporting reports, optional Notion MCP syncs, or /weekly-report insights; uses local JSON files as primary truth and Notion MCP optionally.",
       "triggers": [
+        "track applications or update existing application record",
         "write to logs/applications-log.json or logs/skipped-jobs.json",
         "end of daily run summary",
-        "/weekly-report"
+        "/weekly-report or export application report"
       ],
       "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
         "notion"
       ],
       "preconditions": [
@@ -393,6 +416,9 @@
         "draft reply to recruiter inbox"
       ],
       "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
         "notion"
       ],
       "preconditions": [
@@ -493,26 +519,31 @@
       "name": "meta-self-verification",
       "version": "1.0.0",
       "category": "meta",
-      "description": "Load when the agent is about to report any outcome as done (application submitted, file uploaded, profile updated, post published, record logged or synced); forbids claiming success without concrete evidence observed after the action and logs that proof.",
+      "description": "Load when the agent is about to report any outcome as done (application submitted, file created/edited/uploaded, profile updated, post published, record logged or synced); forbids claiming success without concrete post-action evidence (file re-read, command output, or fresh browser_snapshot) and logs that proof.",
       "triggers": [
         "verify-before-complete",
+        "right after writing or editing a deliverable file",
         "right after a Submit / Save / Post / Send click",
         "before writing status applied or reporting success in chat"
       ],
       "requires_mcp": [
-        "playwright"
+        "none"
+      ],
+      "optional_mcp": [
+        "playwright",
+        "notion"
       ],
       "preconditions": [
         "the action being verified has actually been attempted in this session",
-        "a fresh browser_snapshot (or file read / command output) can be taken now"
+        "a fresh file re-read, command output, or browser_snapshot can be taken now"
       ],
       "requires_skills": [
         "log-and-insights"
       ],
       "verification": [
-        "a quoted confirmation string or state observed AFTER the action is stored in logs/applications-log.json notes",
-        "the evidence names the same company/role (or profile section/post text) as the action",
-        "claims without evidence were reported as unverified/needs_review, not as done"
+        "created or modified files were re-read to confirm existence, formatting, and zero remaining placeholders",
+        "a quoted confirmation string or state observed AFTER any live browser/Notion action is stored in logs/applications-log.json notes (naming the same company/role or profile section)",
+        "claims without post-action evidence were reported as unverified/needs_review, not as done"
       ],
       "path": "skills/meta-self-verification.md"
     },
@@ -946,11 +977,14 @@
         "translate cover letter or outreach to target job language"
       ],
       "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
         "playwright"
       ],
       "preconditions": [
-        "verified source CV facts exist in context/cv.md and context/profile.md",
-        "target language and full captured job description language conventions are confirmed"
+        "verified source CV facts exist in context/cv.md, context/profile.md, or a session-confirmed CV",
+        "target language (and optional job description conventions) confirmed"
       ],
       "requires_skills": [
         "tailor-resume-and-verify",
@@ -1315,20 +1349,24 @@
       "name": "linkedin-growth",
       "version": "1.3.0",
       "category": "core",
-      "description": "Load when the owner runs /linkedin-growth or asks for a Recruiter-SEO LinkedIn profile audit (0-100 rubric against 3-5 target JDs), grounded section-by-section profile optimization, posts, or <=75-word outreach with explicit APPROVE gating.",
+      "description": "Load when the owner runs /linkedin-growth or asks to review their LinkedIn profile, improve headline/About/experience, align LinkedIn with their CV, optimize for target roles, or draft posts/<=75-word outreach; defaults to DRAFT_ONLY and permits live profile updates only with legitimate Playwright auth plus explicit APPROVE and post-save snapshot verification.",
       "triggers": [
         "/linkedin-growth",
-        "audit my LinkedIn profile",
-        "optimize my LinkedIn",
-        "LinkedIn Recruiter SEO"
+        "review or audit my LinkedIn profile",
+        "improve my LinkedIn headline or About section",
+        "make my LinkedIn profile consistent with my CV",
+        "optimize my LinkedIn profile for target roles"
       ],
       "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
         "playwright"
       ],
       "preconditions": [
-        "verified context/profile.md and context/cv.md loaded (zero invented metrics or unverified skills)",
-        "3-5 target job descriptions available (from chat, logs/resumes/*/interview-dossier.md, or read-only LinkedIn extraction)",
-        "strict Read-Only Audit + Chat Draft Output Only (DRAFT_ONLY) — never click LinkedIn profile Edit/Save buttons via Playwright"
+        "verified candidate facts available (context/profile.md + context/cv.md OR session-confirmed CV)",
+        "accessible LinkedIn profile data (pasted text, LinkedIn Save-to-PDF, screenshot, or read-only signed-in Playwright inspection) and optional target role(s)/JDs",
+        "DRAFT_ONLY by default; explicit owner APPROVE required before any live LinkedIn Save, Post, or Send"
       ],
       "requires_skills": [
         "tailor-resume-and-verify",
@@ -1336,9 +1374,9 @@
         "meta-self-verification"
       ],
       "verification": [
-        "0-100 Recruiter-SEO scorecard computed across Headline (25), About Hook & Keywords (25), Experience Bullets (30), and Featured & Skills Alignment (20)",
-        "every metric, skill, title, and date in proposed rewrites is verified verbatim against context/profile.md and context/cv.md (zero hallucinations, zero AI-slop clichés, zero prose em-dashes)",
-        "audit and proposed copy saved strictly as DRAFT_ONLY to logs/insights/linkedin-seo-audit-YYYY-MM-DD.md with zero browser clicks on LinkedIn Edit/Save/Post/Send buttons"
+        "0-100 Recruiter-SEO scorecard (or CV-consistency gap table) grounded solely in inspected profile sections and verified CV facts",
+        "every metric, skill, title, and date in proposed rewrites matches verified candidate facts (zero hallucinations, zero AI-slop clichés, zero prose em-dashes)",
+        "audit and proposed copy saved as DRAFT_ONLY to logs/insights/linkedin-seo-audit-YYYY-MM-DD.md; any user-approved live edit occurred only after explicit APPROVE and passed post-save browser_snapshot verification"
       ],
       "path": "skills/linkedin-growth.md"
     }

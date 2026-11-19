@@ -1,12 +1,15 @@
 ---
 name: log-and-insights
 version: "2.0.0"
-description: Load whenever writing job dispositions, skipped ghost/mismatch logs, daily run summaries, Notion MCP syncs, or /weekly-report market/skill-gap insights; uses local JSON files as primary truth and Notion MCP optionally.
+description: Load whenever tracking or updating applications, writing skipped ghost/mismatch logs, daily run summaries, exporting reports, optional Notion MCP syncs, or /weekly-report insights; uses local JSON files as primary truth and Notion MCP optionally.
 triggers:
+  - track applications or update existing application record
   - write to logs/applications-log.json or logs/skipped-jobs.json
   - end of daily run summary
-  - /weekly-report
+  - /weekly-report or export application report
 requires_mcp:
+  - none
+optional_mcp:
   - notion
 preconditions:
   - exact observed disposition and receipt (for applied) recorded
@@ -24,19 +27,21 @@ verification:
 
 Local JSON files under `logs/` are the single source of truth; Notion MCP is strictly optional (`storage_adapters.notion_mcp: false` by default). You write and maintain the JSON/Markdown logs directly with your IDE file tools—no external logging script is required.
 
-- **Load when:** write to `logs/applications-log.json` or `logs/skipped-jobs.json`; end of daily run summary; `/weekly-report`.
+- **Load when:** track applications or update an existing record; write to `logs/applications-log.json` or `logs/skipped-jobs.json`; end of daily run summary; `/weekly-report` or export application report.
 - **Preconditions (stop if any is false):**
-  - exact observed disposition and receipt (for `applied`) recorded
+  - exact observed disposition and receipt (for `applied`) or owner-supplied status update recorded
   - `storage_adapters.notion_mcp` checked in `config/guardrails.yaml`
-- **Requires skills:** `meta-self-verification`. **MCP:** notion (optional).
+- **Requires skills:** `meta-self-verification`. **MCP:** none (`notion` optional).
 
 ## Deterministic Step-by-Step Execution
 
-### 1. Maintain `logs/applications-log.json` (Primary Truth)
+### 1. Maintain & Update `logs/applications-log.json` (Primary Truth)
 Upsert entries by `job_id` (`"<platform>:<id>"`)—never append a second entry for the same `job_id`, and never overwrite an existing `applied` receipt:
-- Allowed `status` values: `discovered | skipped | dry_run | applied | needs_review | failed | aborted`.
+- Allowed `status` values: `discovered | prepared | skipped | dry_run | applied | needs_review | failed | aborted` (plus outcome transitions such as `interview | assessment | offer | rejected | withdrawn` via `skills/12-recruiter-inbox-triage.md` or owner updates). Note: `prepared`, `discovered`, `dry_run`, `needs_review`, `skipped`, and `aborted` never count toward daily/warm-up `applied` caps.
 - Allowed `apply_type` values: `easy_apply | external | manual_apply`.
 - Required fields per entry: `job_id`, `title`, `company`, `platform`, `url`, `location`, `apply_type`, `discovered_at` (ISO UTC), `status`, `match_score` (0–10), `matched_skills[]`, `missing_skills[]`, `open_questions[]`, `screenshot` (path or `null`), `run_id` (`YYYY-MM-DD`), `applied_at` (ISO UTC or `null`), `notes`, `notion_synced` (`boolean`), `submission_uncertain` (`boolean`).
+- **Application Prepared Without Submission:** When an application package (`resume.*`, cover letter, form answers, `interview-dossier.md`) is generated without submitting, record `status: "prepared"` (or `"needs_review"`), `applied_at: null`, and `notes` pointing to the artifact folder (`logs/resumes/<folder>/`).
+- **Update Existing Record:** When the owner asks to update an existing application (e.g., `"Mark Acme Corp as interviewing"`), look up the matching `job_id`/company in `logs/applications-log.json`, preserve original `applied_at` and receipt quotes, update `status`/`notes`/`updated_at`, re-read the JSON file to verify validity, and confirm the exact diff.
 - **Pre-submit reservation rule:** Before clicking live Submit, write `status: "needs_review"`, `submission_uncertain: true`, `applied_at: null`. Only after `skills/meta-self-verification.md` captures an explicit confirmation quote in `notes`, update the **same** entry to `status: "applied"`, `applied_at: <ISO>`, `submission_uncertain: false`.
 
 ### 2. Maintain `logs/skipped-jobs.json` & `logs/runs/YYYY-MM-DD.json`
@@ -49,10 +54,10 @@ If disabled, skip this step completely. If enabled and `NOTION_TOKEN` + database
 2. **Query before create (Idempotency):** Search `Applications` by exact `job_id` (and `Daily Runs` by `run_id`). Update if 1 match exists; create once if 0 matches; mark for review if multiple.
 3. Save `notion_page_id` and `notion_synced: true` ONLY after a confirmed Notion response with a page ID. On timeout or rate limit, keep `notion_synced: false` locally and retry next run (never lose local JSON records). Never upload raw resumes, screenshots, or secret tokens to Notion.
 
-### 4. Weekly & Monthly Insights (`/weekly-report`)
-Aggregate all entries in `logs/applications-log.json` and `logs/skipped-jobs.json` for the requested period (`YYYY-Www` or `YYYY-MM`):
-- Compute `scanned`, `applied`, `match_rate`, `avg_match_score`, `top_skills[]`, `skill_gaps[]` (most frequent `missing_skills` across high-potential JDs), and actionable `recommendations[]`.
-- Save JSON to `logs/insights/<type>-<period>.json` and a clear Markdown brief in chat (plus Notion `Weekly & Monthly Insights` upsert if enabled).
+### 4. Weekly/Monthly Insights & Report Export (`/weekly-report`)
+Aggregate all entries in `logs/applications-log.json` and `logs/skipped-jobs.json` for the requested period (`YYYY-Www`, `YYYY-MM`, or `all`):
+- Compute `scanned`, `prepared`, `applied`, `match_rate`, `avg_match_score`, `top_skills[]`, `skill_gaps[]` (most frequent `missing_skills` across high-potential JDs), and actionable `recommendations[]`.
+- Save JSON to `logs/insights/<type>-<period>.json` and, when exporting an application report, also write a clean Markdown (`logs/exports/applications-report-YYYY-MM-DD.md`) and/or CSV (`logs/exports/applications-report-YYYY-MM-DD.csv`) summary (plus `node ./bin/cli.mjs dashboard --no-open` for visual HTML Kanban). Re-read exported files to verify validity (`skills/meta-self-verification.md`). Sync Notion `Weekly & Monthly Insights` only if enabled.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

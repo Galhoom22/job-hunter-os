@@ -7,10 +7,12 @@ triggers:
   - bilingual or RTL resume adaptation
   - translate cover letter or outreach to target job language
 requires_mcp:
+  - none
+optional_mcp:
   - playwright
 preconditions:
-  - verified source CV facts exist in context/cv.md and context/profile.md
-  - target language and full captured job description language conventions are confirmed
+  - verified source CV facts exist in context/cv.md, context/profile.md, or a session-confirmed CV
+  - target language (and optional job description conventions) confirmed
 requires_skills:
   - tailor-resume-and-verify
   - outreach-and-interview-prep
@@ -26,28 +28,30 @@ verification:
 
 Adapts resumes, cover letters, form answers, and `<= 75`-word outreach drafts across English, Arabic (RTL), German, French, and Spanish roles while preventing translation drift or hallucinated seniority claims.
 
-- **Load when:** `adapt CV to Arabic / German / French / Spanish`; `bilingual or RTL resume adaptation`; `translate cover letter or outreach to target job language`.
+- **Load when:** `adapt CV to Arabic / German / French / Spanish`; `bilingual or RTL resume adaptation`; `translate cover letter or outreach to target job language`; `"Create an English CV from my Arabic one"` / `"Create an Arabic version"`.
 - **Preconditions (stop if any is false):**
-  - verified source CV facts exist in `context/cv.md` and `context/profile.md`
-  - target language and full captured job description language conventions are confirmed
-- **Requires skills:** `tailor-resume-and-verify`, `outreach-and-interview-prep`, `privacy-pii-shield`. **MCP:** `playwright`.
+  - verified source CV facts exist in `context/cv.md`, `context/profile.md`, or a session-confirmed CV
+  - target language (and optional JD conventions) confirmed
+- **Requires skills:** `tailor-resume-and-verify`, `outreach-and-interview-prep`, `privacy-pii-shield`. **MCP:** none (`playwright` optional for PDF export).
 
 ## Deterministic Step-by-Step Execution
 
-1. **Detect Posting Language & Regional Norms:**
-   - Inspect the full JD in `browser_snapshot` or pasted text to determine whether the employer expects English, Arabic, German (*Lebenslauf* style), French, or Spanish.
-   - Note local conventions (e.g., whether official technical terms such as `TypeScript`, `Kubernetes`, `PostgreSQL`, `CI/CD` must stay in Latin script inside Arabic/German/French prose for ATS parsers).
+1. **Preserve Original Source CV & Detect Target Language Norms:**
+   - Keep the original source CV file untouched; write translated deliverables (`resume.html`, Word-compatible `resume.doc`, `resume.txt`, optional `resume.pdf`) to a clearly named language folder under `logs/resumes/<slug>-<lang>/`.
+   - Inspect the JD (from `browser_snapshot` or pasted text) if targeting a specific job, or apply standard regional conventions for English, Arabic (`dir="rtl"`), German (*Lebenslauf*), French, or Spanish.
+   - Note local conventions (e.g., keep technical terms like `TypeScript`, `React`, `PostgreSQL`, `CI/CD` in Latin script inside Arabic/German/French prose for ATS parsers).
 2. **Literal Fact Lock (Pre-Translation Guard):**
-   - Extract the canonical Fact Table from `context/cv.md`: employers, exact tenure dates (`YYYY-MM`), degrees, certifications, and numeric metrics.
+   - Extract the canonical Fact Table from the confirmed source CV (`context/cv.md` or session CV): employers, exact tenure dates (`YYYY-MM`), degrees, certifications, and numeric metrics.
    - Lock technical proper nouns and brand names so translation never alters job scope (e.g., never translate "Contributor" into "Tech Lead" or "Principal").
 3. **Register & Localization Pass:**
    - **Arabic (`ar`):** Keep technical keywords in Latin (`React`, `PostgreSQL`, `Playwright`) or bilingual `اسم المفهوم (Term)` where ATS clarity helps; set `dir="rtl"` and `lang="ar"` on the HTML wrapper when exporting via `tailor-resume-and-verify`.
+   - **English (`en`) from Arabic:** Translate verified job titles, degrees, and achievements faithfully into plain active engineering English without inflating titles or fabricating metrics.
    - **German (`de`), French (`fr`), Spanish (`es`):** Use crisp active engineering verbs in formal register; apply regional spelling/punctuation rules and keep `<= 75`-word outreach strictly within cap in the target language.
 4. **Back-Translation & Fact Check:**
-   - Mentally back-translate every numeric metric, title, and credential to English and verify 1:1 parity against `context/cv.md`.
-   - Confirm zero banned AI clichés (including their translated equivalents such as "motivierter Teamplayer", "passionné", or "شغوف بـ...") slipped in.
-5. **Render & Visual Check (When Exporting PDF):**
-   - For tailored PDFs, export via Playwright MCP (`page.pdf`) and inspect `browser_snapshot` / rendered PDF page count to ensure RTL alignment, margins, and Latin-in-RTL bidirectional punctuation render cleanly without clipping.
+   - Mentally back-translate every numeric metric, title, and credential to the source CV and verify 1:1 parity.
+   - Confirm zero banned AI clichés (including translated equivalents such as "motivierter Teamplayer", "passionné", or "شغوف بـ...") slipped in.
+5. **Render, Re-Read & Optional PDF Check:**
+   - Write and re-read `resume.html`, Word-compatible `resume.doc`, and `resume.txt` to confirm zero placeholders and clean bidirectional/RTL layout. If Playwright MCP (`--caps=pdf`) is available, export `resume.pdf`; otherwise provide browser `Print -> Save as PDF` instructions.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 

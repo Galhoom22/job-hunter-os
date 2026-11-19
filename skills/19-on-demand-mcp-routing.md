@@ -33,20 +33,21 @@ Prevents accessibility-tree snapshots and optional integration schemas from exha
 
 ## Deterministic Step-by-Step Execution
 
-1. **Classify the Current Phase Before Touching Any MCP Tool:**
-   - **Local-Only Phases (Zero MCP Calls):**
-     - Gatekeeper audit (`00-interrogate-and-onboard`), pasted/Markdown CV ingestion (`01`), HTML tailoring & fact-checking (`03` pre-PDF step), local interview dossier & `<= 75`-word drafts (`05`), local JSON writes & `/weekly-report` (`06`), persona switching (`07`), follow-up radar (`08`), offer negotiation (`09`), PII audit (`14`), rejection patterns (`16`), and score calibration (`17`).
-     - Execute these strictly with built-in file read/write tools.
-   - **Playwright-Required Phases (`requires_mcp: playwright`):**
-     - Auth check, search page inspection, full JD reading, HTML->PDF export (`page.pdf`), ATS form upload/fill, Company due diligence (`13`), and GitHub/Portfolio link inspection (`11`).
-     - Invoke Playwright MCP only during these discrete windows.
-   - **Notion-Required Phases (`requires_mcp: notion`):**
-     - Check `config/guardrails.yaml` -> `storage_adapters.notion_mcp`. If `false` (default), **never load or call Notion MCP tools**; write local JSON under `logs/` only.
+1. **Classify the Current Phase & Capability Category (`A–E`) Before Touching Any MCP Tool:**
+   - **Local-Only Phases (`requires_mcp: none`):**
+     - Gatekeeper audit (`00-interrogate-and-onboard`), CV ingestion/creation/editing (`01`), HTML/TXT/Word-compatible `.doc` tailoring & fact-checking (`03`), standalone interview dossier & `<= 75`-word drafts (`05`), local JSON writes, tracking updates & `/weekly-report` (`06`), persona switching (`07`), follow-up radar (`08`), offer negotiation (`09`), recruiter inbox triage (`12`), PII audit (`14`), multilingual adaptation (`15`), rejection patterns (`16`), score calibration (`17`), and offline LinkedIn audit from pasted/PDF/screenshot profile (`linkedin-growth`).
+     - Execute these strictly with built-in file tools and `bin/cli.mjs` (`audit`, `verify`, `pre-submit`).
+   - **Playwright-Required / Optional Phases (`playwright`):**
+     - **Required:** live board auth checks, search page inspection, live ATS form upload/fill (`04`, `platforms/*`, `ats/*`).
+     - **Optional:** PDF rendering (`page.pdf`), reading `.pdf` without native PDF support, live URL inspection, read-only LinkedIn profile/JD reads, and `APPROVE`-gated live LinkedIn profile edits.
+   - **Notion-Optional Phases (`notion`):**
+     - Check `config/guardrails.yaml` -> `storage_adapters.notion_mcp`. If `false` (default) or Notion MCP is unavailable, keep local JSON under `logs/` as primary truth and skip Notion without blocking.
 2. **Keep Snapshot Surface Lean Across Phases:**
    - Once a JD is captured via `browser_snapshot`, distill its key facts into the working Mission Control entry or `interview-dossier.md` and discard raw HTML/navigation boilerplate from working memory.
    - Every **3–5 applications**, execute `skills/meta-context-compaction.md` to checkpoint progress and drop stale tab trees.
-3. **Graceful Degradation Check (`fallback-no-mcp`):**
-   - If the active harness does not have `playwright` connected when a browser phase begins, stop gracefully and route to `skills/fallback-no-mcp.md` instead of retrying missing MCP tools or fabricating browser output.
+3. **Alternative Resolution & Recovery (`skills/fallback-no-mcp.md`):**
+   - Classify missing tools cleanly: **(A)** run now, **(B)** ask user input, **(C)** optional tool missing, **(D)** supported alternative available, **(E)** unsupported/prohibited.
+   - If `playwright` or `notion` is disconnected or fails mid-task: isolate the exact blocked step, complete all independent local work, switch to the closest safe fallback (user-supplied JD/URL/screenshot, `HTML`/Word-compatible `.doc`/`TXT` + browser `Print -> Save as PDF`, local JSON logging), and resume from the last valid checkpoint without repeating destructive actions or fabricating results.
 
 ## Anti-Patterns (What NEVER To Do) & Self-Verification Check
 
