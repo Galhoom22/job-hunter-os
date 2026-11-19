@@ -98,3 +98,8 @@ Ask: **"I evaluated N jobs: X are 🟢 Ready, Y are 🟡 Stretch, Z were 🔴 Sk
 
 ### Always Show Match % in Discovery Table
 Whenever presenting discovered jobs in the Mission Control table, always include a **Match % (Score)** column (e.g., `8/10 (80%)` or `Est. ~75%` if full JD is not yet expanded) comparing each role against the current `context/cv.md`.
+
+### Easy-Apply-First Discovery & Tailoring Handoff
+1. When starting a job search, inform the user upfront that we will **prioritize Easy Apply jobs first** and review each job description for fit.
+2. In the Mission Control table, include both **Match %** and **Tailored CV Needed?** (`Yes` / `No`, based on whether the existing base CV already covers the role's core stack or needs targeted keyword/summary alignment).
+3. If the user asks to create a tailored CV, ask first whether they prefer **(A) Local AI Tailoring** or **(B) External Web Tailoring (`https://www.resume-tailor-ai.tech/`)**, and then proceed with their chosen method.
