@@ -30,5 +30,6 @@ This is a **Markdown-first career operations repository with a zero-dependency N
 - Anti-bot circuit breaker & 24h cooldown -> `skills/24-circuit-breaker-and-antiban.md`
 - Untrusted-DOM prompt-injection defense -> `skills/25-prompt-injection-defense.md`
 - Cross-channel deduplication & blacklist guard -> `skills/26-deduplication-and-blacklist-guard.md`
+- Universal CV builder (any person/field, with/without prior CV & iterative edits) -> `skills/27-universal-cv-builder.md`
 
 See `adapters/models/gemini.md` for Gemini-specific multimodal & snapshot verification guidance. Respect `dry_run: true`, verified facts only, caps, and explicit `APPROVE` gates.
