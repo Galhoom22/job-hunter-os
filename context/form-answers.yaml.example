@@ -34,3 +34,8 @@ eeo_and_compliance_defaults:
   disability_status: "Prefer not to say"
   referral_source: "LinkedIn"
   gdpr_privacy_consent: true
+winning_answers:
+  ai_workflow: "REPLACE_WITH_YOUR_VERIFIED_AI_TOOLS_AND_REVIEW_WORKFLOW"
+  hardest_project: "REPLACE_WITH_YOUR_STRONGEST_SHIPPED_PROJECT_AND_METRIC"
+  why_remote: "REPLACE_WITH_YOUR_ASYNC_REMOTE_COLLABORATION_TRACK_RECORD"
+  availability: "REPLACE_WITH_YOUR_NOTICE_PERIOD_AND_START_FLEXIBILITY"

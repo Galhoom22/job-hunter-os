@@ -113,3 +113,8 @@ To maximize speed and minimize friction:
 If a job board (such as Indeed) blocks automated browsing with Cloudflare or a timeout:
 1. Do NOT attempt to bypass the challenge.
 2. Give the user the exact pre-filtered search URL (e.g., for Indeed 24h Remote: `https://eg.indeed.com/jobs?q=Full+Stack+OR+React+OR+Next.js+OR+Node.js&fromage=1&sc=0kf%3Aattr%28DSQF7%29%3B` or `https://ae.indeed.com/jobs?q=Full+Stack+OR+React+OR+Next.js+OR+Node.js&fromage=1&sc=0kf%3Aattr%28DSQF7%29%3B`) so they can open it in 1 click and paste any direct job link or JD text here for instant scoring and tailoring.
+
+### Deterministic Fast Match Rubric
+Compute every table `Match %` consistently using verified facts (`context/resume-facts.json`) without verbose reasoning:
+- `Match % = Core Stack (40%) + Experience/Seniority Fit (30%) + Work Mode/Location (20%) + Domain/Shipped Projects (10%)`
+- Report exact matched stack vs. verified gaps in 1–2 concise bullets.

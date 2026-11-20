@@ -60,3 +60,10 @@ Prevents accessibility-tree snapshots and optional integration schemas from exha
 1. **Parallel Local I/O:** Execute independent file reads, edits, and writes in parallel within the same turn instead of sequentially.
 2. **Zero Redundant Context Reloads:** Never re-read unchanged `context/` files or skill bodies already verified in the active session; load only the 1–3 skills required for the current step.
 3. **Smart Model Tiering:** When delegating routine browser scraping, list extraction, or repetitive form filling to a subagent, prefer fast low-latency models (e.g., Flash / Haiku / Mini) and reserve heavier reasoning models for CV tailoring, gap analysis, and complex debugging.
+
+### High-Signal Token-Efficient Intelligence Rules
+Maximize reasoning quality while cutting token burn by 40–70%:
+1. **Prefer Compact Fact Sheet First:** Read `context/resume-facts.json` (~250 tokens) instead of full prose `cv.md` + `profile.md` during fast discovery, scoring, and form filling; load full `context/cv.md` only when writing tailored resumes or cover letters.
+2. **Reuse `winning_answers` Bank:** Pull pre-verified, high-signal answers directly from `context/form-answers.yaml` (`winning_answers.*`) for recurring ATS prompts (AI workflow, hardest project, why remote, availability) instead of re-deriving them from scratch.
+3. **Rubrics & 1-Shot Anchors Over Long Prose:** Score and evaluate with compact numeric rubrics and 1-shot examples to avoid "Lost in the Middle" degradation.
+4. **Proactive Compaction:** Checkpoint progress every 3–5 applications (`skills/meta-context-compaction.md`) and suggest `/compact` on long sessions to keep model reasoning sharp.
