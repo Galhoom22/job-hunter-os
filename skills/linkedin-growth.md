@@ -93,7 +93,7 @@ Apply high-conversion technical positioning across every LinkedIn section (groun
 - **Copywriting Formula (`Hook → Proof → Outcome → Soft CTA`):**
   - *Headline (`<= 220` chars):* `[Primary Target Role] | [Top 3–5 Recruiter-Filter Stack Keywords] | [Differentiator: e.g., AI-First Engineering & Scalable Web Apps]`.
   - *About First 220 Chars:* Lead with concrete specialty + shipped impact before the `"See more"` fold, followed by scannable domain pillars and a clear contact/collaboration CTA.
-  - *Experience & Projects:* Lead with system scope, technical stack, and verified metrics (`73+ automated tests`, `95+ performance scores`, `RTL/bilingual`, CI/CD).
+  - *Experience & Projects:* Lead with system scope, technical stack, and verified metrics (e.g., automated test coverage, latency/performance scores, bilingual/RTL support, CI/CD reliability).
 
 ### 7. LinkedIn Content & Post Publishing Engine (Algorithm-Smart)
 Draft high-signal posts (English, Arabic, or bilingual as requested) that build authority with recruiters and engineering managers:
